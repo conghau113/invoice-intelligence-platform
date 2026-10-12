@@ -1,0 +1,5 @@
+---
+description: Project context shared with Claude Code
+alwaysApply: true
+---
+This repository's rules and context live in `CLAUDE.md` (root) and `docs/plan/WORKFLOW.md`. Read them before suggesting changes. The current milestone and task are at the top of `docs/plan/TASKS.md`. Follow the same rules: i18n keys in both vi.json and en.json, tenant isolation, no PII in logs, synthetic data only, tests must execute behaviour.
