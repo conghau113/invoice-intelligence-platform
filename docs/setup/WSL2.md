@@ -11,12 +11,14 @@ wsl --set-default-version 2
 ```
 Khởi động lại máy nếu được yêu cầu, mở "Ubuntu" và tạo user Linux.
 
-Mặc định WSL2 dùng tối đa 50% RAM (~12 GB) — đủ cho dự án. Nếu muốn cố định, tạo `C:\Users\<bạn>\.wslconfig`:
+Giới hạn RAM cho WSL (khuyến nghị cho máy 24 GB, để Windows luôn còn ≥ 14 GB). Tạo `C:\Users\<bạn>\.wslconfig`:
 ```ini
 [wsl2]
-memory=12GB
+memory=10GB
 ```
-rồi chạy `wsl --shutdown`.
+rồi chạy `wsl --shutdown`. Docker Desktop vốn đã chạy trên WSL2, nên Ubuntu dùng chung máy ảo đó — không tạo thêm máy ảo thứ hai.
+
+Ước tính khi code (cần đo thật): Windows 4–6 GB, Cursor 1–2 GB, trình duyệt 1–2 GB, container 1,5–2 GB, dev server 2–3 GB → ~10–15 GB. Ở T0.0: bật Docker + Cursor + trình duyệt, xem Task Manager → Performance → Memory; thường xuyên > 85% thì báo lại để giảm tải (ví dụ chỉ bật Keycloak khi cần).
 
 ## 2. Docker Desktop dùng WSL2
 Docker Desktop → Settings → General: bật "Use the WSL 2 based engine". Resources → WSL integration: bật cho Ubuntu-24.04.
@@ -60,9 +62,9 @@ docker run --rm hello-world && node -v && pnpm -v && uv --version && claude --ve
 
 ---
 
-## Phương án B: làm trực tiếp trên Windows (ổ E:), không dùng WSL
+## Phương án B (dự phòng, không dùng mặc định): làm trực tiếp trên Windows
 
-Dùng được, nhưng chấp nhận các đánh đổi sau:
+Đã chốt dùng WSL2 (phương án A). Phương án B chỉ dùng nếu WSL2 gặp sự cố không khắc phục được. Đánh đổi:
 
 | Vấn đề | Ảnh hưởng | Cách giảm |
 |---|---|---|
