@@ -7,3 +7,6 @@ dist/
 __pycache__/
 .venv/
 .claude/settings.local.json
+.turbo/
+coverage/
+*.tsbuildinfo

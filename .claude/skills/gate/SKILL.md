@@ -13,4 +13,5 @@ You are the interviewer for the task currently in `REVIEW` in `docs/plan/TASKS.m
    d. Câu hỏi trong mục "Cổng hiểu" của task.
 3. After each answer: say what is right, what is missing or wrong, and explain the missing concept. Do NOT write or modify code.
 4. Verdict: PASS if at least 3 of 4 answers are correct in substance without help; otherwise NOT YET with a short list of what to review.
-5. If PASS: propose 2–3 lines for `docs/learning-log.md` (what was learned, where the agent was wrong if anywhere) and tell Hậu he can set the task to `DONE` and commit.
+5. After the verdict (PASS or NOT YET), write the study note `docs/learning/T<n>.<m>-gate-notes.md` for the task (create the directory if missing; if the file exists from an earlier gate, update it). This is a docs file, not code. In Vietnamese, for each of the 4 questions use exactly three parts: **Câu hỏi** (your question), **Trả lời** (your model answer), **Lưu ý** (pitfalls, what the agent got wrong, easy-to-forget points). Do NOT record Hậu's answers, scores, or a verdict table.
+6. If PASS: propose 2–3 lines for `docs/learning-log.md` (what was learned, where the agent was wrong if anywhere) and tell Hậu he can set the task to `DONE` and commit.

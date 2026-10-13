@@ -18,7 +18,7 @@
 
 ```text
 Mốc hiện tại: M0
-Task hiện tại: T0.1 (T0.0 đã DONE)
+Task hiện tại: T0.1 — REVIEW (T0.0 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-10-12
 ```
@@ -28,7 +28,7 @@ Cập nhật: 2026-10-12
 | ID | Task | Ước tính (h) | Phụ thuộc | Trạng thái | Thực tế (h) | Ghi chú |
 |---|---|---|---|---|---|---|
 | T0.0 | Chuẩn bị môi trường: WSL2 Ubuntu, Docker Desktop, Node, pnpm, uv, Claude Code, Cursor | 2 | — | `DONE` | | Cursor mở ~/code qua WSL: Hậu xác nhận. Gemini key đã tạo (không billing), lưu ngoài repo; sẽ đưa vào apps/ai/.env khi dự án khởi tạo xong |
-| T0.1 | Khởi tạo repo, pnpm workspace, Turborepo | 1.5 | T0.0 | `TODO` | | |
+| T0.1 | Khởi tạo repo, pnpm workspace, Turborepo | 1.5 | T0.0 | `REVIEW` | | |
 | T0.2 | Scaffold apps/web (Next.js + TS strict + Tailwind + shadcn/ui) | 2 | T0.1 | `TODO` | | |
 | T0.3 | Scaffold apps/api (NestJS) + config validation | 2 | T0.1 | `TODO` | | |
 | T0.4 | Scaffold apps/ai (FastAPI + uv + pytest) | 2 | T0.1 | `TODO` | | |
@@ -153,3 +153,8 @@ Cập nhật: 2026-10-12
 |---|---|---|---|
 | 2026-10-12 | T0.0 | pnpm Windows (`/mnt/c/nvm4w/nodejs/pnpm`) còn trong PATH WSL, từng bị chọn nhầm và panic. Cân nhắc: preflight Node (.mjs) báo lỗi nếu pnpm nằm dưới `/mnt/c/` hoặc lệch `packageManager`; hoặc tắt `appendWindowsPath` trong `/etc/wsl.conf` (có tác dụng phụ, cần Hậu quyết) | Chờ quyết khi tới T0.8 (đang ngoài spec T0.8) |
 | 2026-10-12 | T0.0 | Thêm mục troubleshooting "pnpm trỏ nhầm bản Windows" (`which -a pnpm`, corepack enable) vào `docs/setup/WSL2.md` | Chờ xếp lịch |
+| 2026-10-12 | T0.1 | Task `dev` (persistent, không cache) + script `dev` ở gốc cho `pnpm dev` (CLAUDE.md) | Chờ xếp lịch (T0.9) |
+| 2026-10-12 | T0.1 | `env`/`globalEnv` trong `turbo.json` (strict env mode chặn biến như `NEXT_PUBLIC_*`, `DATABASE_URL`) | Xử lý ở T0.2/T0.3 |
+| 2026-10-12 | T0.1 | `onlyBuiltDependencies` trong `pnpm-workspace.yaml` khi thêm package có postinstall (sharp, esbuild, @nestjs/core) | Xử lý ở T0.2/T0.3 |
+| 2026-10-12 | T0.1 | `tsconfig.base.json` chỉ giữ cờ strict; `module`, `moduleResolution`, `lib`, `target` do từng app tự ghi đè (Next: bundler + DOM; Nest: CommonJS + decorators) | Làm ở T0.2/T0.3 |
+| 2026-10-12 | T0.1 | `packages/contracts`: build ra `dist/` hay trỏ `exports` vào source `.ts` (ảnh hưởng `typecheck/test dependsOn ^build`) | Hậu chốt ở T0.5 |
