@@ -18,7 +18,7 @@
 
 ```text
 Mốc hiện tại: M0
-Task hiện tại: T0.2 (T0.0, T0.1 đã DONE)
+Task hiện tại: T0.3 (T0.0, T0.1, T0.2 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-10-13
 ```
@@ -29,7 +29,7 @@ Cập nhật: 2026-10-13
 |---|---|---|---|---|---|---|
 | T0.0 | Chuẩn bị môi trường: WSL2 Ubuntu, Docker Desktop, Node, pnpm, uv, Claude Code, Cursor | 2 | — | `DONE` | | Cursor mở ~/code qua WSL: Hậu xác nhận. Gemini key đã tạo (không billing), lưu ngoài repo; sẽ đưa vào apps/ai/.env khi dự án khởi tạo xong |
 | T0.1 | Khởi tạo repo, pnpm workspace, Turborepo | 1.5 | T0.0 | `DONE` | | |
-| T0.2 | Scaffold apps/web (Next.js + TS strict + Tailwind + shadcn/ui) | 2 | T0.1 | `REVIEW` | | Next 16.4, Tailwind 4, shadcn radix-nova. Licence gián tiếp (LGPL sharp-libvips...) hoãn T7.4, xem Phát sinh |
+| T0.2 | Scaffold apps/web (Next.js + TS strict + Tailwind + shadcn/ui) | 2 | T0.1 | `DONE` | | Next 16.4, Tailwind 4, shadcn radix-nova. Licence gián tiếp (LGPL sharp-libvips...) hoãn T7.4, xem Phát sinh |
 | T0.3 | Scaffold apps/api (NestJS) + config validation | 2 | T0.1 | `TODO` | | |
 | T0.4 | Scaffold apps/ai (FastAPI + uv + pytest) | 2 | T0.1 | `TODO` | | |
 | T0.5 | packages/contracts: schema Zod dùng chung + xuất JSON Schema cho Python | 2 | T0.2, T0.3, T0.4 | `TODO` | | |
