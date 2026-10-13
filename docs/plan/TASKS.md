@@ -18,9 +18,9 @@
 
 ```text
 Mốc hiện tại: M0
-Task hiện tại: T0.1 — REVIEW (T0.0 đã DONE)
+Task hiện tại: T0.2 (T0.0, T0.1 đã DONE)
 Chặn bởi: không
-Cập nhật: 2026-10-12
+Cập nhật: 2026-10-13
 ```
 
 ## M0 — Nền móng repo & công cụ
@@ -28,7 +28,7 @@ Cập nhật: 2026-10-12
 | ID | Task | Ước tính (h) | Phụ thuộc | Trạng thái | Thực tế (h) | Ghi chú |
 |---|---|---|---|---|---|---|
 | T0.0 | Chuẩn bị môi trường: WSL2 Ubuntu, Docker Desktop, Node, pnpm, uv, Claude Code, Cursor | 2 | — | `DONE` | | Cursor mở ~/code qua WSL: Hậu xác nhận. Gemini key đã tạo (không billing), lưu ngoài repo; sẽ đưa vào apps/ai/.env khi dự án khởi tạo xong |
-| T0.1 | Khởi tạo repo, pnpm workspace, Turborepo | 1.5 | T0.0 | `REVIEW` | | |
+| T0.1 | Khởi tạo repo, pnpm workspace, Turborepo | 1.5 | T0.0 | `DONE` | | |
 | T0.2 | Scaffold apps/web (Next.js + TS strict + Tailwind + shadcn/ui) | 2 | T0.1 | `TODO` | | |
 | T0.3 | Scaffold apps/api (NestJS) + config validation | 2 | T0.1 | `TODO` | | |
 | T0.4 | Scaffold apps/ai (FastAPI + uv + pytest) | 2 | T0.1 | `TODO` | | |
