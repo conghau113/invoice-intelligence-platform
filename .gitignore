@@ -10,3 +10,4 @@ __pycache__/
 .turbo/
 coverage/
 *.tsbuildinfo
+next-env.d.ts

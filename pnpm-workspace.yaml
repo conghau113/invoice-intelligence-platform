@@ -1,3 +1,7 @@
 packages:
   - 'apps/*'
   - 'packages/*'
+
+# unrs-resolver's postinstall is only a fallback for platforms without a prebuilt binary; skip it.
+allowBuilds:
+  unrs-resolver: false

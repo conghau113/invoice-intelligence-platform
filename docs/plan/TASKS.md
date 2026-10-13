@@ -29,7 +29,7 @@ Cập nhật: 2026-10-13
 |---|---|---|---|---|---|---|
 | T0.0 | Chuẩn bị môi trường: WSL2 Ubuntu, Docker Desktop, Node, pnpm, uv, Claude Code, Cursor | 2 | — | `DONE` | | Cursor mở ~/code qua WSL: Hậu xác nhận. Gemini key đã tạo (không billing), lưu ngoài repo; sẽ đưa vào apps/ai/.env khi dự án khởi tạo xong |
 | T0.1 | Khởi tạo repo, pnpm workspace, Turborepo | 1.5 | T0.0 | `DONE` | | |
-| T0.2 | Scaffold apps/web (Next.js + TS strict + Tailwind + shadcn/ui) | 2 | T0.1 | `TODO` | | |
+| T0.2 | Scaffold apps/web (Next.js + TS strict + Tailwind + shadcn/ui) | 2 | T0.1 | `REVIEW` | | Next 16.4, Tailwind 4, shadcn radix-nova. Licence gián tiếp (LGPL sharp-libvips...) hoãn T7.4, xem Phát sinh |
 | T0.3 | Scaffold apps/api (NestJS) + config validation | 2 | T0.1 | `TODO` | | |
 | T0.4 | Scaffold apps/ai (FastAPI + uv + pytest) | 2 | T0.1 | `TODO` | | |
 | T0.5 | packages/contracts: schema Zod dùng chung + xuất JSON Schema cho Python | 2 | T0.2, T0.3, T0.4 | `TODO` | | |
@@ -154,7 +154,10 @@ Cập nhật: 2026-10-13
 | 2026-10-12 | T0.0 | pnpm Windows (`/mnt/c/nvm4w/nodejs/pnpm`) còn trong PATH WSL, từng bị chọn nhầm và panic. Cân nhắc: preflight Node (.mjs) báo lỗi nếu pnpm nằm dưới `/mnt/c/` hoặc lệch `packageManager`; hoặc tắt `appendWindowsPath` trong `/etc/wsl.conf` (có tác dụng phụ, cần Hậu quyết) | Chờ quyết khi tới T0.8 (đang ngoài spec T0.8) |
 | 2026-10-12 | T0.0 | Thêm mục troubleshooting "pnpm trỏ nhầm bản Windows" (`which -a pnpm`, corepack enable) vào `docs/setup/WSL2.md` | Chờ xếp lịch |
 | 2026-10-12 | T0.1 | Task `dev` (persistent, không cache) + script `dev` ở gốc cho `pnpm dev` (CLAUDE.md) | Chờ xếp lịch (T0.9) |
-| 2026-10-12 | T0.1 | `env`/`globalEnv` trong `turbo.json` (strict env mode chặn biến như `NEXT_PUBLIC_*`, `DATABASE_URL`) | Xử lý ở T0.2/T0.3 |
-| 2026-10-12 | T0.1 | `onlyBuiltDependencies` trong `pnpm-workspace.yaml` khi thêm package có postinstall (sharp, esbuild, @nestjs/core) | Xử lý ở T0.2/T0.3 |
-| 2026-10-12 | T0.1 | `tsconfig.base.json` chỉ giữ cờ strict; `module`, `moduleResolution`, `lib`, `target` do từng app tự ghi đè (Next: bundler + DOM; Nest: CommonJS + decorators) | Làm ở T0.2/T0.3 |
+| 2026-10-12 | T0.1 | `env`/`globalEnv` trong `turbo.json` (strict env mode chặn biến như `NEXT_PUBLIC_*`, `DATABASE_URL`) | T0.2 chưa có biến env nào nên chưa cần; để T0.3/T1.x khi có biến đầu tiên |
+| 2026-10-12 | T0.1 | `onlyBuiltDependencies` trong `pnpm-workspace.yaml` khi thêm package có postinstall (sharp, esbuild, @nestjs/core) | T0.2 đã xử lý: pnpm 12 ghi `allowBuilds: unrs-resolver: false` trong `pnpm-workspace.yaml`. T0.3 xử lý tiếp nếu Nest cần |
+| 2026-10-12 | T0.1 | `tsconfig.base.json` chỉ giữ cờ strict; `module`, `moduleResolution`, `lib`, `target` do từng app tự ghi đè (Next: bundler + DOM; Nest: CommonJS + decorators) | T0.2 đã làm cho web (`apps/web/tsconfig.json`); T0.3 làm cho api |
 | 2026-10-12 | T0.1 | `packages/contracts`: build ra `dist/` hay trỏ `exports` vào source `.ts` (ảnh hưởng `typecheck/test dependsOn ^build`) | Hậu chốt ở T0.5 |
+| 2026-10-13 | T0.2 | Quét licence gói gián tiếp của `apps/web`: ngoài allow-list có `@img/sharp-libvips-linux-x64` (LGPL-3.0-or-later, binary native do `sharp` của Next kéo vào, liên kết động), `caniuse-lite` (CC-BY-4.0, dữ liệu), `isexe`/`minimatch` (BlueOak-1.0.0), `language-subtag-registry` (CC0-1.0), `tslib` (0BSD), `type-fest` (MIT OR CC0-1.0). Theo LEGAL.md cần mục review trước khi dùng | Hậu quyết 2026-10-13: hoãn tới T7.4 (CI enforce licence), chưa ghi `docs/LEGAL.md` ở T0.2 |
+| 2026-10-13 | T0.2 | `next/font/google` (Geist, do shadcn init thêm) tải font lúc build, cần mạng; Next cũng bật telemetry ẩn danh mặc định | Cân nhắc font self-host và `NEXT_TELEMETRY_DISABLED=1` khi làm T1.6b/T0.7 |
+| 2026-10-13 | T0.2 | `layout.tsx` đặt `lang="vi"` cứng và `page.tsx` dùng text tạm | Thay bằng next-intl ở T1.6 |
