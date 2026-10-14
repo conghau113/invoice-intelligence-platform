@@ -22,7 +22,7 @@
 
 ```text
 Mốc hiện tại: M0
-Task hiện tại: T0.6 (T0.0, T0.1, T0.2, T0.3, T0.4, T0.5 đã DONE)
+Task hiện tại: T0.7 (T0.0, T0.1, T0.2, T0.3, T0.4, T0.5, T0.6 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-10-14
 ```
@@ -40,7 +40,7 @@ Cập nhật: 2026-10-14
 | T0.3 | Scaffold apps/api (NestJS) + config validation                                        | 2            | T0.1             | `DONE`     | 2           | Ghim Nest 11 (CJS) vì Nest 12 chỉ ESM, xem Phát sinh. api cổng 3001, `NODE_ENV` bắt buộc                                                   |
 | T0.4 | Scaffold apps/ai (FastAPI + uv + pytest)                                              | 2            | T0.1             | `DONE`     | 1.5         | Cổng 8000. Python 3.12, uv, package=false (layout `app/`). `package.json` bọc `uv run` để Turborepo gọi được                               |
 | T0.5 | packages/contracts: schema Zod dùng chung + xuất JSON Schema cho Python               | 2            | T0.2, T0.3, T0.4 | `DONE`     | 1.5         |                                                                                                                                            |
-| T0.6 | docker-compose dev: Postgres+pgvector, Redis, Keycloak                                | 3            | T0.3             | `TODO`     |             |                                                                                                                                            |
+| T0.6 | docker-compose dev: Postgres+pgvector, Redis, Keycloak                                | 3            | T0.3             | `DONE`     |             |                                                                                                                                            |
 | T0.7 | Cổng chất lượng & CI (GitHub Actions)                                                 | 2.5          | T0.5, T0.6       | `TODO`     |             |                                                                                                                                            |
 | T0.8 | Script kiểm tra repo: i18n parity, ADR index, docs links                              | 1.5          | T0.7             | `TODO`     |             |                                                                                                                                            |
 | T0.9 | Cập nhật CLAUDE.md lệnh thật + kiểm tra Claude Code hiểu dự án                        | 1            | T0.8             | `TODO`     |             |                                                                                                                                            |
@@ -224,3 +224,12 @@ Cập nhật: 2026-10-14
 | 2026-10-14 | T0.5 | `contracts` build CommonJS (khớp apps/api `node10`); chưa có app nào import. Khi web/api import, kiểm tra resolve và cân nhắc dual ESM/CJS nếu nâng Nest 12 | Xem lại khi T1.2 / T2.x lần đầu import `contracts` |
 | 2026-10-14 | T0.5 | `generated.py` dùng `--strict-types` để pydantic không ép kiểu như Zod (chuỗi "1100000" không thành int); ngày ISO hai bên có thể lệch ở biên (datetime vs date) | Mở rộng fixture khi làm T2.7 |
 | 2026-10-14 | T0.5 | Reviewer: `issueDate` ở Python là `date` (không strict), nhận cả `"2026-03-15T00:00:00"` và số nguyên `1773532800` trong khi Zod từ chối; JSON Schema có `pattern` nhưng pydantic bỏ qua. Cũng sinh hai lớp `Seller`/`Buyer` thay vì một `Party` | Xử lý ở T2.7: đặt `.meta({id})` cho Party, ép pattern cho ngày, thêm fixture |
+| 2026-10-14 | T0.6 | `.env.example` ở gốc bị quyền ghi chặn nên agent không tạo được; Hậu đã tạo tay (agent không đọc được; Hậu tự đối chiếu với các biến `${...}` trong compose.yaml) | Đã xử lý; Hậu tự so nội dung khi đọc diff |
+| 2026-10-14 | T0.6 | Reviewer: Keycloak dùng `POSTGRES_USER` (owner của DB `invoice`); RLS không áp dụng cho owner/superuser, nên app ở T1.3 không được kết nối bằng user này (cần role không phải owner hoặc `FORCE ROW LEVEL SECURITY`); cân nhắc role `keycloak` riêng trong init script | T1.3 (role app), T4.7 (production) |
+| 2026-10-14 | T0.6 | Reviewer: image chưa ghim patch/digest (`pgvector:pg17`, `redis:8`, `keycloak:26.4`); secret mặc định `${VAR:-...}` nên đổi thành `${VAR:?}` ở production | T4.7 |
+| 2026-10-14 | T0.6 | Reviewer: `check-arm64.mjs` coi manifest đơn kiến trúc là FAIL và gộp "không inspect được" với "thiếu arm64"; `01-init.sh` chèn `KEYCLOAK_DB` thẳng vào SQL | Bỏ qua tới khi có image/ tên DB khác (T4.7) |
+| 2026-10-14 | T0.6 | Máy Hậu có Postgres (5432) và Redis (6379) chạy native trên Windows → compose map host port 5433/6380. `DATABASE_URL`/`REDIS_URL` ở T1.2/T1.3 phải dùng cổng này | T1.2, T1.3 |
+| 2026-10-14 | T0.6 | `apps/api` chưa có `DATABASE_URL`, `REDIS_URL`, biến Keycloak (chưa có code dùng) | Thêm vào `apps/api/.env.example` + schema config ở T1.2/T1.3 |
+| 2026-10-14 | T0.6 | Hook `guard.mjs` chặn `DROP TABLE`, nên bảng thử `persist_probe` còn trong DB dev (volume `pgdata`) | Hậu xoá tay (`! docker compose exec postgres psql -U invoice -d invoice -c "DROP TABLE persist_probe"`) hoặc `docker compose down -v` |
+| 2026-10-14 | T0.6 | Healthcheck/`.dockerignore` của `apps/ai` chưa làm (T0.6 chưa đưa app vào compose) | Khi app vào compose (T4.7) |
+| 2026-10-14 | T0.6 | Init script Postgres chỉ chạy khi volume `pgdata` trống (sửa script phải `down -v`); Keycloak dùng chung container Postgres với DB `keycloak` | Ghi vào runbook dev (T0.9) |

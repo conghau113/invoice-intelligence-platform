@@ -11,7 +11,11 @@
     "test": "turbo run test",
     "build": "turbo run build",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "infra:up": "docker compose up -d --wait",
+    "infra:down": "docker compose down",
+    "infra:logs": "docker compose logs -f",
+    "infra:check-arm": "node scripts/check-arm64.mjs"
   },
   "devDependencies": {
     "prettier": "^3.9.10",

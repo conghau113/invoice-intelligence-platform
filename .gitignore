@@ -11,3 +11,7 @@ __pycache__/
 coverage/
 *.tsbuildinfo
 next-env.d.ts
+
+# Local upload storage (StoragePort local FS)
+data/*
+!data/.gitkeep
