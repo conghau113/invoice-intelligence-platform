@@ -16,11 +16,13 @@
 | `CUT`      | Cắt khỏi phạm vi, ghi lý do                             |
 
 
+
+
 ## Điểm dừng hiện tại
 
 ```text
 Mốc hiện tại: M0
-Task hiện tại: T0.4 (T0.0, T0.1, T0.2, T0.3 đã DONE)
+Task hiện tại: T0.5 (T0.0, T0.1, T0.2, T0.3, T0.4 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-10-14
 ```
@@ -36,7 +38,7 @@ Cập nhật: 2026-10-14
 | T0.1 | Khởi tạo repo, pnpm workspace, Turborepo                                              | 1.5          | T0.0             | `DONE`     | 1           |                                                                                                                                            |
 | T0.2 | Scaffold apps/web (Next.js + TS strict + Tailwind + shadcn/ui)                        | 2            | T0.1             | `DONE`     | 1           | Next 16.4, Tailwind 4, shadcn radix-nova. Licence gián tiếp (LGPL sharp-libvips...) hoãn T7.4, xem Phát sinh                               |
 | T0.3 | Scaffold apps/api (NestJS) + config validation                                        | 2            | T0.1             | `DONE`     | 2           | Ghim Nest 11 (CJS) vì Nest 12 chỉ ESM, xem Phát sinh. api cổng 3001, `NODE_ENV` bắt buộc                                                   |
-| T0.4 | Scaffold apps/ai (FastAPI + uv + pytest)                                              | 2            | T0.1             | `TODO`     |             |                                                                                                                                            |
+| T0.4 | Scaffold apps/ai (FastAPI + uv + pytest)                                              | 2            | T0.1             | `DONE`     | 1.5         | Cổng 8000. Python 3.12, uv, package=false (layout `app/`). `package.json` bọc `uv run` để Turborepo gọi được                               |
 | T0.5 | packages/contracts: schema Zod dùng chung + xuất JSON Schema cho Python               | 2            | T0.2, T0.3, T0.4 | `TODO`     |             |                                                                                                                                            |
 | T0.6 | docker-compose dev: Postgres+pgvector, Redis, Keycloak                                | 3            | T0.3             | `TODO`     |             |                                                                                                                                            |
 | T0.7 | Cổng chất lượng & CI (GitHub Actions)                                                 | 2.5          | T0.5, T0.6       | `TODO`     |             |                                                                                                                                            |
@@ -207,6 +209,8 @@ Cập nhật: 2026-10-14
 | 2026-10-13 | T0.2             | `next/font/google` (Geist, do shadcn init thêm) tải font lúc build, cần mạng; Next cũng bật telemetry ẩn danh mặc định                                                                                                                                                                                                                                                                 | Cân nhắc font self-host và `NEXT_TELEMETRY_DISABLED=1` khi làm T1.6b/T0.7                                                |
 | 2026-10-13 | T0.2             | `layout.tsx` đặt `lang="vi"` cứng và `page.tsx` dùng text tạm                                                                                                                                                                                                                                                                                                                          | Thay bằng next-intl ở T1.6                                                                                               |
 | 2026-10-13 | T0.3             | NestJS 12 (mới nhất) và `@nestjs/cli` 12 chỉ phát hành ESM; Jest/CJS không chạy được. Đã ghim `@nestjs/*` 11 + `@nestjs/config` 4 (CommonJS, MIT). Cần cân nhắc nâng lên Nest 12 (ESM, nodenext, Vitest+SWC) và ghi ADR                                                                                                                                                                | Chờ xếp lịch (sau M0, trước khi code api nhiều)                                                                          |
+| 2026-10-14 | T0.4             | `apps/ai/.env.example` bị quyền ghi chặn nên chưa tạo; cần Hậu tạo tay với ENV, PORT, LOG_LEVEL (xem `app/config.py`)                                                                                                                                                                                                                                                                  | Hậu đã tạo tay; xong                                                                                                     |
+| 2026-10-14 | T0.4             | `fastapi.testclient` cảnh báo httpx deprecated, đề nghị `httpx2`; cân nhắc đổi dev dependency khi có bản ổn định và kiểm licence                                                                                                                                                                                                                                                       | Chờ xếp lịch (T0.7)                                                                                                      |
 | 2026-10-13 | T0.3             | `turbo test` cảnh báo "no output files" cho api vì `outputs: coverage/**` chưa có coverage                                                                                                                                                                                                                                                                                             | Bỏ qua tới khi bật coverage (T0.7)                                                                                       |
 | 2026-10-13 | T0.3             | `pnpm-workspace.yaml`: thêm `allowBuilds: '@parcel/watcher': false` (postinstall chỉ là fallback, có binary dựng sẵn)                                                                                                                                                                                                                                                                  | Đã làm trong T0.3                                                                                                        |
 
