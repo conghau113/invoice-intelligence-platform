@@ -5,3 +5,5 @@ packages:
 # unrs-resolver's postinstall is only a fallback for platforms without a prebuilt binary; skip it.
 allowBuilds:
   unrs-resolver: false
+  # @parcel/watcher (via @nestjs/cli watch mode) ships prebuilt binaries; its install script is a fallback.
+  '@parcel/watcher': false
