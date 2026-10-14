@@ -5,6 +5,7 @@ description = "Stateless AI service for the Invoice Intelligence Platform"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.143.0",
+    "pydantic>=2",
     "pydantic-settings>=2.15.0",
     "uvicorn[standard]>=0.54.0",
 ]
@@ -25,6 +26,7 @@ pythonpath = ["."]
 
 [dependency-groups]
 dev = [
+    "datamodel-code-generator>=0.30",
     "httpx>=0.28.1",
     "pytest>=9.1.1",
     "ruff>=0.17.0",

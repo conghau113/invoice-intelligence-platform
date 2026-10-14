@@ -22,7 +22,7 @@
 
 ```text
 Mốc hiện tại: M0
-Task hiện tại: T0.5 (T0.0, T0.1, T0.2, T0.3, T0.4 đã DONE)
+Task hiện tại: T0.6 (T0.0, T0.1, T0.2, T0.3, T0.4, T0.5 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-10-14
 ```
@@ -39,7 +39,7 @@ Cập nhật: 2026-10-14
 | T0.2 | Scaffold apps/web (Next.js + TS strict + Tailwind + shadcn/ui)                        | 2            | T0.1             | `DONE`     | 1           | Next 16.4, Tailwind 4, shadcn radix-nova. Licence gián tiếp (LGPL sharp-libvips...) hoãn T7.4, xem Phát sinh                               |
 | T0.3 | Scaffold apps/api (NestJS) + config validation                                        | 2            | T0.1             | `DONE`     | 2           | Ghim Nest 11 (CJS) vì Nest 12 chỉ ESM, xem Phát sinh. api cổng 3001, `NODE_ENV` bắt buộc                                                   |
 | T0.4 | Scaffold apps/ai (FastAPI + uv + pytest)                                              | 2            | T0.1             | `DONE`     | 1.5         | Cổng 8000. Python 3.12, uv, package=false (layout `app/`). `package.json` bọc `uv run` để Turborepo gọi được                               |
-| T0.5 | packages/contracts: schema Zod dùng chung + xuất JSON Schema cho Python               | 2            | T0.2, T0.3, T0.4 | `TODO`     |             |                                                                                                                                            |
+| T0.5 | packages/contracts: schema Zod dùng chung + xuất JSON Schema cho Python               | 2            | T0.2, T0.3, T0.4 | `DONE`     | 1.5         |                                                                                                                                            |
 | T0.6 | docker-compose dev: Postgres+pgvector, Redis, Keycloak                                | 3            | T0.3             | `TODO`     |             |                                                                                                                                            |
 | T0.7 | Cổng chất lượng & CI (GitHub Actions)                                                 | 2.5          | T0.5, T0.6       | `TODO`     |             |                                                                                                                                            |
 | T0.8 | Script kiểm tra repo: i18n parity, ADR index, docs links                              | 1.5          | T0.7             | `TODO`     |             |                                                                                                                                            |
@@ -220,3 +220,7 @@ Cập nhật: 2026-10-14
 | 2026-10-13 | T0.3             | `pnpm-workspace.yaml`: thêm `allowBuilds: '@parcel/watcher': false` (postinstall chỉ là fallback, có binary dựng sẵn)                                                                                                                                                                                                                                                                  | Đã làm trong T0.3                                                                                                        |
 
 
+| 2026-10-14 | T0.5 | Bước drift (`pnpm --filter contracts check:drift`) mới là lệnh chạy tay; CI chưa gọi nó | Nối vào GitHub Actions và `check:full` ở T0.7 |
+| 2026-10-14 | T0.5 | `contracts` build CommonJS (khớp apps/api `node10`); chưa có app nào import. Khi web/api import, kiểm tra resolve và cân nhắc dual ESM/CJS nếu nâng Nest 12 | Xem lại khi T1.2 / T2.x lần đầu import `contracts` |
+| 2026-10-14 | T0.5 | `generated.py` dùng `--strict-types` để pydantic không ép kiểu như Zod (chuỗi "1100000" không thành int); ngày ISO hai bên có thể lệch ở biên (datetime vs date) | Mở rộng fixture khi làm T2.7 |
+| 2026-10-14 | T0.5 | Reviewer: `issueDate` ở Python là `date` (không strict), nhận cả `"2026-03-15T00:00:00"` và số nguyên `1773532800` trong khi Zod từ chối; JSON Schema có `pattern` nhưng pydantic bỏ qua. Cũng sinh hai lớp `Seller`/`Buyer` thay vì một `Party` | Xử lý ở T2.7: đặt `.meta({id})` cho Party, ép pattern cho ngày, thêm fixture |
