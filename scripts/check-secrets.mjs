@@ -2,12 +2,26 @@
 // Scans the git history for committed secrets with gitleaks (run in Docker, so nothing to install).
 // CI runs the same image/version; bump GITLEAKS_IMAGE in both places together.
 import { spawnSync } from 'node:child_process';
+import { statSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const GITLEAKS_IMAGE = 'zricethezav/gitleaks:v8.30.0';
 
 // Test hook: scan another directory (the negative test points this at a throwaway repo).
 const target = resolve(process.argv[2] ?? process.cwd());
+
+// `target` goes into a `docker -v host:container` argument, where ':' and ',' would add mount options.
+function isScannableDir(path) {
+  try {
+    return statSync(path).isDirectory() && !/[:,]/.test(path);
+  } catch {
+    return false;
+  }
+}
+if (!isScannableDir(target)) {
+  console.error('check-secrets: target must be an existing directory without ":" or ",".');
+  process.exit(2);
+}
 
 const result = spawnSync(
   'docker',
