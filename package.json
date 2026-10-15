@@ -15,7 +15,11 @@
     "infra:up": "docker compose up -d --wait",
     "infra:down": "docker compose down",
     "infra:logs": "docker compose logs -f",
-    "infra:check-arm": "node scripts/check-arm64.mjs"
+    "infra:check-arm": "node scripts/check-arm64.mjs",
+    "check:schema": "pnpm --filter contracts check:drift",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "check:fast": "turbo run lint typecheck test",
+    "check:full": "pnpm check:fast && turbo run build && pnpm check:schema && pnpm check:secrets"
   },
   "devDependencies": {
     "prettier": "^3.9.10",
