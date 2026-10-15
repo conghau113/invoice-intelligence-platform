@@ -17,7 +17,7 @@
     "infra:logs": "docker compose logs -f",
     "infra:check-arm": "node scripts/check-arm64.mjs",
     "check:schema": "pnpm --filter contracts check:drift",
-    "check:secrets": "node scripts/check-secrets.mjs",
+    "check:secrets": "docker run --rm -v \"$PWD:/repo\" zricethezav/gitleaks:v8.30.0 git /repo --redact --no-banner --exit-code 1",
     "check:fast": "turbo run lint typecheck test",
     "check:full": "pnpm check:fast && turbo run build && pnpm check:schema && pnpm check:secrets"
   },

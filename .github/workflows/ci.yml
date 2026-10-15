@@ -82,5 +82,5 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # scan the whole history, not just the tip
-      # Same image as scripts/check-secrets.mjs (docker is preinstalled on the runner).
-      - run: node scripts/check-secrets.mjs
+      # Same command as "check:secrets" in package.json; bump the image tag in both places together.
+      - run: docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.30.0 git /repo --redact --no-banner --exit-code 1
