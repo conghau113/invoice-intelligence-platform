@@ -39,7 +39,7 @@ Cursor đọc cùng ngữ cảnh qua `.cursor/rules/project.mdc` (alwaysApply), 
 4. Bạn: tự chạy lại ít nhất 1 lệnh kiểm chứng + mở app xem bằng mắt (nếu có UI).
 5. Bạn: đọc diff trong Cursor (Source Control). Đánh dấu chỗ chưa hiểu.
 6. "Use the code-reviewer subagent to review this diff against the task spec" → sửa lỗi Cao/Vừa.
-7. /gate  → trả lời 4 câu hỏi không nhìn code. Chưa PASS → hỏi khái niệm, không xin thêm code.
+7. /gate  → trả lời 3 câu hỏi khái niệm kiểu phỏng vấn (là gì và vai trò, cách hoạt động, đánh đổi), không cần mở code hay log. Chưa PASS → hỏi khái niệm, không xin thêm code.
 8. Ghi 2–3 dòng vào docs/learning-log.md; cập nhật TASKS.md (DONE, giờ thực tế).
 9. Commit (Conventional Commits, ví dụ "feat(api): enforce tenant isolation with RLS (T1.3)") → merge vào main.
 ```

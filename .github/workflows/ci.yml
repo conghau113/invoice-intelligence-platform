@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# A newer push to the same PR makes the older run pointless. Runs on main are never cancelled,
+# so every commit that lands on main gets a complete result.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # Each check is its own step so a red run points at the exact gate that failed.
+  node:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      # Reads "packageManager" from package.json, same pnpm version as local dev.
+      - run: corepack enable
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # apps/ai is covered by the python job (its scripts need uv).
+      - name: Lint
+        run: pnpm turbo run lint --filter='!ai'
+      - name: Typecheck
+        run: pnpm turbo run typecheck --filter='!ai'
+      - name: Test
+        run: pnpm turbo run test --filter='!ai'
+      - name: Build
+        run: pnpm turbo run build --filter='!ai'
+
+  python:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: apps/ai
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: 0.13.0
+          enable-cache: true
+          cache-dependency-glob: apps/ai/uv.lock
+      - run: uv sync --frozen --no-build
+      - name: Lint
+        run: uv run --frozen --no-build ruff check .
+      - name: Format
+        run: uv run --frozen --no-build ruff format --check .
+      - name: Test
+        run: uv run --frozen --no-build pytest
+
+  # generated.py must match the Zod schemas; the check needs Node (build) and uv (codegen).
+  schema-drift:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - run: corepack enable
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: 0.13.0
+          enable-cache: true
+          cache-dependency-glob: apps/ai/uv.lock
+      - run: pnpm install --frozen-lockfile
+      - run: uv sync --frozen --no-build
+        working-directory: apps/ai
+      - run: pnpm check:schema
+
+  secrets:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # scan the whole history, not just the tip
+      # Same command as "check:secrets" in package.json; bump the image tag in both places together.
+      - run: docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.30.0 git /repo --redact --no-banner --exit-code 1
