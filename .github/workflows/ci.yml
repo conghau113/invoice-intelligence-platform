@@ -8,10 +8,11 @@ on:
 permissions:
   contents: read
 
-# A newer push to the same ref makes the older run pointless.
+# A newer push to the same PR makes the older run pointless. Runs on main are never cancelled,
+# so every commit that lands on main gets a complete result.
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   # Each check is its own step so a red run points at the exact gate that failed.

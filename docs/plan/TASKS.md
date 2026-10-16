@@ -22,9 +22,9 @@
 
 ```text
 Mốc hiện tại: M0
-Task hiện tại: T0.7 (REVIEW, chờ Hậu push để xem CI; T0.0, T0.1, T0.2, T0.3, T0.4, T0.5, T0.6 đã DONE)
+Task hiện tại: T0.8 (T0.0 đến T0.7 đã DONE)
 Chặn bởi: không
-Cập nhật: 2026-10-15
+Cập nhật: 2026-10-16
 ```
 
 
@@ -41,7 +41,7 @@ Cập nhật: 2026-10-15
 | T0.4 | Scaffold apps/ai (FastAPI + uv + pytest)                                              | 2            | T0.1             | `DONE`     | 1.5         | Cổng 8000. Python 3.12, uv, package=false (layout `app/`). `package.json` bọc `uv run` để Turborepo gọi được                               |
 | T0.5 | packages/contracts: schema Zod dùng chung + xuất JSON Schema cho Python               | 2            | T0.2, T0.3, T0.4 | `DONE`     | 1.5         |                                                                                                                                            |
 | T0.6 | docker-compose dev: Postgres+pgvector, Redis, Keycloak                                | 3            | T0.3             | `DONE`     |             |                                                                                                                                            |
-| T0.7 | Cổng chất lượng & CI (GitHub Actions)                                                 | 2.5          | T0.5, T0.6       | `REVIEW`   |             |                                                                                                                                            |
+| T0.7 | Cổng chất lượng & CI (GitHub Actions)                                                 | 2.5          | T0.5, T0.6       | `DONE`     |             |                                                                                                                                            |
 | T0.8 | Script kiểm tra repo: i18n parity, ADR index, docs links                              | 1.5          | T0.7             | `TODO`     |             |                                                                                                                                            |
 | T0.9 | Cập nhật CLAUDE.md lệnh thật + kiểm tra Claude Code hiểu dự án                        | 1            | T0.8             | `TODO`     |             |                                                                                                                                            |
 
@@ -240,3 +240,7 @@ Cập nhật: 2026-10-15
 | 2026-10-15 | T0.7 | Job `node` trong CI chạy `--filter='!ai'`, job `python` gọi lệnh `uv` trực tiếp (không qua `apps/ai/package.json`): thêm script mới ở `apps/ai/package.json` thì CI không tự chạy | Nhớ cập nhật cả hai khi đổi lệnh Python |
 | 2026-10-15 | T0.7 | `vitest` kéo `lightningcss` (MPL-2.0, trong allow-list); đã kiểm licence 23 gói mới, không có gói ngoài allow-list | Xong |
 | 2026-10-15 | T0.7 | SonarCloud (GitHub App ngoài kế hoạch, Hậu gắn vào repo) tự quét PR và có Quality Gate chặn ở Security Rating A; lần đầu báo C vì 12 cảnh báo ở `ci.yml` và `check-secrets.mjs` (SHA pin, `uv --frozen --no-build`). Đã sửa trong T0.7; script Node `check-secrets.mjs` bị Sonar báo thêm 3 lỗi taint nên thay bằng `docker run` thẳng trong `package.json`/CI. Chưa ghi vào ARCHITECTURE/ADR; chưa rõ có bật branch protection bắt buộc Gate | Hậu quyết giữ hay gỡ SonarCloud; nếu giữ, ghi 1 dòng vào ARCHITECTURE. Mỗi lần đổi workflow/script, xem Sonar API trước khi coi là xong |
+| 2026-10-15 | T0.7 | CI chạy lại đủ 4 job + SonarCloud cho cả commit chỉ đổi docs, gây nhiễu. Giữ nguyên `ci.yml` ở T0.7 (chi phí 0đ, ~35s/lần). Hướng đề xuất ở T0.8: dùng bộ lọc đường dẫn theo **job** (docs-only chạy job kiểm tra docs/link/i18n/ADR, bỏ `node`, `python`, `schema-drift`) kèm một job cổng luôn chạy; chỉ đặt job cổng làm check bắt buộc khi bật branch protection (workflow bị lọc sẽ để check ở trạng thái pending và chặn merge). Đối chiếu tài liệu GitHub về draft PR và `[skip ci]` trước khi làm | Xếp lịch cùng T0.8. Từ giờ: gom commit docs/note vào commit cuối của task, chạy `pnpm check:fast` trước khi push, mở PR dạng Draft |
+| 2026-10-16 | T0.7 | Hook `.claude/hooks/guard.mjs` báo nhầm: regex chặn force push (`\bgit\s+push\b.*\s(--force|-f)`) dùng `.*` nên khớp cả `--force` của `git worktree remove` khi nằm sau `git push` trong cùng một dòng lệnh (ví dụ nối bằng `;` hoặc `&&`). Tách thành các lệnh riêng thì qua | Siết regex (không vượt qua `;`, `&&`, `\|`) và thêm test trong `guard.test.mjs`; xếp cùng T0.9 |
+| 2026-10-16 | T0.7 | Image gitleaks ghim theo tag `v8.30.0`, chưa theo digest (log CI hiện `sha256:691af3c7…`); tag có thể bị di chuyển | T7.4, cùng việc ghim SHA cho `checkout`/`setup-node` |
+| 2026-10-16 | T0.7 | `turbo` cảnh báo "no output files found for task web#test" vì `turbo.json` khai báo `coverage/**` mà web chưa có coverage (cùng loại với dòng T0.3 cho api) | Bỏ qua tới khi bật coverage (sau M1) |
