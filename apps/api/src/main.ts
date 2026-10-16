@@ -16,3 +16,7 @@ bootstrap().catch(() => {
   // Nest already logged the cause (e.g. which env variable is invalid); just fail the process.
   process.exit(1);
 });
+
+// Deliberate type error to prove the Typecheck gate goes red (T0.7). Do not merge.
+const deliberateTypeError: number = 'not a number';
+export { deliberateTypeError };
