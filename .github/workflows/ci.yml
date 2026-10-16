@@ -77,6 +77,24 @@ jobs:
         working-directory: apps/ai
       - run: pnpm check:schema
 
+  # Node-only gates with no dependencies: no pnpm install needed. check:schema stays in schema-drift (needs uv).
+  repo-checks:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - run: corepack enable
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - name: i18n parity
+        run: pnpm check:i18n
+      - name: ADR index
+        run: pnpm check:adr
+      - name: Docs links
+        run: pnpm check:links
+      - name: Gate tests (negative cases)
+        run: pnpm test:scripts
+
   secrets:
     runs-on: ubuntu-24.04
     steps:

@@ -64,6 +64,7 @@ Mẹo prompt khi review (học nhanh hơn xin code):
 10. **Không phát sinh chi phí.** Không thêm dịch vụ trả phí, không bật billing, không nâng gói, không mua tên miền khi chưa được Hậu duyệt rõ ràng. Agent phải dừng và hỏi.
 11. **Mức duyệt theo rủi ro:**
     - Mọi task: duyệt kế hoạch trước khi agent code (đây là lúc học).
+    - Mọi kế hoạch phải kèm bảng "Đối chiếu" (ADR, ARCHITECTURE, LEGAL/NFR, hiện trạng repo, cấu hình có thể làm vô hiệu thay đổi như `turbo.json`/CI, cổng chất lượng như SonarCloud) do agent tự làm trước khi trình bày; danh sách kiểm nằm ở bước 4 của `.claude/skills/task/SKILL.md`.
     - Thay đổi kiến trúc, bảo mật, auth/tenant, dữ liệu, giấy phép hoặc chi phí: trình bày đủ 5 bước *tìm hiểu → phân tích → đối chiếu (ADR, LEGAL, NFR) → review rủi ro → đề xuất áp dụng* và chờ duyệt.
     - Sửa nhỏ trong phạm vi task đã duyệt: làm luôn, báo trong tóm tắt.
     - Lệch kế hoạch hoặc mở rộng phạm vi: dừng, ghi "Phát sinh", xin duyệt.

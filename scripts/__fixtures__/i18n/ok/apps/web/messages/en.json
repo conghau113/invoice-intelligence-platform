@@ -1,0 +1,4 @@
+{
+  "home": { "title": "Invoices", "count": "{n, plural, one {# invoice} other {# invoices}}" },
+  "hi": "Hello {name}"
+}
