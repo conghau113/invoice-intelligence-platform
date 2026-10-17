@@ -17,8 +17,8 @@ erDiagram
   tenants ||--o{ audit_logs : records
   users ||--o{ notifications : receives
 
-  tenants { uuid id PK; text keycloak_org_id UK; text name; timestamptz created_at }
-  users { uuid id PK; text keycloak_sub UK; text email; text display_name }
+  tenants { uuid id PK; text alias UK; text name; timestamptz created_at }
+  users { uuid id PK; text email; text display_name; timestamptz created_at }
   memberships { uuid tenant_id FK; uuid user_id FK; text role }
   documents { uuid id PK; uuid tenant_id; text status; text source_type; text storage_key; char64 content_hash; int version; uuid uploaded_by; timestamptz created_at }
   extractions { uuid id PK; uuid tenant_id; uuid document_id FK; int document_version; jsonb data; jsonb warnings; text model; text prompt_version; int input_tokens; int output_tokens; int latency_ms; numeric cost_usd; timestamptz created_at }
@@ -33,7 +33,8 @@ erDiagram
 ## Tables
 
 ### tenants, users, memberships
-- A tenant maps 1:1 to a Keycloak Organization (`keycloak_org_id`). Users are created lazily on first login from token claims.
+- A tenant maps 1:1 to a Keycloak Organization: `tenants.id` IS the organization id (fixed in the realm file) and `alias` is what the token's `organization` claim carries. `users.id` IS the Keycloak `sub`, so `AuthUser.userId` is the key everywhere (`actor_id`, `uploaded_by`, `approved_by`, `notifications.user_id`) and needs no mapping. Users are created lazily on first login from token claims (T1.7).
+- `users` is a global identity table (no `tenant_id`): RLS shows a request only users that are members of the current tenant.
 - `memberships.role` mirrors the Keycloak role for display; **authorization decisions use the token**, the table is for listing members.
 
 ### documents
@@ -63,11 +64,16 @@ erDiagram
 ## Row-Level Security (summary)
 
 ```sql
+CREATE FUNCTION app_current_tenant() RETURNS uuid LANGUAGE sql STABLE
+  AS $$ SELECT NULLIF(current_setting('app.tenant_id', true), '')::uuid $$;
+
 ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE documents FORCE ROW LEVEL SECURITY;
 CREATE POLICY tenant_isolation ON documents
-  USING (tenant_id = current_setting('app.tenant_id', true)::uuid)
-  WITH CHECK (tenant_id = current_setting('app.tenant_id', true)::uuid);
+  USING (tenant_id = app_current_tenant())
+  WITH CHECK (tenant_id = app_current_tenant());
 ```
 
 The application connects as a role that does not own the tables and is not `BYPASSRLS`. Each request runs in a transaction that starts with `SELECT set_config('app.tenant_id', $1, true)` (transaction-local, safe with connection pooling). Migrations run as the owner role.
+
+`NULLIF(..., '')` is deliberate: after a transaction that used `set_config(..., true)`, a pooled connection reports `''` (not NULL) and `''::uuid` would raise an error instead of returning zero rows. The real definitions, the app role `invoice_app`, grants (`audit_logs` is `SELECT, INSERT` only) and the alias lookup `app_resolve_tenant(alias)` (an ordinary function plus a narrow `tenant_resolve` SELECT policy, no elevated privileges) live in `apps/api/drizzle/0001_rls.sql` and `0002_resolve_tenant_policy.sql`. Drizzle cannot emit `FORCE ROW LEVEL SECURITY`, so every new business table copies the pattern from that file; `apps/api/test/db.int-spec.ts` fails if a public table lacks forced RLS or a policy.

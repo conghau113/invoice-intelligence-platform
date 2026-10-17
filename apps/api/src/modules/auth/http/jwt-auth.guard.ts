@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { mapClaimsToUser } from '../application/claims-mapper';
+import { TENANT_DIRECTORY, type TenantDirectory } from '../application/tenant-directory.port';
 import { TOKEN_VERIFIER, type TokenVerifier } from '../application/token-verifier.port';
 import type { AuthenticatedRequest } from './authenticated-request';
 import { IS_PUBLIC } from './public.decorator';
@@ -17,6 +18,7 @@ export class JwtAuthGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     @Inject(TOKEN_VERIFIER) private readonly verifier: TokenVerifier,
+    @Inject(TENANT_DIRECTORY) private readonly tenants: TenantDirectory,
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
@@ -37,7 +39,7 @@ export class JwtAuthGuard implements CanActivate {
       // Reason (expired, bad aud, bad signature...) is deliberately not exposed or logged.
       throw new UnauthorizedException();
     }
-    req.user = mapClaimsToUser(claims); // may throw 403
+    req.user = await mapClaimsToUser(claims, this.tenants); // may throw 403
     return true;
   }
 }

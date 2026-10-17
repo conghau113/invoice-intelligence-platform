@@ -11,6 +11,9 @@ export const envSchema = z.object({
   OIDC_ISSUER_URL: z.url(),
   // Defaults to <issuer>/protocol/openid-connect/certs; set when the API reaches Keycloak by another host.
   OIDC_JWKS_URL: z.url().optional(),
+  // Connection of the NON-owner role `invoice_app` (RLS applies to it). The owner URL used by
+  // migrations is read only by the db scripts, never by the API process.
+  DATABASE_URL: z.url(),
   OIDC_AUDIENCE: z.string().min(1).default('api'),
 });
 

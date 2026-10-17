@@ -11,3 +11,5 @@ docs
 .claude
 next-env.d.ts
 scripts/__fixtures__
+apps/api/drizzle/meta
+dist-scripts

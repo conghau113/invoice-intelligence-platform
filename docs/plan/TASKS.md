@@ -22,7 +22,7 @@
 
 ```text
 Mốc hiện tại: M1
-Task hiện tại: T1.3 (T0.0 đến T0.9, T1.1, T1.2 đã DONE)
+Task hiện tại: T1.4 (T0.0 đến T0.9, T1.1 đến T1.3 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-10-17
 ```
@@ -55,7 +55,7 @@ Cập nhật: 2026-10-17
 | ----- | ------------------------------------------------------------------------------------ | ------------ | ----------------- | ---------- | ----------- | ------- |
 | T1.1  | Keycloak realm-as-code: organizations, roles, demo users                             | 3            | T0.6              | `DONE`     |             | Realm import OK (26.4): org UUID cố định, membership, secret qua biến. User nhiều tenant chỉ có claim khi xin `organization:*` (xem Phát sinh) |
 | T1.2  | API: xác thực JWT qua JWKS, CurrentUser, TenantContext                               | 3            | T1.1              | `DONE`     |             | Guard jose + JWKS, `/auth/me`; token thiếu/đa tenant → 403. Sửa realm: thêm scope `basic` (xem Phát sinh) |
-| T1.3  | DB: Drizzle, migrations, bảng lõi, Row-Level Security                                | 4            | T1.2              | `TODO`     |             |         |
+| T1.3  | DB: Drizzle, migrations, bảng lõi, Row-Level Security                                | 4            | T1.2              | `DONE`     |             | Agent: drizzle-kit + migration RLS tay (role `invoice_app`, FORCE, `app_current_tenant()`), `TenantDbService` + interceptor, tra tenant qua DB, readiness DB; `users.id` = Keycloak `sub`. 49 unit + 19 tích hợp (`test:int`, chạy tay); drill tắt RLS → đỏ. Sau code-review: sửa tra tenant (0002, bỏ SECURITY DEFINER vì hỏng với owner không phải superuser), shutdown hook, `db:*` không xoá `dist/`. DB/role tạm đã được Hậu xoá |
 | T1.4  | RBAC: ma trận quyền, @RequirePermission, test chính sách                             | 3            | T1.3              | `TODO`     |             |         |
 | T1.5  | Web: đăng nhập Keycloak, session, refresh token, route bảo vệ                        | 3            | T1.1, T0.2        | `TODO`     |             |         |
 | T1.6  | i18n vi/en với next-intl + định dạng số/tiền/ngày theo locale                        | 3            | T0.2              | `TODO`     |             |         |
@@ -258,3 +258,17 @@ Cập nhật: 2026-10-17
 | 2026-10-17 | T1.2 | API từ chối (403) token có 0, nhiều hoặc alias lạ trong `organization`; tenantId hiện tra từ bảng tĩnh `tenant-directory.ts` | T1.3: thay bảng tĩnh bằng bảng `tenants`; T1.7: user nhiều tenant phải chọn tenant lúc đăng nhập (`organization:<alias>`), nếu không sẽ nhận 403; T1.4: `AuthUser.roles` đã có, chỉ cần thêm `@RequirePermission` |
 | 2026-10-17 | T1.2 | `OIDC_ISSUER_URL` là biến bắt buộc của API (không có mặc định); JWKS mặc định `<issuer>/protocol/openid-connect/certs`, đặt `OIDC_JWKS_URL` khi API gọi Keycloak bằng host khác | T4.7/compose: đặt cả hai biến cho api container; `KC_HOSTNAME` ở production |
 | 2026-10-17 | T1.2 | Khi Keycloak không với tới được lúc `jose` tải lại JWKS (timeout, mạng), guard hiện trả 401; client sẽ tưởng token sai. Key bị gỡ vẫn verify được từ cache tối đa 10 phút (`cacheMaxAge`), cooldown 30 giây có thể gây 401 tạm cho `kid` mới | Task xử lý lỗi/độ bền sau M1 (hoặc T4.7): phân biệt lỗi JWKS không với tới được (503) với token sai (401); cân nhắc rút ngắn `cacheMaxAge` ở production |
+| 2026-10-17 | T1.3 | Tạo user/membership lười khi đăng nhập lần đầu + audit "login" (DATA_MODEL:36, SECURITY §5) không nằm trong spec T1.3; T1.7 cần `memberships` có dữ liệu để kiểm tra tenant được chọn | T1.7 (hoặc task riêng trước T1.7): provisioning lười; policy `users` đã cho phép INSERT |
+| 2026-10-17 | T1.3 | Interceptor giữ một transaction/connection suốt request. Request dài (upload, gọi AI) có thể làm cạn pool | T2.3, T2.9: việc dài dùng `TenantDbService.run` ngắn, không giữ tx cả request |
+| 2026-10-17 | T1.3 | CI chưa có Postgres: test RLS tích hợp (`pnpm --filter api test:int`) chỉ chạy tay với `pnpm infra:up` + `db:migrate` + `db:seed`. Spec workflow ghi Vitest+Testcontainers nhưng api dùng Jest (dòng T0.7) | T1.8: chuyển sang Testcontainers (image `pgvector/pgvector:pg17`), dùng lại `runMigrations`, nối vào CI và `check:full` |
+| 2026-10-17 | T1.3 | `pg_dump` không chứa role. Migration tạo role `invoice_app` idempotent, nhưng restore vào DB trống phải tạo role trước (hoặc chạy `runMigrations` rồi nạp dữ liệu). Image production phải COPY thư mục `apps/api/drizzle/` | T7.5 (backup/restore, bước migration riêng, expand/contract), T4.7 (Dockerfile api) |
+| 2026-10-17 | T1.3 | Owner DB hiện là superuser + BYPASSRLS (kiểm bằng `pg_roles`); production cần owner không phải superuser, mật khẩu riêng cho `invoice_app`, và seed demo dùng đường owner | T4.7, T7.6 |
+| 2026-10-17 | T1.3 | `DEMO_READ_ONLY=true` có thể thêm `SET TRANSACTION READ ONLY` trong interceptor làm lớp phòng thủ thứ hai bên cạnh guard chặn non-GET (SECURITY §3); không làm ở T1.3 vì provisioning lười (ghi) sẽ bị chặn | T4.7 |
+| 2026-10-17 | T1.3 | Drizzle (0.45) không sinh `FORCE ROW LEVEL SECURITY` (đã grep mã nguồn), nên RLS nằm trong migration SQL viết tay. Bảng mới ở M2+ phải tự thêm ENABLE/FORCE/policy/GRANT; test meta-catalog sẽ đỏ nếu quên | T2.2, T5.2, M6 notifications: dùng mẫu trong `0001_rls.sql` |
+| 2026-10-17 | T1.3 | Image test cần extension `vector` (hiện chỉ tạo bởi init script lần đầu) và sẽ cần cho bảng `chunks` | T5.2: migration tự `CREATE EXTENSION IF NOT EXISTS vector` (owner), kiểm trên Testcontainers |
+| 2026-10-17 | T1.3 | Sau T1.3 API cần `db:migrate` + `db:seed` (và `DATABASE_URL`) trước khi chạy, nếu không mọi token đều 403 "Unknown tenant"; mọi `sub` phải là uuid (token Keycloak thật đã đúng) | T1.5/T1.7, T4.7 (compose chạy migrate như bước riêng), runbook dev ở M8 |
+| 2026-10-17 | T1.3 | Hook `guard.mjs` lại chặn nhầm heredoc có tên file env (dòng T0.9) và chặn lệnh xoá database (đúng thiết kế); DB/role tạm đã được Hậu xoá | Sửa regex hook cùng dòng T0.7/T0.9 |
+| 2026-10-17 | T1.3 | Reviewer: mỗi request thêm một truy vấn tra alias → tenant (không cache) và một connection thứ hai cho transaction tenant; DB chập chờn làm mọi request 503 | Task độ bền/hiệu năng sau M1 (hoặc T6.6 k6): cache TTL ngắn alias → id |
+| 2026-10-17 | T1.3 | Reviewer: interceptor gói `lastValueFrom(next.handle())` nên handler trả stream/SSE (Q&A có trích dẫn) chỉ phát giá trị cuối; `statement_timeout` 15 giây áp cho mọi transaction | T5.4/T6.x: handler stream mở transaction bằng `TenantDbService.run` thay vì dựa vào interceptor (hoặc thêm decorator bỏ qua); `SET LOCAL statement_timeout` theo từng `run` khi có việc dài |
+| 2026-10-17 | T1.3 | Reviewer: policy `users_insert WITH CHECK (true)` cho phép tenant A thăm dò sự tồn tại của một `sub` qua lỗi trùng khoá | T1.7: khi làm provisioning, ràng buộc `id` = user đang đăng nhập hoặc đưa việc tạo user sang đường có đặc quyền |
+| 2026-10-17 | T1.3 | Readiness dùng `Promise.race` nên `SELECT 1` không bị huỷ; số truy vấn chờ bị chặn bởi `connectionTimeoutMillis` 5 giây của pool và `statement_timeout` 15 giây | T7.x (observability): đo thử; nếu cần, probe dùng client riêng |

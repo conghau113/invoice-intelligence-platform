@@ -7,3 +7,5 @@ allowBuilds:
   unrs-resolver: false
   # @parcel/watcher (via @nestjs/cli watch mode) ships prebuilt binaries; its install script is a fallback.
   '@parcel/watcher': false
+  # esbuild (via drizzle-kit) ships its binary as a platform optional dependency; postinstall only verifies it.
+  esbuild: false
