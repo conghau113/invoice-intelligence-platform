@@ -10,3 +10,4 @@ docs
 *.md
 .claude
 next-env.d.ts
+scripts/__fixtures__

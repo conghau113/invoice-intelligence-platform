@@ -1,0 +1,4 @@
+{
+  "home": { "title": "Hóa đơn", "count": "{n, plural, one {# hóa đơn} other {# hóa đơn}}" },
+  "hi": "Chào {name}"
+}

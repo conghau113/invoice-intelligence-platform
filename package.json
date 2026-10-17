@@ -17,9 +17,14 @@
     "infra:logs": "docker compose logs -f",
     "infra:check-arm": "node scripts/check-arm64.mjs",
     "check:schema": "pnpm --filter contracts check:drift",
+    "check:i18n": "node scripts/check-i18n.mjs",
+    "check:adr": "node scripts/check-adr-index.mjs",
+    "check:links": "node scripts/check-links.mjs",
+    "check": "pnpm check:schema && pnpm check:i18n && pnpm check:adr && pnpm check:links",
+    "test:scripts": "node --test \"scripts/*.test.mjs\"",
     "check:secrets": "docker run --rm -v \"$PWD:/repo\" zricethezav/gitleaks:v8.30.0 git /repo --redact --no-banner --exit-code 1",
     "check:fast": "turbo run lint typecheck test",
-    "check:full": "pnpm check:fast && turbo run build && pnpm check:schema && pnpm check:secrets"
+    "check:full": "pnpm check:fast && turbo run build && pnpm check && pnpm test:scripts && pnpm check:secrets"
   },
   "devDependencies": {
     "prettier": "^3.9.10",

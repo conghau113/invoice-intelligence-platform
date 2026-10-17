@@ -22,7 +22,7 @@
 
 ```text
 Mốc hiện tại: M0
-Task hiện tại: T0.8 (T0.0 đến T0.7 đã DONE)
+Task hiện tại: T0.9 (T0.0 đến T0.8 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-10-16
 ```
@@ -42,7 +42,7 @@ Cập nhật: 2026-10-16
 | T0.5 | packages/contracts: schema Zod dùng chung + xuất JSON Schema cho Python               | 2            | T0.2, T0.3, T0.4 | `DONE`     | 1.5         |                                                                                                                                            |
 | T0.6 | docker-compose dev: Postgres+pgvector, Redis, Keycloak                                | 3            | T0.3             | `DONE`     |             |                                                                                                                                            |
 | T0.7 | Cổng chất lượng & CI (GitHub Actions)                                                 | 2.5          | T0.5, T0.6       | `DONE`     |             |                                                                                                                                            |
-| T0.8 | Script kiểm tra repo: i18n parity, ADR index, docs links                              | 1.5          | T0.7             | `TODO`     |             |                                                                                                                                            |
+| T0.8 | Script kiểm tra repo: i18n parity, ADR index, docs links                              | 1.5          | T0.7             | `DONE`     |             | `pnpm check` gộp 4 cổng; job CI `repo-checks`; i18n tự nghiêm khi có next-intl (xem Phát sinh)                                             |
 | T0.9 | Cập nhật CLAUDE.md lệnh thật + kiểm tra Claude Code hiểu dự án                        | 1            | T0.8             | `TODO`     |             |                                                                                                                                            |
 
 
@@ -244,3 +244,5 @@ Cập nhật: 2026-10-16
 | 2026-10-16 | T0.7 | Hook `.claude/hooks/guard.mjs` báo nhầm: regex chặn force push (`\bgit\s+push\b.*\s(--force|-f)`) dùng `.*` nên khớp cả `--force` của `git worktree remove` khi nằm sau `git push` trong cùng một dòng lệnh (ví dụ nối bằng `;` hoặc `&&`). Tách thành các lệnh riêng thì qua | Siết regex (không vượt qua `;`, `&&`, `\|`) và thêm test trong `guard.test.mjs`; xếp cùng T0.9 |
 | 2026-10-16 | T0.7 | Image gitleaks ghim theo tag `v8.30.0`, chưa theo digest (log CI hiện `sha256:691af3c7…`); tag có thể bị di chuyển | T7.4, cùng việc ghim SHA cho `checkout`/`setup-node` |
 | 2026-10-16 | T0.7 | `turbo` cảnh báo "no output files found for task web#test" vì `turbo.json` khai báo `coverage/**` mà web chưa có coverage (cùng loại với dòng T0.3 cho api) | Bỏ qua tới khi bật coverage (sau M1) |
+| 2026-10-16 | T0.8 | `check:i18n` đang SKIP vì chưa có `apps/web/messages`; script tự chuyển sang nghiêm (exit 1 nếu thiếu file) khi `apps/web/package.json` có `next-intl`. Giới hạn: không so sánh tham số lồng trong nhánh plural/select | Task i18n của M1 (cài next-intl) phải chạy `pnpm check:i18n` và dán output thật |
+| 2026-10-16 | T0.8 | `check:links` chỉ kiểm link inline `[x](path)`; không kiểm link kiểu reference `[x][id]` và `<a href>`; không kiểm `http(s)` (tránh gọi mạng) | Chấp nhận; mở rộng nếu docs bắt đầu dùng reference-style |
