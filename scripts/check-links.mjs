@@ -36,19 +36,45 @@ export function stripCode(text) {
   return kept.join('\n');
 }
 
+// "[text](url) rest" -> "text rest". A plain scan instead of a regex, which would backtrack badly.
+function dropLinkTargets(s) {
+  let out = '';
+  let i = 0;
+  while (i < s.length) {
+    const close = s[i] === '[' ? s.indexOf(']', i) : -1;
+    const end = close !== -1 && s[close + 1] === '(' ? s.indexOf(')', close + 2) : -1;
+    if (end === -1) {
+      out += s[i];
+      i += 1;
+    } else {
+      out += s.slice(i + 1, close);
+      i = end + 1;
+    }
+  }
+  return out;
+}
+
+// "## Title" -> "Title"; null when the line is not an ATX heading (1-6 '#', then a space).
+function headingText(line) {
+  let n = 0;
+  while (line[n] === '#') n += 1;
+  if (n === 0 || n > 6 || line[n] !== ' ') return null;
+  return line.slice(n + 1).trim() || null;
+}
+
 // GitHub-style heading ids: lowercase, drop punctuation, spaces -> '-', repeated ids get -1, -2...
 export function headingSlugs(text) {
   const seen = new Map();
   const slugs = new Set();
   for (const line of stripCode(text).split('\n')) {
-    const m = /^#{1,6}\s+(.+)$/.exec(line);
-    if (!m) continue;
-    const plain = m[1].replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/[`*~]/g, '');
-    const base = plain
+    const heading = headingText(line);
+    if (heading === null) continue;
+    const base = dropLinkTargets(heading)
+      .replaceAll(/[`*~]/g, '')
       .trim()
       .toLowerCase()
-      .replace(/[^\p{L}\p{N}\p{M} _-]/gu, '')
-      .replace(/ /g, '-');
+      .replaceAll(/[^\p{L}\p{N}\p{M} _-]/gu, '')
+      .replaceAll(' ', '-');
     const n = seen.get(base) ?? 0;
     seen.set(base, n + 1);
     slugs.add(n === 0 ? base : `${base}-${n}`);
@@ -63,6 +89,22 @@ const safeDecode = (s) => {
     return s;
   }
 };
+
+// Repo-relative path a link points at, or an error message. rawPath '' means "this file".
+function resolveTarget(file, target, rawPath, exists) {
+  if (rawPath === '') return { resolved: file };
+  const p = safeDecode(rawPath);
+  const resolved = p.startsWith('/')
+    ? path.posix.normalize(p.slice(1))
+    : path.posix.join(path.posix.dirname(file), p);
+  if (resolved === '..' || resolved.startsWith('../')) {
+    return { error: `${file}: link "${target}" leaves the repository` };
+  }
+  if (!exists(resolved)) {
+    return { error: `${file}: link "${target}" -> ${resolved} does not exist` };
+  }
+  return { resolved };
+}
 
 // files: Map(repo-relative posix path -> Markdown text); exists(path) tells if a file/dir exists.
 export function checkLinks(files, exists) {
@@ -79,22 +121,9 @@ export function checkLinks(files, exists) {
       const hash = target.indexOf('#');
       const rawPath = hash === -1 ? target : target.slice(0, hash);
       const anchor = hash === -1 ? '' : safeDecode(target.slice(hash + 1)).toLowerCase();
-      let resolved = file;
-      if (rawPath !== '') {
-        const p = safeDecode(rawPath);
-        resolved = p.startsWith('/')
-          ? path.posix.normalize(p.slice(1))
-          : path.posix.join(path.posix.dirname(file), p);
-        if (resolved === '..' || resolved.startsWith('../')) {
-          errors.push(`${file}: link "${target}" leaves the repository`);
-          continue;
-        }
-        if (!exists(resolved)) {
-          errors.push(`${file}: link "${target}" -> ${resolved} does not exist`);
-          continue;
-        }
-      }
-      if (anchor !== '' && files.has(resolved) && !slugsOf(resolved).has(anchor)) {
+      const { resolved, error } = resolveTarget(file, target, rawPath, exists);
+      if (error) errors.push(error);
+      else if (anchor !== '' && files.has(resolved) && !slugsOf(resolved).has(anchor)) {
         errors.push(`${file}: link "${target}" -> no heading "#${anchor}" in ${resolved}`);
       }
     }

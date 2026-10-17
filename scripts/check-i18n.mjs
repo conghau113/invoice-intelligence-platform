@@ -33,7 +33,7 @@ export function icuArgs(message) {
   return names;
 }
 
-const fmt = (set) => [...set].sort().join(', ') || '(none)';
+const fmt = (set) => [...set].sort((a, b) => a.localeCompare(b)).join(', ') || '(none)';
 
 export function checkParity(vi, en) {
   const errors = [];
