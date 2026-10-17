@@ -9,6 +9,7 @@ import { SignJWT, exportJWK, generateKeyPair, type JWK, type JWTPayload, type Ke
 import request from 'supertest';
 import { ProblemDetailsFilter } from '../../common/http/problem-details.filter';
 import { APP_FILTER } from '@nestjs/core';
+import { TENANT_DIRECTORY } from './application/tenant-directory.port';
 import { TOKEN_VERIFIER } from './application/token-verifier.port';
 import { AuthController } from './http/auth.controller';
 import { CurrentTenant, type TenantContext } from './http/current-user.decorator';
@@ -19,6 +20,7 @@ import { JoseTokenVerifier } from './infra/jose-token-verifier';
 const ISSUER = 'http://idp.test/realms/invoice';
 const AUDIENCE = 'api';
 const ACME_ID = '00000000-0000-4000-8000-0000000000a1';
+const USER_ID = '11111111-1111-4111-8111-111111111111';
 
 @Controller('probe')
 class ProbeController {
@@ -56,7 +58,7 @@ function sign(
 ): Promise<string> {
   return new SignJWT({ organization: ['acme'], realm_access: { roles: ['accountant'] }, ...claims })
     .setProtectedHeader({ alg: 'RS256', kid: key.kid })
-    .setSubject('user-1')
+    .setSubject(USER_ID)
     .setIssuer(opts.iss ?? ISSUER)
     .setAudience(opts.aud ?? AUDIENCE)
     .setIssuedAt()
@@ -94,6 +96,12 @@ describe('JwtAuthGuard (real jose verifier against a local JWKS server)', () => 
             jwksUrl,
             cooldownMs: 0,
           }),
+        },
+        {
+          provide: TENANT_DIRECTORY,
+          useValue: {
+            idForAlias: (alias: string) => Promise.resolve(alias === 'acme' ? ACME_ID : undefined),
+          },
         },
         { provide: ConfigService, useValue: {} },
         { provide: APP_GUARD, useClass: JwtAuthGuard },
@@ -169,7 +177,7 @@ describe('JwtAuthGuard (real jose verifier against a local JWKS server)', () => 
 
   it('valid token -> 200 with userId, tenantId and roles', async () => {
     const res = await get('/auth/me', await sign(keyA)).expect(200);
-    expect(res.body).toEqual({ userId: 'user-1', tenantId: ACME_ID, roles: ['accountant'] });
+    expect(res.body).toEqual({ userId: USER_ID, tenantId: ACME_ID, roles: ['accountant'] });
   });
 
   it('@Public route needs no token', async () => {

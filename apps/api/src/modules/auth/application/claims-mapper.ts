@@ -1,26 +1,34 @@
 import { ForbiddenException } from '@nestjs/common';
+import { isUuid } from '../../../common/uuid';
 import { KNOWN_ROLES, type AuthUser, type Role } from '../domain/auth-user';
-import { tenantIdForAlias } from './tenant-directory';
+import type { TenantDirectory } from './tenant-directory.port';
 import type { TokenClaims } from './token-verifier.port';
 
 const isStringArray = (v: unknown): v is string[] =>
   Array.isArray(v) && v.every((x) => typeof x === 'string');
 
 /**
- * Verified claims -> AuthUser. The tenant comes only from the `organization` claim. A token with
- * no tenant, several tenants (T1.7 will select one at login) or an unknown tenant is refused (403:
- * the identity is valid, but it cannot act for exactly one tenant). Messages never echo claims.
+ * Verified claims -> AuthUser. The tenant comes only from the `organization` claim and its alias
+ * is resolved through the tenants table. A token with no tenant, several tenants (T1.7 will select
+ * one at login) or an unknown tenant is refused (403: the identity is valid, but it cannot act for
+ * exactly one tenant). Messages never echo claims.
  */
-export function mapClaimsToUser(claims: TokenClaims): AuthUser {
+export async function mapClaimsToUser(
+  claims: TokenClaims,
+  tenants: TenantDirectory,
+): Promise<AuthUser> {
   const { sub, organization, realm_access: realmAccess } = claims;
-  if (typeof sub !== 'string' || sub === '') throw new ForbiddenException('Invalid token subject');
+  // users.id and every actor column are uuid, and Keycloak's `sub` is one.
+  if (!isUuid(sub)) {
+    throw new ForbiddenException('Invalid token subject');
+  }
 
   if (!isStringArray(organization) || organization.length === 0) {
     throw new ForbiddenException('Token has no tenant');
   }
   const [tenantAlias, ...others] = organization;
   if (others.length > 0) throw new ForbiddenException('Token must select exactly one tenant');
-  const tenantId = tenantAlias === undefined ? undefined : tenantIdForAlias(tenantAlias);
+  const tenantId = tenantAlias === undefined ? undefined : await tenants.idForAlias(tenantAlias);
   if (tenantAlias === undefined || tenantId === undefined) {
     throw new ForbiddenException('Unknown tenant');
   }

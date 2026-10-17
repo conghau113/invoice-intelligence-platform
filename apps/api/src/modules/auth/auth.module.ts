@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import type { Env } from '../../config/env.schema';
+import { TENANT_DIRECTORY } from './application/tenant-directory.port';
 import { TOKEN_VERIFIER } from './application/token-verifier.port';
+import { PgTenantDirectory } from './infra/pg-tenant-directory';
 import { JoseTokenVerifier } from './infra/jose-token-verifier';
 import { AuthController } from './http/auth.controller';
 import { JwtAuthGuard } from './http/jwt-auth.guard';
@@ -24,6 +26,7 @@ import { JwtAuthGuard } from './http/jwt-auth.guard';
         });
       },
     },
+    { provide: TENANT_DIRECTORY, useClass: PgTenantDirectory },
     { provide: APP_GUARD, useClass: JwtAuthGuard },
   ],
 })
