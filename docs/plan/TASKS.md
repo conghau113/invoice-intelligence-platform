@@ -22,7 +22,7 @@
 
 ```text
 Mốc hiện tại: M1
-Task hiện tại: T1.1 (T0.0 đến T0.9 đã DONE)
+Task hiện tại: T1.2 (T0.0 đến T0.9, T1.1 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-10-17
 ```
@@ -53,7 +53,7 @@ Cập nhật: 2026-10-17
 
 | ID    | Task                                                                                 | Ước tính (h) | Phụ thuộc         | Trạng thái | Thực tế (h) | Ghi chú |
 | ----- | ------------------------------------------------------------------------------------ | ------------ | ----------------- | ---------- | ----------- | ------- |
-| T1.1  | Keycloak realm-as-code: organizations, roles, demo users                             | 3            | T0.6              | `TODO`     |             |         |
+| T1.1  | Keycloak realm-as-code: organizations, roles, demo users                             | 3            | T0.6              | `DONE`     |             | Realm import OK (26.4): org UUID cố định, membership, secret qua biến. User nhiều tenant chỉ có claim khi xin `organization:*` (xem Phát sinh) |
 | T1.2  | API: xác thực JWT qua JWKS, CurrentUser, TenantContext                               | 3            | T1.1              | `TODO`     |             |         |
 | T1.3  | DB: Drizzle, migrations, bảng lõi, Row-Level Security                                | 4            | T1.2              | `TODO`     |             |         |
 | T1.4  | RBAC: ma trận quyền, @RequirePermission, test chính sách                             | 3            | T1.3              | `TODO`     |             |         |
@@ -249,3 +249,8 @@ Cập nhật: 2026-10-17
 | 2026-10-17 | T0.9 | Root chưa có script `pnpm dev` (không có task `dev` trong `turbo.json`); CLAUDE.md đã ghi lệnh dev từng app. Thêm task `dev` persistent + script gốc cần bạn quyết (chạy cả 3 app cùng lúc khi api/ai thiếu biến môi trường có thể lỗi). Các nơi còn nói `pnpm dev` chạy được: `compose.yaml:1`, `docs/plan/milestones/M0.md:5`, `docs/architecture/ARCHITECTURE.md:146`, `docs/setup/WSL2.md:71`; nếu không thêm script thì sửa các chỗ này | Chờ bạn quyết (thay cho dòng T0.1 cũ về task `dev`) |
 | 2026-10-17 | T0.9 | `node --test .claude/hooks/guard.test.mjs` chưa nằm trong `check:full` hay CI, nên hook hỏng sẽ không bị cổng nào bắt | Chờ xếp lịch (cân nhắc gộp vào `test:scripts`) |
 | 2026-10-17 | T0.9 | Hook `guard.mjs` chặn cả lệnh Bash chỉ vì chuỗi tên file env xuất hiện trong lệnh (kể cả heredoc sửa file khác, đã gặp khi làm T0.9), nên phải tách lệnh hoặc dùng Edit. Cùng nhóm với dòng T0.7 về regex force-push; bạn đã duyệt để ngoài T0.9 | Chờ xếp lịch cùng dòng T0.7 |
+| 2026-10-17 | T1.1 | Keycloak 26.4: scope `organization` thường chỉ phát claim cho user thuộc đúng 1 organization; user thuộc nhiều tenant (`consultant@demo.example`) phải xin `organization:*` (cả hai tenant) hoặc `organization:<alias>` (một tenant). Đã kiểm bằng token thật | T1.5 phải xin scope `openid organization:*` khi đăng nhập; T1.2 coi token thiếu claim `organization` là bị từ chối (không có tenant); T1.7 chọn tenant bằng `organization:<alias>` hoặc kiểm membership phía API |
+| 2026-10-17 | T1.1 | Claim `organization` là danh sách alias (`["acme"]`), không có id. T1.3 dùng `tenant_id uuid`. Realm đã đặt UUID cố định cho acme (`00000000-0000-4000-8000-0000000000a1`) và globex (`...a2`) | T1.3: bảng `tenants` có cột `alias` unique, seed đúng hai UUID này; T1.2 tra alias → tenant id |
+| 2026-10-17 | T1.1 | Role là realm role, không theo organization: user thuộc 2 tenant có cùng role ở cả hai | T1.4: chấp nhận cho MVP, ghi vào ma trận quyền; đổi sang role theo tenant (membership trong DB) nếu cần |
+| 2026-10-17 | T1.1 | Client `dev-cli` (password grant, mật khẩu demo `demo-dev-only`, `WEB_CLIENT_SECRET` mặc định) chỉ dành cho dev; `start-dev`, `sslRequired: external`, redirect URI `localhost` | T4.7: xóa `dev-cli`, đổi mật khẩu/secret, cập nhật redirect URI, bật chế độ production |
+| 2026-10-17 | T1.1 | Issuer của token là `http://localhost:8080/realms/invoice` vì `start-dev` suy ra từ host của request; API trong Docker/VM sẽ thấy issuer khác | T1.2: cấu hình issuer tường minh qua env; T4.7: đặt `KC_HOSTNAME` |

@@ -44,8 +44,13 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.4
     restart: unless-stopped
-    command: start-dev
+    command: start-dev --import-realm
+    volumes:
+      # Realm-as-code (T1.1). Import runs only if the realm does not exist yet (IGNORE_EXISTING):
+      # after editing realm-invoice.json run `docker compose down -v` (or drop the keycloak DB) to apply it.
+      - ./infra/keycloak:/opt/keycloak/data/import:ro
     environment:
+      WEB_CLIENT_SECRET: ${WEB_CLIENT_SECRET:-web-secret-dev-only}
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin-dev-only}
       KC_DB: postgres

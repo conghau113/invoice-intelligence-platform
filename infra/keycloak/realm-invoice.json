@@ -1,0 +1,147 @@
+{
+  "realm": "invoice",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "organizationsEnabled": true,
+  "roles": {
+    "realm": [
+      { "name": "tenant_admin", "description": "Manages a tenant and its documents" },
+      { "name": "accountant", "description": "Creates and approves documents" },
+      { "name": "viewer", "description": "Read-only access" }
+    ]
+  },
+  "organizations": [
+    {
+      "id": "00000000-0000-4000-8000-0000000000a1",
+      "name": "acme",
+      "alias": "acme",
+      "enabled": true,
+      "domains": [{ "name": "acme.example", "verified": false }],
+      "members": [
+        { "username": "admin@acme.example" },
+        { "username": "accountant@acme.example" },
+        { "username": "consultant@demo.example" }
+      ]
+    },
+    {
+      "id": "00000000-0000-4000-8000-0000000000a2",
+      "name": "globex",
+      "alias": "globex",
+      "enabled": true,
+      "domains": [{ "name": "globex.example", "verified": false }],
+      "members": [
+        { "username": "viewer@globex.example" },
+        { "username": "consultant@demo.example" }
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "web",
+      "name": "Invoice web (BFF)",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "${WEB_CLIENT_SECRET}",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": ["http://localhost:3000/api/auth/callback/keycloak"],
+      "webOrigins": ["http://localhost:3000"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:3000/*"
+      },
+      "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "email", "organization"],
+      "optionalClientScopes": ["offline_access"],
+      "protocolMappers": [
+        {
+          "name": "audience-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "api",
+      "name": "Invoice API (audience only)",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "bearerOnly": true,
+      "publicClient": false,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false
+    },
+    {
+      "clientId": "dev-cli",
+      "name": "DEV ONLY: curl token helper (remove before production, T4.7)",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "email", "organization"],
+      "protocolMappers": [
+        {
+          "name": "audience-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin@acme.example",
+      "email": "admin@acme.example",
+      "firstName": "SAMPLE Admin",
+      "lastName": "Acme",
+      "enabled": true,
+      "emailVerified": true,
+      "realmRoles": ["tenant_admin"],
+      "credentials": [{ "type": "password", "value": "demo-dev-only", "temporary": false }]
+    },
+    {
+      "username": "accountant@acme.example",
+      "email": "accountant@acme.example",
+      "firstName": "SAMPLE Accountant",
+      "lastName": "Acme",
+      "enabled": true,
+      "emailVerified": true,
+      "realmRoles": ["accountant"],
+      "credentials": [{ "type": "password", "value": "demo-dev-only", "temporary": false }]
+    },
+    {
+      "username": "viewer@globex.example",
+      "email": "viewer@globex.example",
+      "firstName": "SAMPLE Viewer",
+      "lastName": "Globex",
+      "enabled": true,
+      "emailVerified": true,
+      "realmRoles": ["viewer"],
+      "credentials": [{ "type": "password", "value": "demo-dev-only", "temporary": false }]
+    },
+    {
+      "username": "consultant@demo.example",
+      "email": "consultant@demo.example",
+      "firstName": "SAMPLE Consultant",
+      "lastName": "Multi-tenant",
+      "enabled": true,
+      "emailVerified": true,
+      "realmRoles": ["accountant"],
+      "credentials": [{ "type": "password", "value": "demo-dev-only", "temporary": false }]
+    }
+  ]
+}
