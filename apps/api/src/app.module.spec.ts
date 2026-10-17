@@ -29,6 +29,7 @@ describe('AppModule', () => {
 
   it('boots with valid env and serves problem+json errors via the real wiring', async () => {
     process.env.NODE_ENV = 'test';
+    process.env.OIDC_ISSUER_URL = 'http://localhost:8080/realms/invoice';
     const mod = await createBuilder().compile();
     const app: INestApplication = mod.createNestApplication();
     await app.init();

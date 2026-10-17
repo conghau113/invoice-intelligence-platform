@@ -22,7 +22,7 @@
 
 ```text
 Mốc hiện tại: M1
-Task hiện tại: T1.2 (T0.0 đến T0.9, T1.1 đã DONE)
+Task hiện tại: T1.3 (T0.0 đến T0.9, T1.1, T1.2 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-10-17
 ```
@@ -54,7 +54,7 @@ Cập nhật: 2026-10-17
 | ID    | Task                                                                                 | Ước tính (h) | Phụ thuộc         | Trạng thái | Thực tế (h) | Ghi chú |
 | ----- | ------------------------------------------------------------------------------------ | ------------ | ----------------- | ---------- | ----------- | ------- |
 | T1.1  | Keycloak realm-as-code: organizations, roles, demo users                             | 3            | T0.6              | `DONE`     |             | Realm import OK (26.4): org UUID cố định, membership, secret qua biến. User nhiều tenant chỉ có claim khi xin `organization:*` (xem Phát sinh) |
-| T1.2  | API: xác thực JWT qua JWKS, CurrentUser, TenantContext                               | 3            | T1.1              | `TODO`     |             |         |
+| T1.2  | API: xác thực JWT qua JWKS, CurrentUser, TenantContext                               | 3            | T1.1              | `DONE`     |             | Guard jose + JWKS, `/auth/me`; token thiếu/đa tenant → 403. Sửa realm: thêm scope `basic` (xem Phát sinh) |
 | T1.3  | DB: Drizzle, migrations, bảng lõi, Row-Level Security                                | 4            | T1.2              | `TODO`     |             |         |
 | T1.4  | RBAC: ma trận quyền, @RequirePermission, test chính sách                             | 3            | T1.3              | `TODO`     |             |         |
 | T1.5  | Web: đăng nhập Keycloak, session, refresh token, route bảo vệ                        | 3            | T1.1, T0.2        | `TODO`     |             |         |
@@ -254,3 +254,7 @@ Cập nhật: 2026-10-17
 | 2026-10-17 | T1.1 | Role là realm role, không theo organization: user thuộc 2 tenant có cùng role ở cả hai | T1.4: chấp nhận cho MVP, ghi vào ma trận quyền; đổi sang role theo tenant (membership trong DB) nếu cần |
 | 2026-10-17 | T1.1 | Client `dev-cli` (password grant, mật khẩu demo `demo-dev-only`, `WEB_CLIENT_SECRET` mặc định) chỉ dành cho dev; `start-dev`, `sslRequired: external`, redirect URI `localhost` | T4.7: xóa `dev-cli`, đổi mật khẩu/secret, cập nhật redirect URI, bật chế độ production |
 | 2026-10-17 | T1.1 | Issuer của token là `http://localhost:8080/realms/invoice` vì `start-dev` suy ra từ host của request; API trong Docker/VM sẽ thấy issuer khác | T1.2: cấu hình issuer tường minh qua env; T4.7: đặt `KC_HOSTNAME` |
+| 2026-10-17 | T1.2 | Token thật của Keycloak 26.4 không có `sub` vì client `web`/`dev-cli` thiếu client scope `basic` (T1.1 bỏ sót; test dùng token tự ký nên không bắt được). Đã thêm `basic` vào `defaultClientScopes` của hai client trong realm JSON và kiểm bằng token thật | T1.5: client web đã có `basic`; realm import lại (`down -v`) để khớp file |
+| 2026-10-17 | T1.2 | API từ chối (403) token có 0, nhiều hoặc alias lạ trong `organization`; tenantId hiện tra từ bảng tĩnh `tenant-directory.ts` | T1.3: thay bảng tĩnh bằng bảng `tenants`; T1.7: user nhiều tenant phải chọn tenant lúc đăng nhập (`organization:<alias>`), nếu không sẽ nhận 403; T1.4: `AuthUser.roles` đã có, chỉ cần thêm `@RequirePermission` |
+| 2026-10-17 | T1.2 | `OIDC_ISSUER_URL` là biến bắt buộc của API (không có mặc định); JWKS mặc định `<issuer>/protocol/openid-connect/certs`, đặt `OIDC_JWKS_URL` khi API gọi Keycloak bằng host khác | T4.7/compose: đặt cả hai biến cho api container; `KC_HOSTNAME` ở production |
+| 2026-10-17 | T1.2 | Khi Keycloak không với tới được lúc `jose` tải lại JWKS (timeout, mạng), guard hiện trả 401; client sẽ tưởng token sai. Key bị gỡ vẫn verify được từ cache tối đa 10 phút (`cacheMaxAge`), cooldown 30 giây có thể gây 401 tạm cho `kid` mới | Task xử lý lỗi/độ bền sau M1 (hoặc T4.7): phân biệt lỗi JWKS không với tới được (503) với token sai (401); cân nhắc rút ngắn `cacheMaxAge` ở production |
