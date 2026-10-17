@@ -54,7 +54,15 @@
         "pkce.code.challenge.method": "S256",
         "post.logout.redirect.uris": "http://localhost:3000/*"
       },
-      "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "email", "organization"],
+      "defaultClientScopes": [
+        "basic",
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email",
+        "organization"
+      ],
       "optionalClientScopes": ["offline_access"],
       "protocolMappers": [
         {
@@ -87,7 +95,15 @@
       "publicClient": true,
       "standardFlowEnabled": false,
       "directAccessGrantsEnabled": true,
-      "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "email", "organization"],
+      "defaultClientScopes": [
+        "basic",
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email",
+        "organization"
+      ],
       "protocolMappers": [
         {
           "name": "audience-api",

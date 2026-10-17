@@ -3,5 +3,5 @@ import tseslint from 'typescript-eslint';
 
 export default defineConfig([
   ...tseslint.configs.recommended,
-  globalIgnores(['dist/**', 'coverage/**', 'jest.config.js']),
+  globalIgnores(['dist/**', 'dist-scripts/**', 'coverage/**', 'jest.config.js']),
 ]);

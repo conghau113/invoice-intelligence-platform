@@ -8,6 +8,8 @@ import type { Env } from './config/env.schema';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.disable('x-powered-by');
+  // Without this SIGTERM kills the process before onApplicationShutdown can drain the DB pool.
+  app.enableShutdownHooks();
   const port = app.get(ConfigService<Env, true>).get('PORT', { infer: true });
   await app.listen(port);
 }
