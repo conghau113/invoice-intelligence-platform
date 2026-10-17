@@ -38,10 +38,11 @@ Owner: Hậu. You write most of the code; Hậu must be able to explain all of i
 - Architecture, security, auth/tenant, data, licence or cost changes: present research → analysis → comparison with ADR/LEGAL/NFR → risk review → proposal, then wait for approval.
 - Tests must execute behaviour. Do not write tests that grep source files for strings.
 
-## Commands (fill in real commands during T0.9)
-- Environment: WSL2 Ubuntu (see docs/setup/WSL2.md) · Install: `pnpm install` · Infra: `docker compose up -d`
-- Dev: `pnpm dev` · Lint/types: `pnpm lint && pnpm typecheck`
-- Tests: `pnpm test` · Python: `cd apps/ai && uv run pytest`
+## Commands
+- Environment: WSL2 Ubuntu (see docs/setup/WSL2.md) · Install: `pnpm install` · Infra: `pnpm infra:up` / `pnpm infra:down` (Postgres host port 5433, Redis 6380)
+- Dev (one app per terminal; no root `pnpm dev`): `pnpm --filter web dev` (:3000) · `pnpm --filter api start:dev` (:3001) · `pnpm --filter ai dev` (:8000)
+- Lint/types: `pnpm lint && pnpm typecheck` · Tests: `pnpm test` · Python: `cd apps/ai && uv run pytest`
+- Repo gates (schema drift, i18n, ADR index, docs links): `pnpm check` · Script tests: `pnpm test:scripts` · Secrets (needs Docker running): `pnpm check:secrets`
 - Fast gate: `pnpm check:fast` · Full gate before commit: `pnpm check:full` · Hook tests: `node --test .claude/hooks/guard.test.mjs`
 
 ## When compacting
