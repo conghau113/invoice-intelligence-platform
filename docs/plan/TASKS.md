@@ -22,7 +22,7 @@
 
 ```text
 Mốc hiện tại: M1
-Task hiện tại: T1.6b (T0.0 đến T0.9, T1.1 đến T1.6 đã DONE)
+Task hiện tại: T1.7 (T0.0 đến T0.9, T1.1 đến T1.6b đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-10-18
 ```
@@ -59,7 +59,7 @@ Cập nhật: 2026-10-18
 | T1.4  | RBAC: ma trận quyền, @RequirePermission, test chính sách                             | 3            | T1.3              | `DONE`       |             | Agent: `permissions.ts` (ma trận 3 role × 7 permission), `@RequirePermission`/`@AnyAuthenticated`, `PermissionsGuard` deny-by-default (route không khai báo → 403), Problem Details có `code`, `/auth/me` trả `permissions`. 81 test pass; drill đổi ma trận / bỏ guard → đỏ |
 | T1.5  | Web: đăng nhập Keycloak, session, refresh token, route bảo vệ                        | 3            | T1.1, T0.2        | `DONE`     |             | Agent: `next-auth` 4.24.15 (v5 còn beta), `proxy.ts` refresh + ghi lại cookie (RSC không set được cookie), single-flight chống race khi xoay refresh token, logout POST same-origin → end_session. 28 test web; kiểm với Keycloak thật: login/refresh/logout/SSO. Realm: `revokeRefreshToken` |
 | T1.6  | i18n vi/en với next-intl + định dạng số/tiền/ngày theo locale                        | 3            | T0.2              | `DONE`     |             | Agent: `next-intl` 4.14.9 (MIT), `localePrefix: 'always'`, proxy ghép auth + intl (API không qua intl), `format.ts` tiền = số nguyên đơn vị nhỏ nhất, múi giờ cố định Asia/Ho_Chi_Minh. 78 test web; `check:i18n` thật; drill thiếu key → đỏ |
-| T1.6b | Design baseline với ui-ux-pro-max (màu, chữ, khoảng cách, trạng thái, accessibility) | 2.5          | T1.6              | `TODO`     |             |         |
+| T1.6b | Design baseline với ui-ux-pro-max (màu, chữ, khoảng cách, trạng thái, accessibility) | 2.5          | T1.6              | `DONE`     |             | Agent: palette "Invoice & Billing Tool" + IBM Plex Sans/Mono, `tokens.css` (sáng/tối, cookie `theme`), 57 test tương phản (bắt được `--input` 2,5:1 và sửa), mẫu chung + `/[locale]/styleguide`. Lighthouse a11y 100 ×4 (vi/en × sáng/tối). `search.py` đã chạy (Hậu và agent, cùng kết quả); generator đề xuất Dark OLED + Fira (Fira Code không có subset tiếng Việt), giữ lựa chọn từ hàng CSV #105/#31, đối chiếu ở DESIGN_BASELINE.md |
 | T1.7  | App shell: layout, menu theo quyền, chuyển tenant                                    | 2.5          | T1.4, T1.5, T1.6b | `TODO`     |             |         |
 | T1.8  | Test: cách ly tenant (Testcontainers) + e2e đăng nhập (Playwright)                   | 3            | T1.7              | `TODO`     |             |         |
 
@@ -290,3 +290,9 @@ Cập nhật: 2026-10-18
 | 2026-10-18 | T1.6 | Trang 404 toàn cục (`/_not-found`) nằm ngoài `[locale]` nên chưa dịch; dịch cần `global-not-found` (thử nghiệm) hoặc `not-found.tsx` trong `[locale]` | T1.7 |
 | 2026-10-18 | T1.6 | Language switcher bỏ query string và chưa hỗ trợ route động (`[id]`); cần `params` khi có trang chi tiết | T2.6 |
 | 2026-10-18 | T1.6 | Test e2e (T1.8) phải dùng URL có tiền tố (`/vi/login`, `/en/dashboard`); không có chuỗi nào dùng plural thật (vi chỉ có `other`, en có `one`/`other`), thêm khi có chuỗi đếm đầu tiên | T1.8 |
+| 2026-10-18 | T1.6b | `THIRD_PARTY_NOTICES.md` được viết tay (mục skill ui-ux-pro-max, font IBM Plex); T7.4 sẽ sinh file này từ lockfile và có thể ghi đè | T7.4: giữ mục "Manually recorded components" hoặc đọc từ `docs/LEGAL.md` |
+| 2026-10-18 | T1.6b | Layout đọc cookie `theme` nên mọi trang dưới `[locale]` render theo request (mất prerender); `login` và `dashboard` vốn đã động | T7.6: đo LCP/CLS; nếu cần chuyển sang script chặn trước paint hoặc `prefers-color-scheme` |
+| 2026-10-18 | T1.6b | Font tải lúc build qua `next/font/google` (cần mạng khi build, Next tự host file font); chưa self-host bằng `@fontsource` | Xếp lịch T4.7/T7.4 (build offline, CSP); giữ `NEXT_TELEMETRY_DISABLED=1` (dòng T0.2) |
+| 2026-10-18 | T1.6b | Lighthouse chưa nằm trong repo; đo tay bằng Lighthouse 13.5.0 + Chromium cài ngoài repo, cookie phiên giả tạo bằng `next-auth/jwt` với secret ngẫu nhiên cục bộ. Chromium cần `sudo apt install libnspr4 libnss3 libasound2t64` | T7.6: Lighthouse CI (Apache-2.0 ngoài allow-list, cần mục review LEGAL) và cách đăng nhập khi đo trang sau auth |
+| 2026-10-18 | T1.6b | Lần đầu hệ thống chặn agent chạy `search.py` và chép skill vào `.claude/skills/` (Hậu chép tay). Skill có 3,7MB data/CSV; SonarCloud và gitleaks chưa quét thử | Xem Sonar API và `check:secrets` sau khi push; nếu báo nhầm thì loại trừ `.claude/skills/ui-ux-pro-max` |
+| 2026-10-18 | T1.6b | Badge dùng 7 trạng thái của `ARCHITECTURE.md` §8; T2.2 chốt máy trạng thái thật. `DataTable` chưa sắp xếp/phân trang; `LanguageSwitcher` vẫn dùng `<select>` trần (chưa theo mẫu `ui/`) | T2.2 (đối chiếu trạng thái), T2.6 (bảng), T1.7 (đưa switcher vào header) |

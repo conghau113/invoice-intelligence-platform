@@ -17,7 +17,7 @@ export function LanguageSwitcher() {
       data-testid="language-switcher"
       value={locale}
       onChange={(e) => router.replace(pathname, { locale: e.target.value as Locale })}
-      className="rounded-md border bg-background px-2 py-1 text-sm"
+      className="rounded-md border border-input bg-card px-2 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
     >
       {routing.locales.map((l) => (
         <option key={l} value={l}>
