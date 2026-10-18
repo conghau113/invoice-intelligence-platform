@@ -9,3 +9,5 @@ allowBuilds:
   '@parcel/watcher': false
   # esbuild (via drizzle-kit) ships its binary as a platform optional dependency; postinstall only verifies it.
   esbuild: false
+  # @swc/core (via next-intl's optional message extractor) ships its binary as a platform optional dependency; its install script is only a fallback.
+  '@swc/core': false

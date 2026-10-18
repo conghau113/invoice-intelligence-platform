@@ -1,0 +1,20 @@
+{
+  "Common": {
+    "appName": "Invoice Intelligence Platform"
+  },
+  "Home": {
+    "sample": "SAMPLE"
+  },
+  "Login": {
+    "signIn": "Sign in"
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "signOut": "Sign out"
+  },
+  "LanguageSwitcher": {
+    "label": "Language",
+    "vi": "Tiếng Việt",
+    "en": "English"
+  }
+}

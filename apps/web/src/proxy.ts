@@ -1,4 +1,5 @@
-import { NextResponse, type NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import createIntlMiddleware from 'next-intl/middleware';
 import { encode, getToken } from 'next-auth/jwt';
 import { authEnv } from '@/auth/env';
 import {
@@ -7,14 +8,25 @@ import {
   replaceSessionCookies,
   sessionCookieName,
 } from '@/auth/cookie';
-import { decide } from '@/auth/guard';
+import { decide, stripLocale } from '@/auth/guard';
+import { routing } from '@/i18n/routing';
 import { needsRefresh, refreshAccessToken } from '@/auth/refresh';
 
 // Same as next-auth's default session maxAge.
 const MAX_AGE = 30 * 24 * 60 * 60;
 
+const intl = createIntlMiddleware(routing);
+
+// /api/* has no locale prefix; every page goes through next-intl (redirect to /vi|/en, rewrite).
+const isApi = (pathname: string) => pathname === '/api' || pathname.startsWith('/api/');
+
 function toLogin(req: NextRequest, base: string): NextResponse {
-  const url = new URL('/login', req.url);
+  // Keep the locale the user is on; without one, next-intl picks it when it handles /login.
+  const prefix = req.nextUrl.pathname.slice(
+    0,
+    req.nextUrl.pathname.length - stripLocale(req.nextUrl.pathname).length,
+  );
+  const url = new URL(`${prefix}/login`, req.url);
   url.searchParams.set('callbackUrl', req.nextUrl.pathname);
   const res = NextResponse.redirect(url);
   for (const c of req.cookies.getAll())
@@ -22,18 +34,26 @@ function toLogin(req: NextRequest, base: string): NextResponse {
   return res;
 }
 
+// Continue to the page: API routes untouched, pages through next-intl. The request may carry a
+// refreshed cookie header; intl forwards request headers to the rewritten page.
+function next(req: NextRequest): NextResponse {
+  return isApi(req.nextUrl.pathname)
+    ? NextResponse.next({ request: { headers: req.headers } })
+    : intl(req);
+}
+
 // Next 16 "proxy" (ex-middleware). Server Components cannot set cookies, so the
 // refreshed (rotated) token must be written here, before the page renders.
 export default async function proxy(req: NextRequest) {
   // Public paths (login, auth endpoints, health) must work even if auth env is broken.
-  if (decide(req.nextUrl.pathname, false) === 'allow') return NextResponse.next();
+  if (decide(req.nextUrl.pathname, false) === 'allow') return next(req);
 
   const env = authEnv();
   const base = sessionCookieName(env.NEXTAUTH_URL);
   const token = await getToken({ req, secret: env.NEXTAUTH_SECRET });
 
   if (!token) return toLogin(req, base);
-  if (!needsRefresh(token)) return NextResponse.next();
+  if (!needsRefresh(token)) return next(req);
 
   const result = await refreshAccessToken(token, {
     issuer: env.KEYCLOAK_ISSUER,
@@ -41,7 +61,7 @@ export default async function proxy(req: NextRequest) {
     clientSecret: env.KEYCLOAK_CLIENT_SECRET,
   });
   // Keycloak down: keep the session (the API will reject the expired token) instead of logging out.
-  if (result.kind === 'unavailable') return NextResponse.next();
+  if (result.kind === 'unavailable') return next(req);
   if (result.kind === 'rejected') return toLogin(req, base);
 
   const fresh = chunkCookie(
@@ -50,7 +70,7 @@ export default async function proxy(req: NextRequest) {
   );
   const headers = new Headers(req.headers);
   headers.set('cookie', replaceSessionCookies(req.headers.get('cookie') ?? '', base, fresh));
-  const res = NextResponse.next({ request: { headers } });
+  const res = next(new NextRequest(req, { headers }));
   for (const c of req.cookies.getAll()) {
     if (isSessionCookie(c.name, base) && !(c.name in fresh)) res.cookies.delete(c.name);
   }
