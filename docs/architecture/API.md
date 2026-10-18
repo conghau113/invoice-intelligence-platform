@@ -7,7 +7,7 @@
 | Topic | Rule |
 |---|---|
 | Auth | `Authorization: Bearer <access token>` issued by Keycloak. Deny by default; `@Public()` opts out (health only). |
-| Tenant | Derived from the token's `organization` claim; if the user belongs to several, header `X-Tenant-Id` selects one and is checked against membership. Never trusted alone. |
+| Tenant | Derived from the token's `organization` claim; the web asks for `organization:*`, so the token lists every tenant of the user, and header `X-Tenant: <alias>` selects one. The alias must be in that signed claim (else 403 `TENANT_NOT_MEMBER`); several tenants and no header → 403 `TENANT_REQUIRED`. The header only selects, it never grants. |
 | Errors | RFC 9457 Problem Details: `{type, title, status, detail, instance, code, traceId}` |
 | Pagination | Cursor-based: `?limit=20&cursor=<opaque>` → `{items, nextCursor}` |
 | Filtering/sorting | `?status=needs_review&from=2026-09-01&to=2026-09-30&sort=-createdAt` |
@@ -30,7 +30,7 @@
 ### Me & tenants
 | Method | Path | Permission |
 |---|---|---|
-| GET | `/me` | authenticated — user, tenants, roles, permissions |
+| GET | `/auth/me` | authenticated — user, tenant id, `tenants` (aliases to switch to), roles, permissions |
 | GET | `/tenants/current/members` | `tenant:manage` |
 
 ### Documents

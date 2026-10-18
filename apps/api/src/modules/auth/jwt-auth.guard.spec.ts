@@ -20,6 +20,7 @@ import { JoseTokenVerifier } from './infra/jose-token-verifier';
 const ISSUER = 'http://idp.test/realms/invoice';
 const AUDIENCE = 'api';
 const ACME_ID = '00000000-0000-4000-8000-0000000000a1';
+const GLOBEX_ID = '00000000-0000-4000-8000-0000000000a2';
 const USER_ID = '11111111-1111-4111-8111-111111111111';
 
 @Controller('probe')
@@ -100,7 +101,10 @@ describe('JwtAuthGuard (real jose verifier against a local JWKS server)', () => 
         {
           provide: TENANT_DIRECTORY,
           useValue: {
-            idForAlias: (alias: string) => Promise.resolve(alias === 'acme' ? ACME_ID : undefined),
+            idForAlias: (alias: string) =>
+              Promise.resolve(
+                ({ acme: ACME_ID, globex: GLOBEX_ID } as Record<string, string | undefined>)[alias],
+              ),
           },
         },
         { provide: ConfigService, useValue: {} },
@@ -181,6 +185,7 @@ describe('JwtAuthGuard (real jose verifier against a local JWKS server)', () => 
       userId: USER_ID,
       tenantId: ACME_ID,
       roles: ['accountant'],
+      tenants: ['acme'],
       permissions: [
         'document:read',
         'document:create',
@@ -195,17 +200,43 @@ describe('JwtAuthGuard (real jose verifier against a local JWKS server)', () => 
     await get('/probe/open').expect(200);
   });
 
-  it('tenant comes from the token; a spoofed tenant header is ignored', async () => {
-    const res = await get('/probe/tenant', await sign(keyA))
-      .set('X-Tenant-Id', '00000000-0000-4000-8000-0000000000a2')
-      .set('X-Tenant', 'globex')
-      .expect(200);
-    expect(res.body).toEqual({ tenantId: ACME_ID, tenantAlias: 'acme' });
+  it('X-Tenant selects among the tenants in the token', async () => {
+    const token = await sign(keyA, { organization: ['acme', 'globex'] });
+    const acme = await get('/probe/tenant', token).set('X-Tenant', 'acme').expect(200);
+    expect(acme.body).toEqual({ tenantId: ACME_ID, tenantAlias: 'acme' });
+    const globex = await get('/probe/tenant', token).set('X-Tenant', 'globex').expect(200);
+    expect(globex.body).toEqual({ tenantId: GLOBEX_ID, tenantAlias: 'globex' });
+    const me = await get('/auth/me', token).set('X-Tenant', 'globex').expect(200);
+    expect(me.body).toMatchObject({ tenantId: GLOBEX_ID, tenants: ['acme', 'globex'] });
   });
 
-  it('valid signature but no tenant / two tenants -> 403', async () => {
+  it('a tenant the user does not belong to -> 403 TENANT_NOT_MEMBER, even if it exists', async () => {
+    // Token only lists acme; globex exists in the directory but is not the caller's.
+    const res = await get('/probe/tenant', await sign(keyA))
+      .set('X-Tenant', 'globex')
+      .expect(403);
+    expect(res.body).toMatchObject({ status: 403, code: 'TENANT_NOT_MEMBER' });
+    expect(JSON.stringify(res.body)).not.toContain('globex');
+    await get('/probe/tenant', await sign(keyA))
+      .set('X-Tenant-Id', GLOBEX_ID) // the old, ignored header name must not select anything
+      .expect(200);
+    await get('/probe/tenant', await sign(keyA))
+      .set('X-Tenant', GLOBEX_ID)
+      .expect(403);
+  });
+
+  it('a repeated X-Tenant header is not a valid alias -> 403', async () => {
+    const token = await sign(keyA, { organization: ['acme', 'globex'] });
+    await get('/probe/tenant', token).set('X-Tenant', 'acme, globex'); // how Node presents a header sent twice.expect(403);
+  });
+
+  it('no tenant in the token -> 403; two tenants and no choice -> 403 TENANT_REQUIRED', async () => {
     await get('/auth/me', await sign(keyA, { organization: undefined })).expect(403);
-    await get('/auth/me', await sign(keyA, { organization: ['acme', 'globex'] })).expect(403);
+    const res = await get(
+      '/auth/me',
+      await sign(keyA, { organization: ['acme', 'globex'] }),
+    ).expect(403);
+    expect(res.body).toMatchObject({ code: 'TENANT_REQUIRED' });
   });
 
   it('does not echo token content in the error body', async () => {

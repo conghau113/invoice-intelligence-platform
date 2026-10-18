@@ -10,7 +10,9 @@
   },
   "Dashboard": {
     "title": "Bảng điều khiển",
-    "signOut": "Đăng xuất"
+    "tenant": "Tổ chức",
+    "tenantId": "Mã tổ chức",
+    "permissions": "Quyền"
   },
   "LanguageSwitcher": {
     "label": "Ngôn ngữ",
@@ -75,5 +77,37 @@
     "a11y3": "Dùng bàn phím: Tab đi qua mọi điều khiển, vòng focus luôn thấy.",
     "a11y4": "Trạng thái luôn có chữ và biểu tượng, không chỉ dùng màu.",
     "a11y5": "Lỗi báo qua role=alert; đang tải báo qua role=status."
+  },
+  "Shell": {
+    "appName": "Invoice Intelligence",
+    "skipToContent": "Bỏ qua tới nội dung",
+    "mainMenu": "Menu chính",
+    "menu": "Mở menu",
+    "tenantLabel": "Tổ chức",
+    "tenantSwitch": "Đổi tổ chức",
+    "signOut": "Đăng xuất",
+    "forbiddenTitle": "Bạn không dùng được tổ chức này",
+    "forbiddenHint": "Tài khoản không được phép làm việc cho tổ chức đã chọn. Hãy đổi tổ chức hoặc liên hệ quản trị viên.",
+    "unavailableTitle": "Dịch vụ tạm thời không dùng được",
+    "unavailableHint": "Máy chủ không phản hồi. Hãy thử lại sau ít phút.",
+    "forbiddenRequired": "Tài khoản thuộc nhiều tổ chức và chưa chọn tổ chức nào. Hãy chọn ở thanh trên; nếu không có danh sách thì đăng xuất rồi đăng nhập lại.",
+    "forbiddenNotMember": "Tổ chức đã chọn không nằm trong các tổ chức của bạn. Hãy chọn tổ chức khác ở thanh trên, hoặc đăng xuất rồi đăng nhập lại nếu quyền truy cập đã thay đổi."
+  },
+  "Nav": {
+    "documents": "Tài liệu",
+    "upload": "Tải lên",
+    "ask": "Hỏi đáp",
+    "insights": "Thống kê",
+    "members": "Thành viên"
+  },
+  "Role": {
+    "tenant_admin": "Quản trị viên",
+    "accountant": "Kế toán",
+    "viewer": "Người xem"
+  },
+  "NotFound": {
+    "title": "Không tìm thấy trang",
+    "hint": "Địa chỉ có thể sai, hoặc trang này chưa có.",
+    "home": "Về bảng điều khiển"
   }
 }

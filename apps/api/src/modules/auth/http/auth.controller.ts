@@ -6,16 +6,18 @@ import { AnyAuthenticated } from './require-permission.decorator';
 
 @Controller('auth')
 export class AuthController {
-  /** Who does the API think I am? `permissions` lets the UI hide actions (the API still enforces). */
+  /** Who does the API think I am? `tenants` feeds the tenant switcher; `permissions` lets the UI hide actions (the API still enforces). */
   @AnyAuthenticated()
   @Get('me')
-  me(
-    @CurrentUser() user: AuthUser,
-  ): Pick<AuthUser, 'userId' | 'tenantId' | 'roles'> & { permissions: Permission[] } {
+  me(@CurrentUser() user: AuthUser): Pick<AuthUser, 'userId' | 'tenantId' | 'roles'> & {
+    tenants: readonly string[];
+    permissions: Permission[];
+  } {
     return {
       userId: user.userId,
       tenantId: user.tenantId,
       roles: user.roles,
+      tenants: user.memberOf,
       permissions: permissionsOf(user.roles),
     };
   }

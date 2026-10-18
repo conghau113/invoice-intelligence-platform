@@ -4,7 +4,7 @@ import 'next-auth/jwt';
 declare module 'next-auth' {
   // Browser-visible session: deliberately has NO token fields.
   interface Session {
-    tenant?: string;
+    tenants: string[];
     roles: string[];
   }
 }
@@ -15,7 +15,7 @@ declare module 'next-auth/jwt' {
     refreshToken?: string;
     idToken?: string;
     expiresAt?: number;
-    tenant?: string;
+    tenants?: string[];
     roles?: string[];
   }
 }
