@@ -8,7 +8,7 @@ export function tenantsFromClaim(org: unknown): string[] {
   let aliases: string[] = [];
   if (Array.isArray(org)) aliases = org.filter((a): a is string => typeof a === 'string');
   else if (typeof org === 'object' && org !== null) aliases = Object.keys(org);
-  return [...new Set(aliases)].sort();
+  return [...new Set(aliases)].sort((a, b) => a.localeCompare(b, 'en'));
 }
 
 /** Cookie value if it is one of the user's tenants, else their first one (or undefined). */

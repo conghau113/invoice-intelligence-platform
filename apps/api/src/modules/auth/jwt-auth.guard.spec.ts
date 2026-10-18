@@ -227,7 +227,9 @@ describe('JwtAuthGuard (real jose verifier against a local JWKS server)', () => 
 
   it('a repeated X-Tenant header is not a valid alias -> 403', async () => {
     const token = await sign(keyA, { organization: ['acme', 'globex'] });
-    await get('/probe/tenant', token).set('X-Tenant', 'acme, globex'); // how Node presents a header sent twice.expect(403);
+    // 'acme, globex' is how Node presents a header that was sent twice.
+    const res = await get('/probe/tenant', token).set('X-Tenant', 'acme, globex').expect(403);
+    expect(res.body).toMatchObject({ code: 'TENANT_NOT_MEMBER' });
   });
 
   it('no tenant in the token -> 403; two tenants and no choice -> 403 TENANT_REQUIRED', async () => {

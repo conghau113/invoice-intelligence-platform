@@ -30,7 +30,7 @@ export async function mapClaimsToUser(
     throw new ForbiddenException('Token has no tenant');
   }
   // Sorted: Keycloak's order is not stable, and the UI falls back to the first tenant.
-  const memberOf = [...new Set(organization)].sort();
+  const memberOf = [...new Set(organization)].sort((a, b) => a.localeCompare(b, 'en'));
   let tenantAlias: string | undefined;
   if (requestedAlias === undefined) {
     if (memberOf.length > 1) {

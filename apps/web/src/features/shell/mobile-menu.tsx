@@ -1,27 +1,37 @@
 'use client';
 
 import { Menu } from 'lucide-react';
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { usePathname } from '@/i18n/navigation';
 
 /** Native <details> drawer that also closes after navigating and on Escape (focus back to the button). */
 export function MobileMenu({ label, children }: Readonly<{ label: string; children: ReactNode }>) {
   const ref = useRef<HTMLDetailsElement>(null);
+  const [open, setOpen] = useState(false);
   const pathname = usePathname();
+
   useEffect(() => {
     if (ref.current) ref.current.open = false;
   }, [pathname]);
+
+  // Escape is listened for on the document, and only while the drawer is open.
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape' || !ref.current) return;
+      ref.current.open = false;
+      ref.current.querySelector('summary')?.focus();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [open]);
+
   return (
     <details
       ref={ref}
       className="relative md:hidden"
       data-testid="mobile-menu"
-      onKeyDown={(e) => {
-        if (e.key === 'Escape' && ref.current?.open) {
-          ref.current.open = false;
-          ref.current.querySelector('summary')?.focus();
-        }
-      }}
+      onToggle={(e) => setOpen(e.currentTarget.open)}
     >
       <summary
         aria-label={label}
