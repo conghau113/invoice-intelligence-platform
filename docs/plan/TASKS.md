@@ -22,9 +22,9 @@
 
 ```text
 Mốc hiện tại: M1
-Task hiện tại: T1.4 (T0.0 đến T0.9, T1.1 đến T1.3 đã DONE)
+Task hiện tại: T1.5 (T0.0 đến T0.9, T1.1 đến T1.4 đã DONE)
 Chặn bởi: không
-Cập nhật: 2026-10-17
+Cập nhật: 2026-10-18
 ```
 
 
@@ -56,7 +56,7 @@ Cập nhật: 2026-10-17
 | T1.1  | Keycloak realm-as-code: organizations, roles, demo users                             | 3            | T0.6              | `DONE`     |             | Realm import OK (26.4): org UUID cố định, membership, secret qua biến. User nhiều tenant chỉ có claim khi xin `organization:*` (xem Phát sinh) |
 | T1.2  | API: xác thực JWT qua JWKS, CurrentUser, TenantContext                               | 3            | T1.1              | `DONE`     |             | Guard jose + JWKS, `/auth/me`; token thiếu/đa tenant → 403. Sửa realm: thêm scope `basic` (xem Phát sinh) |
 | T1.3  | DB: Drizzle, migrations, bảng lõi, Row-Level Security                                | 4            | T1.2              | `DONE`     |             | Agent: drizzle-kit + migration RLS tay (role `invoice_app`, FORCE, `app_current_tenant()`), `TenantDbService` + interceptor, tra tenant qua DB, readiness DB; `users.id` = Keycloak `sub`. 49 unit + 19 tích hợp (`test:int`, chạy tay); drill tắt RLS → đỏ. Sau code-review: sửa tra tenant (0002, bỏ SECURITY DEFINER vì hỏng với owner không phải superuser), shutdown hook, `db:*` không xoá `dist/`. DB/role tạm đã được Hậu xoá |
-| T1.4  | RBAC: ma trận quyền, @RequirePermission, test chính sách                             | 3            | T1.3              | `TODO`     |             |         |
+| T1.4  | RBAC: ma trận quyền, @RequirePermission, test chính sách                             | 3            | T1.3              | `DONE`       |             | Agent: `permissions.ts` (ma trận 3 role × 7 permission), `@RequirePermission`/`@AnyAuthenticated`, `PermissionsGuard` deny-by-default (route không khai báo → 403), Problem Details có `code`, `/auth/me` trả `permissions`. 81 test pass; drill đổi ma trận / bỏ guard → đỏ |
 | T1.5  | Web: đăng nhập Keycloak, session, refresh token, route bảo vệ                        | 3            | T1.1, T0.2        | `TODO`     |             |         |
 | T1.6  | i18n vi/en với next-intl + định dạng số/tiền/ngày theo locale                        | 3            | T0.2              | `TODO`     |             |         |
 | T1.6b | Design baseline với ui-ux-pro-max (màu, chữ, khoảng cách, trạng thái, accessibility) | 2.5          | T1.6              | `TODO`     |             |         |
@@ -272,3 +272,8 @@ Cập nhật: 2026-10-17
 | 2026-10-17 | T1.3 | Reviewer: interceptor gói `lastValueFrom(next.handle())` nên handler trả stream/SSE (Q&A có trích dẫn) chỉ phát giá trị cuối; `statement_timeout` 15 giây áp cho mọi transaction | T5.4/T6.x: handler stream mở transaction bằng `TenantDbService.run` thay vì dựa vào interceptor (hoặc thêm decorator bỏ qua); `SET LOCAL statement_timeout` theo từng `run` khi có việc dài |
 | 2026-10-17 | T1.3 | Reviewer: policy `users_insert WITH CHECK (true)` cho phép tenant A thăm dò sự tồn tại của một `sub` qua lỗi trùng khoá | T1.7: khi làm provisioning, ràng buộc `id` = user đang đăng nhập hoặc đưa việc tạo user sang đường có đặc quyền |
 | 2026-10-17 | T1.3 | Readiness dùng `Promise.race` nên `SELECT 1` không bị huỷ; số truy vấn chờ bị chặn bởi `connectionTimeoutMillis` 5 giây của pool và `statement_timeout` 15 giây | T7.x (observability): đo thử; nếu cần, probe dùng client riêng |
+| 2026-10-18 | T1.4 | API.md ghi `/me` (kèm tenants, roles, permissions) nhưng code là `/auth/me` và chưa trả danh sách tenant; `permissions` đã có | T1.7: chốt đường dẫn (đổi API.md hoặc thêm route `/me`) và thêm danh sách tenant khi làm chọn tenant |
+| 2026-10-18 | T1.4 | Ma trận trong `permissions.ts` và bảng ở SECURITY.md §3 được giữ đồng bộ bằng tay (test dùng bảng kỳ vọng viết riêng, không đọc SECURITY.md) | Cân nhắc script nhỏ so sánh hai nơi; reviewer kiểm tay mỗi khi đổi ma trận |
+| 2026-10-18 | T1.4 | Từ giờ mọi controller mới phải có `@RequirePermission`, `@AnyAuthenticated` hoặc `@Public`, nếu không mọi request 403 `FORBIDDEN_UNDECLARED` | M2+ (mọi endpoint nghiệp vụ), `/notifications` dùng `@AnyAuthenticated` |
+| 2026-10-18 | T1.4 | Guard `DEMO_READ_ONLY` (non-GET → 403 `DEMO_READ_ONLY`) chưa có; filter chỉ cho phép các `code` nằm trong whitelist `KNOWN_CODES` | M4 (ADR 0018): thêm code `DEMO_READ_ONLY` vào whitelist |
+| 2026-10-18 | T1.4 | Route quên khai báo chính sách chỉ bị phát hiện khi có request gọi tới (403 `FORBIDDEN_UNDECLARED`); chưa có kiểm tra lúc khởi động hay test duyệt toàn bộ route của `AppModule`. Reviewer còn nêu: metadata key là chuỗi trần, `KNOWN_CODES` khai báo riêng khỏi guard | T1.8 hoặc M2: test duyệt route (Nest `DiscoveryService`) buộc mọi handler có một trong ba decorator; gom mã lỗi thành hằng chung khi thêm `DEMO_READ_ONLY` (M4) |
