@@ -1,10 +1,13 @@
 import { redirect } from 'next/navigation';
+import { connection } from 'next/server';
 import { Button } from '@/components/ui/button';
 import { getSession } from '@/auth/session';
 
 // Minimal landing page for T1.5; the real shell/menu is T1.7.
 // TODO(T1.6): temporary hard-coded text; replace with next-intl keys in vi.json + en.json.
 export default async function DashboardPage() {
+  // Per-request page: never prerender at build time (CI has no auth env).
+  await connection();
   const session = await getSession();
   if (!session) redirect('/login');
   return (
