@@ -5,8 +5,8 @@ import vi from '../../messages/vi.json';
 
 describe('messages', () => {
   it('translate the same key differently per locale', () => {
-    const tv = createTranslator({ locale: 'vi', messages: vi, namespace: 'Dashboard' });
-    const te = createTranslator({ locale: 'en', messages: en, namespace: 'Dashboard' });
+    const tv = createTranslator({ locale: 'vi', messages: vi, namespace: 'Shell' });
+    const te = createTranslator({ locale: 'en', messages: en, namespace: 'Shell' });
     expect(tv('signOut')).toBe('Đăng xuất');
     expect(te('signOut')).toBe('Sign out');
   });

@@ -10,7 +10,9 @@
   },
   "Dashboard": {
     "title": "Dashboard",
-    "signOut": "Sign out"
+    "tenant": "Tenant",
+    "tenantId": "Tenant id",
+    "permissions": "Permissions"
   },
   "LanguageSwitcher": {
     "label": "Language",
@@ -75,5 +77,37 @@
     "a11y3": "Keyboard: Tab reaches every control and the focus ring is always visible.",
     "a11y4": "Status always has a word and an icon, never colour alone.",
     "a11y5": "Errors use role=alert; loading uses role=status."
+  },
+  "Shell": {
+    "appName": "Invoice Intelligence",
+    "skipToContent": "Skip to content",
+    "mainMenu": "Main menu",
+    "menu": "Open menu",
+    "tenantLabel": "Tenant",
+    "tenantSwitch": "Switch tenant",
+    "signOut": "Sign out",
+    "forbiddenTitle": "You cannot use this tenant",
+    "forbiddenHint": "Your account is not allowed to act for the selected tenant. Switch tenant or ask an administrator.",
+    "unavailableTitle": "Service unavailable",
+    "unavailableHint": "The server did not answer. Try again in a moment.",
+    "forbiddenRequired": "Your account belongs to several tenants and none is selected yet. Pick one in the header; if there is no list, sign out and sign in again.",
+    "forbiddenNotMember": "The selected tenant is not one of your tenants. Pick another one in the header, or sign out and in again if your access changed."
+  },
+  "Nav": {
+    "documents": "Documents",
+    "upload": "Upload",
+    "ask": "Ask",
+    "insights": "Insights",
+    "members": "Members"
+  },
+  "Role": {
+    "tenant_admin": "Administrator",
+    "accountant": "Accountant",
+    "viewer": "Viewer"
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "hint": "The address may be wrong, or the page does not exist yet.",
+    "home": "Back to the dashboard"
   }
 }

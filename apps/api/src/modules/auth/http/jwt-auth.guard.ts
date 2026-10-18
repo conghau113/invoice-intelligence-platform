@@ -39,7 +39,10 @@ export class JwtAuthGuard implements CanActivate {
       // Reason (expired, bad aud, bad signature...) is deliberately not exposed or logged.
       throw new UnauthorizedException();
     }
-    req.user = await mapClaimsToUser(claims, this.tenants); // may throw 403
+    // X-Tenant only selects among the tenants in the signed claim; mapClaimsToUser checks it.
+    const chosen = req.headers['x-tenant'];
+    const requestedAlias = typeof chosen === 'string' ? chosen : undefined;
+    req.user = await mapClaimsToUser(claims, this.tenants, requestedAlias); // may throw 403
     return true;
   }
 }

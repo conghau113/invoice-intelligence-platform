@@ -9,7 +9,12 @@ import {
 import type { Request, Response } from 'express';
 import { STATUS_CODES } from 'node:http';
 
-const KNOWN_CODES: ReadonlySet<string> = new Set(['FORBIDDEN_PERMISSION', 'FORBIDDEN_UNDECLARED']);
+const KNOWN_CODES: ReadonlySet<string> = new Set([
+  'FORBIDDEN_PERMISSION',
+  'FORBIDDEN_UNDECLARED',
+  'TENANT_REQUIRED',
+  'TENANT_NOT_MEMBER',
+]);
 
 /** RFC 9457 Problem Details body. */
 export interface ProblemDetails {

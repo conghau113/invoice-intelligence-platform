@@ -60,7 +60,13 @@ describe('TenantTransactionInterceptor', () => {
     // Stands in for JwtAuthGuard: authenticated requests carry req.user, @Public ones do not.
     app.use((req: AuthenticatedRequest, _res: unknown, next: () => void) => {
       if (!req.path.endsWith('/open')) {
-        req.user = { userId: 'u', tenantAlias: 'acme', tenantId: ACME, roles: [] };
+        req.user = {
+          userId: 'u',
+          tenantAlias: 'acme',
+          tenantId: ACME,
+          memberOf: ['acme'],
+          roles: [],
+        };
       }
       next();
     });

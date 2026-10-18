@@ -1,6 +1,7 @@
 import type { NextAuthOptions } from 'next-auth';
 import KeycloakProvider from 'next-auth/providers/keycloak';
 import { authEnv } from './env';
+import { tenantsFromClaim } from './tenant';
 
 interface AccessClaims {
   organization?: Record<string, unknown> | string[];
@@ -8,12 +9,6 @@ interface AccessClaims {
 }
 
 const KNOWN_ROLES = new Set(['tenant_admin', 'accountant', 'viewer']);
-
-// Keycloak 26 sends `organization` as an object keyed by alias (or a list of aliases).
-function firstAlias(org: AccessClaims['organization']): string | undefined {
-  if (!org) return undefined;
-  return Array.isArray(org) ? org[0] : Object.keys(org)[0];
-}
 
 function decodeClaims(accessToken: string): AccessClaims {
   // Decoding (not verifying) is fine here: the token just came from Keycloak over
@@ -33,8 +28,9 @@ export function buildAuthOptions(): NextAuthOptions {
         issuer: env.KEYCLOAK_ISSUER,
         clientId: env.KEYCLOAK_CLIENT_ID,
         clientSecret: env.KEYCLOAK_CLIENT_SECRET,
-        // organization: tenant claim (T1.2); multi-tenant users pass ?tenant= -> organization:<alias>
-        authorization: { params: { scope: 'openid organization' } },
+        // organization:* = every tenant the user belongs to; the UI picks one (cookie) and the API
+        // checks it against this signed claim (X-Tenant).
+        authorization: { params: { scope: 'openid organization:*' } },
         checks: ['pkce', 'state'],
       }),
     ],
@@ -48,7 +44,7 @@ export function buildAuthOptions(): NextAuthOptions {
             refreshToken: account.refresh_token,
             idToken: account.id_token,
             expiresAt: account.expires_at,
-            tenant: firstAlias(claims.organization),
+            tenants: tenantsFromClaim(claims.organization),
             roles: (claims.realm_access?.roles ?? []).filter((r) => KNOWN_ROLES.has(r)),
           };
         }
@@ -58,7 +54,7 @@ export function buildAuthOptions(): NextAuthOptions {
       },
       session({ session, token }) {
         // Never copy accessToken/refreshToken/idToken here: this object reaches the browser.
-        session.tenant = token.tenant;
+        session.tenants = token.tenants ?? [];
         session.roles = token.roles ?? [];
         return session;
       },

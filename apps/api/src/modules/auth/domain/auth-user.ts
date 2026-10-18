@@ -7,5 +7,7 @@ export interface AuthUser {
   /** Organization alias from the token (e.g. "acme"). */
   tenantAlias: string;
   tenantId: string;
+  /** Aliases of every tenant the token's organization claim lists: what the user may switch to. */
+  memberOf: readonly string[];
   roles: readonly Role[];
 }

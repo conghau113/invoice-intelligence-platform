@@ -15,7 +15,7 @@ export interface TenantContext {
   tenantAlias: string;
 }
 
-/** Tenant of the caller, taken from the verified token only; any tenant header is ignored. */
+/** Tenant of the caller, taken from the verified token; X-Tenant only selects among the token's own tenants. */
 export const CurrentTenant = createParamDecorator(
   (_: unknown, ctx: ExecutionContext): TenantContext => {
     const { tenantId, tenantAlias } = userOf(ctx);
