@@ -1,0 +1,131 @@
+/*
+ * Design tokens (T1.6b). Source of truth for colour; values come from the ui-ux-pro-max
+ * "Invoice & Billing Tool" palette, with text colours darkened until every pair in
+ * src/styles/contrast.test.ts passes WCAG AA (4.5:1 text, 3:1 UI). Rationale: docs/design/DESIGN_BASELINE.md.
+ * Names follow shadcn (--background, --primary, ...) so ui components work unchanged;
+ * the status groups (--success, --warning, --info, --neutral) are ours.
+ * Hex on purpose: contrast.test.ts parses these values.
+ */
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #1e3a5f;
+  --primary-foreground: #ffffff;
+  --secondary: #e8edf3;
+  --secondary-foreground: #0f172a;
+  --muted: #eef1f5;
+  --muted-foreground: #475569;
+  --accent: #dbeafe;
+  --accent-foreground: #1e3a8a;
+  --destructive: #b91c1c;
+  --destructive-foreground: #ffffff;
+  --border: #cbd5e1;
+  --input: #64748b;
+  --ring: #2563eb;
+
+  --success: #047857;
+  --success-soft: #d1fae5;
+  --success-soft-foreground: #064e3b;
+  --warning: #b45309;
+  --warning-soft: #fef3c7;
+  --warning-soft-foreground: #78350f;
+  --info: #1d4ed8;
+  --info-soft: #dbeafe;
+  --info-soft-foreground: #1e3a8a;
+  --danger-soft: #fee2e2;
+  --danger-soft-foreground: #7f1d1d;
+  --neutral-soft: #e2e8f0;
+  --neutral-soft-foreground: #1e293b;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f172a;
+  --sidebar-primary: #1e3a5f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e8edf3;
+  --sidebar-accent-foreground: #0f172a;
+  --sidebar-border: #cbd5e1;
+  --sidebar-ring: #2563eb;
+
+  --chart-1: #1e3a5f;
+  --chart-2: #2563eb;
+  --chart-3: #047857;
+  --chart-4: #b45309;
+  --chart-5: #64748b;
+
+  /* Shape and density. Spacing is Tailwind's own 4px grid (--spacing: 0.25rem); compact rows for tables. */
+  --radius: 0.5rem;
+  --row-height: 2.5rem;
+  --content-max: 80rem;
+}
+
+.dark {
+  --background: #0b1220;
+  --foreground: #e5e9f0;
+  --card: #111a2b;
+  --card-foreground: #e5e9f0;
+  --popover: #111a2b;
+  --popover-foreground: #e5e9f0;
+  --primary: #93b4e0;
+  --primary-foreground: #0b1220;
+  --secondary: #1b2740;
+  --secondary-foreground: #e5e9f0;
+  --muted: #162033;
+  --muted-foreground: #a3aebf;
+  --accent: #1e3a8a;
+  --accent-foreground: #dbeafe;
+  --destructive: #f87171;
+  --destructive-foreground: #0b1220;
+  --border: #33415a;
+  --input: #64748b;
+  --ring: #60a5fa;
+
+  --success: #34d399;
+  --success-soft: #064e3b;
+  --success-soft-foreground: #d1fae5;
+  --warning: #fbbf24;
+  --warning-soft: #78350f;
+  --warning-soft-foreground: #fef3c7;
+  --info: #60a5fa;
+  --info-soft: #1e3a8a;
+  --info-soft-foreground: #dbeafe;
+  --danger-soft: #7f1d1d;
+  --danger-soft-foreground: #fee2e2;
+  --neutral-soft: #263247;
+  --neutral-soft-foreground: #e2e8f0;
+
+  --sidebar: #0f1828;
+  --sidebar-foreground: #e5e9f0;
+  --sidebar-primary: #93b4e0;
+  --sidebar-primary-foreground: #0b1220;
+  --sidebar-accent: #1b2740;
+  --sidebar-accent-foreground: #e5e9f0;
+  --sidebar-border: #33415a;
+  --sidebar-ring: #60a5fa;
+
+  --chart-1: #93b4e0;
+  --chart-2: #60a5fa;
+  --chart-3: #34d399;
+  --chart-4: #fbbf24;
+  --chart-5: #94a3b8;
+}
+
+@theme inline {
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-success-soft-foreground: var(--success-soft-foreground);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-warning-soft-foreground: var(--warning-soft-foreground);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-info-soft-foreground: var(--info-soft-foreground);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-soft-foreground: var(--danger-soft-foreground);
+  --color-neutral-soft: var(--neutral-soft);
+  --color-neutral-soft-foreground: var(--neutral-soft-foreground);
+  --color-destructive-foreground: var(--destructive-foreground);
+}
