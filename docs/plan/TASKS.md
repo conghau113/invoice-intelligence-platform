@@ -22,7 +22,7 @@
 
 ```text
 Mốc hiện tại: M1
-Task hiện tại: T1.6 (T0.0 đến T0.9, T1.1 đến T1.5 đã DONE)
+Task hiện tại: T1.6b (T0.0 đến T0.9, T1.1 đến T1.6 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-10-18
 ```
@@ -58,7 +58,7 @@ Cập nhật: 2026-10-18
 | T1.3  | DB: Drizzle, migrations, bảng lõi, Row-Level Security                                | 4            | T1.2              | `DONE`     |             | Agent: drizzle-kit + migration RLS tay (role `invoice_app`, FORCE, `app_current_tenant()`), `TenantDbService` + interceptor, tra tenant qua DB, readiness DB; `users.id` = Keycloak `sub`. 49 unit + 19 tích hợp (`test:int`, chạy tay); drill tắt RLS → đỏ. Sau code-review: sửa tra tenant (0002, bỏ SECURITY DEFINER vì hỏng với owner không phải superuser), shutdown hook, `db:*` không xoá `dist/`. DB/role tạm đã được Hậu xoá |
 | T1.4  | RBAC: ma trận quyền, @RequirePermission, test chính sách                             | 3            | T1.3              | `DONE`       |             | Agent: `permissions.ts` (ma trận 3 role × 7 permission), `@RequirePermission`/`@AnyAuthenticated`, `PermissionsGuard` deny-by-default (route không khai báo → 403), Problem Details có `code`, `/auth/me` trả `permissions`. 81 test pass; drill đổi ma trận / bỏ guard → đỏ |
 | T1.5  | Web: đăng nhập Keycloak, session, refresh token, route bảo vệ                        | 3            | T1.1, T0.2        | `DONE`     |             | Agent: `next-auth` 4.24.15 (v5 còn beta), `proxy.ts` refresh + ghi lại cookie (RSC không set được cookie), single-flight chống race khi xoay refresh token, logout POST same-origin → end_session. 28 test web; kiểm với Keycloak thật: login/refresh/logout/SSO. Realm: `revokeRefreshToken` |
-| T1.6  | i18n vi/en với next-intl + định dạng số/tiền/ngày theo locale                        | 3            | T0.2              | `TODO`     |             |         |
+| T1.6  | i18n vi/en với next-intl + định dạng số/tiền/ngày theo locale                        | 3            | T0.2              | `DONE`     |             | Agent: `next-intl` 4.14.9 (MIT), `localePrefix: 'always'`, proxy ghép auth + intl (API không qua intl), `format.ts` tiền = số nguyên đơn vị nhỏ nhất, múi giờ cố định Asia/Ho_Chi_Minh. 78 test web; `check:i18n` thật; drill thiếu key → đỏ |
 | T1.6b | Design baseline với ui-ux-pro-max (màu, chữ, khoảng cách, trạng thái, accessibility) | 2.5          | T1.6              | `TODO`     |             |         |
 | T1.7  | App shell: layout, menu theo quyền, chuyển tenant                                    | 2.5          | T1.4, T1.5, T1.6b | `TODO`     |             |         |
 | T1.8  | Test: cách ly tenant (Testcontainers) + e2e đăng nhập (Playwright)                   | 3            | T1.7              | `TODO`     |             |         |
@@ -287,3 +287,6 @@ Cập nhật: 2026-10-18
 | 2026-10-18 | T1.5 | Cookie session ~4.7KB, next-auth tự chia 2 mảnh; proxy tự chia lại (`auth/cookie.ts`). Thêm claim/role vào token làm cookie to hơn (giới hạn trình duyệt ~4KB mỗi cookie) | Mọi task thêm claim vào token Keycloak |
 | 2026-10-18 | T1.5 | 5 biến web chưa có trong file mẫu env (hook chặn agent sửa) và `getAccessToken()` chưa có test/nơi dùng | Hậu thêm tay vào file mẫu env; T1.7 là người dùng đầu tiên của `getAccessToken()` |
 | 2026-10-18 | T1.5 | Code-review còn lại chưa sửa: `/api/auth/signout` mặc định của next-auth chỉ xoá cookie local, không kết thúc phiên Keycloak (UI không link tới nó); redirect của `proxy.ts` mất query string và trả 307 cho request không phải GET; `KEYCLOAK_ISSUER` dùng chung cho gọi server-to-server và redirect trình duyệt | Chặn `/api/auth/signout` + sửa redirect: T1.7/T1.8; tách issuer nội bộ/công khai: M8 |
+| 2026-10-18 | T1.6 | Trang 404 toàn cục (`/_not-found`) nằm ngoài `[locale]` nên chưa dịch; dịch cần `global-not-found` (thử nghiệm) hoặc `not-found.tsx` trong `[locale]` | T1.7 |
+| 2026-10-18 | T1.6 | Language switcher bỏ query string và chưa hỗ trợ route động (`[id]`); cần `params` khi có trang chi tiết | T2.6 |
+| 2026-10-18 | T1.6 | Test e2e (T1.8) phải dùng URL có tiền tố (`/vi/login`, `/en/dashboard`); không có chuỗi nào dùng plural thật (vi chỉ có `other`, en có `one`/`other`), thêm khi có chuỗi đếm đầu tiên | T1.8 |
