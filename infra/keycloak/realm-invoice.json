@@ -4,6 +4,9 @@
   "sslRequired": "external",
   "registrationAllowed": false,
   "organizationsEnabled": true,
+  "accessTokenLifespan": 300,
+  "revokeRefreshToken": true,
+  "refreshTokenMaxReuse": 0,
   "roles": {
     "realm": [
       { "name": "tenant_admin", "description": "Manages a tenant and its documents" },
