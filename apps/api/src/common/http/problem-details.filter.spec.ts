@@ -1,4 +1,10 @@
-import { ArgumentsHost, BadRequestException, Logger, NotFoundException } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  BadRequestException,
+  ForbiddenException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { ProblemDetailsFilter } from './problem-details.filter';
 
 function run(exception: unknown) {
@@ -46,6 +52,13 @@ describe('ProblemDetailsFilter', () => {
     const { body } = run(new BadRequestException(['a is required', 'b must be a number']));
     expect(body.status).toBe(400);
     expect(body.detail).toBe('a is required; b must be a number');
+  });
+
+  it('echoes only whitelisted error codes', () => {
+    const known = run(new ForbiddenException({ message: 'no', code: 'FORBIDDEN_PERMISSION' }));
+    expect(known.body.code).toBe('FORBIDDEN_PERMISSION');
+    const unknown = run(new ForbiddenException({ message: 'no', code: 'Nguyen Van A' }));
+    expect(unknown.body).not.toHaveProperty('code');
   });
 
   it('hides the message of unknown errors behind a generic 500 and logs only metadata', () => {

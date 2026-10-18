@@ -9,6 +9,8 @@ import {
 import type { Request, Response } from 'express';
 import { STATUS_CODES } from 'node:http';
 
+const KNOWN_CODES: ReadonlySet<string> = new Set(['FORBIDDEN_PERMISSION', 'FORBIDDEN_UNDECLARED']);
+
 /** RFC 9457 Problem Details body. */
 export interface ProblemDetails {
   type: string;
@@ -16,6 +18,8 @@ export interface ProblemDetails {
   status: number;
   detail: string;
   instance: string;
+  /** Stable machine-readable reason, only for codes set by our own guards. */
+  code?: string;
 }
 
 /**
@@ -50,8 +54,19 @@ export class ProblemDetailsFilter implements ExceptionFilter {
       detail: this.detailOf(exception, status),
       instance: req.path,
     };
+    const code = this.codeOf(exception);
+    if (code !== undefined) body.code = code;
 
     res.status(status).type('application/problem+json').json(body);
+  }
+
+  /** Only whitelisted codes are echoed, never a value derived from the request. */
+  private codeOf(exception: unknown): string | undefined {
+    if (!(exception instanceof HttpException)) return undefined;
+    const response = exception.getResponse();
+    if (typeof response !== 'object' || response === null) return undefined;
+    const code = (response as { code?: unknown }).code;
+    return typeof code === 'string' && KNOWN_CODES.has(code) ? code : undefined;
   }
 
   private detailOf(exception: unknown, status: number): string {

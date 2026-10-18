@@ -7,6 +7,14 @@ export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']),
   PORT: z.coerce.number().int().min(1).max(65535).default(3001),
   DEMO_READ_ONLY: booleanString.default(false),
+  // Exact `iss` the API accepts. Explicit because Keycloak derives it from the request host.
+  OIDC_ISSUER_URL: z.url(),
+  // Defaults to <issuer>/protocol/openid-connect/certs; set when the API reaches Keycloak by another host.
+  OIDC_JWKS_URL: z.url().optional(),
+  // Connection of the NON-owner role `invoice_app` (RLS applies to it). The owner URL used by
+  // migrations is read only by the db scripts, never by the API process.
+  DATABASE_URL: z.url(),
+  OIDC_AUDIENCE: z.string().min(1).default('api'),
 });
 
 export type Env = z.infer<typeof envSchema>;
