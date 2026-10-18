@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { getLocale, getTranslations } from 'next-intl/server';
-import { DataTable, type Column } from '@/components/common/data-table';
+import { DataTable } from '@/components/common/data-table';
 import { FormField } from '@/components/common/form-field';
 import { LanguageSwitcher } from '@/components/common/language-switcher';
 import { StatePanel } from '@/components/common/state-panel';
@@ -8,20 +8,21 @@ import { DOCUMENT_STATUSES, StatusBadge } from '@/components/common/status-badge
 import { ThemeToggle } from '@/components/common/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { formatDate, formatMoney } from '@/i18n/format';
+import { formatMoney } from '@/i18n/format';
 import { parseTheme, THEME_COOKIE } from '@/lib/theme';
-import { SAMPLE_INVOICES, SAMPLE_TAX_CODE, type SampleInvoice } from './sample-data';
+import { invoiceColumns } from './columns';
+import { SAMPLE_INVOICES, SAMPLE_TAX_CODE } from './sample-data';
 import { SPACING_STEPS, SWATCHES } from './swatches';
 
 function Section({
   id,
   title,
   children,
-}: {
+}: Readonly<{
   id: string;
   title: string;
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <section aria-labelledby={id} className="flex flex-col gap-3">
       <h2 id={id} className="text-lg font-semibold">
@@ -38,26 +39,17 @@ export async function Styleguide() {
   const locale = await getLocale();
   const theme = parseTheme((await cookies()).get(THEME_COOKIE)?.value);
 
-  const columns: Column<SampleInvoice>[] = [
-    {
-      key: 'number',
-      header: t('colNumber'),
-      cell: (r) => <span className="font-mono">{r.number}</span>,
+  const columns = invoiceColumns({
+    labels: {
+      number: t('colNumber'),
+      seller: t('colSeller'),
+      date: t('colDate'),
+      total: t('colTotal'),
+      status: t('colStatus'),
     },
-    { key: 'seller', header: t('colSeller'), cell: (r) => r.seller },
-    { key: 'date', header: t('colDate'), cell: (r) => formatDate(r.issuedAt, locale) },
-    {
-      key: 'total',
-      header: t('colTotal'),
-      numeric: true,
-      cell: (r) => formatMoney(r.totalVnd, 'VND', locale),
-    },
-    {
-      key: 'status',
-      header: t('colStatus'),
-      cell: (r) => <StatusBadge status={r.status} label={ts(r.status)} />,
-    },
-  ];
+    statusLabel: (status) => ts(status),
+    locale,
+  });
 
   return (
     <>

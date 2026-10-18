@@ -21,8 +21,9 @@ describe('StatusBadge', () => {
 
 describe('StatePanel', () => {
   it('announces loading politely, error assertively, empty not at all', () => {
+    // <output> carries the implicit ARIA role "status" (polite live region).
     expect(renderToStaticMarkup(<StatePanel kind="loading" title="Wait" />)).toMatch(
-      /role="status"[^>]*aria-busy="true"/,
+      /^<output[^>]*aria-busy="true"/,
     );
     expect(renderToStaticMarkup(<StatePanel kind="error" title="Boom" />)).toContain(
       'role="alert"',

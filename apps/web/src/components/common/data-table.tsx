@@ -24,12 +24,12 @@ export function DataTable<T>({
   columns,
   rows,
   rowKey,
-}: {
+}: Readonly<{
   caption: string;
   columns: Column<T>[];
   rows: T[];
   rowKey: (row: T) => string;
-}) {
+}>) {
   return (
     <Table>
       <TableCaption className="sr-only">{caption}</TableCaption>

@@ -10,19 +10,15 @@ type Props = {
 };
 
 /** One look for the three non-happy states. Strings are translated by the caller. */
-export function StatePanel({ kind, title, description, action }: Props) {
+export function StatePanel({ kind, title, description, action }: Readonly<Props>) {
   if (kind === 'loading') {
     return (
-      <div
-        role="status"
-        aria-busy="true"
-        className="flex flex-col gap-2 rounded-lg border bg-card p-4"
-      >
+      <output aria-busy="true" className="flex flex-col gap-2 rounded-lg border bg-card p-4">
         <span className="sr-only">{title}</span>
         <Skeleton className="h-4 w-1/3" />
         <Skeleton className="h-4 w-full" />
         <Skeleton className="h-4 w-5/6" />
-      </div>
+      </output>
     );
   }
   const Icon = kind === 'error' ? CircleAlert : Inbox;

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { nextTheme, themeCookie, type Theme } from '@/lib/theme';
 
 /** `initial` comes from the cookie the server already used for <html class>. */
-export function ThemeToggle({ initial }: { initial: Theme }) {
+export function ThemeToggle({ initial }: Readonly<{ initial: Theme }>) {
   const t = useTranslations('Theme');
   const [theme, setTheme] = useState<Theme>(initial);
   const toggle = () => {

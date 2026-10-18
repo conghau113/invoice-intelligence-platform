@@ -18,13 +18,13 @@ export function FormField({
   error,
   required,
   children,
-}: {
+}: Readonly<{
   label: string;
   hint?: string;
   error?: string;
   required?: boolean;
   children: (control: ControlProps) => ReactNode;
-}) {
+}>) {
   const id = useId();
   const describedBy = [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(' ');
   return (

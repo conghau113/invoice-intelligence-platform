@@ -31,7 +31,10 @@ export const STATUS_STYLE: Record<
 };
 
 /** `label` is already translated by the caller (keys: `Status.<status>`). */
-export function StatusBadge({ status, label }: { status: DocumentStatus; label: string }) {
+export function StatusBadge({
+  status,
+  label,
+}: Readonly<{ status: DocumentStatus; label: string }>) {
   const { tone, Icon } = STATUS_STYLE[status];
   return (
     <Badge tone={tone} data-status={status}>
