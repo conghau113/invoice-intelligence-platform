@@ -94,7 +94,7 @@ describe('proxy', () => {
     const chunks = res.cookies.getAll().filter((c) => c.name.startsWith(`${NAME}.`));
     expect(chunks.length).toBeGreaterThan(1);
     const forwarded = chunks.map((c) => `${c.name}=${c.value}`).join('; ');
-    expect(res.headers.get('x-middleware-request-cookie') === forwarded).toBe(true);
+    expect(res.headers.get('x-middleware-request-cookie')).toBe(forwarded);
   });
 
   it('sends the user to /login and clears the cookie when Keycloak rejects the refresh token', async () => {

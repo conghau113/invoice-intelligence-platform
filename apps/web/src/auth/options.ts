@@ -7,7 +7,13 @@ interface AccessClaims {
   realm_access?: { roles?: string[] };
 }
 
-const KNOWN_ROLES = ['tenant_admin', 'accountant', 'viewer'];
+const KNOWN_ROLES = new Set(['tenant_admin', 'accountant', 'viewer']);
+
+// Keycloak 26 sends `organization` as an object keyed by alias (or a list of aliases).
+function firstAlias(org: AccessClaims['organization']): string | undefined {
+  if (!org) return undefined;
+  return Array.isArray(org) ? org[0] : Object.keys(org)[0];
+}
 
 function decodeClaims(accessToken: string): AccessClaims {
   // Decoding (not verifying) is fine here: the token just came from Keycloak over
@@ -33,26 +39,24 @@ export function buildAuthOptions(): NextAuthOptions {
       }),
     ],
     callbacks: {
-      async jwt({ token, account }) {
+      jwt({ token, account }) {
         if (account?.access_token) {
           const claims = decodeClaims(account.access_token);
-          const org = claims.organization;
-          const alias = Array.isArray(org) ? org[0] : org ? Object.keys(org)[0] : undefined;
           return {
             ...token,
             accessToken: account.access_token,
             refreshToken: account.refresh_token,
             idToken: account.id_token,
             expiresAt: account.expires_at,
-            tenant: alias,
-            roles: (claims.realm_access?.roles ?? []).filter((r) => KNOWN_ROLES.includes(r)),
+            tenant: firstAlias(claims.organization),
+            roles: (claims.realm_access?.roles ?? []).filter((r) => KNOWN_ROLES.has(r)),
           };
         }
         // No refresh here: a callback running in a Server Component cannot store a rotated
         // refresh token (cookies are read-only there). Refresh happens in proxy.ts only.
         return token;
       },
-      async session({ session, token }) {
+      session({ session, token }) {
         // Never copy accessToken/refreshToken/idToken here: this object reaches the browser.
         session.tenant = token.tenant;
         session.roles = token.roles ?? [];
