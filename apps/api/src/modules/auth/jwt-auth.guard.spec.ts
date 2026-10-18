@@ -175,9 +175,20 @@ describe('JwtAuthGuard (real jose verifier against a local JWKS server)', () => 
     await get('/auth/me', hs).expect(401);
   });
 
-  it('valid token -> 200 with userId, tenantId and roles', async () => {
+  it('valid token -> 200 with userId, tenantId, roles and permissions', async () => {
     const res = await get('/auth/me', await sign(keyA)).expect(200);
-    expect(res.body).toEqual({ userId: USER_ID, tenantId: ACME_ID, roles: ['accountant'] });
+    expect(res.body).toEqual({
+      userId: USER_ID,
+      tenantId: ACME_ID,
+      roles: ['accountant'],
+      permissions: [
+        'document:read',
+        'document:create',
+        'document:approve',
+        'qa:ask',
+        'insights:read',
+      ],
+    });
   });
 
   it('@Public route needs no token', async () => {

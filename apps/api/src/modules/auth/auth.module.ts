@@ -8,6 +8,7 @@ import { PgTenantDirectory } from './infra/pg-tenant-directory';
 import { JoseTokenVerifier } from './infra/jose-token-verifier';
 import { AuthController } from './http/auth.controller';
 import { JwtAuthGuard } from './http/jwt-auth.guard';
+import { PermissionsGuard } from './http/permissions.guard';
 
 @Module({
   controllers: [AuthController],
@@ -27,7 +28,9 @@ import { JwtAuthGuard } from './http/jwt-auth.guard';
       },
     },
     { provide: TENANT_DIRECTORY, useClass: PgTenantDirectory },
+    // Order matters: authenticate first, then authorize.
     { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: PermissionsGuard },
   ],
 })
 export class AuthModule {}
