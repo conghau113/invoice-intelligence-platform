@@ -11,3 +11,7 @@ allowBuilds:
   esbuild: false
   # @swc/core (via next-intl's optional message extractor) ships its binary as a platform optional dependency; its install script is only a fallback.
   '@swc/core': false
+  # testcontainers' ssh2 and cpu-features only compile optional native speed-ups (pure-JS fallback exists); protobufjs's script only reads a version.
+  cpu-features: false
+  ssh2: false
+  protobufjs: false

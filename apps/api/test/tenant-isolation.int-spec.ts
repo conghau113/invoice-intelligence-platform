@@ -1,14 +1,15 @@
 /**
  * Row-Level Security against a REAL Postgres, connecting as the real app role.
- * Precondition: `pnpm infra:up`, then `db:migrate` and `db:seed` (see apps/api/.env.example).
- * Missing configuration FAILS the run on purpose; a skipped isolation test would look green.
- * Fixtures are inserted by the owner with fixed ids and removed again afterwards.
+ * The database is started by support/postgres.global-setup.ts (Testcontainers, real migrations
+ * and seed). Missing configuration FAILS the run on purpose; a skipped isolation test would look
+ * green. Fixtures are inserted by the owner with fixed ids and removed again afterwards.
  */
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool, type PoolClient } from 'pg';
 import { sql } from 'drizzle-orm';
 import { TenantDbService } from '../src/db/tenant-db.service';
 import * as schema from '../src/db/schema';
+import { tablesWithoutRls } from './support/rls';
 
 const ACME = '00000000-0000-4000-8000-0000000000a1';
 const GLOBEX = '00000000-0000-4000-8000-0000000000a2';
@@ -19,7 +20,9 @@ const NEW_USER = '00000000-0000-4000-8000-00000000f003';
 function requireVar(name: string): string {
   const value = process.env[name];
   if (value === undefined || value === '') {
-    throw new Error(`Set ${name} (see apps/api/.env.example) and run db:migrate + db:seed first`);
+    throw new Error(
+      `${name} is not set: run "pnpm --filter api test:int" (jest.int.config.js starts the database)`,
+    );
   }
   return value;
 }
@@ -103,15 +106,25 @@ describe('tenant isolation in Postgres (RLS)', () => {
     });
   });
 
-  it('every table in public has RLS enabled, forced and at least one policy', async () => {
-    const { rows } = await owner.query(
-      `SELECT c.relname
-         FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-        WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p')
-          AND NOT (c.relrowsecurity AND c.relforcerowsecurity
-                   AND EXISTS (SELECT 1 FROM pg_policy p WHERE p.polrelid = c.oid))`,
-    );
-    expect(rows).toEqual([]); // names every offending table
+  describe('the RLS gate itself', () => {
+    it('every table in public has RLS enabled, forced and at least one policy', async () => {
+      expect(await tablesWithoutRls(owner)).toEqual([]); // names every offending table
+    });
+
+    it('reports a table that has none (negative control, rolled back)', async () => {
+      // One connection (max 1), so the uncommitted tables are visible to the helper's query.
+      const single = new Pool({ connectionString: requireVar('DATABASE_OWNER_URL'), max: 1 });
+      try {
+        await single.query('BEGIN');
+        await single.query('CREATE TABLE forgotten_table (id int)');
+        await single.query('CREATE TABLE half_done (id int)');
+        await single.query('ALTER TABLE half_done ENABLE ROW LEVEL SECURITY');
+        expect(await tablesWithoutRls(single)).toEqual(['forgotten_table', 'half_done']);
+      } finally {
+        await single.query('ROLLBACK');
+        await single.end();
+      }
+    });
   });
 
   describe('without app.tenant_id: zero rows, never an error', () => {
@@ -146,6 +159,27 @@ describe('tenant isolation in Postgres (RLS)', () => {
         ]);
         expect(m.rows).toEqual([{ user_id: ACME_USER }]);
       });
+    });
+
+    it('SELECT * with no WHERE returns only the own rows, for each tenant', async () => {
+      for (const [tenant, expected] of [
+        [ACME, 'int-test.acme'],
+        [GLOBEX, 'int-test.globex'],
+      ] as const) {
+        await asTenant(tenant, async (c) => {
+          const { rows } = await c.query(
+            `SELECT action FROM audit_logs WHERE action LIKE 'int-test.%'`,
+          );
+          expect(rows).toEqual([{ action: expected }]);
+          const all = await c.query('SELECT DISTINCT tenant_id FROM audit_logs');
+          expect(all.rows).toEqual([{ tenant_id: tenant }]);
+        });
+      }
+      // The owner proves both tenants' rows exist, so the filtering above is RLS and not emptiness.
+      const { rows } = await owner.query(
+        `SELECT count(DISTINCT tenant_id)::int AS n FROM audit_logs WHERE action LIKE 'int-test.%'`,
+      );
+      expect(rows[0].n).toBe(2);
     });
 
     it('cannot write rows for another tenant (WITH CHECK)', async () => {

@@ -21,10 +21,10 @@
 ## Điểm dừng hiện tại
 
 ```text
-Mốc hiện tại: M1
-Task hiện tại: T1.8 (T0.0 đến T0.9, T1.1 đến T1.7 đã DONE)
+Mốc hiện tại: M1 (còn kiểm tra cuối mốc) → M2
+Task hiện tại: T2.1 (T0.0 đến T0.9, T1.1 đến T1.8 đã DONE)
 Chặn bởi: không
-Cập nhật: 2026-10-18
+Cập nhật: 2026-10-19
 ```
 
 
@@ -61,7 +61,7 @@ Cập nhật: 2026-10-18
 | T1.6  | i18n vi/en với next-intl + định dạng số/tiền/ngày theo locale                        | 3            | T0.2              | `DONE`     |             | Agent: `next-intl` 4.14.9 (MIT), `localePrefix: 'always'`, proxy ghép auth + intl (API không qua intl), `format.ts` tiền = số nguyên đơn vị nhỏ nhất, múi giờ cố định Asia/Ho_Chi_Minh. 78 test web; `check:i18n` thật; drill thiếu key → đỏ |
 | T1.6b | Design baseline với ui-ux-pro-max (màu, chữ, khoảng cách, trạng thái, accessibility) | 2.5          | T1.6              | `DONE`     |             | Agent: palette "Invoice & Billing Tool" + IBM Plex Sans/Mono, `tokens.css` (sáng/tối, cookie `theme`), 57 test tương phản (bắt được `--input` 2,5:1 và sửa), mẫu chung + `/[locale]/styleguide`. Lighthouse a11y 100 ×4 (vi/en × sáng/tối). `search.py` đã chạy (Hậu và agent, cùng kết quả); generator đề xuất Dark OLED + Fira (Fira Code không có subset tiếng Việt), giữ lựa chọn từ hàng CSV #105/#31, đối chiếu ở DESIGN_BASELINE.md |
 | T1.7  | App shell: layout, menu theo quyền, chuyển tenant                                    | 2.5          | T1.4, T1.5, T1.6b | `DONE`     |             | Agent: `X-Tenant` chọn tenant trong claim `organization:*` (đổi T1.2, xem Phát sinh), `/auth/me` trả `tenants`, shell sidebar/header + menu theo permission từ API, cookie `tenant` qua `POST /api/tenant`, 404 đã dịch. 90 test api + 183 web; kiểm Keycloak thật |
-| T1.8  | Test: cách ly tenant (Testcontainers) + e2e đăng nhập (Playwright)                   | 3            | T1.7              | `TODO`     |             |         |
+| T1.8  | Test: cách ly tenant (Testcontainers) + e2e đăng nhập (Playwright)                   | 3            | T1.7              | `DONE`     |             | Agent: `test:int` dùng Testcontainers (22 test, migration thật từ số 0, drill tắt RLS → đỏ); Playwright 12 test (10 bước `ui-smoke` + đăng nhập acme/globex + cookie tenant giả), job CI `integration` và `e2e`. Job CI chưa chạy thật (cần push) |
 
 
 
@@ -308,3 +308,7 @@ Cập nhật: 2026-10-18
 | 2026-10-18 | T1.7 | Dev server web chạy từ trước khi đổi code đăng nhập vẫn báo `TENANT_REQUIRED` dù phiên có đủ tenant; tắt và chạy lại thì hết (bản build riêng với phiên giống hệt chạy đúng). Nguyên nhân chưa chứng minh được, nghi dev server giữ trạng thái cũ hoặc bị `next build` ghi đè `.next` | Khi đổi code `src/auth/`: khởi động lại web dev và đăng nhập lại; không `build` khi dev đang chạy. Nếu gặp lại, dùng dòng chi tiết `X-Tenant` trong bảng lỗi để chẩn đoán |
 | 2026-10-19 | T1.7 | Đã thêm `pnpm dev:api` (`scripts/dev-api.mjs`, có test) nạp biến dev cho API; mật khẩu DB lấy từ `APP_DB_PASSWORD` trong shell, không ghi trong code (SonarCloud S6698 chặn bản đầu có mật khẩu cứng); chạy thật phát hiện pnpm 12 qua corepack là file thực thi gốc (không phải JS) nên script chạy thẳng `npm_execpath` khi không phải `.js`/`.cjs`. Web và hạ tầng vẫn là hai lệnh riêng (`pnpm --filter web dev`, `pnpm infra:up`) | M8: runbook dev có thể gom thêm; CLAUDE.md mục "Dev" chưa nhắc `dev:api` (Hậu quyết định có sửa không) |
 | 2026-10-19 | T1.7 | Đăng nhập Keycloak với email có khoảng trắng ở cuối bị từ chối (Keycloak so khớp tên đăng nhập nguyên văn) | T1.8 hoặc M8: nếu cần thì cấu hình realm cắt khoảng trắng (`realm-invoice.json`); chưa quyết định |
+| 2026-10-19 | T1.8 | `tweetnacl` (Unlicense, qua `ssh2` của `testcontainers`, dev-only) không nằm trong allow-list LEGAL.md; `memfs`/`fs-monkey` (Unlicense), BlueOak, CC-BY-4.0, 0BSD đã có từ trước. Đã đặt `allowBuilds: false` cho `ssh2`, `cpu-features`, `protobufjs` (chỉ là bản biên dịch tăng tốc tuỳ chọn) | T7.4 quyết định allow-list (thêm Unlicense/0BSD/BlueOak hay loại); Hậu đã duyệt giữ `testcontainers` (2026-10-19), mục review đã ghi trong LEGAL.md |
+| 2026-10-19 | T1.8 | `check:full` mới thêm `test:int` (chỉ cần Docker); `test:e2e` KHÔNG vào vì cần Keycloak + API + web đang chạy. Test duyệt route (Phát sinh T1.4) chưa làm | M2: test duyệt route khi có thêm controller; e2e trong `check:full` nếu muốn có script dựng cả stack |
+| 2026-10-19 | T1.8 | E2E chỉ ghi lại hành vi auth hiện tại, không sửa: cookie `tenant` còn sau đăng xuất, `/api/auth/signout`, `proxy.ts` mất query, email có khoảng trắng. Đóng menu mobile sau khi bấm mục chưa kiểm được vì các mục trỏ tới 404 không có shell | Task auth nhỏ trước M2 (Hậu quyết); đóng-sau-điều-hướng: M2 khi có trang thật |
+| 2026-10-19 | T1.8 | Testcontainers trên WSL2: lần đầu Ryuk (reaper) từng báo "Failed to connect to Reaper" khi còn container ryuk cũ; xoá `testcontainers-ryuk-*` rồi chạy lại thì ổn. E2E phải chờ `networkidle` sau đăng nhập (client component chưa hydrate thì bấm không có tác dụng) | Nếu lặp lại: `docker rm -f` container ryuk cũ |
