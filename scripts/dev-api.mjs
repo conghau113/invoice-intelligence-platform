@@ -1,13 +1,13 @@
-// Starts the API for local development. The API reads no dotfile (ignoreEnvFile), so the three
-// variables it needs are put in its process environment here. Values already set in your shell win.
-// These are the local dev values from docs/setup/DEMO_ACCOUNTS.md, not secrets.
+// Starts the API for local development. The API reads no dotfile (ignoreEnvFile), so the variables
+// it needs are put in its process environment here. Values already set in your shell win.
+// No password lives in this file: the database password comes from APP_DB_PASSWORD (the same
+// variable db:migrate uses), exported once in your shell profile.
 import { spawn } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
 export const DEV_DEFAULTS = {
   NODE_ENV: 'development',
   OIDC_ISSUER_URL: 'http://localhost:8080/realms/invoice',
-  DATABASE_URL: 'postgres://invoice_app:invoice-app-dev-only@localhost:5433/invoice',
 };
 
 /** Environment for the API: dev defaults under whatever the caller already set. */
@@ -17,6 +17,13 @@ export function devApiEnv(env) {
   }
   const merged = { ...env };
   for (const [name, value] of Object.entries(DEV_DEFAULTS)) merged[name] ??= value;
+  if (merged.DATABASE_URL === undefined) {
+    if (!merged.APP_DB_PASSWORD) {
+      throw new Error('Set DATABASE_URL, or APP_DB_PASSWORD (password of the invoice_app role)');
+    }
+    const password = encodeURIComponent(merged.APP_DB_PASSWORD);
+    merged.DATABASE_URL = `postgres://invoice_app:${password}@localhost:5433/invoice`;
+  }
   return merged;
 }
 
@@ -35,8 +42,15 @@ function main() {
     process.exit(1);
   }
   const { command, args } = pnpmCommand(execPath);
+  let env;
+  try {
+    env = devApiEnv(process.env);
+  } catch (err) {
+    console.error(err.message);
+    process.exit(1);
+  }
   const child = spawn(command, [...args, '--filter', 'api', 'start:dev'], {
-    env: devApiEnv(process.env),
+    env,
     stdio: 'inherit',
   });
   child.on('exit', (code, signal) => process.exit(code ?? (signal ? 1 : 0)));

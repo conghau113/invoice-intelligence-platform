@@ -4,23 +4,35 @@ import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { DEV_DEFAULTS, devApiEnv, pnpmCommand } from './dev-api.mjs';
 
-test('dev-api: fills in the three variables the API needs', () => {
-  const env = devApiEnv({ PATH: '/bin' });
-  assert.deepEqual(
-    Object.keys(DEV_DEFAULTS).map((k) => env[k]),
-    Object.values(DEV_DEFAULTS),
-  );
+test('dev-api: fills in the variables the API needs, building the database URL from the password', () => {
+  const env = devApiEnv({ PATH: '/bin', APP_DB_PASSWORD: 'p@ss/word' });
+  assert.equal(env.NODE_ENV, DEV_DEFAULTS.NODE_ENV);
+  assert.equal(env.OIDC_ISSUER_URL, DEV_DEFAULTS.OIDC_ISSUER_URL);
+  assert.equal(env.DATABASE_URL, 'postgres://invoice_app:p%40ss%2Fword@localhost:5433/invoice');
   assert.equal(env.PATH, '/bin');
 });
 
 test('dev-api: values already set in the shell win', () => {
-  const env = devApiEnv({ DATABASE_URL: 'postgres://other', NODE_ENV: 'development' });
+  const env = devApiEnv({
+    DATABASE_URL: 'postgres://other',
+    APP_DB_PASSWORD: 'ignored',
+    OIDC_ISSUER_URL: 'http://idp/realms/x',
+    NODE_ENV: 'development',
+  });
   assert.equal(env.DATABASE_URL, 'postgres://other');
-  assert.equal(env.OIDC_ISSUER_URL, DEV_DEFAULTS.OIDC_ISSUER_URL);
+  assert.equal(env.OIDC_ISSUER_URL, 'http://idp/realms/x');
+});
+
+test('dev-api: without DATABASE_URL or a password it says what to set', () => {
+  assert.throws(() => devApiEnv({}), /DATABASE_URL, or APP_DB_PASSWORD/);
+  assert.throws(() => devApiEnv({ APP_DB_PASSWORD: '' }), /APP_DB_PASSWORD/);
 });
 
 test('dev-api: refuses to run with a non-development NODE_ENV', () => {
-  assert.throws(() => devApiEnv({ NODE_ENV: 'production' }), /local development only/);
+  assert.throws(
+    () => devApiEnv({ NODE_ENV: 'production', APP_DB_PASSWORD: 'x' }),
+    /local development only/,
+  );
 });
 
 test('dev-api: started outside pnpm it explains itself and exits 1', () => {
