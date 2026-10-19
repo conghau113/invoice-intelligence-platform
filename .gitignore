@@ -16,3 +16,7 @@ next-env.d.ts
 data/*
 !data/.gitkeep
 dist-scripts/
+
+# Playwright
+playwright-report/
+test-results/

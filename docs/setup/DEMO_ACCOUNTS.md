@@ -52,6 +52,15 @@ curl localhost:3001/health/ready   # {"status":"ok","checks":{"database":"ok"}}
 3. Design baseline: http://localhost:3000/vi/styleguide and `/en/styleguide` (light/dark toggle, language switcher).
 4. API check with a token (dev client `dev-cli`, password grant, dev only): `GET http://localhost:3001/auth/me` returns the user, tenant and permissions.
 
+## Run the automated tests (T1.8)
+
+```bash
+pnpm test:int   # Postgres in a throw-away container (Docker needed): row-level security from the real migrations
+pnpm test:e2e   # Playwright; needs pnpm infra:up, pnpm dev:api and pnpm --filter web dev already running
+```
+
+Before the first `pnpm test:e2e` install the browser once: `pnpm --filter web exec playwright install chromium`. The e2e run stops with one message listing whichever of Keycloak, API or web is down. CI runs both (`integration` and `e2e` jobs).
+
 ## Try these
 
 - `viewer@globex.example` calls an approve endpoint: API answers 403 (`FORBIDDEN`), enforced in the backend.

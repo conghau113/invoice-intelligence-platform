@@ -24,6 +24,7 @@
 | Component | Licence | Notes |
 |---|---|---|
 | ui-ux-pro-max skill | MIT, © 2024 Next Level Builder | Installed once under `.claude/skills/`; LICENSE file kept |
+| tweetnacl (Unlicense) | Public-domain-equivalent; transitive dev-only dependency of `testcontainers` (via `ssh2`), used by `pnpm test:int`, never shipped | Reviewed 2026-10-19 (T1.8), kept with Hậu's approval. `testcontainers` and `@testcontainers/postgresql` are MIT; `ssh2`, `cpu-features` and `protobufjs` install scripts are disabled (`pnpm-workspace.yaml`). The other non-allow-list licences already in the tree (Unlicense: memfs, fs-monkey; BlueOak; CC-BY-4.0; 0BSD) are for T7.4 to decide |
 | Keycloak | Apache-2.0 | Run as container image |
 | PostgreSQL | PostgreSQL License | |
 | pgvector | PostgreSQL License | |
