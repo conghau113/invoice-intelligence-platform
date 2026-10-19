@@ -38,13 +38,10 @@ pnpm --filter api start:dev       # :3001
 pnpm --filter web dev             # :3000
 ```
 
-The API reads **no dotfile** (`ignoreEnvFile: true`), so start it with its variables in the process environment, in its own terminal. These are the local dev values, not secrets:
+The API reads **no dotfile** (`ignoreEnvFile: true`), so its variables must be in the process environment. `pnpm dev:api` (`scripts/dev-api.mjs`) sets `NODE_ENV` and `OIDC_ISSUER_URL` and builds `DATABASE_URL` from the password of the `invoice_app` role, which it reads from `APP_DB_PASSWORD` (no password is stored in the repo). Export it once in your shell profile (`~/.bashrc`), using the value you gave the role in your own env file, then open a new terminal. Anything you already export (`DATABASE_URL`, `OIDC_ISSUER_URL`) wins. Run it in its own terminal:
 
 ```bash
-NODE_ENV=development \
-OIDC_ISSUER_URL=http://localhost:8080/realms/invoice \
-DATABASE_URL=postgres://invoice_app:invoice-app-dev-only@localhost:5433/invoice \
-pnpm --filter api start:dev
+pnpm dev:api
 curl localhost:3001/health/ready   # {"status":"ok","checks":{"database":"ok"}}
 ```
 
