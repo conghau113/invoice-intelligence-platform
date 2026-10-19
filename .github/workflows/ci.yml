@@ -123,7 +123,6 @@ jobs:
   e2e:
     runs-on: ubuntu-24.04
     env:
-      APP_DB_PASSWORD: ci-app-role-password
       E2E_START_SERVERS: '1'
       OIDC_ISSUER_URL: http://localhost:8080/realms/invoice
       NEXTAUTH_URL: http://localhost:3000
@@ -140,22 +139,31 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # Random per run and masked: nothing password-shaped lives in this file.
+      - name: Throw-away database passwords
+        run: |
+          for name in POSTGRES_PASSWORD APP_DB_PASSWORD; do
+            value=$(openssl rand -hex 16)
+            echo "::add-mask::$value"
+            echo "$name=$value" >> "$GITHUB_ENV"
+          done
       # Redis is not used by the app yet.
       - name: Start Postgres and Keycloak
         run: docker compose up -d --wait postgres keycloak
       - name: Migrate and seed
-        run: pnpm --filter api db:migrate && pnpm --filter api db:seed
-        env:
-          DATABASE_OWNER_URL: postgres://invoice:invoice-dev-only@localhost:5433/invoice
+        run: |
+          export DATABASE_OWNER_URL="postgres://invoice:${POSTGRES_PASSWORD}@localhost:5433/invoice"
+          pnpm --filter api db:migrate && pnpm --filter api db:seed
       - name: Build api and web
         run: pnpm turbo run build --filter=api --filter=web
       - name: Install Chromium
         run: pnpm --filter web exec playwright install --with-deps chromium
       - name: Playwright
-        run: pnpm test:e2e
+        run: |
+          export DATABASE_URL="postgres://invoice_app:${APP_DB_PASSWORD}@localhost:5433/invoice"
+          pnpm test:e2e
         env:
           NODE_ENV: production # install is done; the API refuses to start without it
-          DATABASE_URL: postgres://invoice_app:ci-app-role-password@localhost:5433/invoice
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

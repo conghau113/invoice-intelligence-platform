@@ -21,9 +21,11 @@ export default async function globalSetup(): Promise<void> {
     ['API', `${API}/health/ready`, 'pnpm dev:api'],
     ['Web', `${WEB}/api/health`, 'pnpm --filter web dev'],
   ];
-  const down: string[] = [];
-  for (const [name, url, fix] of checks) {
-    if (!(await reachable(url))) down.push(`${name} (${url}) is not reachable: run \`${fix}\``);
-  }
+  const results = await Promise.all(
+    checks.map(async ([name, url, fix]) =>
+      (await reachable(url)) ? null : `${name} (${url}) is not reachable: run \`${fix}\``,
+    ),
+  );
+  const down = results.filter((r): r is string => r !== null);
   if (down.length > 0) throw new Error(`E2E prerequisites missing:\n- ${down.join('\n- ')}`);
 }
