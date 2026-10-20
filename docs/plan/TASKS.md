@@ -22,7 +22,7 @@
 
 ```text
 Mốc hiện tại: M1 (còn kiểm tra cuối mốc) → M2
-Task hiện tại: T2.2 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đã DONE)
+Task hiện tại: T2.3 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.2 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-10-20
 ```
@@ -72,7 +72,7 @@ Cập nhật: 2026-10-20
 | ID    | Task                                                                        | Ước tính (h) | Phụ thuộc        | Trạng thái | Thực tế (h) | Ghi chú |
 | ----- | --------------------------------------------------------------------------- | ------------ | ---------------- | ---------- | ----------- | ------- |
 | T2.1  | StoragePort + adapter filesystem local; upload qua API có kiểm tra file     | 3            | T1.8             | `DONE`     |             | Agent: `StoragePort` + `LocalFs` (khoá từng segment + kiểm resolve, ghi `.part` rồi rename), multer engine tự viết sniff magic bytes trước khi ghi, 415/413; `DATA_DIR` bắt buộc, tuyệt đối. 134 test api; drill bỏ kiểm traversal → 9 test đỏ |
-| T2.2  | Bảng documents + máy trạng thái                                             | 2.5          | T2.1             | `TODO`     |             |         |
+| T2.2  | Bảng documents + máy trạng thái                                             | 2.5          | T2.1             | `DONE`   |             | Agent: bảng `documents` (RLS FORCE, `UPDATE` chỉ cột `status`/`version`, unique tenant+hash, CHECK), `DocumentStateMachine` khoá `FOR UPDATE` + ghi `audit_logs` cùng transaction. 51 unit (49 cặp) + 15 int; drill bỏ cặp/khoá/FORCE → đỏ |
 | T2.3  | API tạo tài liệu + idempotency theo content hash                            | 2.5          | T2.2             | `TODO`     |             |         |
 | T2.4  | Hàng đợi BullMQ: producer, worker, retry, dead-letter                       | 3            | T2.3             | `TODO`     |             |         |
 | T2.5  | Web: màn hình upload kéo thả                                                | 3            | T2.3, T1.7       | `TODO`     |             |         |
@@ -318,4 +318,8 @@ Cập nhật: 2026-10-20
 | 2026-10-19 | T2.1 | 413 chưa có `code` riêng (Nest tự map); file lớn vẫn bị nhận tới 10 MiB rồi mới huỷ (không pre-check `Content-Length`); XML chỉ kiểm nông, UTF-16 bị từ chối | Chấp nhận; XXE/parse sâu ở T2.8 |
 | 2026-10-19 | T2.1 | Web proxy upload (T2.5) phải chuyển tiếp multipart dạng stream và giữ tên field `file` | T2.5 |
 | 2026-10-19 | T2.1 | Reviewer: `StoragePort` nhận khoá của tenant bất kỳ; multer chưa giới hạn `fields`/`parts`; `DATA_DIR` thiếu/không ghi được chỉ lộ ở upload đầu (nên kiểm lúc khởi động); UI cần ánh xạ `UNSUPPORTED_FILE_TYPE` sang vi/en | T2.x tải file (khoá từ bản ghi documents dưới RLS); T2.5 (i18n lỗi); M8 (kiểm DATA_DIR lúc boot) |
-
+| 2026-10-20 | T2.2 | Lý do `failed` hiện chỉ nằm trong `audit_logs.meta.code`; UI (T2.9) cần đọc nhanh trên trang chi tiết | T2.4/T2.9: quyết định thêm cột `failure_code` (kèm `GRANT UPDATE` cột đó) hay đọc audit mới nhất |
+| 2026-10-20 | T2.2 | `InvalidDocumentTransitionError` chưa ánh xạ HTTP; `KNOWN_CODES` của Problem Details chưa có `INVALID_DOCUMENT_TRANSITION` | T2.4 (endpoint retry đầu tiên): ánh xạ 409 + code |
+| 2026-10-20 | T2.2 | Danh sách 7 trạng thái nằm ở hai nơi: `document-status.ts` (api) và `status-badge.tsx` (web), chưa có gì nối. `GRANT UPDATE (status, version)` nghĩa là task sau cần cột khác phải thêm GRANT | T2.6 (đưa enum vào `packages/contracts` khi làm bộ lọc `status`); mọi task thêm cột ghi được |
+| 2026-10-20 | T2.2 | Dòng audit "tạo document" (`[*] → uploaded`) chưa có: máy trạng thái chỉ ghi chuyển trạng thái. `uploaded_by` không FK tới `users` (đã duyệt) nên T2.6 join tên người upload phải là LEFT JOIN | T2.3/T2.10 (audit upload + IP), T2.6 |
+| 2026-10-20 | T2.2 | Reviewer: `DocumentStateMachine` ném `NotFoundException` (Nest) từ lớp application; nên đổi thành lỗi domain `DocumentNotFoundError` cùng lúc ánh xạ HTTP | T2.4 |
