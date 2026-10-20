@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { z } from 'zod';
 
 // z.coerce.boolean() would turn the string "false" into true, so booleans are parsed explicitly.
@@ -14,6 +15,9 @@ export const envSchema = z.object({
   // Connection of the NON-owner role `invoice_app` (RLS applies to it). The owner URL used by
   // migrations is read only by the db scripts, never by the API process.
   DATABASE_URL: z.url(),
+  // Where StoragePort(LocalFs) keeps uploaded files. Absolute on purpose: a relative path would depend
+  // on the working directory and could land inside the repo, where .gitignore does not cover it.
+  DATA_DIR: z.string().refine((v) => path.isAbsolute(v), 'must be an absolute path'),
   OIDC_AUDIENCE: z.string().min(1).default('api'),
 });
 

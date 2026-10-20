@@ -20,3 +20,6 @@ dist-scripts/
 # Playwright
 playwright-report/
 test-results/
+
+# Throw-away storage used by api tests
+apps/api/.test-data/

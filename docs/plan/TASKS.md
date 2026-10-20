@@ -22,9 +22,9 @@
 
 ```text
 Mốc hiện tại: M1 (còn kiểm tra cuối mốc) → M2
-Task hiện tại: T2.1 (T0.0 đến T0.9, T1.1 đến T1.8 đã DONE)
+Task hiện tại: T2.2 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đã DONE)
 Chặn bởi: không
-Cập nhật: 2026-10-19
+Cập nhật: 2026-10-20
 ```
 
 
@@ -71,7 +71,7 @@ Cập nhật: 2026-10-19
 
 | ID    | Task                                                                        | Ước tính (h) | Phụ thuộc        | Trạng thái | Thực tế (h) | Ghi chú |
 | ----- | --------------------------------------------------------------------------- | ------------ | ---------------- | ---------- | ----------- | ------- |
-| T2.1  | StoragePort + adapter filesystem local; upload qua API có kiểm tra file     | 3            | T1.8             | `TODO`     |             |         |
+| T2.1  | StoragePort + adapter filesystem local; upload qua API có kiểm tra file     | 3            | T1.8             | `DONE`     |             | Agent: `StoragePort` + `LocalFs` (khoá từng segment + kiểm resolve, ghi `.part` rồi rename), multer engine tự viết sniff magic bytes trước khi ghi, 415/413; `DATA_DIR` bắt buộc, tuyệt đối. 134 test api; drill bỏ kiểm traversal → 9 test đỏ |
 | T2.2  | Bảng documents + máy trạng thái                                             | 2.5          | T2.1             | `TODO`     |             |         |
 | T2.3  | API tạo tài liệu + idempotency theo content hash                            | 2.5          | T2.2             | `TODO`     |             |         |
 | T2.4  | Hàng đợi BullMQ: producer, worker, retry, dead-letter                       | 3            | T2.3             | `TODO`     |             |         |
@@ -312,3 +312,10 @@ Cập nhật: 2026-10-19
 | 2026-10-19 | T1.8 | `check:full` mới thêm `test:int` (chỉ cần Docker); `test:e2e` KHÔNG vào vì cần Keycloak + API + web đang chạy. Test duyệt route (Phát sinh T1.4) chưa làm | M2: test duyệt route khi có thêm controller; e2e trong `check:full` nếu muốn có script dựng cả stack |
 | 2026-10-19 | T1.8 | E2E chỉ ghi lại hành vi auth hiện tại, không sửa: cookie `tenant` còn sau đăng xuất, `/api/auth/signout`, `proxy.ts` mất query, email có khoảng trắng. Đóng menu mobile sau khi bấm mục chưa kiểm được vì các mục trỏ tới 404 không có shell | Task auth nhỏ trước M2 (Hậu quyết); đóng-sau-điều-hướng: M2 khi có trang thật |
 | 2026-10-19 | T1.8 | Testcontainers trên WSL2: lần đầu Ryuk (reaper) từng báo "Failed to connect to Reaper" khi còn container ryuk cũ; xoá `testcontainers-ryuk-*` rồi chạy lại thì ổn. E2E phải chờ `networkidle` sau đăng nhập (client component chưa hydrate thì bấm không có tác dụng) | Nếu lặp lại: `docker rm -f` container ryuk cũ |
+| 2026-10-19 | T2.1 | File đã ghi mà chưa có bản ghi `documents` là file mồ côi (API chết giữa chừng, hoặc upload trùng hash). Chưa có gì dọn | T2.3: xoá file vừa ghi khi trùng hash; job dọn file mồ côi: M7/M8 |
+| 2026-10-19 | T2.1 | `Idempotency-Key` bắt buộc theo API.md:39 nhưng T2.1 không kiểm; response upload hiện là `{storageKey,size,sha256,sourceType}`, T2.3 sẽ đổi thành document | T2.3 |
+| 2026-10-19 | T2.1 | Ai chạy API phải đặt `DATA_DIR` tuyệt đối (`dev:api` và job e2e đã có). `apps/api/.env.example` bị hook chặn nên chưa ghi `DATA_DIR=` | Hậu thêm tay dòng `DATA_DIR=` vào `apps/api/.env.example`; docker compose/Dockerfile api (M4) phải mount volume vào `DATA_DIR` |
+| 2026-10-19 | T2.1 | 413 chưa có `code` riêng (Nest tự map); file lớn vẫn bị nhận tới 10 MiB rồi mới huỷ (không pre-check `Content-Length`); XML chỉ kiểm nông, UTF-16 bị từ chối | Chấp nhận; XXE/parse sâu ở T2.8 |
+| 2026-10-19 | T2.1 | Web proxy upload (T2.5) phải chuyển tiếp multipart dạng stream và giữ tên field `file` | T2.5 |
+| 2026-10-19 | T2.1 | Reviewer: `StoragePort` nhận khoá của tenant bất kỳ; multer chưa giới hạn `fields`/`parts`; `DATA_DIR` thiếu/không ghi được chỉ lộ ở upload đầu (nên kiểm lúc khởi động); UI cần ánh xạ `UNSUPPORTED_FILE_TYPE` sang vi/en | T2.x tải file (khoá từ bản ghi documents dưới RLS); T2.5 (i18n lỗi); M8 (kiểm DATA_DIR lúc boot) |
+
