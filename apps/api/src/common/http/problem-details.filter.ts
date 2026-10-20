@@ -15,6 +15,8 @@ const KNOWN_CODES: ReadonlySet<string> = new Set([
   'TENANT_REQUIRED',
   'TENANT_NOT_MEMBER',
   'UNSUPPORTED_FILE_TYPE',
+  'IDEMPOTENCY_KEY_REQUIRED',
+  'IDEMPOTENCY_KEY_REUSED',
 ]);
 
 /** RFC 9457 Problem Details body. */

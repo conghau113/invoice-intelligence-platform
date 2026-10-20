@@ -3,6 +3,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { STORAGE_PORT, type StoragePort } from '../storage/application/storage.port';
 import { StorageModule } from '../storage/storage.module';
 import { DocumentStateMachine } from './application/document-state-machine';
+import { DocumentsService } from './application/documents.service';
 import { DocumentsController } from './http/documents.controller';
 import { StorageMulterEngine } from './infra/storage-multer-engine';
 
@@ -21,7 +22,7 @@ export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
     }),
   ],
   controllers: [DocumentsController],
-  providers: [DocumentStateMachine],
-  exports: [DocumentStateMachine],
+  providers: [DocumentStateMachine, DocumentsService],
+  exports: [DocumentStateMachine, DocumentsService],
 })
 export class DocumentsModule {}

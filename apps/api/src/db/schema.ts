@@ -108,3 +108,30 @@ export const documents = pgTable(
     check('documents_version_check', sql`${t.version} >= 1`),
   ],
 );
+
+/**
+ * One row per Idempotency-Key a tenant has used on a create request (API.md: replay for 24 h).
+ * Stores a reference, not the response body: a replay is rebuilt from the document. `request_hash`
+ * is the sha256 of the uploaded bytes, so the same key with a different file is detectable.
+ */
+export const idempotencyKeys = pgTable(
+  'idempotency_keys',
+  {
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    key: text('key').notNull(),
+    requestHash: char('request_hash', { length: 64 }).notNull(),
+    documentId: uuid('document_id')
+      .notNull()
+      .references(() => documents.id),
+    // The status of the original response (201 created, 200 existing), replayed as-is.
+    statusCode: integer('status_code').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.tenantId, t.key] }),
+    check('idempotency_keys_request_hash_check', sql`${t.requestHash} ~ '^[0-9a-f]{64}$'`),
+    check('idempotency_keys_status_code_check', sql`${t.statusCode} in (200, 201)`),
+  ],
+);
