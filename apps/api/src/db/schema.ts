@@ -1,14 +1,17 @@
 import { sql } from 'drizzle-orm';
 import {
   bigint,
+  char,
   check,
   index,
   inet,
+  integer,
   jsonb,
   pgTable,
   primaryKey,
   text,
   timestamp,
+  unique,
   uuid,
 } from 'drizzle-orm/pg-core';
 
@@ -69,4 +72,39 @@ export const auditLogs = pgTable(
     at: timestamp('at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index('audit_logs_tenant_at_idx').on(t.tenantId, t.at.desc())],
+);
+
+/**
+ * `status` follows ARCHITECTURE.md section 8 and is written only by DocumentStateMachine. The
+ * CHECK lists below mirror domain/document-status.ts (the domain owns the transitions; the
+ * database only guarantees the value set). `uploaded_by` has no FK on purpose, like audit
+ * `actor_id`: users are provisioned lazily and a document must not depend on that row.
+ */
+export const documents = pgTable(
+  'documents',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    status: text('status').notNull().default('uploaded'),
+    sourceType: text('source_type').notNull(),
+    storageKey: text('storage_key').notNull(),
+    contentHash: char('content_hash', { length: 64 }).notNull(),
+    // Incremented when an approved document is reopened.
+    version: integer('version').notNull().default(1),
+    uploadedBy: uuid('uploaded_by').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    unique('documents_tenant_hash_unique').on(t.tenantId, t.contentHash),
+    index('documents_tenant_status_created_idx').on(t.tenantId, t.status, t.createdAt.desc()),
+    check(
+      'documents_status_check',
+      sql`${t.status} in ('uploaded', 'queued', 'processing', 'needs_review', 'approved', 'rejected', 'failed')`,
+    ),
+    check('documents_source_type_check', sql`${t.sourceType} in ('pdf', 'image', 'xml')`),
+    check('documents_content_hash_check', sql`${t.contentHash} ~ '^[0-9a-f]{64}$'`),
+    check('documents_version_check', sql`${t.version} >= 1`),
+  ],
 );
