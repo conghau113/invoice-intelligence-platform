@@ -14,6 +14,7 @@ const KNOWN_CODES: ReadonlySet<string> = new Set([
   'FORBIDDEN_UNDECLARED',
   'TENANT_REQUIRED',
   'TENANT_NOT_MEMBER',
+  'UNSUPPORTED_FILE_TYPE',
 ]);
 
 /** RFC 9457 Problem Details body. */

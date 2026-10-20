@@ -31,6 +31,7 @@ describe('AppModule', () => {
     process.env.NODE_ENV = 'test';
     process.env.OIDC_ISSUER_URL = 'http://localhost:8080/realms/invoice';
     process.env.DATABASE_URL = 'postgres://invoice_app:pw@localhost:5433/invoice';
+    process.env.DATA_DIR = '/var/lib/invoice-data';
     const mod = await createBuilder().compile();
     const app: INestApplication = mod.createNestApplication();
     await app.init();

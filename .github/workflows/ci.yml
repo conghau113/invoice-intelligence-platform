@@ -131,6 +131,7 @@ jobs:
       KEYCLOAK_CLIENT_ID: web
       KEYCLOAK_CLIENT_SECRET: web-secret-dev-only
       API_BASE_URL: http://localhost:3001
+      DATA_DIR: ${{ github.workspace }}/data
     steps:
       - uses: actions/checkout@v7
       - run: corepack enable

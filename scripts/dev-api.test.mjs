@@ -10,6 +10,7 @@ test('dev-api: fills in the variables the API needs, building the database URL f
   assert.equal(env.OIDC_ISSUER_URL, DEV_DEFAULTS.OIDC_ISSUER_URL);
   assert.equal(env.DATABASE_URL, 'postgres://invoice_app:p%40ss%2Fword@localhost:5433/invoice');
   assert.equal(env.PATH, '/bin');
+  assert.ok(path.isAbsolute(env.DATA_DIR), 'DATA_DIR must be absolute');
 });
 
 test('dev-api: values already set in the shell win', () => {

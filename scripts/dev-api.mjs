@@ -3,11 +3,13 @@
 // No password lives in this file: the database password comes from APP_DB_PASSWORD (the same
 // variable db:migrate uses), exported once in your shell profile.
 import { spawn } from 'node:child_process';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 export const DEV_DEFAULTS = {
   NODE_ENV: 'development',
   OIDC_ISSUER_URL: 'http://localhost:8080/realms/invoice',
+  // <repo>/data is git-ignored; the API requires an absolute path.
+  DATA_DIR: fileURLToPath(new URL('../data', import.meta.url)),
 };
 
 /** Environment for the API: dev defaults under whatever the caller already set. */
