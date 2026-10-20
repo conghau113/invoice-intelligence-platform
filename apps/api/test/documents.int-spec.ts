@@ -49,6 +49,17 @@ describe('documents (Postgres, RLS, state machine)', () => {
     (await owner.query('SELECT count(*)::int AS n FROM audit_logs WHERE entity_id = $1', [id]))
       .rows[0].n as number;
 
+  /** True once some session is waiting on a row lock taken by FOR UPDATE (polls up to ~5 s). */
+  async function waitForRowLockWaiter(triesLeft = 100): Promise<boolean> {
+    const { rows } = await owner.query(
+      `SELECT 1 FROM pg_stat_activity WHERE wait_event_type = 'Lock' AND query ILIKE '%for update%'`,
+    );
+    if (rows.length > 0) return true;
+    if (triesLeft <= 1) return false;
+    await new Promise((r) => setTimeout(r, 50));
+    return waitForRowLockWaiter(triesLeft - 1);
+  }
+
   async function clean() {
     await owner.query('DELETE FROM audit_logs WHERE entity = $1 AND entity_id = ANY($2)', [
       'document',
@@ -57,7 +68,7 @@ describe('documents (Postgres, RLS, state machine)', () => {
     await owner.query('DELETE FROM documents WHERE id = ANY($1)', [[DOC_A, DOC_G]]);
   }
 
-  beforeAll(async () => {
+  beforeAll(() => {
     owner = new Pool({ connectionString: requireVar('DATABASE_OWNER_URL'), max: 1 });
     app = new Pool({ connectionString: requireVar('DATABASE_URL'), max: 4 });
     tenantDb = new TenantDbService(drizzle(app, { schema }));
@@ -221,7 +232,6 @@ describe('documents (Postgres, RLS, state machine)', () => {
 
   it('lets only one of two concurrent transitions win (row lock, not luck)', async () => {
     await owner.query(`UPDATE documents SET status = 'processing' WHERE id = $1`, [DOC_A]);
-    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
     let aHoldsLock!: () => void;
     const locked = new Promise<void>((r) => (aHoldsLock = r));
     let releaseA!: () => void;
@@ -235,14 +245,7 @@ describe('documents (Postgres, RLS, state machine)', () => {
     });
     await locked;
     const b = tenantDb.run(ACME, () => machine.transition(DOC_A, 'failed', { actorId: null }));
-    let blocked = false;
-    for (let i = 0; i < 100 && !blocked; i++) {
-      const { rows } = await owner.query(
-        `SELECT 1 FROM pg_stat_activity WHERE wait_event_type = 'Lock' AND query ILIKE '%for update%'`,
-      );
-      blocked = rows.length > 0;
-      if (!blocked) await sleep(50);
-    }
+    const blocked = await waitForRowLockWaiter();
     releaseA();
     const results = await Promise.allSettled([a, b]);
     expect(blocked).toBe(true);
