@@ -3,6 +3,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import type { AuthenticatedRequest } from '../modules/auth/http/authenticated-request';
+import { SkipTenantTransaction } from './skip-tenant-transaction.decorator';
 import { Public } from '../modules/auth/http/public.decorator';
 import { TenantDbService } from './tenant-db.service';
 import { TenantTransactionInterceptor } from './tenant-transaction.interceptor';
@@ -35,6 +36,13 @@ class ProbeController {
   @Get('fail')
   fail(): never {
     throw new Error('handler failed');
+  }
+
+  @SkipTenantTransaction()
+  @Get('skipped')
+  skipped(): { ok: true } {
+    events.push('handler');
+    return { ok: true };
   }
 
   @Public()
@@ -84,6 +92,11 @@ describe('TenantTransactionInterceptor', () => {
 
   it('does not open a transaction for a route without a user (@Public)', async () => {
     await request(app.getHttpServer()).get('/probe/open').expect(200);
+    expect(events).toEqual(['handler']);
+  });
+
+  it('does not open a transaction for an authenticated route marked @SkipTenantTransaction', async () => {
+    await request(app.getHttpServer()).get('/probe/skipped').expect(200);
     expect(events).toEqual(['handler']);
   });
 

@@ -22,7 +22,7 @@
 
 ```text
 Mốc hiện tại: M1 (còn kiểm tra cuối mốc) → M2
-Task hiện tại: T2.3 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.2 đã DONE)
+Task hiện tại: T2.4 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.3 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-10-20
 ```
@@ -73,7 +73,7 @@ Cập nhật: 2026-10-20
 | ----- | --------------------------------------------------------------------------- | ------------ | ---------------- | ---------- | ----------- | ------- |
 | T2.1  | StoragePort + adapter filesystem local; upload qua API có kiểm tra file     | 3            | T1.8             | `DONE`     |             | Agent: `StoragePort` + `LocalFs` (khoá từng segment + kiểm resolve, ghi `.part` rồi rename), multer engine tự viết sniff magic bytes trước khi ghi, 415/413; `DATA_DIR` bắt buộc, tuyệt đối. 134 test api; drill bỏ kiểm traversal → 9 test đỏ |
 | T2.2  | Bảng documents + máy trạng thái                                             | 2.5          | T2.1             | `DONE`   |             | Agent: bảng `documents` (RLS FORCE, `UPDATE` chỉ cột `status`/`version`, unique tenant+hash, CHECK), `DocumentStateMachine` khoá `FOR UPDATE` + ghi `audit_logs` cùng transaction. 51 unit (49 cặp) + 15 int; drill bỏ cặp/khoá/FORCE → đỏ |
-| T2.3  | API tạo tài liệu + idempotency theo content hash                            | 2.5          | T2.2             | `TODO`     |             |         |
+| T2.3  | API tạo tài liệu + idempotency theo content hash                            | 2.5          | T2.2             | `DONE`      |             | Agent: `DocumentsService.create` (unique hash + `Idempotency-Key` ở bảng `idempotency_keys` có RLS, 24h), upload trả document 201/200, xoá file trùng, `@SkipTenantTransaction`. 211 unit + 56 int; 4 drill (bỏ ON CONFLICT, bỏ so hash, bỏ xoá file, NO FORCE) → đỏ |
 | T2.4  | Hàng đợi BullMQ: producer, worker, retry, dead-letter                       | 3            | T2.3             | `TODO`     |             |         |
 | T2.5  | Web: màn hình upload kéo thả                                                | 3            | T2.3, T1.7       | `TODO`     |             |         |
 | T2.6  | Danh sách tài liệu: phân trang server, lọc, sắp xếp                         | 3            | T2.3, T1.7       | `TODO`     |             |         |
@@ -323,3 +323,7 @@ Cập nhật: 2026-10-20
 | 2026-10-20 | T2.2 | Danh sách 7 trạng thái nằm ở hai nơi: `document-status.ts` (api) và `status-badge.tsx` (web), chưa có gì nối. `GRANT UPDATE (status, version)` nghĩa là task sau cần cột khác phải thêm GRANT | T2.6 (đưa enum vào `packages/contracts` khi làm bộ lọc `status`); mọi task thêm cột ghi được |
 | 2026-10-20 | T2.2 | Dòng audit "tạo document" (`[*] → uploaded`) chưa có: máy trạng thái chỉ ghi chuyển trạng thái. `uploaded_by` không FK tới `users` (đã duyệt) nên T2.6 join tên người upload phải là LEFT JOIN | T2.3/T2.10 (audit upload + IP), T2.6 |
 | 2026-10-20 | T2.2 | Reviewer: `DocumentStateMachine` ném `NotFoundException` (Nest) từ lớp application; nên đổi thành lỗi domain `DocumentNotFoundError` cùng lúc ánh xạ HTTP | T2.4 |
+| 2026-10-20 | T2.3 | Upload xong document dừng ở `uploaded`, KHÔNG phải `queued` như `ARCHITECTURE.md:122`. `DocumentsService.create` trả `created` (true đúng một lần); "1 job" chỉ kiểm được ở mức `created` + một dòng audit `document.created`, job thật chưa có | T2.4: chỉ enqueue + chuyển `queued` khi `created=true`, và có test đếm job; sửa sơ đồ nếu cần |
+| 2026-10-20 | T2.3 | Bảng `idempotency_keys` không có job dọn: dòng quá 24h chỉ bị xoá khi chính key đó được dùng lại (app có `DELETE` chỉ để làm việc đó). File mồ côi khi API chết giữa chừng vẫn chưa có gì dọn | M7/M8 (job dọn key hết hạn + file mồ côi) |
+| 2026-10-20 | T2.3 | Response upload nay là document `{id,status,sourceType,contentHash,version,createdAt}` (201 tạo mới / 200 trùng hoặc replay; header `Idempotent-Replayed`); mã lỗi mới `IDEMPOTENCY_KEY_REQUIRED` (400), `IDEMPOTENCY_KEY_REUSED` (422). Web proxy phải chuyển tiếp header `Idempotency-Key` (mỗi lần chọn file một UUID mới, giữ nguyên khi thử lại) | T2.5 (proxy, sinh key, i18n 2 mã lỗi vi/en) |
+| 2026-10-20 | T2.3 | `@SkipTenantTransaction()` (mới) bỏ transaction cả request cho route upload; handler nào làm I/O chậm khác (T2.9 gọi AI) dùng `TenantDbService.run` ngắn | T2.9, T6.x |
