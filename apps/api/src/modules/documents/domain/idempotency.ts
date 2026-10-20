@@ -16,7 +16,7 @@ export function parseIdempotencyKey(header: unknown): string | null {
     return null;
   }
   for (let i = 0; i < header.length; i++) {
-    const code = header.charCodeAt(i);
+    const code = header.codePointAt(i) ?? 0;
     if (code < 0x21 || code > 0x7e) return null;
   }
   return header;
