@@ -78,7 +78,7 @@ export function describeStoragePortContract(
       'tenant//double',
       'tenant/./x',
       '',
-      'tenant/a\\..\\b',
+      String.raw`tenant/a\..\b`,
       'tenant/a\0b',
     ])('rejects the unsafe key %j on every operation', async (bad) => {
       await expect(storage.put(bad, Readable.from([Buffer.from('x')]))).rejects.toBeInstanceOf(

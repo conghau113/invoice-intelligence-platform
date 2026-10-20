@@ -32,7 +32,7 @@ export function detectFileType(header: Buffer): DetectedFileType | null {
   while (i < header.length && [0x20, 0x09, 0x0a, 0x0d].includes(header[i] as number)) i++;
   const rest = header.subarray(i);
   const isXmlDecl = rest.subarray(0, 5).toString('latin1') === '<?xml';
-  const isTag = rest[0] === 0x3c && /^[A-Za-z]$/.test(String.fromCharCode(rest[1] ?? 0));
+  const isTag = rest[0] === 0x3c && /^[A-Za-z]$/.test(String.fromCodePoint(rest[1] ?? 0));
   // Markup that is plainly not an invoice: HTML/SVG would otherwise be stored as "xml".
   const notInvoice = /^<(!doctype|html|svg|script)/i.test(rest.subarray(0, 16).toString('latin1'));
   return (isXmlDecl || isTag) && !notInvoice

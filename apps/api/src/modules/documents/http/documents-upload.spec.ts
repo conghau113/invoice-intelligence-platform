@@ -95,14 +95,15 @@ describe('POST /documents/upload (real guards, filter, multer engine and LocalFs
 
   it('a file over 10 MiB is refused with 413 and nothing is left on disk', async () => {
     const big = Buffer.concat([PDF, Buffer.alloc(MAX_UPLOAD_BYTES + 1 - PDF.length)]);
-    expect(big.length).toBe(MAX_UPLOAD_BYTES + 1);
+    expect(big).toHaveLength(MAX_UPLOAD_BYTES + 1);
     await upload(big).expect(413);
     expect(await files(root)).toEqual([]);
   });
 
   it('a file of exactly 10 MiB is accepted', async () => {
     const exact = Buffer.concat([PDF, Buffer.alloc(MAX_UPLOAD_BYTES - PDF.length)]);
-    await upload(exact).expect(201);
+    const res = await upload(exact).expect(201);
+    expect(res.body.size).toBe(MAX_UPLOAD_BYTES);
   });
 
   it('a hostile file name never reaches the storage path', async () => {
