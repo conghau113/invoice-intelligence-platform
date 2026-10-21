@@ -21,6 +21,8 @@ import { TOKEN_VERIFIER } from '../src/modules/auth/application/token-verifier.p
 import { JwtAuthGuard } from '../src/modules/auth/http/jwt-auth.guard';
 import { PermissionsGuard } from '../src/modules/auth/http/permissions.guard';
 import { DocumentsModule } from '../src/modules/documents/documents.module';
+import { EXTRACTION_QUEUE_PORT } from '../src/modules/queue/application/extraction-queue.port';
+import { FakeExtractionQueue } from '../src/modules/queue/testing/fake-extraction-queue';
 import { STORAGE_PORT } from '../src/modules/storage/application/storage.port';
 import { LocalFsStorage } from '../src/modules/storage/infra/local-fs.storage';
 import { useTestRoots } from '../src/modules/storage/testing/test-root';
@@ -106,6 +108,8 @@ describe('POST /documents/upload (HTTP -> Postgres -> LocalFs)', () => {
     })
       .overrideProvider(STORAGE_PORT)
       .useValue(new LocalFsStorage(root))
+      .overrideProvider(EXTRACTION_QUEUE_PORT)
+      .useValue(new FakeExtractionQueue())
       .compile();
     app = mod.createNestApplication();
     await app.init();

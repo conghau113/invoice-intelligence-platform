@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
-import { DEV_DEFAULTS, devApiEnv, pnpmCommand } from './dev-api.mjs';
+import { DEV_DEFAULTS, devApiEnv, devScript, pnpmCommand } from './dev-api.mjs';
 
 test('dev-api: fills in the variables the API needs, building the database URL from the password', () => {
   const env = devApiEnv({ PATH: '/bin', APP_DB_PASSWORD: 'p@ss/word' });
@@ -11,6 +11,7 @@ test('dev-api: fills in the variables the API needs, building the database URL f
   assert.equal(env.DATABASE_URL, 'postgres://invoice_app:p%40ss%2Fword@localhost:5433/invoice');
   assert.equal(env.PATH, '/bin');
   assert.ok(path.isAbsolute(env.DATA_DIR), 'DATA_DIR must be absolute');
+  assert.equal(env.REDIS_URL, 'redis://localhost:6380');
 });
 
 test('dev-api: values already set in the shell win', () => {
@@ -45,6 +46,12 @@ test('dev-api: started outside pnpm it explains itself and exits 1', () => {
   });
   assert.equal(r.status, 1);
   assert.match(r.stderr, /pnpm dev:api/);
+});
+
+test('dev-api: the `worker` argument selects the worker script, anything else the API', () => {
+  assert.equal(devScript('worker'), 'start:worker:dev');
+  assert.equal(devScript(undefined), 'start:dev');
+  assert.equal(devScript('other'), 'start:dev');
 });
 
 test('dev-api: runs a JS pnpm with node and a native pnpm directly', () => {

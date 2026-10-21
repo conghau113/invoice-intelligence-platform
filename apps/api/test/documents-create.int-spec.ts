@@ -14,6 +14,8 @@ import {
   type CreateDocumentResult,
 } from '../src/modules/documents/application/documents.service';
 import type { UploadedObject } from '../src/modules/documents/infra/storage-multer-engine';
+import { DocumentStateMachine } from '../src/modules/documents/application/document-state-machine';
+import { FakeExtractionQueue } from '../src/modules/queue/testing/fake-extraction-queue';
 import { LocalFsStorage } from '../src/modules/storage/infra/local-fs.storage';
 import { useTestRoots } from '../src/modules/storage/testing/test-root';
 import { tablesWithoutRls } from './support/rls';
@@ -38,6 +40,7 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
   let storage: LocalFsStorage;
   let service: DocumentsService;
   let tenantDb: TenantDbService;
+  let queue: FakeExtractionQueue;
   let seq = 0;
 
   /** Writes a distinct PDF-like file the way the upload engine does and describes it. */
@@ -55,6 +58,8 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
       .n as number;
 
   async function clean() {
+    queue.jobs.clear();
+    queue.down = false;
     await owner.query('DELETE FROM idempotency_keys WHERE tenant_id = ANY($1)', [[ACME, GLOBEX]]);
     await owner.query(
       `DELETE FROM audit_logs WHERE entity = 'document' AND entity_id IN
@@ -69,7 +74,8 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
     app = new Pool({ connectionString: requireVar('DATABASE_URL'), max: 8 });
     tenantDb = new TenantDbService(drizzle(app, { schema }));
     storage = new LocalFsStorage(await newRoot());
-    service = new DocumentsService(tenantDb, storage);
+    queue = new FakeExtractionQueue();
+    service = new DocumentsService(tenantDb, storage, new DocumentStateMachine(tenantDb), queue);
   });
   afterAll(async () => {
     await clean();
@@ -81,22 +87,27 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
     expect(await tablesWithoutRls(owner)).toEqual([]);
   });
 
-  it('creates the document, one audit row with the caller ip, status uploaded v1', async () => {
+  it('creates the document, one audit row with the caller ip, queued v1, one job', async () => {
     const file = await stored(ACME, 'one');
     const res = await create(ACME, 'k1', file, '203.0.113.7');
     expect(res).toMatchObject({ created: true, replayed: false, statusCode: 201 });
     expect(res.document).toMatchObject({
-      status: 'uploaded',
+      status: 'queued',
       version: 1,
       sourceType: 'pdf',
       contentHash: file.sha256,
     });
     expect(res.document).not.toHaveProperty('storageKey');
     const { rows } = await owner.query(
-      `SELECT actor_id, host(ip) AS ip, meta FROM audit_logs WHERE entity_id = $1`,
+      `SELECT actor_id, host(ip) AS ip, meta FROM audit_logs WHERE entity_id = $1 AND action = 'document.created'`,
       [res.document.id],
     );
     expect(rows).toEqual([{ actor_id: USER, ip: '203.0.113.7', meta: { sourceType: 'pdf' } }]);
+    expect([...queue.jobs.keys()]).toEqual([res.document.id]);
+    expect(queue.jobs.get(res.document.id)).toEqual({
+      documentId: res.document.id,
+      tenantId: ACME,
+    });
     expect(await exists(file)).toBe(true);
   });
 
@@ -108,11 +119,42 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
     expect(first.created).toBe(true);
     expect(second).toMatchObject({ created: false, replayed: true, statusCode: 201 });
     expect(second.document).toEqual(first.document);
+    expect(queue.jobs.size).toBe(1);
     expect(await count('documents', `uploaded_by = '${USER}'`)).toBe(1);
     expect(await count('audit_logs', `action = 'document.created' AND tenant_id = '${ACME}'`)).toBe(
       1,
     );
     expect(await exists(again)).toBe(false); // the duplicate upload does not stay on disk
+  });
+
+  it('queue down -> 503 QUEUE_UNAVAILABLE, the row stays queued; the same request later sends the one job', async () => {
+    queue.down = true;
+    await expect(create(ACME, 'k1', await stored(ACME, 'outage'))).rejects.toMatchObject({
+      status: 503,
+      response: { code: 'QUEUE_UNAVAILABLE' },
+    });
+    expect(await count('documents', `uploaded_by = '${USER}' AND status = 'queued'`)).toBe(1);
+    expect(queue.jobs.size).toBe(0);
+
+    queue.down = false;
+    const retry = await create(ACME, 'k1', await stored(ACME, 'outage'));
+    expect(retry).toMatchObject({ created: false, replayed: true });
+    expect(retry.document.status).toBe('queued');
+    expect([...queue.jobs.keys()]).toEqual([retry.document.id]);
+    // A third request changes nothing: the job id is the document id.
+    await create(ACME, 'k1', await stored(ACME, 'outage'));
+    expect(queue.jobs.size).toBe(1);
+  });
+
+  it('a document that already moved on is not queued again by a duplicate upload', async () => {
+    const first = await create(ACME, 'k1', await stored(ACME, 'moved'));
+    await owner.query(`UPDATE documents SET status = 'needs_review' WHERE id = $1`, [
+      first.document.id,
+    ]);
+    queue.jobs.clear();
+    const again = await create(ACME, 'k2', await stored(ACME, 'moved'));
+    expect(again.document.status).toBe('needs_review');
+    expect(queue.jobs.size).toBe(0);
   });
 
   it('the same bytes under a new key -> the existing document, answered 200, no second create', async () => {
@@ -122,6 +164,7 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
 
     expect(second).toMatchObject({ created: false, replayed: false, statusCode: 200 });
     expect(second.document.id).toBe(first.document.id);
+    expect(queue.jobs.size).toBe(1);
     expect(await count('documents', `uploaded_by = '${USER}'`)).toBe(1);
     expect(await count('audit_logs', `action = 'document.created' AND tenant_id = '${ACME}'`)).toBe(
       1,
@@ -226,7 +269,7 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
       await realRun(...args);
       throw new Error('connection reset');
     };
-    const flaky = new DocumentsService(dropped, storage);
+    const flaky = new DocumentsService(dropped, storage, new DocumentStateMachine(dropped), queue);
 
     await expect(
       flaky.create({ tenantId: ACME, userId: USER, ip: undefined, idempotencyKey: 'k1', file }),
@@ -242,7 +285,12 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
   it('a failing storage.delete does not hide the result', async () => {
     const brokenStorage = Object.create(storage) as LocalFsStorage;
     brokenStorage.delete = () => Promise.reject(new Error('disk gone'));
-    const svc = new DocumentsService(tenantDb, brokenStorage);
+    const svc = new DocumentsService(
+      tenantDb,
+      brokenStorage,
+      new DocumentStateMachine(tenantDb),
+      queue,
+    );
     await create(ACME, 'k1', await stored(ACME, 'del-fail'));
     const res = await svc.create({
       tenantId: ACME,

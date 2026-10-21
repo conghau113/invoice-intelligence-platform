@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { TenantDbService } from '../../../db/tenant-db.service';
 import { auditLogs, documents } from '../../../db/schema';
@@ -8,6 +8,7 @@ import {
   nextVersion,
   type DocumentStatus,
 } from '../domain/document-status';
+import { DocumentNotFoundError } from '../domain/document-not-found.error';
 
 export interface TransitionContext {
   /** Keycloak sub of the user, or null when the system acts (worker). */
@@ -58,7 +59,7 @@ export class DocumentStateMachine {
       .where(eq(documents.id, documentId))
       .for('update');
     // RLS hides other tenants' rows, so "not yours" and "not there" look the same.
-    if (!row) throw new NotFoundException('Document not found');
+    if (!row) throw new DocumentNotFoundError();
     if (!isDocumentStatus(row.status)) throw new Error('Unknown document status in database');
 
     assertTransition(row.status, to);

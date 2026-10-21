@@ -42,10 +42,16 @@ The API reads **no dotfile** (`ignoreEnvFile: true`), so its variables must be i
 
 ```bash
 pnpm dev:api
-curl localhost:3001/health/ready   # {"status":"ok","checks":{"database":"ok"}}
+curl localhost:3001/health/ready   # {"status":"ok","checks":{"database":"ok","redis":"ok"}}
 ```
 
-`db:migrate` and `db:seed` are only needed on a fresh database and need `DATABASE_OWNER_URL` and `APP_DB_PASSWORD` too (see `apps/api/.env.example`). If the dashboard says "Service unavailable", the API is not running on :3001. After upgrading from an older build, restart `pnpm --filter web dev` and sign out and in once so the session carries your tenant list. Do not run `pnpm --filter web build` while the dev server is running: both write to `.next`.
+Uploaded documents are processed by the queue worker, a separate process. Without it they stay `queued`. Start it in another terminal with the same environment defaults (it also sets `REDIS_URL` to the Redis of `pnpm infra:up`):
+
+```bash
+pnpm dev:worker
+```
+
+`db:migrate` and `db:seed` need `DATABASE_OWNER_URL` and `APP_DB_PASSWORD` too (see `apps/api/.env.example`). Run `pnpm --filter api db:migrate` on a fresh database **and again after pulling or finishing any task that adds a file under `apps/api/drizzle/`** (it is safe to repeat; it applies only what is missing). A dev database that was not migrated makes endpoints fail with `500 Internal server error` while `/auth/me` and `/health/ready` still answer, because the older tables exist (for example uploads fail with `relation "documents" does not exist` until T2.2 and T2.3 are applied). `db:seed` is only needed on a fresh database. If the dashboard says "Service unavailable", the API is not running on :3001. After upgrading from an older build, restart `pnpm --filter web dev` and sign out and in once so the session carries your tenant list. Do not run `pnpm --filter web build` while the dev server is running: both write to `.next`.
 
 1. Open http://localhost:3000/vi/login (or `/en/login`) and sign in. Keycloak asks for the username, then the password (two steps).
 2. The app shell shows a sidebar whose items depend on your role, and the dashboard shows the tenant and permissions the API reports. `consultant@demo.example` gets a tenant dropdown in the header: switching it changes the tenant id on the dashboard without signing in again. Sign out with the header button, then sign in as another user to compare.

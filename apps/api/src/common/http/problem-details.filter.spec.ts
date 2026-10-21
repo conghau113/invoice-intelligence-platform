@@ -5,6 +5,9 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { DocumentNotFoundError } from '../../modules/documents/domain/document-not-found.error';
+import { InvalidDocumentTransitionError } from '../../modules/documents/domain/document-status';
+import { JobNotFailedError } from '../../modules/queue/application/admin-jobs.service';
 import { ProblemDetailsFilter } from './problem-details.filter';
 
 function run(exception: unknown) {
@@ -40,6 +43,22 @@ describe('ProblemDetailsFilter', () => {
       instance: '/x',
     });
     expect(logError).not.toHaveBeenCalled();
+  });
+
+  it('maps domain errors to 404 / 409 with fixed text', () => {
+    const missing = run(new DocumentNotFoundError());
+    expect(missing.res.status).toHaveBeenCalledWith(404);
+    expect(missing.body.detail).toBe('Document not found');
+
+    const bad = run(new InvalidDocumentTransitionError('failed', 'approved'));
+    expect(bad.res.status).toHaveBeenCalledWith(409);
+    expect(bad.body.code).toBe('INVALID_DOCUMENT_TRANSITION');
+    expect(JSON.stringify(bad.body)).not.toContain('approved');
+
+    expect(run(new JobNotFailedError()).body).toMatchObject({
+      status: 409,
+      code: 'JOB_NOT_FAILED',
+    });
   });
 
   it('never echoes the query string, even for Nest built-in 404 messages', () => {

@@ -22,9 +22,9 @@
 
 ```text
 Mốc hiện tại: M1 (còn kiểm tra cuối mốc) → M2
-Task hiện tại: T2.4 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.3 đã DONE)
+Task hiện tại: T2.5 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.4 đã DONE)
 Chặn bởi: không
-Cập nhật: 2026-10-20
+Cập nhật: 2026-10-21
 ```
 
 
@@ -74,7 +74,7 @@ Cập nhật: 2026-10-20
 | T2.1  | StoragePort + adapter filesystem local; upload qua API có kiểm tra file     | 3            | T1.8             | `DONE`     |             | Agent: `StoragePort` + `LocalFs` (khoá từng segment + kiểm resolve, ghi `.part` rồi rename), multer engine tự viết sniff magic bytes trước khi ghi, 415/413; `DATA_DIR` bắt buộc, tuyệt đối. 134 test api; drill bỏ kiểm traversal → 9 test đỏ |
 | T2.2  | Bảng documents + máy trạng thái                                             | 2.5          | T2.1             | `DONE`   |             | Agent: bảng `documents` (RLS FORCE, `UPDATE` chỉ cột `status`/`version`, unique tenant+hash, CHECK), `DocumentStateMachine` khoá `FOR UPDATE` + ghi `audit_logs` cùng transaction. 51 unit (49 cặp) + 15 int; drill bỏ cặp/khoá/FORCE → đỏ |
 | T2.3  | API tạo tài liệu + idempotency theo content hash                            | 2.5          | T2.2             | `DONE`      |             | Agent: `DocumentsService.create` (unique hash + `Idempotency-Key` ở bảng `idempotency_keys` có RLS, 24h), upload trả document 201/200, xoá file trùng, `@SkipTenantTransaction`. 211 unit + 56 int; 4 drill (bỏ ON CONFLICT, bỏ so hash, bỏ xoá file, NO FORCE) → đỏ |
-| T2.4  | Hàng đợi BullMQ: producer, worker, retry, dead-letter                       | 3            | T2.3             | `TODO`     |             |         |
+| T2.4  | Hàng đợi BullMQ: producer, worker, retry, dead-letter                       | 3            | T2.3             | `DONE`     |             | Agent: `bullmq` + `ioredis` (MIT), `modules/queue/` + `src/worker.ts`; job = id + traceparent, `jobId` = documentId; mọi lần chạy đi qua máy trạng thái (retry: `processing→queued`, hết 5 lượt: `failed` + mã); admin xem/thử lại job lỗi theo tenant; Redis chết → 503 `QUEUE_UNAVAILABLE`. 222 unit + 71 int (Redis thật); drill (bỏ lọc tenant, bỏ jobId, bỏ bước bỏ qua, bỏ reset lượt, bỏ tạo lại job, bỏ nhánh `processing`) → đỏ. Sau code-reviewer: sửa document kẹt `processing`, retry khi job hết hạn, retry có đủ 5 lượt, danh sách lỗi đọc từ Postgres, admin 503 khi Redis chết. Handler tạm → `needs_review` (T2.9 thay) |
 | T2.5  | Web: màn hình upload kéo thả                                                | 3            | T2.3, T1.7       | `TODO`     |             |         |
 | T2.6  | Danh sách tài liệu: phân trang server, lọc, sắp xếp                         | 3            | T2.3, T1.7       | `TODO`     |             |         |
 | T2.7  | Chốt schema hóa đơn + độ tin cậy từng field                                 | 2            | T0.5             | `TODO`     |             |         |
@@ -327,3 +327,10 @@ Cập nhật: 2026-10-20
 | 2026-10-20 | T2.3 | Bảng `idempotency_keys` không có job dọn: dòng quá 24h chỉ bị xoá khi chính key đó được dùng lại (app có `DELETE` chỉ để làm việc đó). File mồ côi khi API chết giữa chừng vẫn chưa có gì dọn | M7/M8 (job dọn key hết hạn + file mồ côi) |
 | 2026-10-20 | T2.3 | Response upload nay là document `{id,status,sourceType,contentHash,version,createdAt}` (201 tạo mới / 200 trùng hoặc replay; header `Idempotent-Replayed`); mã lỗi mới `IDEMPOTENCY_KEY_REQUIRED` (400), `IDEMPOTENCY_KEY_REUSED` (422). Web proxy phải chuyển tiếp header `Idempotency-Key` (mỗi lần chọn file một UUID mới, giữ nguyên khi thử lại) | T2.5 (proxy, sinh key, i18n 2 mã lỗi vi/en) |
 | 2026-10-20 | T2.3 | `@SkipTenantTransaction()` (mới) bỏ transaction cả request cho route upload; handler nào làm I/O chậm khác (T2.9 gọi AI) dùng `TenantDbService.run` ngắn | T2.9, T6.x |
+| 2026-10-20 | T2.4 | `REDIS_URL` là biến bắt buộc mới của API và worker. `apps/api/.env.example` bị hook chặn; `dev:api` đã có mặc định `redis://localhost:6380` (`scripts/dev-api.mjs`) | Hậu thêm tay dòng `REDIS_URL=` vào `apps/api/.env.example`; docker compose/Dockerfile (M4) phải đặt `REDIS_URL` cho api và worker |
+| 2026-10-20 | T2.4 | Worker là process riêng: chạy dev bằng `pnpm dev:worker` (tự điền biến môi trường như `dev:api`); `start:worker` chạy thẳng `dist/worker.js` nên cần tự export đủ biến. Nó dùng cùng env schema với API (cần cả `OIDC_ISSUER_URL`, `DATA_DIR`...) | T2.10 (e2e phải bật worker), M4 (image/compose có service worker) |
+| 2026-10-20 | T2.4 | Document có thể kẹt: (a) `queued` không có job nếu API chết đúng giữa commit và enqueue và không ai upload lại; (b) `processing` nếu DB sập đúng lúc ghi lượt cuối. Không có job quét. `POST /documents/:id/retry` (API.md:43) chưa làm | M7/M8 (job quét `queued`/`processing` quá hạn, cùng chỗ với dọn file mồ côi); T2.6/T2.9 (nút thử lại cho người dùng) |
+| 2026-10-20 | T2.4 | Handler tạm đưa document sang `needs_review` mà chưa có dữ liệu trích xuất. Lý do `failed` chỉ ở `audit_logs.meta.code` (không thêm cột `failure_code`) và mã trong `failedReason` của BullMQ | T2.9: thay `PlaceholderExtractionHandler`, quyết định cột `failure_code` nếu UI cần đọc nhanh |
+| 2026-10-20 | T2.4 | BullMQ `Worker` nhân đôi một kết nối chặn bên trong; nếu Redis đã chết lúc tắt thì kết nối này cứ nối lại và giữ process (jest không thoát). Process worker thật vẫn thoát nhờ Nest gửi lại tín hiệu sau `app.close()`; test tách kịch bản Redis chết ra container riêng | T6.7 (diễn tập tắt Redis giữa chừng: kiểm tắt worker) |
+| 2026-10-21 | T2.4 | `GET /admin/jobs` lấy tối đa 200 document `failed` gần nhất của tenant (không phân trang), `attemptsMade` chỉ có khi job còn trong Redis. Hết 5 lượt cũng chưa có `limiter` theo RPM | T2.6 (phân trang nếu UI cần), T6.2 (limiter) |
+| 2026-10-21 | T2.4 | (phát hiện khi kiểm web→API, không do T2.4) Chưa đăng nhập mà vào đúng `/vi` hoặc `/en` thì bị chuyển tới `/v/login` / `/e/login` (404) thay vì `/vi/login`; `/vi/dashboard`, `/` vẫn đúng. Nghi ngờ `stripLocale('/vi')` trả `/` nên `proxy.ts:25-28` cắt thừa 1 ký tự | task web kế tiếp (T2.5) hoặc sửa riêng; cần test cho `/vi` và `/en` trần |

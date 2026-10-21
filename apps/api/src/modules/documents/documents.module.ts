@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { STORAGE_PORT, type StoragePort } from '../storage/application/storage.port';
+import { QueueModule } from '../queue/queue.module';
 import { StorageModule } from '../storage/storage.module';
-import { DocumentStateMachine } from './application/document-state-machine';
 import { DocumentsService } from './application/documents.service';
+import { DocumentStateModule } from './document-state.module';
 import { DocumentsController } from './http/documents.controller';
 import { StorageMulterEngine } from './infra/storage-multer-engine';
 
@@ -12,6 +13,8 @@ export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 @Module({
   imports: [
     StorageModule,
+    QueueModule,
+    DocumentStateModule,
     MulterModule.registerAsync({
       imports: [StorageModule],
       inject: [STORAGE_PORT],
@@ -22,7 +25,7 @@ export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
     }),
   ],
   controllers: [DocumentsController],
-  providers: [DocumentStateMachine, DocumentsService],
-  exports: [DocumentStateMachine, DocumentsService],
+  providers: [DocumentsService],
+  exports: [DocumentStateModule, DocumentsService],
 })
 export class DocumentsModule {}

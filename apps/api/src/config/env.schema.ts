@@ -18,6 +18,10 @@ export const envSchema = z.object({
   // Where StoragePort(LocalFs) keeps uploaded files. Absolute on purpose: a relative path would depend
   // on the working directory and could land inside the repo, where .gitignore does not cover it.
   DATA_DIR: z.string().refine((v) => path.isAbsolute(v), 'must be an absolute path'),
+  // Redis for BullMQ (ADR 0008). The API and the worker process both read it.
+  REDIS_URL: z.url(),
+  // First wait of the retry backoff; tests set a few ms, production keeps seconds.
+  QUEUE_BACKOFF_BASE_MS: z.coerce.number().int().min(1).max(60_000).default(5_000),
   OIDC_AUDIENCE: z.string().min(1).default('api'),
 });
 

@@ -3,11 +3,11 @@
  * The database comes from support/postgres.global-setup.ts (real migrations). Fixtures are inserted
  * with fixed ids and removed afterwards by the owner (the app role cannot DELETE documents).
  */
-import { NotFoundException } from '@nestjs/common';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { DocumentStateMachine } from '../src/modules/documents/application/document-state-machine';
 import { InvalidDocumentTransitionError } from '../src/modules/documents/domain/document-status';
+import { DocumentNotFoundError } from '../src/modules/documents/domain/document-not-found.error';
 import { TenantDbService } from '../src/db/tenant-db.service';
 import * as schema from '../src/db/schema';
 import { tablesWithoutRls } from './support/rls';
@@ -226,7 +226,7 @@ describe('documents (Postgres, RLS, state machine)', () => {
   it("cannot touch another tenant's document (looks like not found)", async () => {
     await expect(
       tenantDb.run(ACME, () => machine.transition(DOC_G, 'queued', { actorId: USER })),
-    ).rejects.toThrow(NotFoundException);
+    ).rejects.toThrow(DocumentNotFoundError);
     expect(await statusOf(DOC_G)).toEqual({ status: 'uploaded', version: 1 });
   });
 

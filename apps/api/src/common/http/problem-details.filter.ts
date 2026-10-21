@@ -8,6 +8,12 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { STATUS_CODES } from 'node:http';
+import { DocumentNotFoundError } from '../../modules/documents/domain/document-not-found.error';
+import {
+  INVALID_TRANSITION_CODE,
+  InvalidDocumentTransitionError,
+} from '../../modules/documents/domain/document-status';
+import { JobNotFailedError } from '../../modules/queue/application/admin-jobs.service';
 
 const KNOWN_CODES: ReadonlySet<string> = new Set([
   'FORBIDDEN_PERMISSION',
@@ -17,7 +23,30 @@ const KNOWN_CODES: ReadonlySet<string> = new Set([
   'UNSUPPORTED_FILE_TYPE',
   'IDEMPOTENCY_KEY_REQUIRED',
   'IDEMPOTENCY_KEY_REUSED',
+  'QUEUE_UNAVAILABLE',
+  INVALID_TRANSITION_CODE,
+  'JOB_NOT_FAILED',
 ]);
+
+/** Domain errors carry no HTTP knowledge; this is the one place that gives them a status. */
+function domainProblem(
+  e: unknown,
+): { status: HttpStatus; code?: string; detail: string } | undefined {
+  if (e instanceof DocumentNotFoundError) {
+    return { status: HttpStatus.NOT_FOUND, detail: 'Document not found' };
+  }
+  if (e instanceof InvalidDocumentTransitionError) {
+    return {
+      status: HttpStatus.CONFLICT,
+      code: INVALID_TRANSITION_CODE,
+      detail: 'The document is not in a state that allows this',
+    };
+  }
+  if (e instanceof JobNotFailedError) {
+    return { status: HttpStatus.CONFLICT, code: 'JOB_NOT_FAILED', detail: 'The job is not failed' };
+  }
+  return undefined;
+}
 
 /** RFC 9457 Problem Details body. */
 export interface ProblemDetails {
@@ -46,8 +75,10 @@ export class ProblemDetailsFilter implements ExceptionFilter {
     const res = http.getResponse<Response>();
     const req = http.getRequest<Request>();
 
+    const domain = domainProblem(exception);
     const isHttp = exception instanceof HttpException;
-    const status = isHttp ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+    const status =
+      domain?.status ?? (isHttp ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR);
     const title = STATUS_CODES[status] ?? 'Error';
 
     if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
@@ -59,10 +90,10 @@ export class ProblemDetailsFilter implements ExceptionFilter {
       type: 'about:blank',
       title,
       status,
-      detail: this.detailOf(exception, status),
+      detail: domain?.detail ?? this.detailOf(exception, status),
       instance: req.path,
     };
-    const code = this.codeOf(exception);
+    const code = domain ? domain.code : this.codeOf(exception);
     if (code !== undefined) body.code = code;
 
     res.status(status).type('application/problem+json').json(body);
