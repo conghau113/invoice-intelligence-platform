@@ -15,3 +15,5 @@ allowBuilds:
   cpu-features: false
   ssh2: false
   protobufjs: false
+  # msgpackr-extract (via bullmq) only compiles an optional native speed-up; msgpackr falls back to pure JS.
+  msgpackr-extract: false

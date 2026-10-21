@@ -2,9 +2,12 @@ import { Global, INestApplication, Module } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { PG_POOL } from '../../../db/db.module';
+import { EXTRACTION_QUEUE_PORT } from '../../queue/application/extraction-queue.port';
+import { FakeExtractionQueue } from '../../queue/testing/fake-extraction-queue';
 import { HealthModule } from '../health.module';
 
 let query: jest.Mock;
+const queue = new FakeExtractionQueue();
 
 @Global()
 @Module({
@@ -21,7 +24,10 @@ describe('HealthController (http)', () => {
   beforeAll(async () => {
     const mod = await Test.createTestingModule({
       imports: [FakePoolModule, HealthModule],
-    }).compile();
+    })
+      .overrideProvider(EXTRACTION_QUEUE_PORT)
+      .useValue(queue)
+      .compile();
     app = mod.createNestApplication();
     await app.init();
   });
@@ -37,7 +43,18 @@ describe('HealthController (http)', () => {
   it('GET /health/ready -> 200 when the database answers', async () => {
     query = jest.fn().mockResolvedValue({ rows: [{ '?column?': 1 }] });
     const res = await request(app.getHttpServer()).get('/health/ready').expect(200);
-    expect(res.body).toEqual({ status: 'ok', checks: { database: 'ok' } });
+    expect(res.body).toEqual({ status: 'ok', checks: { database: 'ok', redis: 'ok' } });
+  });
+
+  it('GET /health/ready -> 503 when Redis is down; /health stays 200 (liveness must not depend on it)', async () => {
+    query = jest.fn().mockResolvedValue({ rows: [] });
+    queue.down = true;
+    try {
+      await request(app.getHttpServer()).get('/health/ready').expect(503);
+      await request(app.getHttpServer()).get('/health').expect(200);
+    } finally {
+      queue.down = false;
+    }
   });
 
   it('GET /health/ready -> 503 without detail when the database fails', async () => {

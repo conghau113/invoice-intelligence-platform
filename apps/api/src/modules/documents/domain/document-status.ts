@@ -26,7 +26,7 @@ const TRANSITIONS: Readonly<Record<DocumentStatus, readonly DocumentStatus[]>> =
   rejected: [],
 };
 
-/** Stable machine-readable reason, mapped to HTTP by the endpoints that need it (T2.4). */
+/** Stable machine-readable reason; ProblemDetailsFilter maps the error to 409 for every route. */
 export const INVALID_TRANSITION_CODE = 'INVALID_DOCUMENT_TRANSITION';
 
 export class InvalidDocumentTransitionError extends Error {

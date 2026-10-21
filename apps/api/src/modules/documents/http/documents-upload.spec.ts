@@ -12,6 +12,8 @@ import { TENANT_DIRECTORY } from '../../auth/application/tenant-directory.port';
 import { TOKEN_VERIFIER } from '../../auth/application/token-verifier.port';
 import { JwtAuthGuard } from '../../auth/http/jwt-auth.guard';
 import { PermissionsGuard } from '../../auth/http/permissions.guard';
+import { EXTRACTION_QUEUE_PORT } from '../../queue/application/extraction-queue.port';
+import { FakeExtractionQueue } from '../../queue/testing/fake-extraction-queue';
 import { STORAGE_PORT } from '../../storage/application/storage.port';
 import { LocalFsStorage } from '../../storage/infra/local-fs.storage';
 import { useTestRoots } from '../../storage/testing/test-root';
@@ -119,11 +121,20 @@ describe('POST /documents/upload (real guards, filter, multer engine and LocalFs
       .useValue(service)
       .overrideProvider(STORAGE_PORT)
       .useValue(new LocalFsStorage(root))
+      .overrideProvider(EXTRACTION_QUEUE_PORT)
+      .useValue(new FakeExtractionQueue())
       .compile();
     app = mod.createNestApplication();
     await app.init();
   });
   afterEach(() => app.close());
+
+  it('hands a well-formed traceparent header to the service and drops a malformed one', async () => {
+    const trace = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
+    await upload(PDF).set('traceparent', trace).expect(201);
+    await upload(PDF, 'invoice.pdf', 'accountant', 'key-2').set('traceparent', 'junk').expect(201);
+    expect(service.calls.map((c) => c.traceparent)).toEqual([trace, undefined]);
+  });
 
   const upload = (content: Buffer, filename = 'invoice.pdf', role = 'accountant', key = 'key-1') =>
     request(app.getHttpServer())

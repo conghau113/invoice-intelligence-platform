@@ -132,6 +132,8 @@ jobs:
       KEYCLOAK_CLIENT_SECRET: web-secret-dev-only
       API_BASE_URL: http://localhost:3001
       DATA_DIR: ${{ github.workspace }}/data
+      # The API checks it at start and in /health/ready (compose publishes Redis on 6380, no password).
+      REDIS_URL: redis://localhost:6380
     steps:
       - uses: actions/checkout@v7
       - run: corepack enable
@@ -148,9 +150,8 @@ jobs:
             echo "::add-mask::$value"
             echo "$name=$value" >> "$GITHUB_ENV"
           done
-      # Redis is not used by the app yet.
-      - name: Start Postgres and Keycloak
-        run: docker compose up -d --wait postgres keycloak
+      - name: Start Postgres, Redis and Keycloak
+        run: docker compose up -d --wait postgres redis keycloak
       - name: Migrate and seed
         run: |
           export DATABASE_OWNER_URL="postgres://invoice:${POSTGRES_PASSWORD}@localhost:5433/invoice"

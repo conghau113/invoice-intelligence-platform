@@ -16,6 +16,7 @@ import type { AuthenticatedRequest } from '../../auth/http/authenticated-request
 import { RequirePermission } from '../../auth/http/require-permission.decorator';
 import { DocumentsService, type DocumentView } from '../application/documents.service';
 import { IDEMPOTENCY_KEY_REQUIRED, parseIdempotencyKey } from '../domain/idempotency';
+import { parseTraceparent } from '../../queue/domain/extraction-job';
 import type { UploadedObject } from '../infra/storage-multer-engine';
 import { IdempotencyKeyGuard } from './idempotency-key.guard';
 
@@ -25,7 +26,7 @@ export class DocumentsController {
 
   /**
    * Streams the file to storage (multer engine, options in DocumentsModule), then registers it.
-   * 201 when this call created the document, 200 when the same bytes or the same Idempotency-Key
+   * 201 when this call created the document (already `queued`), 200 when the same bytes or the same Idempotency-Key
    * had been seen (the existing document is returned and no new job may start). The request-wide
    * transaction is skipped: holding a connection while a client uploads would exhaust the pool, so
    * DocumentsService opens a short one after the file is on disk.
@@ -54,6 +55,7 @@ export class DocumentsController {
       ip: req.ip,
       idempotencyKey,
       file,
+      traceparent: parseTraceparent(req.headers.traceparent),
     });
     res.status(result.statusCode);
     if (result.replayed) res.setHeader('Idempotent-Replayed', 'true');

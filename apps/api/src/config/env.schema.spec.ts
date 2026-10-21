@@ -3,11 +3,18 @@ import { validateEnv } from './env.schema';
 const ISSUER = 'http://localhost:8080/realms/invoice';
 const DB_URL = 'postgres://invoice_app:pw@localhost:5433/invoice';
 const DATA_DIR = '/var/lib/invoice-data';
+const REDIS_URL = 'redis://localhost:6380';
 
 describe('validateEnv', () => {
   it('applies defaults', () => {
     expect(
-      validateEnv({ NODE_ENV: 'test', OIDC_ISSUER_URL: ISSUER, DATABASE_URL: DB_URL, DATA_DIR }),
+      validateEnv({
+        NODE_ENV: 'test',
+        OIDC_ISSUER_URL: ISSUER,
+        DATABASE_URL: DB_URL,
+        DATA_DIR,
+        REDIS_URL,
+      }),
     ).toEqual({
       NODE_ENV: 'test',
       PORT: 3001,
@@ -15,14 +22,33 @@ describe('validateEnv', () => {
       OIDC_ISSUER_URL: ISSUER,
       DATABASE_URL: DB_URL,
       DATA_DIR,
+      REDIS_URL,
+      QUEUE_BACKOFF_BASE_MS: 5000,
       OIDC_AUDIENCE: 'api',
     });
   });
 
   it('parses "false" as false (not a truthy string)', () => {
-    const base = { NODE_ENV: 'test', OIDC_ISSUER_URL: ISSUER, DATABASE_URL: DB_URL, DATA_DIR };
+    const base = {
+      NODE_ENV: 'test',
+      OIDC_ISSUER_URL: ISSUER,
+      DATABASE_URL: DB_URL,
+      DATA_DIR,
+      REDIS_URL,
+    };
     expect(validateEnv({ ...base, DEMO_READ_ONLY: 'false' }).DEMO_READ_ONLY).toBe(false);
     expect(validateEnv({ ...base, DEMO_READ_ONLY: 'true' }).DEMO_READ_ONLY).toBe(true);
+  });
+
+  it('requires REDIS_URL and bounds the backoff base', () => {
+    const base = { NODE_ENV: 'test', OIDC_ISSUER_URL: ISSUER, DATABASE_URL: DB_URL, DATA_DIR };
+    expect(() => validateEnv(base)).toThrow(/REDIS_URL/);
+    expect(() => validateEnv({ ...base, REDIS_URL, QUEUE_BACKOFF_BASE_MS: '0' })).toThrow(
+      /QUEUE_BACKOFF_BASE_MS/,
+    );
+    expect(
+      validateEnv({ ...base, REDIS_URL, QUEUE_BACKOFF_BASE_MS: '10' }).QUEUE_BACKOFF_BASE_MS,
+    ).toBe(10);
   });
 
   it('requires the token issuer (no silent insecure default)', () => {

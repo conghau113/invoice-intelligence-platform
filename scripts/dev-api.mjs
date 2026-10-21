@@ -1,4 +1,4 @@
-// Starts the API for local development. The API reads no dotfile (ignoreEnvFile), so the variables
+// Starts the API (or, with the argument `worker`, the queue worker) for local development. The API reads no dotfile (ignoreEnvFile), so the variables
 // it needs are put in its process environment here. Values already set in your shell win.
 // No password lives in this file: the database password comes from APP_DB_PASSWORD (the same
 // variable db:migrate uses), exported once in your shell profile.
@@ -10,6 +10,8 @@ export const DEV_DEFAULTS = {
   OIDC_ISSUER_URL: 'http://localhost:8080/realms/invoice',
   // <repo>/data is git-ignored; the API requires an absolute path.
   DATA_DIR: fileURLToPath(new URL('../data', import.meta.url)),
+  // Redis of `pnpm infra:up` (compose.yaml, host port 6380, no password).
+  REDIS_URL: 'redis://localhost:6380',
 };
 
 /** Environment for the API: dev defaults under whatever the caller already set. */
@@ -29,6 +31,11 @@ export function devApiEnv(env) {
   return merged;
 }
 
+/** `pnpm dev:api` runs the HTTP API; `pnpm dev:worker` runs the queue worker with the same environment. */
+export function devScript(target) {
+  return target === 'worker' ? 'start:worker:dev' : 'start:dev';
+}
+
 /** pnpm is a JS file on some installs and a native binary on others (pnpm 12 via corepack). */
 export function pnpmCommand(execPath) {
   return /\.[cm]?js$/.test(execPath)
@@ -40,7 +47,7 @@ function main() {
   // Run through the same pnpm that launched this script, not a PATH lookup.
   const execPath = process.env.npm_execpath;
   if (!execPath) {
-    console.error('Run it as: pnpm dev:api');
+    console.error('Run it as: pnpm dev:api (or pnpm dev:worker)');
     process.exit(1);
   }
   const { command, args } = pnpmCommand(execPath);
@@ -51,7 +58,7 @@ function main() {
     console.error(err.message);
     process.exit(1);
   }
-  const child = spawn(command, [...args, '--filter', 'api', 'start:dev'], {
+  const child = spawn(command, [...args, '--filter', 'api', devScript(process.argv[2])], {
     env,
     stdio: 'inherit',
   });

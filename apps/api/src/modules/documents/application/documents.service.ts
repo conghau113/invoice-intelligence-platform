@@ -3,8 +3,15 @@ import { and, eq, gt, sql } from 'drizzle-orm';
 import { auditLogs, documents, idempotencyKeys } from '../../../db/schema';
 import { TenantDbService, type Tx } from '../../../db/tenant-db.service';
 import { STORAGE_PORT, type StoragePort } from '../../storage/application/storage.port';
+import { queueUnavailable } from '../../queue/application/queue-unavailable';
+import {
+  EXTRACTION_QUEUE_PORT,
+  type ExtractionQueuePort,
+} from '../../queue/application/extraction-queue.port';
 import { IDEMPOTENCY_KEY_REUSED, IDEMPOTENCY_WINDOW_HOURS } from '../domain/idempotency';
+import { InvalidDocumentTransitionError } from '../domain/document-status';
 import type { UploadedObject } from '../infra/storage-multer-engine';
+import { DocumentStateMachine } from './document-state-machine';
 
 export const DOCUMENT_CREATED = 'document.created';
 
@@ -24,13 +31,15 @@ export interface CreateDocumentInput {
   ip: string | undefined;
   idempotencyKey: string;
   file: UploadedObject;
+  /** Valid W3C traceparent of the request, handed on to the job (T7.1). */
+  traceparent?: string;
 }
 
 export interface CreateDocumentResult {
   document: DocumentView;
   /**
-   * True only when this call inserted the row. The queue (T2.4) enqueues a job exactly then, so a
-   * duplicate file or a replayed request never starts a second job.
+   * True only when this call inserted the row. A duplicate file or a replayed request returns
+   * false and never starts a second job (see `dispatch` for the one case that re-sends the first).
    */
   created: boolean;
   /** Status of the original response: 201 if that call created the row, else 200. */
@@ -55,6 +64,8 @@ export class DocumentsService {
   constructor(
     private readonly tenantDb: TenantDbService,
     @Inject(STORAGE_PORT) private readonly storage: StoragePort,
+    private readonly machine: DocumentStateMachine,
+    @Inject(EXTRACTION_QUEUE_PORT) private readonly queue: ExtractionQueuePort,
   ) {}
 
   /**
@@ -75,7 +86,43 @@ export class DocumentsService {
       throw e;
     }
     if (!result.created) await this.discard(input.file.storageKey);
-    return result;
+    return this.dispatch(result, input);
+  }
+
+  /**
+   * Hands the document to the queue: uploaded -> queued, then one job whose id is the document id.
+   * Redis may fail after the row committed. The document is then left `uploaded` or `queued` with
+   * no job and this answers 503; the client's retry (same Idempotency-Key, or the same file) lands
+   * here again as a duplicate, sees that status and sends the job. Adding a job id that already
+   * exists does nothing, so a retry can never produce a second job.
+   */
+  private async dispatch(
+    result: CreateDocumentResult,
+    input: CreateDocumentInput,
+  ): Promise<CreateDocumentResult> {
+    const { document } = result;
+    if (document.status !== 'uploaded' && document.status !== 'queued') return result;
+
+    if (document.status === 'uploaded') {
+      try {
+        await this.tenantDb.run(input.tenantId, () =>
+          this.machine.transition(document.id, 'queued', { actorId: input.userId }),
+        );
+      } catch (e) {
+        // A concurrent duplicate request queued it first; its job is on the way.
+        if (!(e instanceof InvalidDocumentTransitionError)) throw e;
+      }
+    }
+    try {
+      await this.queue.enqueue({
+        documentId: document.id,
+        tenantId: input.tenantId,
+        ...(input.traceparent === undefined ? {} : { traceparent: input.traceparent }),
+      });
+    } catch {
+      throw queueUnavailable();
+    }
+    return { ...result, document: { ...document, status: 'queued' } };
   }
 
   private async register(tx: Tx, input: CreateDocumentInput): Promise<CreateDocumentResult> {
