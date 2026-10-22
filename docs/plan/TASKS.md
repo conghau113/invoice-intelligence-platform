@@ -22,9 +22,9 @@
 
 ```text
 Mốc hiện tại: M1 (còn kiểm tra cuối mốc) → M2
-Task hiện tại: T2.5 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.4 đã DONE)
+Task hiện tại: T2.6 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.5 đã DONE)
 Chặn bởi: không
-Cập nhật: 2026-10-21
+Cập nhật: 2026-10-22
 ```
 
 
@@ -75,7 +75,7 @@ Cập nhật: 2026-10-21
 | T2.2  | Bảng documents + máy trạng thái                                             | 2.5          | T2.1             | `DONE`   |             | Agent: bảng `documents` (RLS FORCE, `UPDATE` chỉ cột `status`/`version`, unique tenant+hash, CHECK), `DocumentStateMachine` khoá `FOR UPDATE` + ghi `audit_logs` cùng transaction. 51 unit (49 cặp) + 15 int; drill bỏ cặp/khoá/FORCE → đỏ |
 | T2.3  | API tạo tài liệu + idempotency theo content hash                            | 2.5          | T2.2             | `DONE`      |             | Agent: `DocumentsService.create` (unique hash + `Idempotency-Key` ở bảng `idempotency_keys` có RLS, 24h), upload trả document 201/200, xoá file trùng, `@SkipTenantTransaction`. 211 unit + 56 int; 4 drill (bỏ ON CONFLICT, bỏ so hash, bỏ xoá file, NO FORCE) → đỏ |
 | T2.4  | Hàng đợi BullMQ: producer, worker, retry, dead-letter                       | 3            | T2.3             | `DONE`     |             | Agent: `bullmq` + `ioredis` (MIT), `modules/queue/` + `src/worker.ts`; job = id + traceparent, `jobId` = documentId; mọi lần chạy đi qua máy trạng thái (retry: `processing→queued`, hết 5 lượt: `failed` + mã); admin xem/thử lại job lỗi theo tenant; Redis chết → 503 `QUEUE_UNAVAILABLE`. 222 unit + 71 int (Redis thật); drill (bỏ lọc tenant, bỏ jobId, bỏ bước bỏ qua, bỏ reset lượt, bỏ tạo lại job, bỏ nhánh `processing`) → đỏ. Sau code-reviewer: sửa document kẹt `processing`, retry khi job hết hạn, retry có đủ 5 lượt, danh sách lỗi đọc từ Postgres, admin 503 khi Redis chết. Handler tạm → `needs_review` (T2.9 thay) |
-| T2.5  | Web: màn hình upload kéo thả                                                | 3            | T2.3, T1.7       | `TODO`     |             |         |
+| T2.5  | Web: màn hình upload kéo thả                                                | 3            | T2.3, T1.7       | `DONE`     |             | Agent: `features/upload/` (hàng đợi thuần tối đa 3 song song, XHR có tiến độ, huỷ, thử lại cùng `Idempotency-Key`), proxy `POST /api/documents/upload` (stream, same-origin), `proxyClientMaxBodySize: '11mb'` (mặc định 10MB cắt im lặng file sát 10 MiB), lỗi i18n vi/en. Sửa luôn lỗi `/vi` → `/v/login`. 262 test web; Playwright 20 (8 mới); drill bỏ giới hạn 3 / bỏ sửa `/vi` / hạ `proxyClientMaxBodySize` → đỏ. CI `e2e` (build production) đã chạy: 8 test upload xanh; sửa thêm menu mobile (xem Phát sinh) |
 | T2.6  | Danh sách tài liệu: phân trang server, lọc, sắp xếp                         | 3            | T2.3, T1.7       | `TODO`     |             |         |
 | T2.7  | Chốt schema hóa đơn + độ tin cậy từng field                                 | 2            | T0.5             | `TODO`     |             |         |
 | T2.8  | Parser hóa đơn điện tử XML (đường xác định, không dùng LLM)                 | 3            | T2.7             | `TODO`     |             |         |
@@ -334,3 +334,10 @@ Cập nhật: 2026-10-21
 | 2026-10-20 | T2.4 | BullMQ `Worker` nhân đôi một kết nối chặn bên trong; nếu Redis đã chết lúc tắt thì kết nối này cứ nối lại và giữ process (jest không thoát). Process worker thật vẫn thoát nhờ Nest gửi lại tín hiệu sau `app.close()`; test tách kịch bản Redis chết ra container riêng | T6.7 (diễn tập tắt Redis giữa chừng: kiểm tắt worker) |
 | 2026-10-21 | T2.4 | `GET /admin/jobs` lấy tối đa 200 document `failed` gần nhất của tenant (không phân trang), `attemptsMade` chỉ có khi job còn trong Redis. Hết 5 lượt cũng chưa có `limiter` theo RPM | T2.6 (phân trang nếu UI cần), T6.2 (limiter) |
 | 2026-10-21 | T2.4 | (phát hiện khi kiểm web→API, không do T2.4) Chưa đăng nhập mà vào đúng `/vi` hoặc `/en` thì bị chuyển tới `/v/login` / `/e/login` (404) thay vì `/vi/login`; `/vi/dashboard`, `/` vẫn đúng. Nghi ngờ `stripLocale('/vi')` trả `/` nên `proxy.ts:25-28` cắt thừa 1 ký tự | task web kế tiếp (T2.5) hoặc sửa riêng; cần test cho `/vi` và `/en` trần |
+| 2026-10-21 | T2.5 | Đã sửa lỗi `/vi`, `/en` trần → `/v/login` của dòng T2.4 phía trên (`localePrefix` trong `guard.ts`, có test) | — (đã xong) |
+| 2026-10-21 | T2.5 | `proxy.ts` chạy cả trên `/api/*` và Next đệm body (mặc định 10MB, cắt im lặng); đã đặt `proxyClientMaxBodySize: '11mb'`. Mọi route proxy upload/tải file lớn sau này (vd. ảnh hoá đơn) phải tính giới hạn này; mỗi upload đang chạy giữ tới 11MB trong RAM của web | Task nào thêm route nhận body lớn; M8 (kích thước RAM web) |
+| 2026-10-21 | T2.5 | Huỷ upload chỉ huỷ XHR; API có thể đã ghi file và tạo document rồi mới thấy kết nối đứt (document `queued` mà UI ghi "đã huỷ"). Chưa có cách huỷ document từ UI | T2.6 (danh sách sẽ hiện document này), M7/M8 (dọn) |
+| 2026-10-21 | T2.5 | Sau khi upload xong UI chỉ hiện trạng thái lúc nhận (`queued`), không tự cập nhật và chưa có link tới `/documents` (trang chưa có) | T2.6 (thêm link/điều hướng), T6.4 (realtime) |
+| 2026-10-21 | T2.5 | `MAX_UPLOAD_BYTES` (10 MiB) và danh sách loại file nay có 2 bản: API và `features/upload/validate.ts`. Chỉ khớp bằng comment | T7.x hoặc khi đưa hằng số vào `packages/contracts` |
+| 2026-10-22 | T2.5 | CI `e2e` đỏ 3/3 ở test 9 của `app-shell` (T1.7): menu mobile chỉ nghe Escape sau khi sự kiện `toggle` đi qua state React, nên phím bấm ngay sau khi mở bị mất (trace: Escape đến 27 ms sau click). `main` vẫn xanh; lỗi chỉ lộ ở PR này vì thời gian. Đã sửa ngoài phạm vi T2.5 (Hậu duyệt): `mobile-menu.tsx` gắn nghe Escape từ lúc mount; thêm test 9b bấm click và Escape trong cùng một tác vụ (đỏ với code cũ, xanh với code mới) | — (đã xong) |
+| 2026-10-21 | T2.5 | E2E chạy ở dev server; job CI `e2e` build production và không bật worker nên document dừng ở `queued` (test chỉ khẳng định tới đó). Test 10 MiB phụ thuộc `next.config.ts` được đọc lúc `next start` | T2.10 (e2e thêm worker); kiểm khi push |

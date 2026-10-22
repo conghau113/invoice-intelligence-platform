@@ -31,6 +31,42 @@
     "rejected": "Rejected",
     "failed": "Failed"
   },
+  "Upload": {
+    "title": "Upload invoices",
+    "description": "Upload PDF, PNG/JPEG images or XML e-invoices. Up to 10 MB per file, at most 3 files at a time.",
+    "dropzoneTitle": "Drag files here",
+    "dropzoneHint": "PDF, PNG, JPEG, XML · up to 10 MB each",
+    "choose": "Choose files",
+    "fileInput": "Choose invoice files to upload",
+    "listLabel": "Uploads",
+    "clear": "Clear finished",
+    "cancel": "Cancel",
+    "retry": "Retry",
+    "cancelFile": "Cancel upload of {name}",
+    "retryFile": "Retry {name}",
+    "progress": "Upload progress of {name}",
+    "state": {
+      "pending": "Waiting",
+      "uploading": "Uploading",
+      "done": "Uploaded",
+      "duplicate": "Already exists, not created again",
+      "cancelled": "Cancelled",
+      "error": "Error"
+    },
+    "errors": {
+      "unsupportedType": "Unsupported file type. Only PDF, PNG, JPEG or XML are accepted.",
+      "tooLarge": "The file is larger than 10 MB.",
+      "empty": "The file is empty.",
+      "sessionExpired": "Your session has expired. Please sign in again.",
+      "forbidden": "You are not allowed to upload in this organization.",
+      "tenant": "No valid organization selected. Choose one in the top bar.",
+      "idempotency": "The request was invalid. Please choose the file again.",
+      "queueUnavailable": "The processing queue is temporarily unavailable. Try again in a few minutes.",
+      "network": "Lost connection to the server. Check your network and retry.",
+      "server": "The server hit an error. Try again in a few minutes.",
+      "unknown": "Upload failed. Please try again."
+    }
+  },
   "Styleguide": {
     "title": "Styleguide",
     "intro": "Shared building blocks for every page. All data on this page is sample data.",

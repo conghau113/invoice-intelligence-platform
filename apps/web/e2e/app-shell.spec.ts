@@ -96,6 +96,20 @@ test.describe('app shell', () => {
     await expect(page).toHaveURL(/\/vi\/documents$/);
   });
 
+  test('9b. Escape right after opening the drawer closes it (no wait for the toggle event)', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 800 });
+    await login(page, 'admin');
+    // Click and key in one task: the `toggle` event has not run yet. A slow CI runner hits the
+    // same window with a fast user; the drawer must not depend on that event to hear Escape.
+    await page.getByTestId('mobile-menu').evaluate((el) => {
+      el.querySelector('summary')?.click();
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    });
+    await expect(page.getByTestId('mobile-nav-documents')).toBeHidden();
+  });
+
   test('10. sign out returns to the login page and protects the dashboard', async ({ page }) => {
     await login(page, 'viewer');
     await page.getByTestId('logout').click();

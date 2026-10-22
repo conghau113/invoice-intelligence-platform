@@ -8,7 +8,7 @@ import {
   replaceSessionCookies,
   sessionCookieName,
 } from '@/auth/cookie';
-import { decide, stripLocale } from '@/auth/guard';
+import { decide, localePrefix } from '@/auth/guard';
 import { routing } from '@/i18n/routing';
 import { needsRefresh, refreshAccessToken } from '@/auth/refresh';
 
@@ -21,12 +21,16 @@ const intl = createIntlMiddleware(routing);
 const isApi = (pathname: string) => pathname === '/api' || pathname.startsWith('/api/');
 
 function toLogin(req: NextRequest, base: string): NextResponse {
+  // A fetch/XHR to /api/* follows redirects silently and would read the login page as a "200";
+  // answer it with a status code it can act on instead.
+  if (isApi(req.nextUrl.pathname)) {
+    const res = NextResponse.json({ code: 'UNAUTHENTICATED' }, { status: 401 });
+    for (const c of req.cookies.getAll())
+      if (isSessionCookie(c.name, base)) res.cookies.delete(c.name);
+    return res;
+  }
   // Keep the locale the user is on; without one, next-intl picks it when it handles /login.
-  const prefix = req.nextUrl.pathname.slice(
-    0,
-    req.nextUrl.pathname.length - stripLocale(req.nextUrl.pathname).length,
-  );
-  const url = new URL(`${prefix}/login`, req.url);
+  const url = new URL(`${localePrefix(req.nextUrl.pathname)}/login`, req.url);
   url.searchParams.set('callbackUrl', req.nextUrl.pathname);
   const res = NextResponse.redirect(url);
   for (const c of req.cookies.getAll())
