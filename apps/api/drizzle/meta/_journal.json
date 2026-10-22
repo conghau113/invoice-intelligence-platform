@@ -50,6 +50,13 @@
       "when": 1792522197536,
       "tag": "0006_idempotency_keys_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792662738752,
+      "tag": "0007_documents_list_indexes",
+      "breakpoints": true
     }
   ]
 }

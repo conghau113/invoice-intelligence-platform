@@ -65,7 +65,8 @@
       "network": "Lost connection to the server. Check your network and retry.",
       "server": "The server hit an error. Try again in a few minutes.",
       "unknown": "Upload failed. Please try again."
-    }
+    },
+    "viewList": "View the document list"
   },
   "Styleguide": {
     "title": "Styleguide",
@@ -127,14 +128,24 @@
     "unavailableTitle": "Service unavailable",
     "unavailableHint": "The server did not answer. Try again in a moment.",
     "forbiddenRequired": "Your account belongs to several tenants and none is selected yet. Pick one in the header; if there is no list, sign out and sign in again.",
-    "forbiddenNotMember": "The selected tenant is not one of your tenants. Pick another one in the header, or sign out and in again if your access changed."
+    "forbiddenNotMember": "The selected tenant is not one of your tenants. Pick another one in the header, or sign out and in again if your access changed.",
+    "collapseSidebar": "Collapse menu",
+    "expandSidebar": "Expand menu",
+    "readOnlyBanner": "Read-only mode: actions that change data are turned off.",
+    "user": "User",
+    "userMenu": "Account"
   },
   "Nav": {
     "documents": "Documents",
     "upload": "Upload",
     "ask": "Ask",
     "insights": "Insights",
-    "members": "Members"
+    "members": "Members",
+    "groups": {
+      "workspace": "Documents",
+      "analysis": "Analysis",
+      "settings": "Settings"
+    }
   },
   "Role": {
     "tenant_admin": "Administrator",
@@ -145,5 +156,81 @@
     "title": "Page not found",
     "hint": "The address may be wrong, or the page does not exist yet.",
     "home": "Back to the dashboard"
+  },
+  "Documents": {
+    "title": "Documents",
+    "description": "Uploaded invoices and their processing status. The list refreshes every 5 seconds while a document is still being processed.",
+    "caption": "Document list",
+    "filters": "Document filters",
+    "status": "Status",
+    "allStatuses": "All statuses",
+    "type": "File type",
+    "allTypes": "All types",
+    "types": {
+      "xml": "XML",
+      "pdf": "PDF",
+      "image": "Image"
+    },
+    "from": "From",
+    "to": "To",
+    "sort": "Sort",
+    "sortNewest": "Newest first",
+    "sortOldest": "Oldest first",
+    "clear": "Clear filters",
+    "colId": "ID",
+    "colType": "Type",
+    "colStatus": "Status",
+    "colCreated": "Uploaded at",
+    "loading": "Loading the list",
+    "empty": "No documents yet",
+    "emptyHint": "Upload your first invoice to get started.",
+    "goUpload": "Go to upload",
+    "emptyFiltered": "No documents match the filters",
+    "retry": "Retry",
+    "first": "First page",
+    "staleHint": "Could not refresh the list; showing the data from the last load.",
+    "errors": {
+      "session": {
+        "title": "Your session has expired",
+        "hint": "Sign in again to see the list."
+      },
+      "forbidden": {
+        "title": "You are not allowed to see this list",
+        "hint": "Ask your organization's administrator if you need access to documents."
+      },
+      "unreachable": {
+        "title": "Cannot reach the server",
+        "hint": "The API service is not responding. Try again in a few minutes."
+      },
+      "error": {
+        "title": "The list could not be loaded",
+        "hint": "Something went wrong while loading the list. Try again."
+      }
+    },
+    "signIn": "Sign in again",
+    "count": "{count, plural, one {# document} other {# documents}}",
+    "countAria": "Total documents: {count}",
+    "refreshing": "Updating the list",
+    "filterStatus": "Status: {value}",
+    "filterType": "Type: {value}",
+    "filterFrom": "From: {value}",
+    "filterTo": "To: {value}",
+    "refresh": "Refresh the list"
+  },
+  "List": {
+    "range": "Showing {from}–{to} of {total}",
+    "pageSize": "Rows per page",
+    "pagination": "Pagination",
+    "first": "First page",
+    "previous": "Previous page",
+    "next": "Next page",
+    "last": "Last page",
+    "goToPage": "Page {page}",
+    "jumpLabel": "Go to page (1–{totalPages})",
+    "jumpButton": "Go",
+    "appliedFilters": "Applied filters",
+    "removeFilter": "Remove filter {name}",
+    "clearAll": "Clear all",
+    "sortBy": "Sort by {column}"
   }
 }

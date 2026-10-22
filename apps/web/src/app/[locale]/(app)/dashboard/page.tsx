@@ -1,4 +1,5 @@
 import { getTranslations } from 'next-intl/server';
+import { PageLayout } from '@/components/common/page-layout';
 import { getMe } from '@/features/shell/me';
 import { currentTenant } from '@/lib/api';
 
@@ -9,7 +10,7 @@ export default async function DashboardPage() {
   const me = await getMe();
   if (me.kind !== 'ok') return null;
   return (
-    <section className="flex flex-col gap-4">
+    <PageLayout>
       <h1 className="text-2xl font-semibold">{t('title')}</h1>
       <dl className="grid gap-2 text-sm sm:grid-cols-[10rem_1fr]">
         <dt className="text-muted-foreground">{t('tenant')}</dt>
@@ -23,6 +24,6 @@ export default async function DashboardPage() {
         <dt className="text-muted-foreground">{t('permissions')}</dt>
         <dd className="font-mono">{me.data.permissions.join(', ') || '-'}</dd>
       </dl>
-    </section>
+    </PageLayout>
   );
 }

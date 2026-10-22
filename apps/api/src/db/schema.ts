@@ -98,7 +98,14 @@ export const documents = pgTable(
   },
   (t) => [
     unique('documents_tenant_hash_unique').on(t.tenantId, t.contentHash),
-    index('documents_tenant_status_created_idx').on(t.tenantId, t.status, t.createdAt.desc()),
+    // The list page (GET /documents) orders by (created_at, id); `id` is the tie-breaker that keeps pages deterministic.
+    index('documents_tenant_created_idx').on(t.tenantId, t.createdAt.desc(), t.id.desc()),
+    index('documents_tenant_status_created_idx').on(
+      t.tenantId,
+      t.status,
+      t.createdAt.desc(),
+      t.id.desc(),
+    ),
     check(
       'documents_status_check',
       sql`${t.status} in ('uploaded', 'queued', 'processing', 'needs_review', 'approved', 'rejected', 'failed')`,

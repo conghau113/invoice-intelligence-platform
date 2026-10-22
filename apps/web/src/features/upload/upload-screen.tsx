@@ -1,7 +1,9 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { PageLayout } from '@/components/common/page-layout';
 import { Button } from '@/components/ui/button';
+import { Link } from '@/i18n/navigation';
 import { Dropzone } from './dropzone';
 import { UploadList } from './upload-list';
 import { useUploadQueue } from './use-upload-queue';
@@ -10,7 +12,7 @@ export function UploadScreen() {
   const t = useTranslations('Upload');
   const { queue, items } = useUploadQueue();
   return (
-    <section className="flex flex-col gap-4">
+    <PageLayout>
       <div>
         <h1 className="text-2xl font-semibold">{t('title')}</h1>
         <p className="text-sm text-muted-foreground">{t('description')}</p>
@@ -23,13 +25,18 @@ export function UploadScreen() {
             onCancel={(id) => queue.cancel(id)}
             onRetry={(id) => queue.retry(id)}
           />
-          <div>
+          <div className="flex items-center gap-3">
             <Button type="button" variant="ghost" size="sm" onClick={() => queue.clearSettled()}>
               {t('clear')}
             </Button>
+            {items.some((i) => i.state === 'done') && (
+              <Link href="/documents" data-testid="view-documents" className="text-sm underline">
+                {t('viewList')}
+              </Link>
+            )}
           </div>
         </>
       )}
-    </section>
+    </PageLayout>
   );
 }

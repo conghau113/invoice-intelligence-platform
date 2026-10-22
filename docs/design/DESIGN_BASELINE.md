@@ -59,7 +59,14 @@ Cookie `theme` = `light` or `dark` (default light). The server reads it in `[loc
 
 | Pattern | File | Notes |
 |---|---|---|
-| Data table | `common/data-table.tsx` | Required caption (screen reader), `scope="col"`, right-aligned tabular figures for amounts. Sorting and paging belong to T2.6 |
+| Data table | `common/data-table.tsx` | Required caption (screen reader), `scope="col"`, right-aligned tabular figures for amounts. A `sortable` column gets a header button with `aria-sort` (T2.6); paging is `ListPagination` |
+| Page container | `common/page-layout.tsx` | `fill` for a page whose table owns the scrolling; otherwise a readable width and the main area scrolls |
+| Data grid | `common/data-grid.tsx` | Table panel of `docs/ui/UI_TABLE_SPEC.md`: height from the space given (not the rows), sticky header, always-present horizontal scrollbar strip kept in step with `scrollLeft`, footer pinned. Loading, empty and error render inside it |
+| Info banner | `common/info-banner.tsx` | Notice above the page (read-only mode); blocks nothing |
+| List pagination | `common/list-pagination.tsx` (+ `lib/pagination.ts`) | "Showing 21–40 of 142", rows per page (10/20/50/100), first/previous/numbers with `…`/next/last, jump-to-page box; `nav` + `aria-current="page"`, every button named. Strings in `List`. The screen owns the state (the URL) |
+| Applied filters | `common/applied-filters.tsx` | Removable chips plus "Clear all" |
+| List header | `common/list-page-header.tsx` | Title, count badge, thin progress bar while a background refresh runs |
+| Table skeleton | `common/table-skeleton.tsx` | Same header cells and row count as the table, so the page does not jump |
 | Form field | `common/form-field.tsx` | Label `htmlFor`, hint and error linked with `aria-describedby`, `aria-invalid` |
 | Loading / empty / error | `common/state-panel.tsx` | `role="status"` + `aria-busy`, nothing, `role="alert"` |
 | Document status badge | `common/status-badge.tsx` | Seven statuses of the state machine (ARCHITECTURE section 8) |
@@ -67,6 +74,15 @@ Cookie `theme` = `light` or `dark` (default light). The server reads it in `[loc
 | Primitives | `ui/{button,badge,input,label,table,skeleton}.tsx` | shadcn style, token colours |
 
 Strings are in `messages/{vi,en}.json` under `Styleguide`, `Status`, `Theme`.
+
+## App shell and tables (`docs/ui`, T2.6b)
+
+- The shell (`features/shell/app-shell.tsx`) is exactly one window high and never scrolls itself: top bar, then sidebar and main side by side. Sizes are tokens (`--topbar-height`, `--sidebar-width`, `--sidebar-collapsed-width`, `--page-padding-*`). Scroll owners: sidebar menu, `main` (pages without a table), the table viewport (rows) and the table's horizontal scrollbar strip.
+- The sidebar groups the menu (`Nav.groups`), derives the active item from the route, and collapses to icons; the choice is the cookie `sidebar` (read on the server like `theme`, so no flash). Below `md` the drawer of T1.7 is unchanged.
+- Active navigation uses `--nav-active` (cyan), still told apart by weight and `aria-current`. Table colours are tokens too (`--table-header`, `--table-row-alt`, `--table-row-hover`, `--scroll-*`), all covered by `contrast.test.ts`.
+- Default theme stays light (see Decisions); `.dark` is the dark enterprise look of the spec.
+- Not built (no feature behind it): global search, version badge, row checkboxes and bulk menu. Read-only banner shows when `DEMO_READ_ONLY=true`; it informs, the API refuses the writes.
+- Verified in a real browser by `apps/web/e2e/layout-table.spec.ts` (geometry at 0/1/5/many rows, header alignment after sideways scroll, no page-level scroll from 1920x1080 down to 1280x320, collapse, route changes, zoom as CSS viewports).
 
 ## Accessibility checklist
 
@@ -81,6 +97,6 @@ Strings are in `messages/{vi,en}.json` under `Styleguide`, `Status`, `Theme`.
 ## For later tasks
 
 - T1.7 (app shell): use `--sidebar-*`, `ThemeToggle`, `LanguageSwitcher`; layout width `--content-max`.
-- T2.5, T2.6: `DataTable`, `StatusBadge`, `StatePanel`.
+- T2.5, T2.6: `DataTable`, `StatusBadge`, `StatePanel`. Every list (approved invoices, review queue, members, notifications) uses `ListPagination`, `AppliedFilters`, `ListPageHeader` and `TableSkeleton` rather than its own table chrome; the API side follows ADR 0019.
 - T3.4: `FormField`, `warning` tokens for low-confidence fields.
 - T7.6: Lighthouse CI will re-measure LCP, CLS and INP; the theme cookie makes the layout dynamic.

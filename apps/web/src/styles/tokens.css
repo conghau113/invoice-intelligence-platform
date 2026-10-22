@@ -60,6 +60,24 @@
   --radius: 0.5rem;
   --row-height: 2.5rem;
   --content-max: 80rem;
+
+  /* App shell (docs/ui/UI_LAYOUT_SPEC.md): sizes come from here, never from page content. */
+  --topbar-height: 3.5rem;
+  --sidebar-width: 16rem;
+  --sidebar-collapsed-width: 4.5rem;
+  --page-padding-x: 1.5rem;
+  --page-padding-top: 1.5rem;
+
+  /* Active navigation item: a bright accent that is still readable (contrast.test.ts). */
+  --nav-active: #0e7490;
+  --nav-active-foreground: #ffffff;
+
+  /* Data table (docs/ui/UI_TABLE_SPEC.md): header band, alternate rows, hover, scrollbar track. */
+  --table-header: #eef1f5;
+  --table-row-alt: #f6f8fb;
+  --table-row-hover: #e8edf3;
+  --scroll-track: #e2e8f0;
+  --scroll-thumb: #64748b;
 }
 
 .dark {
@@ -111,9 +129,23 @@
   --chart-3: #34d399;
   --chart-4: #fbbf24;
   --chart-5: #94a3b8;
+
+  --nav-active: #22d3ee;
+  --nav-active-foreground: #0b1220;
+
+  --table-header: #162033;
+  --table-row-alt: #0f1828;
+  --table-row-hover: #1b2740;
+  --scroll-track: #1b2740;
+  --scroll-thumb: #64748b;
 }
 
 @theme inline {
+  --color-nav-active: var(--nav-active);
+  --color-nav-active-foreground: var(--nav-active-foreground);
+  --color-table-header: var(--table-header);
+  --color-table-row-alt: var(--table-row-alt);
+  --color-table-row-hover: var(--table-row-hover);
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
   --color-success-soft-foreground: var(--success-soft-foreground);

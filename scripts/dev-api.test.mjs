@@ -25,9 +25,13 @@ test('dev-api: values already set in the shell win', () => {
   assert.equal(env.OIDC_ISSUER_URL, 'http://idp/realms/x');
 });
 
-test('dev-api: without DATABASE_URL or a password it says what to set', () => {
-  assert.throws(() => devApiEnv({}), /DATABASE_URL, or APP_DB_PASSWORD/);
-  assert.throws(() => devApiEnv({ APP_DB_PASSWORD: '' }), /APP_DB_PASSWORD/);
+test('dev-api: with no password at all it uses the committed dev-only defaults', () => {
+  const env = devApiEnv({});
+  assert.equal(
+    env.DATABASE_URL,
+    'postgres://invoice_app:invoice-app-dev-only@localhost:5433/invoice',
+  );
+  assert.equal(env.APP_DB_PASSWORD, 'invoice-app-dev-only');
 });
 
 test('dev-api: refuses to run with a non-development NODE_ENV', () => {

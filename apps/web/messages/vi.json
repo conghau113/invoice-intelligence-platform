@@ -65,7 +65,8 @@
       "network": "Mất kết nối tới máy chủ. Hãy kiểm tra mạng rồi thử lại.",
       "server": "Máy chủ gặp lỗi. Hãy thử lại sau ít phút.",
       "unknown": "Không tải lên được. Hãy thử lại."
-    }
+    },
+    "viewList": "Xem danh sách tài liệu"
   },
   "Styleguide": {
     "title": "Hướng dẫn giao diện",
@@ -127,14 +128,24 @@
     "unavailableTitle": "Dịch vụ tạm thời không dùng được",
     "unavailableHint": "Máy chủ không phản hồi. Hãy thử lại sau ít phút.",
     "forbiddenRequired": "Tài khoản thuộc nhiều tổ chức và chưa chọn tổ chức nào. Hãy chọn ở thanh trên; nếu không có danh sách thì đăng xuất rồi đăng nhập lại.",
-    "forbiddenNotMember": "Tổ chức đã chọn không nằm trong các tổ chức của bạn. Hãy chọn tổ chức khác ở thanh trên, hoặc đăng xuất rồi đăng nhập lại nếu quyền truy cập đã thay đổi."
+    "forbiddenNotMember": "Tổ chức đã chọn không nằm trong các tổ chức của bạn. Hãy chọn tổ chức khác ở thanh trên, hoặc đăng xuất rồi đăng nhập lại nếu quyền truy cập đã thay đổi.",
+    "collapseSidebar": "Thu gọn menu",
+    "expandSidebar": "Mở rộng menu",
+    "readOnlyBanner": "Chế độ chỉ đọc: các thao tác thay đổi dữ liệu bị tắt.",
+    "user": "Người dùng",
+    "userMenu": "Tài khoản"
   },
   "Nav": {
     "documents": "Tài liệu",
     "upload": "Tải lên",
     "ask": "Hỏi đáp",
     "insights": "Thống kê",
-    "members": "Thành viên"
+    "members": "Thành viên",
+    "groups": {
+      "workspace": "Tài liệu",
+      "analysis": "Phân tích",
+      "settings": "Cài đặt"
+    }
   },
   "Role": {
     "tenant_admin": "Quản trị viên",
@@ -145,5 +156,81 @@
     "title": "Không tìm thấy trang",
     "hint": "Địa chỉ có thể sai, hoặc trang này chưa có.",
     "home": "Về bảng điều khiển"
+  },
+  "Documents": {
+    "title": "Tài liệu",
+    "description": "Hóa đơn đã tải lên và trạng thái xử lý. Danh sách tự làm mới 5 giây một lần khi còn tài liệu đang xử lý.",
+    "caption": "Danh sách tài liệu",
+    "filters": "Bộ lọc tài liệu",
+    "status": "Trạng thái",
+    "allStatuses": "Tất cả trạng thái",
+    "type": "Loại file",
+    "allTypes": "Tất cả loại",
+    "types": {
+      "xml": "XML",
+      "pdf": "PDF",
+      "image": "Ảnh"
+    },
+    "from": "Từ ngày",
+    "to": "Đến ngày",
+    "sort": "Sắp xếp",
+    "sortNewest": "Mới nhất trước",
+    "sortOldest": "Cũ nhất trước",
+    "clear": "Xóa bộ lọc",
+    "colId": "Mã",
+    "colType": "Loại",
+    "colStatus": "Trạng thái",
+    "colCreated": "Tải lên lúc",
+    "loading": "Đang tải danh sách",
+    "empty": "Chưa có tài liệu nào",
+    "emptyHint": "Tải lên hóa đơn đầu tiên để bắt đầu.",
+    "goUpload": "Đi tới trang tải lên",
+    "emptyFiltered": "Không có tài liệu khớp bộ lọc",
+    "retry": "Thử lại",
+    "first": "Về trang đầu",
+    "staleHint": "Không làm mới được danh sách; đang hiển thị dữ liệu lần tải trước.",
+    "errors": {
+      "session": {
+        "title": "Phiên đăng nhập đã hết hạn",
+        "hint": "Đăng nhập lại để xem danh sách."
+      },
+      "forbidden": {
+        "title": "Bạn không có quyền xem danh sách này",
+        "hint": "Liên hệ quản trị viên của tổ chức nếu bạn cần quyền xem tài liệu."
+      },
+      "unreachable": {
+        "title": "Không kết nối được máy chủ",
+        "hint": "Dịch vụ API không phản hồi. Thử lại sau ít phút."
+      },
+      "error": {
+        "title": "Không tải được danh sách",
+        "hint": "Đã có lỗi khi tải danh sách. Thử lại."
+      }
+    },
+    "signIn": "Đăng nhập lại",
+    "count": "{count} tài liệu",
+    "countAria": "Tổng số tài liệu: {count}",
+    "refreshing": "Đang cập nhật danh sách",
+    "filterStatus": "Trạng thái: {value}",
+    "filterType": "Loại: {value}",
+    "filterFrom": "Từ ngày: {value}",
+    "filterTo": "Đến ngày: {value}",
+    "refresh": "Làm mới danh sách"
+  },
+  "List": {
+    "range": "Hiển thị {from}–{to} trên {total}",
+    "pageSize": "Số dòng mỗi trang",
+    "pagination": "Phân trang",
+    "first": "Trang đầu",
+    "previous": "Trang trước",
+    "next": "Trang sau",
+    "last": "Trang cuối",
+    "goToPage": "Trang {page}",
+    "jumpLabel": "Đi tới trang (1–{totalPages})",
+    "jumpButton": "Đi",
+    "appliedFilters": "Bộ lọc đang áp dụng",
+    "removeFilter": "Bỏ bộ lọc {name}",
+    "clearAll": "Xóa tất cả",
+    "sortBy": "Sắp xếp theo {column}"
   }
 }
