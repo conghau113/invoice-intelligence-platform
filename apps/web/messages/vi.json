@@ -31,6 +31,42 @@
     "rejected": "Bị từ chối",
     "failed": "Lỗi"
   },
+  "Upload": {
+    "title": "Tải lên hóa đơn",
+    "description": "Tải lên PDF, ảnh PNG/JPEG hoặc XML hóa đơn điện tử. Tối đa 10 MB mỗi file, xử lý tối đa 3 file cùng lúc.",
+    "dropzoneTitle": "Kéo thả file vào đây",
+    "dropzoneHint": "PDF, PNG, JPEG, XML · tối đa 10 MB mỗi file",
+    "choose": "Chọn file",
+    "fileInput": "Chọn file hóa đơn để tải lên",
+    "listLabel": "Danh sách file tải lên",
+    "clear": "Xóa các mục đã xong",
+    "cancel": "Hủy",
+    "retry": "Thử lại",
+    "cancelFile": "Hủy tải lên {name}",
+    "retryFile": "Thử lại {name}",
+    "progress": "Tiến độ tải lên {name}",
+    "state": {
+      "pending": "Đang chờ",
+      "uploading": "Đang tải lên",
+      "done": "Đã tải lên",
+      "duplicate": "Đã có sẵn, không tạo lại",
+      "cancelled": "Đã hủy",
+      "error": "Lỗi"
+    },
+    "errors": {
+      "unsupportedType": "Loại file không được hỗ trợ. Chỉ nhận PDF, PNG, JPEG hoặc XML.",
+      "tooLarge": "File lớn hơn 10 MB.",
+      "empty": "File rỗng.",
+      "sessionExpired": "Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.",
+      "forbidden": "Bạn không có quyền tải lên trong tổ chức này.",
+      "tenant": "Chưa chọn tổ chức hợp lệ. Hãy chọn tổ chức ở thanh trên.",
+      "idempotency": "Yêu cầu không hợp lệ. Hãy chọn lại file.",
+      "queueUnavailable": "Hàng đợi xử lý tạm thời không dùng được. Hãy thử lại sau ít phút.",
+      "network": "Mất kết nối tới máy chủ. Hãy kiểm tra mạng rồi thử lại.",
+      "server": "Máy chủ gặp lỗi. Hãy thử lại sau ít phút.",
+      "unknown": "Không tải lên được. Hãy thử lại."
+    }
+  },
   "Styleguide": {
     "title": "Hướng dẫn giao diện",
     "intro": "Bộ mẫu dùng chung cho mọi trang. Dữ liệu trên trang này chỉ là mẫu.",

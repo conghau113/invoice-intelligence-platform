@@ -13,6 +13,12 @@ export function stripLocale(pathname: string): string {
   return pathname;
 }
 
+/** "/vi/dashboard" -> "/vi", "/vi" -> "/vi", "/dashboard" -> "". The locale segment itself, if any. */
+export function localePrefix(pathname: string): string {
+  const l = routing.locales.find((x) => pathname === `/${x}` || pathname.startsWith(`/${x}/`));
+  return l === undefined ? '' : `/${l}`;
+}
+
 /** Optimistic check from the cookie only (no network): the API still enforces. */
 export function decide(pathname: string, signedIn: boolean): GuardDecision {
   // API routes never carry a locale: "/en/api/auth/x" is a page path, not the auth endpoint.

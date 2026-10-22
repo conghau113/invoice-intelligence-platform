@@ -4,7 +4,7 @@ import { getAccessToken, getSession } from '@/auth/session';
 import { resolveTenant, TENANT_COOKIE } from '@/auth/tenant';
 
 // Local default so dev needs no extra variable; set API_BASE_URL anywhere else.
-const apiBaseUrl = () => process.env.API_BASE_URL ?? 'http://localhost:3001';
+export const apiBaseUrl = () => process.env.API_BASE_URL ?? 'http://localhost:3001';
 
 export type ApiResult<T> =
   | { kind: 'ok'; data: T }

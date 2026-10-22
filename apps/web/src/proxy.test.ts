@@ -50,6 +50,28 @@ describe('proxy', () => {
     expect(new URL(res.headers.get('location')!, 'http://localhost:3000').pathname).toBe('/login');
   });
 
+  it.each([
+    ['/vi', '/vi/login'],
+    ['/en', '/en/login'],
+    ['/en/upload', '/en/login'],
+    ['/documents', '/login'],
+  ])('sends signed-out %s to %s (bare locale root keeps its whole prefix)', async (from, to) => {
+    const res = await proxy(new NextRequest(`http://localhost:3000${from}`));
+    expect(res.status).toBe(307);
+    const url = new URL(res.headers.get('location')!, 'http://localhost:3000');
+    expect(url.pathname).toBe(to);
+    expect(url.searchParams.get('callbackUrl')).toBe(from);
+  });
+
+  it('answers a signed-out call to /api/* with 401 JSON, not a redirect to the login page', async () => {
+    const res = await proxy(
+      new NextRequest('http://localhost:3000/api/documents/upload', { method: 'POST' }),
+    );
+    expect(res.status).toBe(401);
+    expect(res.headers.get('location')).toBeNull();
+    expect(await res.json()).toEqual({ code: 'UNAUTHENTICATED' });
+  });
+
   it('serves public paths even when the auth environment is missing', async () => {
     vi.unstubAllEnvs();
     vi.stubEnv('NEXTAUTH_SECRET', '');

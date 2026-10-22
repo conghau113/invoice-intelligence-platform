@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { decide, stripLocale } from './guard';
+import { decide, localePrefix, stripLocale } from './guard';
 
 describe('decide', () => {
   it.each(['/dashboard', '/', '/documents/1'])('sends signed-out users from %s to login', (p) => {
@@ -29,4 +29,13 @@ describe('decide', () => {
     expect(stripLocale('/en/documents/1')).toBe('/documents/1');
     expect(stripLocale('/vi')).toBe('/');
   });
+});
+
+describe('localePrefix', () => {
+  it.each([
+    ['/vi', '/vi'],
+    ['/en/dashboard', '/en'],
+    ['/viet/login', ''],
+    ['/login', ''],
+  ])('%s -> "%s"', (path, expected) => expect(localePrefix(path)).toBe(expected));
 });
