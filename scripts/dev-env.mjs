@@ -1,10 +1,27 @@
 // Database variables for local development, shared by `pnpm dev:api`, `pnpm dev:worker` and
-// `pnpm db:migrate|db:seed|db:seed:documents`. Nothing here is a secret: the defaults are the
-// throw-away passwords already committed in compose.yaml (user `invoice`, password
-// `invoice-dev-only`) plus one more of the same kind for the app role. Anything set in the shell
+// `pnpm db:migrate|db:seed|db:seed:documents`. Nothing here is a secret: the owner default is read
+// from compose.yaml, where the throw-away development database is defined (this file repeats no
+// password), and the app role's default is that value plus "-app". Anything set in the shell
 // wins, so a developer who changed a password keeps working.
+import { readFileSync } from 'node:fs';
 
-export const DEFAULT_APP_DB_PASSWORD = 'invoice-app-dev-only';
+const COMPOSE_FILE = new URL('../compose.yaml', import.meta.url);
+const COMPOSE_MARKER = 'POSTGRES_PASSWORD:-';
+
+/** The default compose.yaml gives the owner: the text after `POSTGRES_PASSWORD:-` up to the closing brace. */
+export function composeOwnerDefault(text = readFileSync(COMPOSE_FILE, 'utf8')) {
+  const start = text.indexOf(COMPOSE_MARKER);
+  const end = start < 0 ? -1 : text.indexOf('}', start);
+  if (start < 0 || end < 0 || end === start + COMPOSE_MARKER.length) {
+    throw new Error(
+      'compose.yaml has no default for POSTGRES_PASSWORD: set the database variables yourself',
+    );
+  }
+  return text.slice(start + COMPOSE_MARKER.length, end).trim();
+}
+
+/** Default for the `invoice_app` role: development only, derived so no second copy is committed. */
+export const defaultAppDbPassword = (ownerDefault = composeOwnerDefault()) => `${ownerDefault}-app`;
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]']);
 
 const hostOf = (url) => {
@@ -51,10 +68,11 @@ export function devDbEnv(env) {
       );
     }
   }
-  merged.APP_DB_PASSWORD ||= DEFAULT_APP_DB_PASSWORD;
+  const ownerDefault = composeOwnerDefault();
+  merged.APP_DB_PASSWORD ||= defaultAppDbPassword(ownerDefault);
 
   const user = merged.POSTGRES_USER || 'invoice';
-  const ownerPassword = merged.POSTGRES_PASSWORD || 'invoice-dev-only';
+  const ownerPassword = merged.POSTGRES_PASSWORD || ownerDefault;
   const db = merged.POSTGRES_DB || 'invoice';
   const port = merged.POSTGRES_PORT || '5433'; // host port of compose.yaml
   const enc = encodeURIComponent;

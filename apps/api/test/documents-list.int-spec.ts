@@ -362,7 +362,7 @@ describe('GET /documents (HTTP -> Postgres, RLS on)', () => {
     it('a deep page still answers fast (the planner may scan the table: offset 780 of 1.000)', async () => {
       const plan = await plans({ page: '40', limit: '20' });
       console.log(`EXPLAIN page 40:\n${plan}`);
-      expect(plan).toMatch(/Execution Time: [0-9]\.\d+ ms/);
+      expect(plan).toMatch(/Execution Time: \d\.\d+ ms/);
     });
 
     it('first page timing over 20 runs (logged, not asserted: timing is flaky in CI)', async () => {

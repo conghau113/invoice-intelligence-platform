@@ -167,7 +167,7 @@ describe('DataGrid', () => {
 
   it('shows skeleton rows while loading, and the header stays', () => {
     const html = grid({ loading: true, loadingRows: 5, rows: [] });
-    expect((html.match(/data-slot="skeleton"/g) ?? []).length).toBe(10);
+    expect(html.match(/data-slot="skeleton"/g) ?? []).toHaveLength(10);
     expect(html).toContain('>ID<');
     expect(html).toContain('FOOT');
   });
@@ -238,6 +238,6 @@ describe('DataTable sorting', () => {
   it('leaves the other headers as plain text', () => {
     const html = table();
     expect(html.match(/<button/g)?.length).toBe(1);
-    expect((html.match(/aria-sort/g) ?? []).length).toBe(1);
+    expect(html.match(/aria-sort/g) ?? []).toHaveLength(1);
   });
 });

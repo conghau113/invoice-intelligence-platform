@@ -95,9 +95,13 @@ export function ListPagination({
           >
             <ChevronLeft aria-hidden />
           </Button>
-          {pageWindow(page, totalPages).map((item, i) =>
+          {pageWindow(page, totalPages).map((item, i, all) =>
             item === 'gap' ? (
-              <span key={`gap-${i}`} aria-hidden className="px-1 text-muted-foreground">
+              <span
+                key={`gap-after-${all[i - 1]}`}
+                aria-hidden
+                className="px-1 text-muted-foreground"
+              >
                 …
               </span>
             ) : (

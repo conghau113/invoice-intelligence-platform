@@ -171,7 +171,7 @@ function List() {
         }
       />
     );
-  } else if (data && data.items.length === 0 && data.meta.total === 0) {
+  } else if (data?.items.length === 0 && data.meta.total === 0) {
     const filtered = hasFilters(params);
     state = (
       <StatePanel

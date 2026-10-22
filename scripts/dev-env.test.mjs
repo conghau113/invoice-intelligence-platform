@@ -3,7 +3,13 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { DB_COMMANDS, dbArgs } from './db-dev.mjs';
-import { DEFAULT_APP_DB_PASSWORD, describeDbTarget, devDbEnv } from './dev-env.mjs';
+import { readFileSync } from 'node:fs';
+import {
+  composeOwnerDefault,
+  defaultAppDbPassword,
+  describeDbTarget,
+  devDbEnv,
+} from './dev-env.mjs';
 
 test('dev-env: with an empty shell it builds both URLs from the compose.yaml defaults', () => {
   const env = devDbEnv({});
@@ -13,9 +19,9 @@ test('dev-env: with an empty shell it builds both URLs from the compose.yaml def
   );
   assert.equal(
     env.DATABASE_URL,
-    'postgres://invoice_app:invoice-app-dev-only@localhost:5433/invoice',
+    'postgres://invoice_app:invoice-dev-only-app@localhost:5433/invoice',
   );
-  assert.equal(env.APP_DB_PASSWORD, DEFAULT_APP_DB_PASSWORD);
+  assert.equal(env.APP_DB_PASSWORD, defaultAppDbPassword());
 });
 
 test('dev-env: POSTGRES_* (the names compose.yaml reads) change the owner URL and the port', () => {
@@ -26,7 +32,7 @@ test('dev-env: POSTGRES_* (the names compose.yaml reads) change the owner URL an
     POSTGRES_DB: 'x',
   });
   assert.equal(env.DATABASE_OWNER_URL, 'postgres://me:p%40ss@localhost:5544/x');
-  assert.equal(env.DATABASE_URL, 'postgres://invoice_app:invoice-app-dev-only@localhost:5544/x');
+  assert.equal(env.DATABASE_URL, 'postgres://invoice_app:invoice-dev-only-app@localhost:5544/x');
 });
 
 test('dev-env: values already set in the shell win, including an empty-string password falling back', () => {
@@ -36,7 +42,7 @@ test('dev-env: values already set in the shell win, including an empty-string pa
   });
   assert.equal(env.DATABASE_OWNER_URL, 'postgres://o:o@127.0.0.1:1/d');
   assert.equal(env.DATABASE_URL, 'postgres://invoice_app:mine%2F1@localhost:5433/invoice');
-  assert.equal(devDbEnv({ APP_DB_PASSWORD: '' }).APP_DB_PASSWORD, DEFAULT_APP_DB_PASSWORD);
+  assert.equal(devDbEnv({ APP_DB_PASSWORD: '' }).APP_DB_PASSWORD, defaultAppDbPassword());
 });
 
 test('dev-env: refuses a non-development NODE_ENV', () => {
@@ -86,7 +92,7 @@ test('dev-env: names the target database and the password source, never a creden
   const line = describeDbTarget(before, devDbEnv(before));
   assert.match(line, /localhost:5433\/invoice/);
   assert.match(line, /committed dev-only default/);
-  assert.doesNotMatch(line, /invoice-dev-only|invoice-app-dev-only/);
+  assert.doesNotMatch(line, /invoice-dev-only|invoice-dev-only-app/);
   const own = { APP_DB_PASSWORD: 'mine' };
   assert.match(describeDbTarget(own, devDbEnv(own)), /from your shell/);
   assert.doesNotMatch(describeDbTarget(own, devDbEnv(own)), /mine/);
@@ -97,4 +103,19 @@ test('dev-env: NODE_ENV unset with a database on another machine still needs an 
     () => devDbEnv({ DATABASE_URL: 'postgres://u:p@staging.example.com:5432/x' }),
     /another machine/,
   );
+});
+
+test('dev-env: the owner default comes from compose.yaml itself, not from a copy', () => {
+  const compose = readFileSync(new URL('../compose.yaml', import.meta.url), 'utf8');
+  const fromFile = composeOwnerDefault();
+  assert.ok(fromFile.length > 0);
+  assert.ok(compose.includes(`POSTGRES_PASSWORD:-${fromFile}}`));
+  assert.equal(devDbEnv({}).DATABASE_OWNER_URL.includes(encodeURIComponent(fromFile)), true);
+  assert.equal(defaultAppDbPassword(), `${fromFile}-app`);
+});
+
+test('dev-env: a compose.yaml without the default is reported, not guessed', () => {
+  assert.throws(() => composeOwnerDefault('services: {}'), /no default for POSTGRES_PASSWORD/);
+  assert.throws(() => composeOwnerDefault('x: ${POSTGRES_PASSWORD:-'), /no default/);
+  assert.throws(() => composeOwnerDefault('x: ${POSTGRES_PASSWORD:-}'), /no default/);
 });

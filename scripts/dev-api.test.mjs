@@ -29,9 +29,9 @@ test('dev-api: with no password at all it uses the committed dev-only defaults',
   const env = devApiEnv({});
   assert.equal(
     env.DATABASE_URL,
-    'postgres://invoice_app:invoice-app-dev-only@localhost:5433/invoice',
+    'postgres://invoice_app:invoice-dev-only-app@localhost:5433/invoice',
   );
-  assert.equal(env.APP_DB_PASSWORD, 'invoice-app-dev-only');
+  assert.equal(env.APP_DB_PASSWORD, 'invoice-dev-only-app');
 });
 
 test('dev-api: refuses to run with a non-development NODE_ENV', () => {

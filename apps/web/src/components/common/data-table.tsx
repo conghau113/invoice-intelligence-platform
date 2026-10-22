@@ -27,6 +27,24 @@ export type Column<T> = {
 
 export type TableSort = { key: string; direction: 'asc' | 'desc' };
 
+function ariaSortOf(sortable: boolean, key: string, sort?: TableSort) {
+  if (!sortable) return undefined;
+  if (sort?.key !== key) return 'none';
+  return sort.direction === 'asc' ? 'ascending' : 'descending';
+}
+
+function SortIcon({
+  active,
+  direction,
+}: Readonly<{ active: boolean; direction?: 'asc' | 'desc' }>) {
+  if (!active) return <ArrowUpDown aria-hidden className="size-3 opacity-50" />;
+  return direction === 'asc' ? (
+    <ArrowUp aria-hidden className="size-3" />
+  ) : (
+    <ArrowDown aria-hidden className="size-3" />
+  );
+}
+
 /** One header cell: plain text, or a sort button with `aria-sort` for a `sortable` column. */
 export function HeaderCell<T>({
   column: c,
@@ -45,15 +63,7 @@ export function HeaderCell<T>({
     <TableHead
       scope="col"
       className={cn(c.numeric && 'text-right', className)}
-      aria-sort={
-        c.sortable
-          ? sort?.key === c.key
-            ? sort.direction === 'asc'
-              ? 'ascending'
-              : 'descending'
-            : 'none'
-          : undefined
-      }
+      aria-sort={ariaSortOf(c.sortable === true, c.key, sort)}
     >
       {c.sortable && onSort ? (
         <button
@@ -63,15 +73,7 @@ export function HeaderCell<T>({
           onClick={() => onSort(c.key)}
         >
           {c.header}
-          {sort?.key === c.key ? (
-            sort.direction === 'asc' ? (
-              <ArrowUp aria-hidden className="size-3" />
-            ) : (
-              <ArrowDown aria-hidden className="size-3" />
-            )
-          ) : (
-            <ArrowUpDown aria-hidden className="size-3 opacity-50" />
-          )}
+          <SortIcon active={sort?.key === c.key} direction={sort?.direction} />
         </button>
       ) : (
         c.header
