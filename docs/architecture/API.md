@@ -9,8 +9,8 @@
 | Auth | `Authorization: Bearer <access token>` issued by Keycloak. Deny by default; `@Public()` opts out (health only). |
 | Tenant | Derived from the token's `organization` claim; the web asks for `organization:*`, so the token lists every tenant of the user, and header `X-Tenant: <alias>` selects one. The alias must be in that signed claim (else 403 `TENANT_NOT_MEMBER`); several tenants and no header → 403 `TENANT_REQUIRED`. The header only selects, it never grants. |
 | Errors | RFC 9457 Problem Details: `{type, title, status, detail, instance, code, traceId}` |
-| Pagination | Cursor-based: `?limit=20&cursor=<opaque>` → `{items, nextCursor}` |
-| Filtering/sorting | `?status=needs_review&from=2026-09-01&to=2026-09-30&sort=-createdAt` |
+| Pagination | `?page=1&limit=20` → `{items, meta: {page, limit, total, totalPages}}` (`page` from 1, at most 10 000; `limit` 1–100, default 20; ADR 0019). `total` is counted after tenant and filters. A `page` past `totalPages` answers empty `items` with the true `meta`. Append-only streams (audit, events) use cursors instead; none exists yet |
+| Filtering/sorting | `?status=needs_review&type=xml&from=2026-09-01&to=2026-09-30&sort=-createdAt` — `type` is `xml`, `pdf` or `image`; `from`/`to` are whole days, both inclusive, in `Asia/Ho_Chi_Minh`; `sort` is `createdAt` or `-createdAt` (default), always followed by `id` as tie-breaker. Anything else is `400 INVALID_QUERY` |
 | Idempotency | `Idempotency-Key` header on POSTs that create resources; replay returns the original response for 24 h |
 | Concurrency | `If-Match: <rowVersion>` on approve/update; stale → `409` |
 | Rate limits | `429` with `Retry-After` and `RateLimit-*` headers (ADR 0012) |
@@ -37,7 +37,7 @@
 | Method | Path | Permission | Notes |
 |---|---|---|---|
 | POST | `/documents/upload` | `document:create` | `multipart/form-data` (one file ≤ 10 MB, streamed); type checked by magic bytes; dedupe by (tenant, sha256); `Idempotency-Key` required |
-| GET | `/documents` | `document:read` | Paginated list with filters |
+| GET | `/documents` | `document:read` | Paginated list with filters; items are `{id, status, sourceType, version, createdAt}`, plus `meta` |
 | GET | `/documents/:id` | `document:read` | Includes latest extraction + warnings |
 | GET | `/documents/:id/file` | `document:read` | Streams the file through the API after the permission check (no public file URLs) |
 | POST | `/documents/:id/retry` | `document:manage` | Only from `failed` |

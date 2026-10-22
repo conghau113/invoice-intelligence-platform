@@ -1,10 +1,13 @@
 import {
   BadRequestException,
   Controller,
+  Get,
   Headers,
   Post,
+  Query,
   Req,
   Res,
+  UnauthorizedException,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -14,7 +17,9 @@ import type { Response } from 'express';
 import { SkipTenantTransaction } from '../../../db/skip-tenant-transaction.decorator';
 import type { AuthenticatedRequest } from '../../auth/http/authenticated-request';
 import { RequirePermission } from '../../auth/http/require-permission.decorator';
+import { DocumentsListService, type DocumentPage } from '../application/documents-list.service';
 import { DocumentsService, type DocumentView } from '../application/documents.service';
+import { parseDocumentListQuery } from '../domain/document-list-query';
 import { IDEMPOTENCY_KEY_REQUIRED, parseIdempotencyKey } from '../domain/idempotency';
 import { parseTraceparent } from '../../queue/domain/extraction-job';
 import type { UploadedObject } from '../infra/storage-multer-engine';
@@ -22,7 +27,21 @@ import { IdempotencyKeyGuard } from './idempotency-key.guard';
 
 @Controller('documents')
 export class DocumentsController {
-  constructor(private readonly documents: DocumentsService) {}
+  constructor(
+    private readonly documents: DocumentsService,
+    private readonly list: DocumentsListService,
+  ) {}
+
+  /** API.md "Documents": page/limit pagination with a total (ADR 0019), filters and sort. Runs in the request's tenant transaction. */
+  @RequirePermission('document:read')
+  @Get()
+  listDocuments(
+    @Query() query: Record<string, unknown>,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<DocumentPage> {
+    if (!req.user) throw new UnauthorizedException();
+    return this.list.list(req.user.tenantId, parseDocumentListQuery(query));
+  }
 
   /**
    * Streams the file to storage (multer engine, options in DocumentsModule), then registers it.

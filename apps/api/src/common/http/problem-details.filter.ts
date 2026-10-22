@@ -8,6 +8,10 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { STATUS_CODES } from 'node:http';
+import {
+  InvalidQueryError,
+  INVALID_QUERY,
+} from '../../modules/documents/domain/document-list-query';
 import { DocumentNotFoundError } from '../../modules/documents/domain/document-not-found.error';
 import {
   INVALID_TRANSITION_CODE,
@@ -40,6 +44,13 @@ function domainProblem(
       status: HttpStatus.CONFLICT,
       code: INVALID_TRANSITION_CODE,
       detail: 'The document is not in a state that allows this',
+    };
+  }
+  if (e instanceof InvalidQueryError) {
+    return {
+      status: HttpStatus.BAD_REQUEST,
+      code: INVALID_QUERY,
+      detail: 'Invalid query parameters',
     };
   }
   if (e instanceof JobNotFailedError) {

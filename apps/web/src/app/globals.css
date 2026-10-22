@@ -60,3 +60,25 @@
     @apply font-sans;
   }
 }
+
+/*
+ * The strip under a data table that carries its horizontal scrollbar (docs/ui/UI_TABLE_SPEC.md
+ * section 4). Styling the scrollbar makes browsers draw a permanent track instead of an overlay
+ * that fades away, which is the point: the track must be there even when nothing overflows.
+ */
+.h-scroll-strip {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+.h-scroll-strip::-webkit-scrollbar {
+  height: 10px;
+}
+.h-scroll-strip::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+}
+.h-scroll-strip::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border-radius: 5px;
+}

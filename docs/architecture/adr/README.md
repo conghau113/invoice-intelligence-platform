@@ -22,3 +22,4 @@ Format: lightweight MADR. One decision per file. Create new ones with `/adr`. Ne
 | [0016](0016-drizzle-orm.md) | Data access with Drizzle ORM and SQL migrations | Accepted |
 | [0017](0017-storage-local-fs.md) | File storage: StoragePort with a local filesystem adapter (MinIO rejected) | Accepted |
 | [0018](0018-public-demo-read-only.md) | Public demo is read-only and makes no live LLM calls | Accepted |
+| [0019](0019-list-pagination-offset-with-total.md) | List pagination: page/limit with a total for lists people read, cursors for append-only streams | Accepted |

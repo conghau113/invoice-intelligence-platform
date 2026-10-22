@@ -1,9 +1,9 @@
 // Starts the API (or, with the argument `worker`, the queue worker) for local development. The API reads no dotfile (ignoreEnvFile), so the variables
 // it needs are put in its process environment here. Values already set in your shell win.
-// No password lives in this file: the database password comes from APP_DB_PASSWORD (the same
-// variable db:migrate uses), exported once in your shell profile.
+// The database variables come from dev-env.mjs (defaults = the throw-away passwords of compose.yaml).
 import { spawn } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { devDbEnv } from './dev-env.mjs';
 
 export const DEV_DEFAULTS = {
   NODE_ENV: 'development',
@@ -16,18 +16,8 @@ export const DEV_DEFAULTS = {
 
 /** Environment for the API: dev defaults under whatever the caller already set. */
 export function devApiEnv(env) {
-  if (env.NODE_ENV !== undefined && env.NODE_ENV !== 'development') {
-    throw new Error(`dev:api is for local development only (NODE_ENV=${env.NODE_ENV})`);
-  }
-  const merged = { ...env };
+  const merged = devDbEnv(env);
   for (const [name, value] of Object.entries(DEV_DEFAULTS)) merged[name] ??= value;
-  if (merged.DATABASE_URL === undefined) {
-    if (!merged.APP_DB_PASSWORD) {
-      throw new Error('Set DATABASE_URL, or APP_DB_PASSWORD (password of the invoice_app role)');
-    }
-    const password = encodeURIComponent(merged.APP_DB_PASSWORD);
-    merged.DATABASE_URL = `postgres://invoice_app:${password}@localhost:5433/invoice`;
-  }
   return merged;
 }
 

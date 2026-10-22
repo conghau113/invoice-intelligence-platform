@@ -9,6 +9,7 @@ import { AppShell } from '@/features/shell/app-shell';
 import { forbiddenHintKey } from '@/features/shell/forbidden';
 import { getMe } from '@/features/shell/me';
 import { currentTenant } from '@/lib/api';
+import { parseSidebarCollapsed, SIDEBAR_COOKIE } from '@/lib/sidebar';
 import { parseTheme, THEME_COOKIE } from '@/lib/theme';
 
 /** Every signed-in page lives under this layout: session guard + shell + who-am-I from the API. */
@@ -18,7 +19,15 @@ export default async function AppLayout({ children }: Readonly<{ children: React
   const locale = await getLocale();
   const session = await getSession();
   if (!session) redirect(`/${locale}/login`);
-  const theme = parseTheme((await cookies()).get(THEME_COOKIE)?.value);
+  const jar = await cookies();
+  const theme = parseTheme(jar.get(THEME_COOKIE)?.value);
+  const sidebarCollapsed = parseSidebarCollapsed(jar.get(SIDEBAR_COOKIE)?.value);
+  const shellProps = {
+    theme,
+    user: session.user ?? undefined,
+    sidebarCollapsed,
+    readOnly: process.env.DEMO_READ_ONLY === 'true',
+  };
   const me = await getMe();
   if (me.kind === 'unauthorized') redirect(`/${locale}/login`);
 
@@ -28,7 +37,7 @@ export default async function AppLayout({ children }: Readonly<{ children: React
     const forbidden = me.kind === 'forbidden';
     const tenant = await currentTenant();
     return (
-      <AppShell theme={theme} tenant={tenant} tenants={session.tenants}>
+      <AppShell {...shellProps} tenant={tenant} tenants={session.tenants}>
         <StatePanel
           kind="error"
           title={forbidden ? t('forbiddenTitle') : t('unavailableTitle')}
@@ -46,7 +55,7 @@ export default async function AppLayout({ children }: Readonly<{ children: React
     );
   }
   return (
-    <AppShell theme={theme} access={me.data} tenant={await currentTenant()}>
+    <AppShell {...shellProps} access={me.data} tenant={await currentTenant()}>
       {children}
     </AppShell>
   );
