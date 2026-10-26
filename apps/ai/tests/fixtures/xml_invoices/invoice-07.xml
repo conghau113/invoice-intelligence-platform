@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TAA</KHHDon>
+      <SHDon>6829333</SHDon>
+      <NLap>2026-04-04</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Công ty SAMPLE Bán 7</Ten>
+        <MST>0310518346</MST>
+        <DChi>8 Đường Mẫu, Hà Nội</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Công ty SAMPLE Mua 7</Ten>
+        <MST>7382997370</MST>
+        <DChi>27 Đường Mẫu, TP.HCM</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ SAMPLE</THHDVu>
+          <DVTinh>gói</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>347.00</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>694.00</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ SAMPLE</THHDVu>
+          <DVTinh>gói</DVTinh>
+          <SLuong>10.5</SLuong>
+          <DGia>236.00</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>2478.00</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Vật tư SAMPLE</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>73.00</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>146.00</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>146.00</TgTien>
+            <TThue>0.00</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>3172.00</TgTien>
+            <TThue>317.20</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>3318.00</TgTCThue>
+        <TgTTTBSo>3635.20</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TAA</KHHDon>
+      <SHDon>4918716</SHDon>
+      <NLap>2026-06-19</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Công ty SAMPLE Bán 1</Ten>
+        <MST>2351161554</MST>
+        <DChi>2 Đường Mẫu, Hà Nội</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Công ty SAMPLE Mua 1</Ten>
+        <MST>9407816181</MST>
+        <DChi>21 Đường Mẫu, TP.HCM</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Vật tư SAMPLE</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>5</SLuong>
+          <DGia>285000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1425000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>1425000</TgTien>
+            <TThue>71250</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>1425000</TgTCThue>
+        <TgTTTBSo>1496250</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

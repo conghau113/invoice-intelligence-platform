@@ -1,0 +1,35 @@
+{
+  "seller": {
+    "name": "Công ty SAMPLE Bán 4",
+    "taxCode": "6916697849",
+    "address": "5 Đường Mẫu, Hà Nội"
+  },
+  "buyer": {
+    "name": "Công ty SAMPLE Mua 4",
+    "taxCode": null,
+    "address": "24 Đường Mẫu, TP.HCM"
+  },
+  "invoiceNo": "9281591",
+  "series": "C26TAA",
+  "issueDate": "2026-01-22",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Dịch vụ SAMPLE",
+      "quantity": 2.5,
+      "unit": "gói",
+      "unitPrice": 164000,
+      "vatRate": 0,
+      "amount": 410000
+    }
+  ],
+  "subtotal": 410000,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 410000,
+      "amount": 0
+    }
+  ],
+  "total": 410000
+}

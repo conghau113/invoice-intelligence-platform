@@ -1,0 +1,35 @@
+{
+  "seller": {
+    "name": "Công ty SAMPLE Bán 6",
+    "taxCode": "3911718225-676",
+    "address": "7 Đường Mẫu, Hà Nội"
+  },
+  "buyer": {
+    "name": "Công ty SAMPLE Mua 6",
+    "taxCode": "7824896388",
+    "address": "26 Đường Mẫu, TP.HCM"
+  },
+  "invoiceNo": "3374755",
+  "series": "C26TAA",
+  "issueDate": "2026-05-13",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Hàng hóa SAMPLE",
+      "quantity": 3,
+      "unit": "cái",
+      "unitPrice": 60000,
+      "vatRate": 0,
+      "amount": 180000
+    }
+  ],
+  "subtotal": 180000,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 180000,
+      "amount": 0
+    }
+  ],
+  "total": 180000
+}

@@ -1,0 +1,35 @@
+{
+  "seller": {
+    "name": "Công ty SAMPLE Bán 5",
+    "taxCode": "6270482814",
+    "address": "6 Đường Mẫu, Hà Nội"
+  },
+  "buyer": {
+    "name": "Công ty SAMPLE Mua 5",
+    "taxCode": "4893252886",
+    "address": "25 Đường Mẫu, TP.HCM"
+  },
+  "invoiceNo": "0009595",
+  "series": "C26TAA",
+  "issueDate": "2026-06-16",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Vật tư SAMPLE",
+      "quantity": 3,
+      "unit": "kg",
+      "unitPrice": 301000,
+      "vatRate": 8,
+      "amount": 903000
+    }
+  ],
+  "subtotal": 903000,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 903000,
+      "amount": 72240
+    }
+  ],
+  "total": 975240
+}

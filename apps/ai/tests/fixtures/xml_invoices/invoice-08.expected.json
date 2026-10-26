@@ -1,0 +1,35 @@
+{
+  "seller": {
+    "name": "Công ty SAMPLE Bán 8",
+    "taxCode": "0106513331",
+    "address": "9 Đường Mẫu, Hà Nội"
+  },
+  "buyer": {
+    "name": "Công ty SAMPLE Mua 8",
+    "taxCode": "8726247316",
+    "address": "28 Đường Mẫu, TP.HCM"
+  },
+  "invoiceNo": "7434501",
+  "series": "C26TAA",
+  "issueDate": "2026-09-04",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Hàng hóa SAMPLE",
+      "quantity": 5,
+      "unit": "cái",
+      "unitPrice": 479000,
+      "vatRate": 10,
+      "amount": 2395000
+    }
+  ],
+  "subtotal": 2395000,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 2395000,
+      "amount": 239500
+    }
+  ],
+  "total": 2634500
+}

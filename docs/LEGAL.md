@@ -25,6 +25,7 @@
 |---|---|---|
 | ui-ux-pro-max skill | MIT, © 2024 Next Level Builder | Installed once under `.claude/skills/`; LICENSE file kept |
 | tweetnacl (Unlicense) | Public-domain-equivalent; transitive dev-only dependency of `testcontainers` (via `ssh2`), used by `pnpm test:int`, never shipped | Reviewed 2026-10-19 (T1.8), kept with Hậu's approval. `testcontainers` and `@testcontainers/postgresql` are MIT; `ssh2`, `cpu-features` and `protobufjs` install scripts are disabled (`pnpm-workspace.yaml`). The other non-allow-list licences already in the tree (Unlicense: memfs, fs-monkey; BlueOak; CC-BY-4.0; 0BSD) are for T7.4 to decide |
+| defusedxml | PSF-2.0 (Python Software Foundation License; same family as the allowed Python-2.0) | Used by `apps/ai` to parse untrusted e-invoice XML (blocks XXE and entity bombs). Reviewed 2026-10-26 (T2.8), kept with Hậu's approval. `python-multipart` (Apache-2.0) is on the allow-list |
 | Keycloak | Apache-2.0 | Run as container image |
 | PostgreSQL | PostgreSQL License | |
 | pgvector | PostgreSQL License | |
