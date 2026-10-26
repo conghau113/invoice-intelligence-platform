@@ -75,7 +75,7 @@
 ## Internal API: AI service (not public)
 | Method | Path | Body → Result |
 |---|---|---|
-| POST | `/extract` | multipart `{file, sourceType, schemaVersion}` → `{invoice, confidence, warnings, usage}`; `xml` → parser, `pdf/png/jpeg` → LLM |
+| POST | `/extract` | multipart `{file, sourceType, schemaVersion?}` → `{invoice, warnings, usage}` (`invoice` includes `fieldMeta`, so no separate `confidence`; `usage` is `null` for xml); `sourceType` is `xml \| pdf \| image` (same as `documents.source_type`); `xml` → parser, `pdf/image` → LLM (501 `EXTRACTION_PATH_NOT_IMPLEMENTED` until M3). Errors: `{code, message}` — 422 `XML_*`, 413 `FILE_TOO_LARGE` |
 | POST | `/embed` | `{texts[]}` → `{vectors[], usage}` |
 | POST | `/answer` | `{question, chunks[], locale}` → stream of tokens + `{citations[]}` |
 | POST | `/plan-query` | `{question, locale}` → structured filter (validated schema) |

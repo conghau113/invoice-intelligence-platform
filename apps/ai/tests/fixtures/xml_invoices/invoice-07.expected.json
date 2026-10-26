@@ -1,0 +1,56 @@
+{
+  "seller": {
+    "name": "Công ty SAMPLE Bán 7",
+    "taxCode": "0310518346",
+    "address": "8 Đường Mẫu, Hà Nội"
+  },
+  "buyer": {
+    "name": "Công ty SAMPLE Mua 7",
+    "taxCode": "7382997370",
+    "address": "27 Đường Mẫu, TP.HCM"
+  },
+  "invoiceNo": "6829333",
+  "series": "C26TAA",
+  "issueDate": "2026-04-04",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Dịch vụ SAMPLE",
+      "quantity": 2,
+      "unit": "gói",
+      "unitPrice": 34700,
+      "vatRate": 10,
+      "amount": 69400
+    },
+    {
+      "description": "Dịch vụ SAMPLE",
+      "quantity": 10.5,
+      "unit": "gói",
+      "unitPrice": 23600,
+      "vatRate": 10,
+      "amount": 247800
+    },
+    {
+      "description": "Vật tư SAMPLE",
+      "quantity": 2,
+      "unit": "kg",
+      "unitPrice": 7300,
+      "vatRate": 0,
+      "amount": 14600
+    }
+  ],
+  "subtotal": 331800,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 14600,
+      "amount": 0
+    },
+    {
+      "rate": 10,
+      "base": 317200,
+      "amount": 31720
+    }
+  ],
+  "total": 363520
+}

@@ -1,0 +1,35 @@
+{
+  "seller": {
+    "name": "Công ty SAMPLE Bán 3",
+    "taxCode": "9537672420-253",
+    "address": "4 Đường Mẫu, Hà Nội"
+  },
+  "buyer": {
+    "name": "Công ty SAMPLE Mua 3",
+    "taxCode": "8849696537",
+    "address": "23 Đường Mẫu, TP.HCM"
+  },
+  "invoiceNo": "2320822",
+  "series": "C26TAA",
+  "issueDate": "2026-09-16",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Hàng hóa SAMPLE",
+      "quantity": 3,
+      "unit": "cái",
+      "unitPrice": 21700,
+      "vatRate": 8,
+      "amount": 65100
+    }
+  ],
+  "subtotal": 65100,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 65100,
+      "amount": 5208
+    }
+  ],
+  "total": 70308
+}
