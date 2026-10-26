@@ -19,12 +19,14 @@ Defined once in `packages/contracts` (Zod) and exported to JSON Schema for Pytho
 
 ```text
 Invoice
-  seller { name, taxCode, address }      buyer { name, taxCode, address }
+  seller { name, taxCode, address }      buyer { name, taxCode | null, address }
   invoiceNo, series, issueDate (ISO 8601), currency (ISO 4217)
   lines[] { description, quantity, unit, unitPrice, vatRate, amount }
   subtotal, vatBreakdown[] { rate, base, amount }, total     (integers, minor units)
-  fieldMeta { <fieldPath>: { confidence 0..1, evidence { page, text } } }
+  fieldMeta { <fieldPath>: { confidence 0..1, evidence { page, text } | null } }
 ```
+
+`fieldMeta` is part of the Invoice, so `extractions.data` stores it too. `fieldPath` is a fixed grammar (`seller.name`, `total`, `lines.0.amount`, `vatBreakdown.1.rate`, …); unknown keys are rejected, and business-rule warnings and field corrections use the same paths. `fieldMeta` need not cover every field. "No value" is always `null` with the key present, never a missing key (so Zod, JSON Schema and pydantic agree). `evidence` is `null` when there is no page (XML); it holds an excerpt of the document, so never log it. The buyer's tax code may be `null` (individual buyers).
 
 Business rules (shared TS code, also run in the worker): lines sum to subtotal; subtotal + VAT = total (±1 minor unit rounding); tax code **format** is 10 digits or 10+3 (`0123456789-001`); issue date not in the future; currency in an allow-list. Rules produce **warnings**, they never auto-correct numbers. The tax-code check digit is deliberately **not** validated: synthetic data uses invalid check digits so it can never match a real business (docs/LEGAL.md).
 
