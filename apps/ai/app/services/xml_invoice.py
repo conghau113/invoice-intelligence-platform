@@ -22,9 +22,10 @@ from app.schemas.generated import Invoice
 
 MAX_XML_BYTES = 10 * 1024 * 1024  # same cap as the API upload
 MAX_XML_TAGS = 200_000  # real invoices have ~10 tags per line; this bounds tree size and depth
-# Plain ASCII decimal only: Decimal() alone also accepts "1E+999999999" (Overflow later),
-# full-width digits, "1_000", "NaN" and surrounding whitespace.
-DECIMAL_PATTERN = re.compile(r"-?[0-9]{1,18}(?:\.[0-9]{1,6})?")
+# Plain ASCII decimal only (re.ASCII keeps \d from matching other scripts' digits). Decimal()
+# alone also accepts "1E+999999999" (Overflow later), full-width digits, "1_000", "NaN" and
+# surrounding whitespace.
+DECIMAL_PATTERN = re.compile(r"-?\d{1,18}(?:\.\d{1,6})?", re.ASCII)
 CURRENCY_EXPONENT = {"VND": 0, "USD": 2}  # minor-unit digits; unknown currency is rejected
 
 

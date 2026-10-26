@@ -51,7 +51,8 @@ def test_samples_cover_usd_and_buyer_without_tax_code() -> None:
 
 def test_committed_samples_are_what_the_generator_produces() -> None:
     spec = importlib.util.spec_from_file_location("min_xml", GENERATOR)
-    assert spec and spec.loader
+    assert spec is not None
+    assert spec.loader is not None
     gen = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(gen)
     rng = random.Random(42)

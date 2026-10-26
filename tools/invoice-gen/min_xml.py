@@ -15,7 +15,7 @@ import xml.etree.ElementTree as ET
 from decimal import Decimal
 from pathlib import Path
 
-DEFAULT_OUT = Path(__file__).resolve().parents[2] / "apps/ai/tests/fixtures/xml_invoices"
+OUT_DIR = Path(__file__).resolve().parents[2] / "apps/ai/tests/fixtures/xml_invoices"
 EXPONENT = {"VND": 0, "USD": 2}
 WEIGHTS = [31, 29, 23, 19, 17, 13, 7, 5, 3]
 PRODUCTS = [("Dịch vụ SAMPLE", "gói"), ("Hàng hóa SAMPLE", "cái"), ("Vật tư SAMPLE", "kg")]
@@ -114,17 +114,17 @@ def render_xml(inv: dict) -> bytes:
 
 
 def main() -> None:
+    # Output dir is fixed on purpose: a path taken from the command line could write anywhere.
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=10)
     ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
     args = ap.parse_args()
     rng = random.Random(args.seed)
-    args.out.mkdir(parents=True, exist_ok=True)
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
     for i in range(args.n):
         inv = make_invoice(rng, i)
-        (args.out / f"invoice-{i:02d}.xml").write_bytes(render_xml(inv))
-        (args.out / f"invoice-{i:02d}.expected.json").write_text(
+        (OUT_DIR / f"invoice-{i:02d}.xml").write_bytes(render_xml(inv))
+        (OUT_DIR / f"invoice-{i:02d}.expected.json").write_text(
             json.dumps(inv, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
 

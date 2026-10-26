@@ -19,7 +19,8 @@ def test_xml_returns_invoice_with_integer_money() -> None:
     res = post(SAMPLE.read_bytes(), "xml")
     assert res.status_code == 200
     body = res.json()
-    assert body["warnings"] == [] and body["usage"] is None
+    assert body["warnings"] == []
+    assert body["usage"] is None
     assert isinstance(body["invoice"]["total"], int)
     # The raw JSON must not carry "1100000.0": the TS side would accept it, Python would not.
     assert not re.search(r'"(total|subtotal|amount|base|unitPrice)":\s*\d+\.\d', res.text)
