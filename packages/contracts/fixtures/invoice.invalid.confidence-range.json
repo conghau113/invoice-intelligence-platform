@@ -1,0 +1,55 @@
+{
+  "seller": {
+    "name": "Công ty SAMPLE Bán",
+    "taxCode": "0123456789-001",
+    "address": "1 Đường Mẫu, Hà Nội"
+  },
+  "buyer": {
+    "name": "Công ty SAMPLE Mua",
+    "taxCode": "0123456780",
+    "address": "2 Đường Mẫu, TP.HCM"
+  },
+  "invoiceNo": "0000123",
+  "series": "C26TAA",
+  "issueDate": "2026-03-15",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Dịch vụ SAMPLE",
+      "quantity": 2,
+      "unit": "gói",
+      "unitPrice": 500000,
+      "vatRate": 10,
+      "amount": 1000000
+    }
+  ],
+  "subtotal": 1000000,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 1000000,
+      "amount": 100000
+    }
+  ],
+  "total": 1100000,
+  "fieldMeta": {
+    "seller.name": {
+      "confidence": 0.97,
+      "evidence": {
+        "page": 1,
+        "text": "Công ty SAMPLE Bán"
+      }
+    },
+    "total": {
+      "confidence": 1.5,
+      "evidence": {
+        "page": 1,
+        "text": "Tổng cộng: 1.100.000"
+      }
+    },
+    "lines.0.amount": {
+      "confidence": 1,
+      "evidence": null
+    }
+  }
+}

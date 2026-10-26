@@ -1,0 +1,36 @@
+{
+  "seller": { "name": "SAMPLE Trading Ltd", "taxCode": "9876543210", "address": "10 Sample Road" },
+  "buyer": { "name": "Nguyễn SAMPLE", "taxCode": null, "address": "5 Đường Mẫu, Đà Nẵng" },
+  "invoiceNo": "INV-77",
+  "series": "1C26TYY",
+  "issueDate": "2024-02-29",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Widget SAMPLE",
+      "quantity": 1.5,
+      "unit": "kg",
+      "unitPrice": 1999,
+      "vatRate": 8,
+      "amount": 2999
+    },
+    {
+      "description": "Cáp SAMPLE",
+      "quantity": 3,
+      "unit": "cái",
+      "unitPrice": 1000,
+      "vatRate": 10,
+      "amount": 3000
+    }
+  ],
+  "subtotal": 5999,
+  "vatBreakdown": [
+    { "rate": 8, "base": 2999, "amount": 240 },
+    { "rate": 10, "base": 3000, "amount": 300 }
+  ],
+  "total": 6539,
+  "fieldMeta": {
+    "buyer.taxCode": { "confidence": 0, "evidence": null },
+    "vatBreakdown.1.amount": { "confidence": 1, "evidence": null }
+  }
+}
