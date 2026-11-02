@@ -16,6 +16,7 @@
 | Rate limits | `429` with `Retry-After` and `RateLimit-*` headers (ADR 0012) |
 | Tracing | W3C `traceparent` accepted and propagated; `traceId` echoed in errors |
 | Versioning | URL major version (`/v1`); additive changes only within a version |
+| Client address | `req.ip` follows `X-Forwarded-For` only from peers in `TRUSTED_PROXIES` (default `loopback`), used for audit rows (SECURITY.md §5). The web upload proxy passes the header on only when `TRUST_FORWARDED_FOR=true` (a proxy that overwrites it is in front); a value that is not an IP is stored as no address |
 | Demo mode | When `DEMO_READ_ONLY=true` every non-GET request returns `403` with code `DEMO_READ_ONLY`, and `/qa/ask` serves only precomputed answers (ADR 0018) |
 | Routing | Behind Caddy: web at `/`, API at `/api` on the same origin (no CORS needed in production) |
 

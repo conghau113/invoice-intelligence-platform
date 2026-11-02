@@ -36,6 +36,14 @@ export async function POST(req: NextRequest) {
   if (tenant !== undefined) headers['x-tenant'] = tenant;
   if (key !== null) headers['idempotency-key'] = key;
   if (length > 0) headers['content-length'] = String(length);
+  // The reverse proxy in front of the web server (M4) tells us who the caller is. Passed on as it
+  // came; the API believes it only from peers listed in TRUSTED_PROXIES (apps/api trusted-proxies.ts).
+  // Off unless TRUST_FORWARDED_FOR=true: without a proxy that overwrites the header, it is whatever
+  // the browser sent and would let a user choose the address written to the audit log.
+  const forwardedFor = req.headers.get('x-forwarded-for');
+  if (forwardedFor !== null && process.env.TRUST_FORWARDED_FOR === 'true') {
+    headers['x-forwarded-for'] = forwardedFor;
+  }
   const traceparent = req.headers.get('traceparent');
   if (traceparent !== null) headers.traceparent = traceparent;
 

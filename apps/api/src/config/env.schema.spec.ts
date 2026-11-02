@@ -27,6 +27,7 @@ describe('validateEnv', () => {
       REDIS_URL,
       ...AI,
       QUEUE_BACKOFF_BASE_MS: 5000,
+      TRUSTED_PROXIES: 'loopback',
       OIDC_AUDIENCE: 'api',
     });
   });
