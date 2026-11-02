@@ -232,5 +232,95 @@
     "removeFilter": "Bỏ bộ lọc {name}",
     "clearAll": "Xóa tất cả",
     "sortBy": "Sắp xếp theo {column}"
+  },
+  "DocumentDetail": {
+    "title": "Chi tiết tài liệu",
+    "back": "Quay lại danh sách",
+    "version": "Phiên bản {version}",
+    "loading": "Đang tải tài liệu",
+    "none": "—",
+    "retry": "Thử lại",
+    "signIn": "Đăng nhập lại",
+    "staleHint": "Không làm mới được; đang hiển thị dữ liệu của lần tải trước.",
+    "waiting": {
+      "hint": "Trang tự cập nhật khi trích xuất xong.",
+      "uploaded": {
+        "title": "Đã nhận, chưa vào hàng đợi"
+      },
+      "queued": {
+        "title": "Đang chờ trong hàng đợi"
+      },
+      "processing": {
+        "title": "Đang trích xuất dữ liệu hóa đơn"
+      }
+    },
+    "noExtraction": "Tài liệu này chưa có dữ liệu trích xuất",
+    "noExtractionHint": "Chưa có kết quả trích xuất nào được lưu cho tài liệu.",
+    "failedTitle": "Trích xuất thất bại",
+    "failure": {
+      "unknown": "Không xử lý được tài liệu. Mã bên dưới giúp quản trị viên biết nguyên nhân.",
+      "EXTRACTION_RETRIES_EXHAUSTED": "Dịch vụ trích xuất không phản hồi sau nhiều lần thử. Thử lại sau hoặc nhờ quản trị viên chạy lại.",
+      "EXTRACTION_STALLED": "Quá trình xử lý bị gián đoạn quá nhiều lần.",
+      "EXTRACTION_FAILED": "Không xử lý được tài liệu.",
+      "EXTRACTION_SCHEMA_INVALID": "Dịch vụ trích xuất trả về dữ liệu không phải hóa đơn hợp lệ.",
+      "EXTRACTION_PATH_NOT_IMPLEMENTED": "Hóa đơn PDF và ảnh chưa được hỗ trợ. Hãy tải lên hóa đơn XML.",
+      "FILE_MISSING": "Không tìm thấy tệp đã lưu.",
+      "FILE_TOO_LARGE": "Tệp quá lớn để xử lý.",
+      "XML_MALFORMED": "Tệp không phải XML hợp lệ.",
+      "XML_TOO_COMPLEX": "XML quá phức tạp để xử lý an toàn.",
+      "XML_UNSUPPORTED_STRUCTURE": "XML này không có cấu trúc hóa đơn mà hệ thống hỗ trợ.",
+      "XML_MISSING_FIELD": "Hóa đơn XML thiếu một trường bắt buộc.",
+      "XML_INVALID_VALUE": "Hóa đơn XML có giá trị không hợp lệ.",
+      "XML_UNSUPPORTED_CURRENCY": "Loại tiền của hóa đơn chưa được hỗ trợ.",
+      "XML_UNSUPPORTED_VAT_RATE": "Hóa đơn dùng thuế suất VAT chưa được hỗ trợ.",
+      "AI_SERVICE_MISCONFIGURED": "Dịch vụ trích xuất đang cấu hình chưa đúng (ví dụ sai token truy cập). Lỗi không nằm ở tệp của bạn; hãy nhờ quản trị viên sửa rồi chạy lại.",
+      "XML_FORBIDDEN_CONSTRUCT": "XML chứa khai báo DTD hoặc entity, hệ thống không cho phép."
+    },
+    "errors": {
+      "session": {
+        "title": "Phiên đăng nhập đã hết hạn",
+        "hint": "Hãy đăng nhập lại để xem tài liệu này."
+      },
+      "forbidden": {
+        "title": "Bạn không có quyền xem tài liệu này",
+        "hint": "Hãy hỏi quản trị viên của tổ chức nếu bạn cần quyền truy cập."
+      },
+      "notFound": {
+        "title": "Không tìm thấy tài liệu",
+        "hint": "Tài liệu có thể thuộc tổ chức khác hoặc không còn tồn tại."
+      },
+      "unreachable": {
+        "title": "Không kết nối được máy chủ",
+        "hint": "Dịch vụ API không phản hồi. Hãy thử lại sau vài phút."
+      },
+      "error": {
+        "title": "Không tải được tài liệu",
+        "hint": "Đã xảy ra lỗi khi tải. Hãy thử lại."
+      }
+    },
+    "invoiceInfo": "Hóa đơn",
+    "invoiceNo": "Số hóa đơn",
+    "series": "Ký hiệu",
+    "issueDate": "Ngày lập",
+    "currency": "Loại tiền",
+    "seller": "Người bán",
+    "buyer": "Người mua",
+    "name": "Tên",
+    "taxCode": "Mã số thuế",
+    "address": "Địa chỉ",
+    "lines": "Hàng hóa, dịch vụ",
+    "linesCaption": "Các dòng hàng hóa, dịch vụ của hóa đơn",
+    "description": "Mô tả",
+    "quantity": "Số lượng",
+    "unit": "Đơn vị",
+    "unitPrice": "Đơn giá",
+    "vatRate": "Thuế suất",
+    "amount": "Thành tiền",
+    "vatBreakdown": "Thuế GTGT theo thuế suất",
+    "vatBase": "Tiền chịu thuế",
+    "vatAmount": "Tiền thuế",
+    "totals": "Tổng cộng",
+    "subtotal": "Tiền trước thuế",
+    "total": "Tổng thanh toán"
   }
 }

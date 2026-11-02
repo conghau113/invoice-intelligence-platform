@@ -11,6 +11,7 @@ import {
   EXTRACTION_RETRY,
   ExtractionJobError,
   PermanentExtractionError,
+  TransientExtractionError,
   extractionJobSchema,
 } from '../domain/extraction-job';
 import { EXTRACTION_HANDLER, type ExtractionHandler } from './extraction-handler.port';
@@ -63,7 +64,11 @@ export class ExtractionProcessor {
       const permanent = e instanceof PermanentExtractionError;
       const exhausted = info.attempt >= info.maxAttempts;
       if (permanent || exhausted) {
-        const code = permanent ? e.code : EXTRACTION_RETRIES_EXHAUSTED;
+        // A transient error may carry the reason to keep when the attempts run out.
+        const code =
+          permanent || e instanceof TransientExtractionError
+            ? e.code
+            : EXTRACTION_RETRIES_EXHAUSTED;
         await this.move(job.tenantId, job.documentId, 'failed', code);
         throw new ExtractionJobError(code, false);
       }

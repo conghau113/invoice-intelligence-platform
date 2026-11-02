@@ -232,5 +232,95 @@
     "removeFilter": "Remove filter {name}",
     "clearAll": "Clear all",
     "sortBy": "Sort by {column}"
+  },
+  "DocumentDetail": {
+    "title": "Document",
+    "back": "Back to documents",
+    "version": "Version {version}",
+    "loading": "Loading the document",
+    "none": "—",
+    "retry": "Retry",
+    "signIn": "Sign in again",
+    "staleHint": "Could not refresh; showing the data from the last load.",
+    "waiting": {
+      "hint": "This page updates by itself when the extraction finishes.",
+      "uploaded": {
+        "title": "Received, not queued yet"
+      },
+      "queued": {
+        "title": "Waiting in the queue"
+      },
+      "processing": {
+        "title": "Extracting the invoice data"
+      }
+    },
+    "noExtraction": "No extracted data for this document",
+    "noExtractionHint": "The document has no extraction stored.",
+    "failedTitle": "Extraction failed",
+    "failure": {
+      "unknown": "The document could not be processed. The code below tells an administrator why.",
+      "EXTRACTION_RETRIES_EXHAUSTED": "The extraction service did not answer after several attempts. Try again later or ask an administrator to retry.",
+      "EXTRACTION_STALLED": "Processing was interrupted too many times.",
+      "EXTRACTION_FAILED": "The document could not be processed.",
+      "EXTRACTION_SCHEMA_INVALID": "The extraction service returned data that is not a valid invoice.",
+      "EXTRACTION_PATH_NOT_IMPLEMENTED": "PDF and image invoices are not supported yet. Upload an XML invoice.",
+      "FILE_MISSING": "The stored file could not be found.",
+      "FILE_TOO_LARGE": "The file is too large to process.",
+      "XML_MALFORMED": "The file is not well-formed XML.",
+      "XML_TOO_COMPLEX": "The XML is too deeply nested or too large to process safely.",
+      "XML_UNSUPPORTED_STRUCTURE": "This XML is not an invoice structure the system supports.",
+      "XML_MISSING_FIELD": "The invoice XML is missing a required field.",
+      "XML_INVALID_VALUE": "The invoice XML has a value that is not valid.",
+      "XML_UNSUPPORTED_CURRENCY": "The invoice currency is not supported.",
+      "XML_UNSUPPORTED_VAT_RATE": "The invoice uses a VAT rate that is not supported.",
+      "AI_SERVICE_MISCONFIGURED": "The extraction service is not set up correctly (for example a wrong access token). This is not a problem with your file; ask an administrator to fix it and retry.",
+      "XML_FORBIDDEN_CONSTRUCT": "The XML contains a DTD or entity declaration, which is not allowed."
+    },
+    "errors": {
+      "session": {
+        "title": "Your session has expired",
+        "hint": "Sign in again to see this document."
+      },
+      "forbidden": {
+        "title": "You are not allowed to see this document",
+        "hint": "Ask your organization's administrator if you need access."
+      },
+      "notFound": {
+        "title": "Document not found",
+        "hint": "It may belong to another organization or no longer exist."
+      },
+      "unreachable": {
+        "title": "Cannot reach the server",
+        "hint": "The API service is not responding. Try again in a few minutes."
+      },
+      "error": {
+        "title": "The document could not be loaded",
+        "hint": "Something went wrong while loading. Try again."
+      }
+    },
+    "invoiceInfo": "Invoice",
+    "invoiceNo": "Invoice number",
+    "series": "Series",
+    "issueDate": "Issue date",
+    "currency": "Currency",
+    "seller": "Seller",
+    "buyer": "Buyer",
+    "name": "Name",
+    "taxCode": "Tax code",
+    "address": "Address",
+    "lines": "Line items",
+    "linesCaption": "Invoice line items",
+    "description": "Description",
+    "quantity": "Quantity",
+    "unit": "Unit",
+    "unitPrice": "Unit price",
+    "vatRate": "VAT rate",
+    "amount": "Amount",
+    "vatBreakdown": "VAT breakdown",
+    "vatBase": "Taxable amount",
+    "vatAmount": "VAT",
+    "totals": "Totals",
+    "subtotal": "Subtotal",
+    "total": "Total"
   }
 }

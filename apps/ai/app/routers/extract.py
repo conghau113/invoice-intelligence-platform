@@ -1,11 +1,12 @@
 from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, Form, UploadFile
+from fastapi import APIRouter, Depends, Form, UploadFile
 from fastapi.responses import JSONResponse
 
+from app.security import require_service_token
 from app.services.xml_invoice import MAX_XML_BYTES, XmlInvoiceError, parse_xml_invoice
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_service_token)])
 
 SourceType = Literal["xml", "pdf", "image"]  # same vocabulary as documents.source_type
 

@@ -65,7 +65,12 @@ export class DocumentStateMachine {
     assertTransition(row.status, to);
     const version = nextVersion(row.status, to, row.version);
 
-    await tx.update(documents).set({ status: to, version }).where(eq(documents.id, documentId));
+    // The reason is kept only while the document is `failed`: leaving that state (retry) clears it.
+    const failureCode = to === 'failed' ? (ctx.code ?? null) : null;
+    await tx
+      .update(documents)
+      .set({ status: to, version, failureCode })
+      .where(eq(documents.id, documentId));
     await tx.insert(auditLogs).values({
       tenantId: row.tenantId,
       actorId: ctx.actorId,

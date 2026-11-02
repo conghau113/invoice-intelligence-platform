@@ -4,6 +4,7 @@ const ISSUER = 'http://localhost:8080/realms/invoice';
 const DB_URL = 'postgres://invoice_app:pw@localhost:5433/invoice';
 const DATA_DIR = '/var/lib/invoice-data';
 const REDIS_URL = 'redis://localhost:6380';
+const AI = { AI_SERVICE_URL: 'http://localhost:8000', AI_SERVICE_TOKEN: 'x'.repeat(16) };
 
 describe('validateEnv', () => {
   it('applies defaults', () => {
@@ -14,6 +15,7 @@ describe('validateEnv', () => {
         DATABASE_URL: DB_URL,
         DATA_DIR,
         REDIS_URL,
+        ...AI,
       }),
     ).toEqual({
       NODE_ENV: 'test',
@@ -23,6 +25,7 @@ describe('validateEnv', () => {
       DATABASE_URL: DB_URL,
       DATA_DIR,
       REDIS_URL,
+      ...AI,
       QUEUE_BACKOFF_BASE_MS: 5000,
       OIDC_AUDIENCE: 'api',
     });
@@ -35,13 +38,20 @@ describe('validateEnv', () => {
       DATABASE_URL: DB_URL,
       DATA_DIR,
       REDIS_URL,
+      ...AI,
     };
     expect(validateEnv({ ...base, DEMO_READ_ONLY: 'false' }).DEMO_READ_ONLY).toBe(false);
     expect(validateEnv({ ...base, DEMO_READ_ONLY: 'true' }).DEMO_READ_ONLY).toBe(true);
   });
 
   it('requires REDIS_URL and bounds the backoff base', () => {
-    const base = { NODE_ENV: 'test', OIDC_ISSUER_URL: ISSUER, DATABASE_URL: DB_URL, DATA_DIR };
+    const base = {
+      NODE_ENV: 'test',
+      OIDC_ISSUER_URL: ISSUER,
+      DATABASE_URL: DB_URL,
+      DATA_DIR,
+      ...AI,
+    };
     expect(() => validateEnv(base)).toThrow(/REDIS_URL/);
     expect(() => validateEnv({ ...base, REDIS_URL, QUEUE_BACKOFF_BASE_MS: '0' })).toThrow(
       /QUEUE_BACKOFF_BASE_MS/,
@@ -88,5 +98,19 @@ describe('validateEnv', () => {
       expect(msg).toContain('PORT');
       expect(msg).not.toContain('abc-secret');
     }
+  });
+
+  it('requires the AI service URL and a token of at least 16 characters', () => {
+    const base = {
+      NODE_ENV: 'test',
+      OIDC_ISSUER_URL: ISSUER,
+      DATABASE_URL: DB_URL,
+      DATA_DIR,
+      REDIS_URL,
+    };
+    expect(() => validateEnv(base)).toThrow(/AI_SERVICE_URL[\s\S]*AI_SERVICE_TOKEN/);
+    expect(() => validateEnv({ ...base, ...AI, AI_SERVICE_TOKEN: 'short' })).toThrow(
+      /AI_SERVICE_TOKEN/,
+    );
   });
 });

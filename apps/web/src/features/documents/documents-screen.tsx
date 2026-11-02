@@ -108,7 +108,15 @@ function List() {
       key: 'id',
       header: t('colId'),
       width: 140,
-      cell: (d) => <code className="font-mono text-xs">{d.id.slice(0, 8)}</code>,
+      cell: (d) => (
+        <Link
+          href={`/documents/${d.id}`}
+          data-testid={`document-link-${d.id}`}
+          className="underline-offset-2 hover:underline focus-visible:underline"
+        >
+          <code className="font-mono text-xs">{d.id.slice(0, 8)}</code>
+        </Link>
+      ),
     },
     { key: 'type', header: t('colType'), width: 120, cell: (d) => t(`types.${d.sourceType}`) },
     {

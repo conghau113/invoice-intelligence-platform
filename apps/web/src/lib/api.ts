@@ -43,3 +43,21 @@ export async function apiGet<T>(path: string): Promise<ApiResult<T>> {
   if (!res.ok) return { kind: 'unavailable' };
   return { kind: 'ok', data: (await res.json()) as T };
 }
+
+/** W3C trace-context shape only; anything else is dropped rather than relayed. */
+const TRACEPARENT = /^[0-9a-f]{2}-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$/;
+
+/**
+ * Headers for a BFF route that forwards a browser request to the API: the bearer token, the chosen
+ * tenant and a well-formed traceparent. `null` when there is no token (answer 401, call nothing).
+ */
+export async function upstreamHeaders(
+  traceparent: string | null,
+): Promise<Record<string, string> | null> {
+  const [token, tenant] = await Promise.all([getAccessToken(), currentTenant()]);
+  if (token === null) return null;
+  const headers: Record<string, string> = { authorization: `Bearer ${token}` };
+  if (tenant !== undefined) headers['x-tenant'] = tenant;
+  if (traceparent !== null && TRACEPARENT.test(traceparent)) headers.traceparent = traceparent;
+  return headers;
+}

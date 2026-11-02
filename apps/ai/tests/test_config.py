@@ -37,3 +37,16 @@ def test_create_app_fails_fast_on_invalid_config(monkeypatch: pytest.MonkeyPatch
             create_app()
     finally:
         get_settings.cache_clear()
+
+
+def test_missing_or_short_service_token_fails_fast(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("AI_SERVICE_TOKEN", raising=False)
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None)
+    monkeypatch.setenv("AI_SERVICE_TOKEN", "short")
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None)
+
+
+def test_token_is_not_in_repr() -> None:
+    assert "test-service-token" not in repr(Settings(_env_file=None))

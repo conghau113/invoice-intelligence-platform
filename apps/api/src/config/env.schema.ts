@@ -22,6 +22,9 @@ export const envSchema = z.object({
   REDIS_URL: z.url(),
   // First wait of the retry backoff; tests set a few ms, production keeps seconds.
   QUEUE_BACKOFF_BASE_MS: z.coerce.number().int().min(1).max(60_000).default(5_000),
+  // Internal AI service (ADR 0002): base URL and the shared bearer token the worker sends (API.md).
+  AI_SERVICE_URL: z.url(),
+  AI_SERVICE_TOKEN: z.string().min(16),
   OIDC_AUDIENCE: z.string().min(1).default('api'),
 });
 
