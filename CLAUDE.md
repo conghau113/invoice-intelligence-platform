@@ -40,7 +40,7 @@ Owner: Hậu. You write most of the code; Hậu must be able to explain all of i
 
 ## Commands
 - Environment: WSL2 Ubuntu (see docs/setup/WSL2.md) · Install: `pnpm install` · Infra: `pnpm infra:up` / `pnpm infra:down` (Postgres host port 5433, Redis 6380)
-- Dev (one app per terminal; no root `pnpm dev`): `pnpm --filter web dev` (:3000) · `pnpm --filter api start:dev` (:3001) · `pnpm dev:ai` (:8000, shares the dev AI token with `pnpm dev:api`/`dev:worker`)
+- Dev, one command: `pnpm dev:stack` (infra + migrate, then AI :8000, API :3001, worker, web :3000 with prefixed logs; Ctrl+C stops all; refuses to start if a port is taken). One app per terminal instead: `pnpm --filter web dev` (:3000) · `pnpm dev:api` (:3001) · `pnpm dev:worker` · `pnpm dev:ai` (:8000); the three `dev:*` share the dev AI token. No root `pnpm dev` (that would be turbo, which cannot run the dev-only wrappers).
 - Lint/types: `pnpm lint && pnpm typecheck` · Tests: `pnpm test` · Python: `cd apps/ai && uv run pytest`
 - Repo gates (schema drift, i18n, ADR index, docs links): `pnpm check` · Script tests: `pnpm test:scripts` · Secrets (needs Docker running): `pnpm check:secrets`
 - Fast gate: `pnpm check:fast` · Full gate before commit: `pnpm check:full` · Hook tests: `node --test .claude/hooks/guard.test.mjs`

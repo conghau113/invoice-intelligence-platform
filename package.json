@@ -20,6 +20,7 @@
     "dev:api": "node scripts/dev-api.mjs",
     "dev:worker": "node scripts/dev-api.mjs worker",
     "dev:ai": "node scripts/dev-ai.mjs",
+    "dev:stack": "node scripts/dev-stack.mjs",
     "infra:up": "docker compose up -d --wait",
     "infra:down": "docker compose down",
     "infra:logs": "docker compose logs -f",
