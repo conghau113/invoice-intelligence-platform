@@ -13,7 +13,7 @@
     "test": "jest",
     "test:int": "jest --config jest.int.config.js --runInBand",
     "db:generate": "drizzle-kit generate",
-    "db:build": "tsc -p tsconfig.build.json --outDir dist-scripts --incremental false",
+    "db:build": "pnpm --filter contracts build && tsc -p tsconfig.build.json --outDir dist-scripts --incremental false",
     "db:migrate": "pnpm db:build && node dist-scripts/db/migrate.js",
     "db:seed": "pnpm db:build && node dist-scripts/db/seed.js",
     "db:seed:documents": "pnpm db:build && node dist-scripts/db/seed-documents.js"
