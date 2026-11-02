@@ -172,6 +172,42 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
     expect(await exists(dupFile)).toBe(false);
   });
 
+  it('the duplicate upload is audited too: who, from which address, in which tenant', async () => {
+    const first = await create(ACME, 'k1', await stored(ACME, 'twice'), '203.0.113.7');
+    await create(ACME, 'k2', await stored(ACME, 'twice'), '198.51.100.9');
+    // The same request replayed (same key) is the same upload, so it adds no row.
+    await create(ACME, 'k2', await stored(ACME, 'twice'), '198.51.100.9');
+
+    const { rows } = await owner.query(
+      `SELECT action, tenant_id, actor_id, host(ip) AS ip, meta, at FROM audit_logs
+        WHERE entity_id = $1 AND action IN ('document.created', 'document.upload_duplicate')
+        ORDER BY id`,
+      [first.document.id],
+    );
+    expect(rows.map((r) => [r.action, r.tenant_id, r.actor_id, r.ip, r.meta])).toEqual([
+      ['document.created', ACME, USER, '203.0.113.7', { sourceType: 'pdf' }],
+      ['document.upload_duplicate', ACME, USER, '198.51.100.9', { sourceType: 'pdf' }],
+    ]);
+    expect(rows.every((r) => r.at instanceof Date)).toBe(true);
+  });
+
+  it('no audit row of an upload holds file content, the storage key or a file name', async () => {
+    const marker = 'MARKER-9f3c-not-for-the-audit-log';
+    const file = await stored(ACME, marker);
+    const first = await create(ACME, 'k1', file, '203.0.113.7');
+    await create(ACME, 'k2', await stored(ACME, marker), '203.0.113.7');
+
+    const { rows } = await owner.query(
+      `SELECT row_to_json(a)::text AS dump FROM audit_logs a WHERE entity_id = $1`,
+      [first.document.id],
+    );
+    expect(rows.length).toBeGreaterThanOrEqual(3); // created, duplicate, uploaded -> queued
+    for (const { dump } of rows as Array<{ dump: string }>) {
+      expect(dump).not.toContain(marker);
+      expect(dump).not.toContain(file.storageKey);
+    }
+  });
+
   it('the original file survives a duplicate upload', async () => {
     const original = await stored(ACME, 'keep-me');
     await create(ACME, 'k1', original);

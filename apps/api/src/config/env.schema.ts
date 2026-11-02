@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { z } from 'zod';
+import { trustedProxiesProblem } from './trusted-proxies';
 
 // z.coerce.boolean() would turn the string "false" into true, so booleans are parsed explicitly.
 const booleanString = z.enum(['true', 'false']).transform((v) => v === 'true');
@@ -25,6 +26,16 @@ export const envSchema = z.object({
   // Internal AI service (ADR 0002): base URL and the shared bearer token the worker sends (API.md).
   AI_SERVICE_URL: z.url(),
   AI_SERVICE_TOKEN: z.string().min(16),
+  // Peers whose X-Forwarded-For the API believes, so audit rows get the caller's address instead of
+  // the web server's. Default: only a proxy on the same machine (dev, CI). In deployment set the
+  // reverse proxy's address or network (M4). Never a value that trusts everyone (see trusted-proxies.ts).
+  // An empty value (a copied `TRUSTED_PROXIES=` line) counts as not set: the default applies.
+  TRUSTED_PROXIES: z
+    .preprocess((v) => (v === '' ? undefined : v), z.string().default('loopback'))
+    .superRefine((value, ctx) => {
+      const problem = trustedProxiesProblem(value);
+      if (problem !== null) ctx.addIssue({ code: 'custom', message: problem });
+    }),
   OIDC_AUDIENCE: z.string().min(1).default('api'),
 });
 

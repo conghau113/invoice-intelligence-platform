@@ -21,8 +21,8 @@
 ## Điểm dừng hiện tại
 
 ```text
-Mốc hiện tại: M1 (còn kiểm tra cuối mốc) → M2
-Task hiện tại: T2.10 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.9 đã DONE)
+Mốc hiện tại: M2 (còn kiểm tra cuối mốc) → M3
+Task hiện tại: T3.1 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.10 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-11-02
 ```
@@ -81,7 +81,7 @@ Cập nhật: 2026-11-02
 | T2.7  | Chốt schema hóa đơn + độ tin cậy từng field                                 | 2            | T0.5             | `DONE`     |             | Agent: `InvoiceSchema` (đổi tên từ Draft) có `fieldMeta` ngữ pháp path cố định, "không có giá trị" luôn là `null`; `buyer.taxCode` null được (Hậu duyệt); ngày Python chặt như Zod. 6 fixture + bảng đột biến kiểm cả vị trí lỗi ở TS và Python |
 | T2.8  | Parser hóa đơn điện tử XML (đường xác định, không dùng LLM)                 | 3            | T2.7             | `DONE`     |             | Agent: `services/xml_invoice.py` (defusedxml `forbid_dtd`, tiền bằng `Decimal`, fieldMeta đủ mọi lá, mã lỗi `XML_*`), `POST /extract` (xml → parser; pdf/image → 501), `tools/invoice-gen/min_xml.py` + 10 mẫu. 86 test Python; drill đổi sang `xml.etree` → 5 test XXE/bom đỏ. Duyệt `defusedxml` (PSF-2.0) |
 | T2.9  | Lát cắt xuyên suốt: worker gọi AI service (XML) → lưu extraction → hiển thị | 3.5          | T2.4, T2.6, T2.8 | `DONE`     | 5 | Agent: bảng `extractions` (RLS, append-only, unique (document, version) làm worker idempotent) + `documents.failure_code` do state machine ghi; `modules/extraction/` (`HttpAiExtractor` fetch+FormData, service token + traceparent, 4xx có code → vĩnh viễn, 5xx/mạng/timeout → retry; `AiExtractionHandler` thay handler tạm; `GET /documents/:id` validate lại bằng `InvoiceSchema`); AI: `AI_SERVICE_TOKEN` bắt buộc, `/extract` deny-by-default, echo traceparent; web: `/documents/[id]` chỉ đọc + polling 2s, BFF `/api/documents/[id]`, link ở danh sách. API 259 unit + 104 int; web 379; ai 94; chạy stack thật: dữ liệu hiện ~8,5s sau khi upload xong, tắt AI → failed hiện lý do. 7 drill → đỏ |
-| T2.10 | Audit log + test luồng upload end-to-end                                    | 2            | T2.5, T2.9       | `TODO`     |             |         |
+| T2.10 | Audit log + test luồng upload end-to-end                                    | 2            | T2.5, T2.9       | `DONE`     |             | Agent: audit upload đã có từ T2.3; thêm `document.upload_duplicate`, IP thật qua `TRUSTED_PROXIES` (mặc định `loopback`, từ chối giá trị tin mọi người) + web chuyển `X-Forwarded-For`; test int: không nội dung/khoá lưu trữ trong audit. `e2e/upload.spec.ts` (3 test: XML → danh sách → chi tiết, trùng, tenant khác); CI e2e nay bật AI + worker. 53 e2e xanh local; drill bỏ audit trùng → đỏ |
 
 
 
@@ -388,3 +388,7 @@ Cập nhật: 2026-11-02
 | 2026-11-02 | T2.9 | Hai lượt phát cùng một job chạy song song vẫn gọi AI hai lần (một dòng được ghi). Với đường LLM sẽ tốn gấp đôi | T3.2 (khoá theo document trước khi gọi LLM, hoặc `jobId` + lock) |
 | 2026-11-02 | T2.9 | `AI_SERVICE_MISCONFIGURED` (401/403/404 từ AI) được retry trong cửa sổ backoff (~75s mặc định); sau đó document `failed` từng cái, chưa có nút "thử lại hàng loạt" và chưa có circuit breaker | T6.7 (circuit breaker pause queue), M7/M8 (thử lại hàng loạt `failed`) |
 | 2026-11-02 | T2.9 | `.mcp.json` (untracked, `npx -y chrome-devtools-mcp@latest`, chưa ghim phiên bản) không thuộc T2.9; không đưa vào commit | Hậu quyết định giữ/ghim phiên bản/xoá |
+| 2026-11-02 | T2.10 | `TRUSTED_PROXIES` (API) và `TRUST_FORWARDED_FOR` (web, mặc định tắt) là hai khoá đi cùng nhau: chỉ bật khi có reverse proxy GHI ĐÈ `X-Forwarded-For`. Reviewer tìm ra: nếu web chuyển header của trình duyệt khi API tin `loopback` thì người dùng tự chọn được IP audit (đã sửa: web mặc định không chuyển; API bỏ giá trị không phải IP). `TRUSTED_PROXIES=` để trống trong env nay = mặc định | M4: Caddy ghi đè header + bật `TRUST_FORWARDED_FOR=true` + đặt `TRUSTED_PROXIES` theo mạng compose; thêm `TRUST_FORWARDED_FOR` vào env example của web (Hậu) |
+| 2026-11-02 | T2.10 | Chưa có reverse proxy trước web nên trong dev/CI IP audit là địa chỉ loopback (đúng với client cục bộ), không kiểm được đường `X-Forwarded-For` từ trình duyệt thật; hai nửa được test riêng (web chuyển header; API chỉ tin peer trong danh sách) | M4: thêm kiểm e2e/compose có proxy thật, đặt `TRUSTED_PROXIES` |
+| 2026-11-02 | T2.10 | CI e2e nay cần `uv sync` + chạy AI/worker; chưa chạy trên GitHub (chỉ local). Worker không có cổng để `globalSetup` kiểm, test upload tự báo "worker/AI chạy chưa?" khi document không rời `queued` | Kiểm khi push; T3.4 dùng lại |
+| 2026-11-02 | T2.10 | `app.module.spec.ts` (biên dịch cả AppModule, timeout 5s mặc định) hai lần đỏ khi `pnpm check:fast` chạy song song cả monorepo, rồi xanh ở lần sau và khi chạy riêng. Dấu hiệu flaky do tải, có từ trước | Nâng timeout cho test đó nếu lặp lại (task nhỏ riêng) |

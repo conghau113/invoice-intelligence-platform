@@ -1,6 +1,7 @@
 const ISSUER = process.env.KEYCLOAK_ISSUER ?? 'http://localhost:8080/realms/invoice';
 const API = 'http://localhost:3001';
 const WEB = 'http://localhost:3000';
+const AI = 'http://localhost:8000';
 
 async function reachable(url: string): Promise<boolean> {
   try {
@@ -12,7 +13,8 @@ async function reachable(url: string): Promise<boolean> {
 
 /**
  * Fails the run with one clear message when a dependency is down, instead of 30 timeouts that
- * look like product bugs. The web and API are started by Playwright in CI (webServer), so by the
+ * look like product bugs. (The worker has no address to probe; the upload test says so itself when
+ * a document never leaves `queued`.) The web and API are started by Playwright in CI (webServer), so by the
  * time this runs they are expected; Keycloak is always external.
  */
 export default async function globalSetup(): Promise<void> {
@@ -20,6 +22,8 @@ export default async function globalSetup(): Promise<void> {
     ['Keycloak', `${ISSUER}/.well-known/openid-configuration`, 'pnpm infra:up'],
     ['API', `${API}/health/ready`, 'pnpm dev:api'],
     ['Web', `${WEB}/api/health`, 'pnpm --filter web dev'],
+    // The upload test waits for the worker to extract the XML through the AI service.
+    ['AI service', `${AI}/health`, 'pnpm dev:ai'],
   ];
   const results = await Promise.all(
     checks.map(async ([name, url, fix]) =>

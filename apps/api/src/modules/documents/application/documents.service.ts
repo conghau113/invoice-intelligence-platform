@@ -14,6 +14,8 @@ import type { UploadedObject } from '../infra/storage-multer-engine';
 import { DocumentStateMachine } from './document-state-machine';
 
 export const DOCUMENT_CREATED = 'document.created';
+/** Same bytes uploaded again under a new key: no new document, but the upload still happened. */
+export const DOCUMENT_UPLOAD_DUPLICATE = 'document.upload_duplicate';
 
 /** What the API exposes of a document: no storage key (an internal path) and no uploader. */
 export interface DocumentView {
@@ -175,17 +177,16 @@ export class DocumentsService {
       return this.replay(tx, input.tenantId, winner, file.sha256); // may throw; the rollback drops our insert
     }
 
-    if (created) {
-      await tx.insert(auditLogs).values({
-        tenantId: input.tenantId,
-        actorId: input.userId,
-        action: DOCUMENT_CREATED,
-        entity: 'document',
-        entityId: document.id,
-        meta: { sourceType: file.sourceType },
-        ip: input.ip,
-      });
-    }
+    // Who uploaded, from where, when. Ids and the file kind only: never the name or the bytes.
+    await tx.insert(auditLogs).values({
+      tenantId: input.tenantId,
+      actorId: input.userId,
+      action: created ? DOCUMENT_CREATED : DOCUMENT_UPLOAD_DUPLICATE,
+      entity: 'document',
+      entityId: document.id,
+      meta: { sourceType: file.sourceType },
+      ip: input.ip,
+    });
     return { document, created, statusCode, replayed: false };
   }
 

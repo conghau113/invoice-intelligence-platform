@@ -67,6 +67,21 @@ describe('POST /api/documents/upload', () => {
     expect(sent).toContain('<?xml version="1.0"?><a/>');
   });
 
+  it('drops a browser-supplied X-Forwarded-For unless TRUST_FORWARDED_FOR=true (a proxy overwrites it)', async () => {
+    const sentHeaders = () =>
+      fetchMock.mock.calls.map(
+        ([, init]) => (init as RequestInit).headers as Record<string, string>,
+      );
+    await upload({ headers: { 'x-forwarded-for': '203.0.113.7' } });
+    vi.stubEnv('TRUST_FORWARDED_FOR', 'true');
+    await upload({ headers: { 'x-forwarded-for': '203.0.113.7' } });
+    await upload(); // trusted, but no proxy header: nothing to pass on
+    const sent = sentHeaders();
+    expect(sent[0]).not.toHaveProperty('x-forwarded-for');
+    expect(sent[1]?.['x-forwarded-for']).toBe('203.0.113.7');
+    expect(sent[2]).not.toHaveProperty('x-forwarded-for');
+  });
+
   it('passes the API status, problem body and replay header through unchanged', async () => {
     fetchMock.mockResolvedValue(
       new Response(JSON.stringify({ code: 'UNSUPPORTED_FILE_TYPE' }), {

@@ -136,7 +136,7 @@ jobs:
       DATA_DIR: ${{ github.workspace }}/data
       # The API checks it at start and in /health/ready (compose publishes Redis on 6380, no password).
       REDIS_URL: redis://localhost:6380
-      # The API requires them at start. No AI service or worker runs in this job (uploads stay queued).
+      # The API and the worker require them at start; the AI service gets the same token below.
       AI_SERVICE_URL: http://localhost:8000
       AI_SERVICE_TOKEN: ci-only-token-not-a-secret-0123456789
     steps:
@@ -165,9 +165,26 @@ jobs:
         run: pnpm turbo run build --filter=api --filter=web
       - name: Install Chromium
         run: pnpm --filter web exec playwright install --with-deps chromium
+      # The upload test follows a document through the queue: the worker takes the job and calls
+      # the AI service (deterministic XML path, no LLM).
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: 0.13.0
+          enable-cache: true
+          cache-dependency-glob: apps/ai/uv.lock
+      - name: Install the AI service
+        working-directory: apps/ai
+        run: uv sync --frozen --no-build
       - name: Playwright
         run: |
           export DATABASE_URL="postgres://invoice_app:${APP_DB_PASSWORD}@localhost:5433/invoice"
+          trap 'kill $(jobs -p) 2>/dev/null || true' EXIT
+          (cd apps/ai && exec uv run --frozen --no-build uvicorn app.main:app --port 8000) > "$RUNNER_TEMP/ai.log" 2>&1 &
+          (cd apps/api && exec node dist/worker.js) > "$RUNNER_TEMP/worker.log" 2>&1 &
+          worker=$!
+          for _ in $(seq 1 30); do curl -fsS http://localhost:8000/health && break; sleep 1; done
+          # The worker has no address to probe: a crash at start must fail here, not as a 45 s timeout.
+          kill -0 "$worker" || { echo "worker exited at start"; cat "$RUNNER_TEMP/worker.log"; exit 1; }
           pnpm test:e2e
         env:
           NODE_ENV: production # install is done; the API refuses to start without it
@@ -178,6 +195,8 @@ jobs:
           path: |
             apps/web/playwright-report
             apps/web/test-results
+            ${{ runner.temp }}/ai.log
+            ${{ runner.temp }}/worker.log
           retention-days: 7
       - name: Keycloak logs on failure
         if: failure()

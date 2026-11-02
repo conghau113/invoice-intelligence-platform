@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { Response } from 'express';
+import { auditIp } from '../../../config/trusted-proxies';
 import { SkipTenantTransaction } from '../../../db/skip-tenant-transaction.decorator';
 import type { AuthenticatedRequest } from '../../auth/http/authenticated-request';
 import { RequirePermission } from '../../auth/http/require-permission.decorator';
@@ -71,7 +72,7 @@ export class DocumentsController {
     const result = await this.documents.create({
       tenantId: req.user.tenantId,
       userId: req.user.userId,
-      ip: req.ip,
+      ip: auditIp(req.ip),
       idempotencyKey,
       file,
       traceparent: parseTraceparent(req.headers.traceparent),
