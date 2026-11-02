@@ -12,6 +12,11 @@ export const DEV_DEFAULTS = {
   DATA_DIR: fileURLToPath(new URL('../data', import.meta.url)),
   // Redis of `pnpm infra:up` (compose.yaml, host port 6380, no password).
   REDIS_URL: 'redis://localhost:6380',
+  // The AI service of `pnpm --filter ai dev` (port 8000). The token is a throw-away development
+  // value, like the database passwords; the AI service must get the SAME value as AI_SERVICE_TOKEN
+  // (variable AI_SERVICE_TOKEN, listed in the AI example env file).
+  AI_SERVICE_URL: 'http://localhost:8000',
+  AI_SERVICE_TOKEN: 'dev-only-ai-service-token',
 };
 
 /** Environment for the API: dev defaults under whatever the caller already set. */

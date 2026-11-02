@@ -65,6 +65,19 @@ export class PermanentExtractionError extends Error {
 }
 
 /**
+ * Handlers throw this for a failure a later attempt may fix (a service that is down, a setting an
+ * operator can correct). The job is retried; if the attempts run out, the document fails with this
+ * `code` instead of the generic EXTRACTION_RETRIES_EXHAUSTED, so the reason survives. Any other
+ * non-permanent error behaves like this one with the generic code.
+ */
+export class TransientExtractionError extends Error {
+  constructor(readonly code: string = EXTRACTION_RETRIES_EXHAUSTED) {
+    super(code);
+    this.name = 'TransientExtractionError';
+  }
+}
+
+/**
  * The only error that leaves the processor. Its message is always one of the codes above, so
  * BullMQ's `failedReason` (stored in Redis, shown to admins) cannot leak what a handler said.
  */

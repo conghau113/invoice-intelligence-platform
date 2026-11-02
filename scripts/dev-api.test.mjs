@@ -12,6 +12,8 @@ test('dev-api: fills in the variables the API needs, building the database URL f
   assert.equal(env.PATH, '/bin');
   assert.ok(path.isAbsolute(env.DATA_DIR), 'DATA_DIR must be absolute');
   assert.equal(env.REDIS_URL, 'redis://localhost:6380');
+  assert.equal(env.AI_SERVICE_URL, 'http://localhost:8000');
+  assert.ok(env.AI_SERVICE_TOKEN.length >= 16, 'the API refuses a shorter AI token');
 });
 
 test('dev-api: values already set in the shell win', () => {

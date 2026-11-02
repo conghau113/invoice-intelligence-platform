@@ -22,9 +22,9 @@
 
 ```text
 Mốc hiện tại: M1 (còn kiểm tra cuối mốc) → M2
-Task hiện tại: T2.9 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.8 đã DONE)
+Task hiện tại: T2.10 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.9 đã DONE)
 Chặn bởi: không
-Cập nhật: 2026-10-26
+Cập nhật: 2026-11-02
 ```
 
 
@@ -80,7 +80,7 @@ Cập nhật: 2026-10-26
 | T2.6b | App shell + bảng dữ liệu theo `docs/ui` (viewport cố định, sidebar nhóm/thu gọn, DataGrid, thanh cuộn ngang luôn hiện) | 5.5 | T2.6 | `DONE`   | | Agent: shell `h-dvh` (topbar/sidebar/main, token kích thước), sidebar nhóm + thu gọn (cookie `sidebar`), topbar brand + avatar/tên/vai trò, `PageLayout` (`fill`), `InfoBanner` (`DEMO_READ_ONLY`), `DataGrid` (header sticky, strip cuộn ngang luôn hiện đồng bộ `scrollLeft`, footer ghim, tải/rỗng/lỗi trong bảng). Không thêm dependency. Web 352 test; Playwright 49 xanh (18 mới đo hình học thật); 4 drill (bỏ sticky, bỏ đồng bộ strip, shell cuộn theo nội dung, panel co theo dòng) → đỏ. Chưa có: ảnh tham chiếu/trang OLMS (không xem được), zoom thật (mô phỏng bằng cỡ viewport) |
 | T2.7  | Chốt schema hóa đơn + độ tin cậy từng field                                 | 2            | T0.5             | `DONE`     |             | Agent: `InvoiceSchema` (đổi tên từ Draft) có `fieldMeta` ngữ pháp path cố định, "không có giá trị" luôn là `null`; `buyer.taxCode` null được (Hậu duyệt); ngày Python chặt như Zod. 6 fixture + bảng đột biến kiểm cả vị trí lỗi ở TS và Python |
 | T2.8  | Parser hóa đơn điện tử XML (đường xác định, không dùng LLM)                 | 3            | T2.7             | `DONE`     |             | Agent: `services/xml_invoice.py` (defusedxml `forbid_dtd`, tiền bằng `Decimal`, fieldMeta đủ mọi lá, mã lỗi `XML_*`), `POST /extract` (xml → parser; pdf/image → 501), `tools/invoice-gen/min_xml.py` + 10 mẫu. 86 test Python; drill đổi sang `xml.etree` → 5 test XXE/bom đỏ. Duyệt `defusedxml` (PSF-2.0) |
-| T2.9  | Lát cắt xuyên suốt: worker gọi AI service (XML) → lưu extraction → hiển thị | 3.5          | T2.4, T2.6, T2.8 | `TODO`     |             |         |
+| T2.9  | Lát cắt xuyên suốt: worker gọi AI service (XML) → lưu extraction → hiển thị | 3.5          | T2.4, T2.6, T2.8 | `DONE`     |             | Agent: bảng `extractions` (RLS, append-only, unique (document, version) làm worker idempotent) + `documents.failure_code` do state machine ghi; `modules/extraction/` (`HttpAiExtractor` fetch+FormData, service token + traceparent, 4xx có code → vĩnh viễn, 5xx/mạng/timeout → retry; `AiExtractionHandler` thay handler tạm; `GET /documents/:id` validate lại bằng `InvoiceSchema`); AI: `AI_SERVICE_TOKEN` bắt buộc, `/extract` deny-by-default, echo traceparent; web: `/documents/[id]` chỉ đọc + polling 2s, BFF `/api/documents/[id]`, link ở danh sách. API 259 unit + 104 int; web 379; ai 94; chạy stack thật: dữ liệu hiện ~8,5s sau khi upload xong, tắt AI → failed hiện lý do. 7 drill → đỏ |
 | T2.10 | Audit log + test luồng upload end-to-end                                    | 2            | T2.5, T2.9       | `TODO`     |             |         |
 
 
@@ -373,3 +373,16 @@ Cập nhật: 2026-10-26
 | 2026-10-26 | T2.8 | `API.md:78` đổi `sourceType` thành `xml\|pdf\|image` (khớp DB) và bỏ trường `confidence` rời (đã nằm trong `fieldMeta`). `M3.md:37` vẫn ghi `pdf/png/jpeg` | T3.1 (đọc lại khi làm) |
 | 2026-10-26 | T2.8 | Reviewer: multipart bị Starlette nhận và ghi tạm trọn gói trước khi handler cắt ở 10 MiB (413 chỉ sau khi đã buffer); nhánh 501 cũng buffer. Chặn ở biên cần `Content-Length`/reverse proxy | M4 (compose/proxy) hoặc T6.x (giới hạn tải) |
 | 2026-10-26 | T2.8 | Reviewer: parser gán confidence 1.0 mà không chạy luật nghiệp vụ (tổng dòng = subtotal, số lượng × đơn giá = thành tiền, subtotal + VAT = total); tiền âm (hóa đơn điều chỉnh) được nhận vì schema cho số nguyên âm | T3.3 (luật), quyết định xử lý số âm khi có dữ liệu thật |
+| 2026-10-26 | T2.9 | Trang chi tiết cần xem file gốc song song (T3.4) nhưng `GET /documents/:id/file` (API.md:42) chưa có task nào làm | T3.4 (thêm endpoint stream file qua API sau kiểm quyền) |
+| 2026-10-26 | T2.9 | PDF/ảnh nay `failed` với `EXTRACTION_PATH_NOT_IMPLEMENTED` (AI trả 501) thay vì `needs_review` rỗng; demo M2 chỉ dùng XML. Test e2e hiện có upload `<HDon>` giả chỉ kiểm `queued` nên không ảnh hưởng, nhưng worker thật sẽ cho chúng `failed` | T2.10 (e2e dùng XML mẫu thật nếu cần chờ `needs_review`), T3.1/T3.2 |
+| 2026-10-26 | T2.9 | `warnings` lưu nguyên như AI trả (`unknown[]`, tối đa 100), chưa có schema; trang chi tiết không hiển thị chúng | T3.3 (định nghĩa schema warning, cập nhật `aiExtractResponseSchema`), T3.4 |
+| 2026-10-26 | T2.9 | Token dùng chung API/worker và AI (`AI_SERVICE_TOKEN`): `pnpm dev:api`/`dev:worker` có mặc định dev-only `dev-only-ai-service-token`; AI phải nhận cùng giá trị qua biến môi trường (Hậu tự thêm vào file env của AI). API.md ghi đủ. Không có xoay token | T7.x (deploy: sinh token thật cho cả hai service), M5 (`/embed`, `/answer` dùng lại) |
+| 2026-10-26 | T2.9 | Worker đọc cả file (≤10 MB × 2 job đồng thời) vào RAM để gửi multipart; timeout AI cố định 15s cho đường XML | T3.2 (timeout 60s cho LLM; xem lại nếu nâng concurrency), T6.6 |
+| 2026-10-26 | T2.9 | `extractions` unique `(document_id, document_version)`: trích xuất lại cùng version cần migration nới ràng buộc; hiện `eval/` làm A/B | M3/M4 nếu có nhu cầu |
+| 2026-10-26 | T2.9 | Hậu cần thêm `AI_SERVICE_TOKEN` (cùng giá trị) vào file env của apps/ai và khởi động lại `pnpm dev:api` (API đang chạy watch từ trước sẽ không có biến mới). File env example của apps/api không sửa được (hook chặn), cần thêm tay `AI_SERVICE_URL`, `AI_SERVICE_TOKEN` | Hậu |
+| 2026-11-02 | T2.9 | Hậu muốn chạy cả stack bằng một lệnh. Đã làm `pnpm dev:ai` (token dev dùng chung với `dev:api`/`dev:worker`). Còn lại: `pnpm dev:stack` bật infra + AI + API + worker + web, log có tiền tố, `Ctrl+C` tắt cả tiến trình con (đã từng gây `EADDRINUSE`), có test dựng biến môi trường; cần sửa dòng "no root `pnpm dev`" trong CLAUDE.md | Làm ngay sau khi T2.9 commit (Hậu đã duyệt) |
+| 2026-11-02 | T2.9 | Reviewer: trang chi tiết ưu tiên hiện extraction hơn trạng thái `failed`; khi M3 mở lại tài liệu (version 2) mà trích xuất lại lỗi, trang vẫn hiện dữ liệu version 1 mà không báo. `extraction.documentVersion` chưa được so với `version` của document | T3.4/T3.5 |
+| 2026-11-02 | T2.9 | Reviewer: `extractions.document_id` chỉ FK tới `documents(id)`, không ràng buộc cùng tenant (RLS `WITH CHECK` chỉ kiểm `tenant_id` của phiên). Hiện chỉ worker ghi nên rủi ro thấp | Khi thêm đường ghi khác (T3.5): cân nhắc FK ghép `(document_id, tenant_id)` |
+| 2026-11-02 | T2.9 | Hai lượt phát cùng một job chạy song song vẫn gọi AI hai lần (một dòng được ghi). Với đường LLM sẽ tốn gấp đôi | T3.2 (khoá theo document trước khi gọi LLM, hoặc `jobId` + lock) |
+| 2026-11-02 | T2.9 | `AI_SERVICE_MISCONFIGURED` (401/403/404 từ AI) được retry trong cửa sổ backoff (~75s mặc định); sau đó document `failed` từng cái, chưa có nút "thử lại hàng loạt" và chưa có circuit breaker | T6.7 (circuit breaker pause queue), M7/M8 (thử lại hàng loạt `failed`) |
+| 2026-11-02 | T2.9 | `.mcp.json` (untracked, `npx -y chrome-devtools-mcp@latest`, chưa ghim phiên bản) không thuộc T2.9; không đưa vào commit | Hậu quyết định giữ/ghim phiên bản/xoá |

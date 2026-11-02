@@ -1,3 +1,4 @@
+import os
 import re
 from pathlib import Path
 
@@ -8,7 +9,7 @@ from app.main import app
 
 FIXTURES = Path(__file__).parent / "fixtures"
 SAMPLE = FIXTURES / "xml_invoices" / "invoice-00.xml"
-client = TestClient(app)
+client = TestClient(app, headers={"Authorization": f"Bearer {os.environ['AI_SERVICE_TOKEN']}"})
 
 
 def post(data: bytes, source_type: str, name: str = "f.xml"):

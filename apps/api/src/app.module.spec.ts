@@ -33,6 +33,8 @@ describe('AppModule', () => {
     process.env.DATABASE_URL = 'postgres://invoice_app:pw@localhost:5433/invoice';
     process.env.DATA_DIR = '/var/lib/invoice-data';
     process.env.REDIS_URL = 'redis://localhost:6380';
+    process.env.AI_SERVICE_URL = 'http://localhost:8000';
+    process.env.AI_SERVICE_TOKEN = 'unit-test-token-0123456789';
     const mod = await createBuilder().compile();
     const app: INestApplication = mod.createNestApplication();
     await app.init();

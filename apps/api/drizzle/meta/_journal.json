@@ -57,6 +57,20 @@
       "when": 1792662738752,
       "tag": "0007_documents_list_indexes",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793016324526,
+      "tag": "0008_extractions",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793016324537,
+      "tag": "0009_extractions_rls",
+      "breakpoints": true
     }
   ]
 }

@@ -20,8 +20,8 @@ erDiagram
   tenants { uuid id PK; text alias UK; text name; timestamptz created_at }
   users { uuid id PK; text email; text display_name; timestamptz created_at }
   memberships { uuid tenant_id FK; uuid user_id FK; text role }
-  documents { uuid id PK; uuid tenant_id; text status; text source_type; text storage_key; char64 content_hash; int version; uuid uploaded_by; timestamptz created_at }
-  extractions { uuid id PK; uuid tenant_id; uuid document_id FK; int document_version; jsonb data; jsonb warnings; text model; text prompt_version; int input_tokens; int output_tokens; int latency_ms; numeric cost_usd; timestamptz created_at }
+  documents { uuid id PK; uuid tenant_id; text status; text failure_code; text source_type; text storage_key; char64 content_hash; int version; uuid uploaded_by; timestamptz created_at }
+  extractions { uuid id PK; uuid tenant_id; uuid document_id FK; int document_version; text source; jsonb data; jsonb warnings; text model; text prompt_version; int input_tokens; int output_tokens; int latency_ms; numeric cost_usd; timestamptz created_at }
   field_corrections { uuid id PK; uuid tenant_id; uuid extraction_id FK; text field_path; jsonb ai_value; jsonb human_value }
   invoices { uuid id PK; uuid tenant_id; uuid document_id FK; text invoice_no; text series; date issue_date; text seller_tax_code; text seller_name; text buyer_tax_code; char3 currency; bigint subtotal; bigint vat_amount; bigint total; uuid approved_by; int row_version }
   invoice_lines { uuid id PK; uuid tenant_id; uuid invoice_id FK; int line_no; text description; numeric quantity; bigint unit_price; numeric vat_rate; bigint amount }
@@ -41,11 +41,13 @@ erDiagram
 - `status` follows the state machine in `ARCHITECTURE.md §8`; only `DocumentStateMachine` writes it.
 - `UNIQUE (tenant_id, content_hash)` → duplicate uploads return the existing row (idempotency).
 - `version` increments when a document is reopened after approval.
+- `failure_code` is the reason (an `UPPER_SNAKE` code, never content) while `status = 'failed'`, otherwise `NULL`. `DocumentStateMachine` writes it in the same `UPDATE` as `status`, so the detail page reads it without scanning `audit_logs`.
 - Indexes: `(tenant_id, status, created_at DESC)` for the list page; `(tenant_id, content_hash)` unique.
 
 ### extractions
-- Append-only: every extraction run is a new row (model, prompt version, tokens, cost, latency) → cost reporting and A/B comparison come for free.
-- `data` holds the Invoice JSON exactly as validated by `packages/contracts`.
+- Append-only (the app role has no `UPDATE`/`DELETE`) and **at most one row per `(document_id, document_version)`**: that unique key makes the worker idempotent, because a job delivered twice inserts the same row twice and the second insert does nothing. Reopening an approved document bumps `documents.version` and so gets a new row. Comparing models or prompts (A/B) is done by `eval/`, not by storing several runs per version here.
+- `source` (`xml | pdf | image`) says which path produced `data`. `model`, `prompt_version`, token counts and `cost_usd` are `NULL` on the XML path (no LLM); `latency_ms` is always set (measured by the worker when the AI service reports none).
+- `data` holds the Invoice JSON exactly as validated by `packages/contracts`, and is validated again when it is read (`GET /documents/:id`). `warnings` is stored as returned by the AI service.
 
 ### field_corrections
 - One row per field the reviewer changed. Feeds the "human correction rate" metric (T4.6) — an online signal that complements the offline eval.

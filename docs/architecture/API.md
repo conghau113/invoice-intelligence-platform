@@ -38,7 +38,7 @@
 |---|---|---|---|
 | POST | `/documents/upload` | `document:create` | `multipart/form-data` (one file ≤ 10 MB, streamed); type checked by magic bytes; dedupe by (tenant, sha256); `Idempotency-Key` required |
 | GET | `/documents` | `document:read` | Paginated list with filters; items are `{id, status, sourceType, version, createdAt}`, plus `meta` |
-| GET | `/documents/:id` | `document:read` | Includes latest extraction + warnings |
+| GET | `/documents/:id` | `document:read` | `{id, status, sourceType, version, createdAt, failureCode, extraction}`; `failureCode` is set only while `failed`; `extraction` is `null` until one exists, else `{id, documentVersion, source, data (Invoice incl. fieldMeta), warnings, createdAt}`. Another tenant's id and a malformed id are both `404`; stored data that no longer matches the schema is `500 EXTRACTION_DATA_INVALID` |
 | GET | `/documents/:id/file` | `document:read` | Streams the file through the API after the permission check (no public file URLs) |
 | POST | `/documents/:id/retry` | `document:manage` | Only from `failed` |
 | POST | `/documents/:id/approve` | `document:approve` | Body = corrected Invoice; `If-Match` required |
@@ -80,4 +80,4 @@
 | POST | `/answer` | `{question, chunks[], locale}` → stream of tokens + `{citations[]}` |
 | POST | `/plan-query` | `{question, locale}` → structured filter (validated schema) |
 
-Reachable only on the internal Docker network; requests carry a shared service token and `traceparent`.
+Reachable only on the internal Docker network. Every route except `/health` requires `Authorization: Bearer <AI_SERVICE_TOKEN>` (the same value in the API/worker and AI service environments, at least 16 characters; missing or wrong → `401 {code: "SERVICE_UNAUTHORIZED"}`, compared in constant time). Requests may carry a W3C `traceparent`, which the service echoes back when it is well formed. Worker classification: `401`/`403`/`404` mean our own settings are wrong, so they are retried and, if the attempts run out, the document fails as `AI_SERVICE_MISCONFIGURED` (not a file error; fix the setting, then retry from the admin job list). Every other `4xx` with a `code` (`XML_*`, `FILE_TOO_LARGE`, `EXTRACTION_PATH_NOT_IMPLEMENTED`) and `501` are permanent: the document becomes `failed` with that code at once. Network errors, timeouts, a body cut off mid-read, `408`, `429` and `5xx` (except `501`) are transient (retried; `EXTRACTION_RETRIES_EXHAUSTED` when the attempts run out).

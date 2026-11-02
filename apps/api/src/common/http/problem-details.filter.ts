@@ -17,6 +17,7 @@ import {
   INVALID_TRANSITION_CODE,
   InvalidDocumentTransitionError,
 } from '../../modules/documents/domain/document-status';
+import { ExtractionDataInvalidError } from '../../modules/extraction/domain/ai-errors';
 import { JobNotFailedError } from '../../modules/queue/application/admin-jobs.service';
 
 const KNOWN_CODES: ReadonlySet<string> = new Set([
@@ -51,6 +52,13 @@ function domainProblem(
       status: HttpStatus.BAD_REQUEST,
       code: INVALID_QUERY,
       detail: 'Invalid query parameters',
+    };
+  }
+  if (e instanceof ExtractionDataInvalidError) {
+    return {
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      code: e.code,
+      detail: 'Stored extraction is invalid',
     };
   }
   if (e instanceof JobNotFailedError) {

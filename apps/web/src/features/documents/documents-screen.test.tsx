@@ -64,6 +64,8 @@ describe('DocumentsScreen', () => {
     expect(html).toContain('data-status="needs_review"');
     expect(html).toContain('Needs review');
     expect(html).toContain('3f1c9a52');
+    // The short id opens the detail page (T2.10's e2e relies on this link).
+    expect(html).toContain('href="/documents/3f1c9a52-7d0e-4b7a-9c1d-2a6f0b8e4d11"');
     expect(html).toMatch(/<option value="failed" selected/);
     expect(render('vi')).toContain('Cần kiểm tra');
   });

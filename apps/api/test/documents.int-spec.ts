@@ -195,6 +195,20 @@ describe('documents (Postgres, RLS, state machine)', () => {
     });
   });
 
+  it('stores the failure code with the status and clears it when the document leaves failed', async () => {
+    const failureOf = async () =>
+      (await owner.query('SELECT failure_code FROM documents WHERE id = $1', [DOC_A])).rows[0]
+        .failure_code as string | null;
+    await tenantDb.run(ACME, async () => {
+      await machine.transition(DOC_A, 'queued', { actorId: null });
+      await machine.transition(DOC_A, 'processing', { actorId: null });
+      await machine.transition(DOC_A, 'failed', { actorId: null, code: 'XML_MALFORMED' });
+    });
+    expect(await failureOf()).toBe('XML_MALFORMED');
+    await tenantDb.run(ACME, () => machine.transition(DOC_A, 'queued', { actorId: null }));
+    expect(await failureOf()).toBeNull();
+  });
+
   it('bumps version when an approved document is reopened', async () => {
     await owner.query(`UPDATE documents SET status = 'approved' WHERE id = $1`, [DOC_A]);
     const res = await tenantDb.run(ACME, () =>

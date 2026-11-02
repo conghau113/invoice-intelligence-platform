@@ -7,6 +7,7 @@ import {
   inet,
   integer,
   jsonb,
+  numeric,
   pgTable,
   primaryKey,
   text,
@@ -93,6 +94,9 @@ export const documents = pgTable(
     contentHash: char('content_hash', { length: 64 }).notNull(),
     // Incremented when an approved document is reopened.
     version: integer('version').notNull().default(1),
+    // Why the document is `failed` (UPPER_SNAKE code, never content); null in every other status.
+    // Written only by DocumentStateMachine together with `status`.
+    failureCode: text('failure_code'),
     uploadedBy: uuid('uploaded_by').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
@@ -113,6 +117,48 @@ export const documents = pgTable(
     check('documents_source_type_check', sql`${t.sourceType} in ('pdf', 'image', 'xml')`),
     check('documents_content_hash_check', sql`${t.contentHash} ~ '^[0-9a-f]{64}$'`),
     check('documents_version_check', sql`${t.version} >= 1`),
+    check('documents_failure_code_check', sql`${t.failureCode} ~ '^[A-Z][A-Z0-9_]{1,63}$'`),
+  ],
+);
+
+/**
+ * What the AI service extracted from one version of a document (DATA_MODEL.md). Append-only: the
+ * app role has no UPDATE/DELETE. At most one row per (document, version): that unique key is what
+ * makes the worker idempotent, because a job delivered twice inserts the same row twice and the
+ * second insert does nothing. `data` is the Invoice JSON exactly as `InvoiceSchema` validated it.
+ * `model`/`prompt_version`/tokens/cost are null on the XML path (no LLM involved).
+ */
+export const extractions = pgTable(
+  'extractions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    documentId: uuid('document_id')
+      .notNull()
+      .references(() => documents.id),
+    documentVersion: integer('document_version').notNull(),
+    // Where the data came from: the deterministic XML parser or the LLM path (same words as documents.source_type).
+    source: text('source').notNull(),
+    data: jsonb('data').notNull(),
+    warnings: jsonb('warnings')
+      .notNull()
+      .default(sql`'[]'::jsonb`),
+    model: text('model'),
+    promptVersion: text('prompt_version'),
+    inputTokens: integer('input_tokens'),
+    outputTokens: integer('output_tokens'),
+    latencyMs: integer('latency_ms').notNull(),
+    costUsd: numeric('cost_usd', { precision: 12, scale: 6 }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    unique('extractions_document_version_unique').on(t.documentId, t.documentVersion),
+    index('extractions_tenant_created_idx').on(t.tenantId, t.createdAt.desc()),
+    check('extractions_source_check', sql`${t.source} in ('pdf', 'image', 'xml')`),
+    check('extractions_document_version_check', sql`${t.documentVersion} >= 1`),
+    check('extractions_latency_check', sql`${t.latencyMs} >= 0`),
   ],
 );
 
