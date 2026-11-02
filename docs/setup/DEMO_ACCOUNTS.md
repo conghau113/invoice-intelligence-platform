@@ -38,7 +38,7 @@ pnpm --filter api start:dev       # :3001
 pnpm --filter web dev             # :3000
 ```
 
-The API reads **no dotfile** (`ignoreEnvFile: true`), so its variables must be in the process environment. `pnpm dev:api` (`scripts/dev-api.mjs`) sets `NODE_ENV` and `OIDC_ISSUER_URL` and builds `DATABASE_URL` from the password of the `invoice_app` role, which it reads from `APP_DB_PASSWORD` (no password is stored in the repo). Export it once in your shell profile (`~/.bashrc`), using the value you gave the role in your own env file, then open a new terminal. Anything you already export (`DATABASE_URL`, `OIDC_ISSUER_URL`) wins. Run it in its own terminal:
+The API reads **no dotfile** (`ignoreEnvFile: true`), so its variables must be in the process environment. `pnpm dev:api` (`scripts/dev-api.mjs`) sets `NODE_ENV` and `OIDC_ISSUER_URL` and builds `DATABASE_URL` from the password of the `invoice_app` role, which it reads from `APP_DB_PASSWORD` (no password is stored in the repo). Export it once in your shell profile (`~/.bashrc`), using the value you gave the role in your own env file, then open a new terminal. Anything you already export (`DATABASE_URL`, `OIDC_ISSUER_URL`) wins. To start everything at once (infra, migrations, AI, API, worker and web, one terminal), run `pnpm dev:stack`; it refuses to start when port 3000, 3001 or 8000 is already taken. To run only the API, run it in its own terminal:
 
 ```bash
 pnpm dev:api
