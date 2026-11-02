@@ -22,7 +22,7 @@
 
 ```text
 Mốc hiện tại: M2 (còn kiểm tra cuối mốc) → M3
-Task hiện tại: T3.1 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.10 đã DONE)
+Task hiện tại: T3.2 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.10, T3.1 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-11-02
 ```
@@ -91,7 +91,7 @@ Cập nhật: 2026-11-02
 
 | ID   | Task                                                         | Ước tính (h) | Phụ thuộc         | Trạng thái | Thực tế (h) | Ghi chú |
 | ---- | ------------------------------------------------------------ | ------------ | ----------------- | ---------- | ----------- | ------- |
-| T3.1 | FastAPI /extract: provider abstraction + structured output   | 4            | T2.8              | `TODO`     |             |         |
+| T3.1 | FastAPI /extract: provider abstraction + structured output   | 4            | T2.8              | `DONE`       |             |         |
 | T3.2 | Worker: đường LLM, timeout, phân loại lỗi tạm thời/vĩnh viễn | 2.5          | T3.1, T2.9        | `TODO`     |             |         |
 | T3.3 | Kiểm tra nghiệp vụ: tổng tiền, thuế, MST, ngày               | 2.5          | T3.2              | `TODO`     |             |         |
 | T3.4 | Form review: RHF + Zod, xem tài liệu song song, tô field yếu | 4            | T3.3, T2.9, T1.6b | `TODO`     |             |         |
@@ -392,3 +392,10 @@ Cập nhật: 2026-11-02
 | 2026-11-02 | T2.10 | Chưa có reverse proxy trước web nên trong dev/CI IP audit là địa chỉ loopback (đúng với client cục bộ), không kiểm được đường `X-Forwarded-For` từ trình duyệt thật; hai nửa được test riêng (web chuyển header; API chỉ tin peer trong danh sách) | M4: thêm kiểm e2e/compose có proxy thật, đặt `TRUSTED_PROXIES` |
 | 2026-11-02 | T2.10 | CI e2e nay cần `uv sync` + chạy AI/worker; chưa chạy trên GitHub (chỉ local). Worker không có cổng để `globalSetup` kiểm, test upload tự báo "worker/AI chạy chưa?" khi document không rời `queued` | Kiểm khi push; T3.4 dùng lại |
 | 2026-11-02 | T2.10 | `app.module.spec.ts` (biên dịch cả AppModule, timeout 5s mặc định) hai lần đỏ khi `pnpm check:fast` chạy song song cả monorepo, rồi xanh ở lần sau và khi chạy riêng. Dấu hiệu flaky do tải, có từ trước | Nâng timeout cho test đó nếu lặp lại (task nhỏ riêng) |
+| 2026-11-02 | T3.1 | AI trả mã lỗi mới `LLM_UNAVAILABLE`, `LLM_RATE_LIMITED`, `LLM_TIMEOUT_OR_NETWORK`, `LLM_MISCONFIGURED`, `LLM_NOT_CONFIGURED`, `LLM_BAD_RESPONSE` (503, tạm thời), `LLM_REQUEST_REJECTED`, `LLM_NO_CANDIDATE`, `PDF_INVALID`, `PDF_TOO_MANY_PAGES`, `IMAGE_UNSUPPORTED` (422, vĩnh viễn) và `EXTRACTION_SCHEMA_INVALID`. 503 đã được `http-ai-extractor.ts` coi là tạm thời nên không cần đổi phân loại; nhưng mã 422 chưa nằm trong `FAILURE_CODES` (`ai-errors.ts`, `document-detail-screen.tsx`) nên web hiện chữ "không rõ lỗi" và API lưu `EXTRACTION_FAILED` | T3.2: thêm mã vào `isFailureCode`, `FAILURE_CODES` và `DocumentDetail.failure` trong vi.json/en.json; nâng `TIMEOUT_MS` 15s → 60s cho đường LLM |
+| 2026-11-02 | T3.1 | Không dùng Pillow (HPND chưa có trong allow-list) nên chưa chuẩn hoá xoay EXIF của ảnh JPEG chụp bằng điện thoại: ảnh nghiêng đi thẳng vào model. `AI_PIPELINE.md` §4 bước 2 vẫn ghi "normalize EXIF rotation" | Task đầu tiên có ảnh chụp thật (T4.1 sinh ảnh hoặc M7): hoặc duyệt Pillow + dòng LEGAL, hoặc tự đọc EXIF orientation và xoay bằng pdfium/zlib |
+| 2026-11-02 | T3.1 | Chạy thật Gemini (`gemini-3.1-flash-lite`, free tier): schema gốc được nhận (không phải chuyển `propertyNames`/`pattern`/`$ref`), NHƯNG `fieldMeta` là map khoá tự do nên model luôn trả `{}`. Đã đổi: model trả danh sách `{path, confidence, evidence}` (`minItems:1`) và `services/extract.py` đổi lại thành map; `maxItems` làm Gemini trả 400 nên giới hạn 200 kiểm trong code. Contracts/Zod không đổi. `gemini-2.5-flash` (mặc định cũ) đã 404 với key mới | T4.4 (so sánh model: kiểm lại schema dạng danh sách với provider dự phòng) |
+| 2026-11-02 | T3.1 | Chạy thật 3 PDF mẫu: tổng tiền, số hoá đơn, ngày, MST người mua đúng cả 3. Model cắt hậu tố chi nhánh `-224` ở `seller.taxCode` của invoice-00 nhưng vẫn báo `confidence` 1.0 (tự tin sai); sửa prompt một lần không hết. Free tier trả 503/timeout ngẫu nhiên ~1/3 lần gọi | T4.3/T4.4 (đo tỷ lệ lỗi MST chi nhánh, hiệu chỉnh confidence); T3.2 (retry phải chịu được 503 ngẫu nhiên) |
+| 2026-11-02 | T3.1 | Biến cấu hình mới của `apps/ai` (`LLM_PROVIDER`, `LLM_MODEL`, `LLM_TIMEOUT_S`, `GEMINI_API_KEY`, `LLM_FALLBACK_BASE_URL`, `LLM_FALLBACK_API_KEY`) chưa có trong file mẫu biến môi trường ở gốc repo vì hook chặn agent sửa các file môi trường, kể cả bản mẫu | Bạn thêm tay (đoạn mẫu trong task notes T3.1) |
+| 2026-11-02 | T3.1 | `docker-compose`/CI chưa đặt `LLM_PROVIDER`. Mặc định `gemini` không có key → PDF/ảnh nhận 503 `LLM_NOT_CONFIGURED` (XML vẫn chạy). Test e2e cần đường LLM không gọi mạng nên đặt `LLM_PROVIDER=fake` (bị cấm khi `ENV=production`) | T3.2 (e2e PDF), T7.x (compose production) |
+| 2026-11-02 | T3.1 | Reviewer (Thấp, chưa làm): `sniff_image_mime` chỉ nhìn magic bytes nên tệp rác bắt đầu bằng `\x89PNG` hoặc `\xff\xd8\xff` vẫn tốn một lần gọi provider (trả 422 `LLM_REQUEST_REJECTED`); chưa kiểm IHDR/SOF hay giới hạn rộng×cao của ảnh. Với PDF đã giới hạn trang, cạnh dài và tổng byte ảnh | Task xử lý ảnh (cùng chỗ với EXIF) |

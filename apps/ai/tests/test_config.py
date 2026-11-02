@@ -50,3 +50,23 @@ def test_missing_or_short_service_token_fails_fast(monkeypatch: pytest.MonkeyPat
 
 def test_token_is_not_in_repr() -> None:
     assert "test-service-token" not in repr(Settings(_env_file=None))
+
+
+def test_fake_llm_provider_is_refused_in_production(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("AI_SERVICE_TOKEN", "x" * 20)
+    monkeypatch.setenv("ENV", "production")
+    monkeypatch.setenv("LLM_PROVIDER", "fake")
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None)
+    monkeypatch.setenv("ENV", "test")
+    assert Settings(_env_file=None).llm_provider == "fake"
+
+
+@pytest.mark.parametrize("url", ["http://llm.example/v1", "ftp://x", "llm.example"])
+def test_fallback_url_must_be_https(monkeypatch: pytest.MonkeyPatch, url: str) -> None:
+    monkeypatch.setenv("AI_SERVICE_TOKEN", "x" * 20)
+    monkeypatch.setenv("LLM_FALLBACK_BASE_URL", url)
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None)
+    monkeypatch.setenv("LLM_FALLBACK_BASE_URL", "https://llm.example/v1")
+    assert Settings(_env_file=None).llm_fallback_base_url == "https://llm.example/v1"

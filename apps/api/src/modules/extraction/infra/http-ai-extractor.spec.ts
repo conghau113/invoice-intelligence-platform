@@ -66,6 +66,28 @@ describe('HttpAiExtractor (real HTTP against a local stub)', () => {
     seen = undefined;
   });
 
+  it('accepts the LLM usage block, including the prompt version stored with every extraction', async () => {
+    const usage = {
+      model: 'gemini-2.5-flash',
+      promptVersion: 'invoice_extraction/v1',
+      inputTokens: 1000,
+      outputTokens: 150,
+      latencyMs: 2400,
+      costUsd: 0.000675,
+    };
+    reply = json(200, { invoice: INVOICE, warnings: [], usage });
+    expect((await extractor().extract(input)).usage).toEqual(usage);
+  });
+
+  it('rejects a usage block without a prompt version (eval results would not be comparable)', async () => {
+    reply = json(200, {
+      invoice: INVOICE,
+      warnings: [],
+      usage: { model: 'm', inputTokens: 1, outputTokens: 1, latencyMs: 1, costUsd: 0 },
+    });
+    await expect(extractor().extract(input)).rejects.toBeInstanceOf(PermanentExtractionError);
+  });
+
   it('sends the file, sourceType, bearer token and traceparent, and returns the validated answer', async () => {
     reply = json(200, { invoice: INVOICE, warnings: [], usage: null });
     const out = await extractor().extract({ ...input, traceparent: TRACE });

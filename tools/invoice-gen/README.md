@@ -1,6 +1,6 @@
 # invoice-gen
 
-Synthetic invoice generator. Today only the minimal XML generator from T2.8 exists; T4.1 adds Faker,
+Synthetic invoice generator. Today only the minimal XML (T2.8) and PDF (T3.1) generators exist; T4.1 adds Faker,
 PDF/image rendering and hard variants.
 
 ```bash
@@ -35,3 +35,13 @@ other currencies, signature blocks. The parser refuses what it does not know wit
 (`XML_UNSUPPORTED_STRUCTURE`, `XML_UNSUPPORTED_VAT_RATE`, `XML_UNSUPPORTED_CURRENCY`) instead of
 guessing. To support a new provider, add its element paths in `_map`
 (`apps/ai/app/services/xml_invoice.py`), add a generated sample, and extend the ground-truth test.
+
+## Minimal PDFs (T3.1)
+
+```bash
+cd apps/ai && uv run python ../../tools/invoice-gen/min_pdf.py --n 3
+```
+
+Renders `invoice-NN.expected.json` from the XML fixtures into `tests/fixtures/pdf_invoices/` (PDF plus
+the same ground truth). Standard library only; Helvetica has no Vietnamese letters so diacritics are
+stripped, and each page carries a `SAMPLE` watermark. Used by the real-provider check of T3.1.

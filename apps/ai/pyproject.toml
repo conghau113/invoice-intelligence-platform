@@ -6,8 +6,10 @@ requires-python = ">=3.12"
 dependencies = [
     "defusedxml>=0.7.1",
     "fastapi>=0.143.0",
+    "httpx>=0.28.1",
     "pydantic>=2",
     "pydantic-settings>=2.15.0",
+    "pypdfium2>=5.14.0",
     "python-multipart>=0.0.32",
     "uvicorn[standard]>=0.54.0",
 ]
@@ -29,7 +31,6 @@ pythonpath = ["."]
 [dependency-groups]
 dev = [
     "datamodel-code-generator>=0.30",
-    "httpx>=0.28.1",
     "pytest>=9.1.1",
     "ruff>=0.17.0",
 ]

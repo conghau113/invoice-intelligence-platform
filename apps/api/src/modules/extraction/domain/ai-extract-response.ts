@@ -7,6 +7,7 @@ export const MAX_FILE_BYTES = 10 * 1024 * 1024;
 /** `usage` of AI_PIPELINE.md section 4: null on the XML path (no model involved). */
 export const usageSchema = z.strictObject({
   model: z.string().min(1),
+  promptVersion: z.string().min(1),
   inputTokens: z.int().min(0),
   outputTokens: z.int().min(0),
   latencyMs: z.int().min(0),
