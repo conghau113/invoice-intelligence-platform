@@ -70,3 +70,11 @@ def test_fallback_url_must_be_https(monkeypatch: pytest.MonkeyPatch, url: str) -
         Settings(_env_file=None)
     monkeypatch.setenv("LLM_FALLBACK_BASE_URL", "https://llm.example/v1")
     assert Settings(_env_file=None).llm_fallback_base_url == "https://llm.example/v1"
+
+
+def test_llm_timeout_must_fit_the_workers_60s_abort(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("LLM_TIMEOUT_S", "55")
+    assert Settings(_env_file=None).llm_timeout_s == 55
+    monkeypatch.setenv("LLM_TIMEOUT_S", "90")
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None)

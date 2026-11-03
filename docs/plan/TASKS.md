@@ -22,9 +22,9 @@
 
 ```text
 Mốc hiện tại: M2 (còn kiểm tra cuối mốc) → M3
-Task hiện tại: T3.2 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.10, T3.1 đã DONE)
+Task hiện tại: T3.3 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.10, T3.1 đến T3.2 đã DONE)
 Chặn bởi: không
-Cập nhật: 2026-11-02
+Cập nhật: 2026-11-03
 ```
 
 
@@ -92,7 +92,7 @@ Cập nhật: 2026-11-02
 | ID   | Task                                                         | Ước tính (h) | Phụ thuộc         | Trạng thái | Thực tế (h) | Ghi chú |
 | ---- | ------------------------------------------------------------ | ------------ | ----------------- | ---------- | ----------- | ------- |
 | T3.1 | FastAPI /extract: provider abstraction + structured output   | 4            | T2.8              | `DONE`       |             |         |
-| T3.2 | Worker: đường LLM, timeout, phân loại lỗi tạm thời/vĩnh viễn | 2.5          | T3.1, T2.9        | `TODO`     |             |         |
+| T3.2 | Worker: đường LLM, timeout, phân loại lỗi tạm thời/vĩnh viễn | 2.5          | T3.1, T2.9        | `DONE`     |             |         |
 | T3.3 | Kiểm tra nghiệp vụ: tổng tiền, thuế, MST, ngày               | 2.5          | T3.2              | `TODO`     |             |         |
 | T3.4 | Form review: RHF + Zod, xem tài liệu song song, tô field yếu | 4            | T3.3, T2.9, T1.6b | `TODO`     |             |         |
 | T3.5 | Duyệt/sửa: lưu bản sửa và diff AI vs người                   | 2.5          | T3.4              | `TODO`     |             |         |
@@ -385,7 +385,7 @@ Cập nhật: 2026-11-02
 | 2026-11-02 | skill | Skill `/ship` đã viết (`.claude/skills/ship/SKILL.md`, WORKFLOW.md bước 9): nhánh → commit theo nhóm → cổng cục bộ → push → PR → chờ CI + SonarCloud (sửa tối đa 2 vòng) → merge chỉ khi có `--merge` hoặc Hậu nói. Chưa chạy thật lần nào; lần dùng đầu tiên là phép thử. Còn mở: bật branch protection (required checks) làm task riêng | Hậu thử `/ship` ở task tiếp theo, báo chỗ sai |
 | 2026-11-02 | T2.9 | Reviewer: trang chi tiết ưu tiên hiện extraction hơn trạng thái `failed`; khi M3 mở lại tài liệu (version 2) mà trích xuất lại lỗi, trang vẫn hiện dữ liệu version 1 mà không báo. `extraction.documentVersion` chưa được so với `version` của document | T3.4/T3.5 |
 | 2026-11-02 | T2.9 | Reviewer: `extractions.document_id` chỉ FK tới `documents(id)`, không ràng buộc cùng tenant (RLS `WITH CHECK` chỉ kiểm `tenant_id` của phiên). Hiện chỉ worker ghi nên rủi ro thấp | Khi thêm đường ghi khác (T3.5): cân nhắc FK ghép `(document_id, tenant_id)` |
-| 2026-11-02 | T2.9 | Hai lượt phát cùng một job chạy song song vẫn gọi AI hai lần (một dòng được ghi). Với đường LLM sẽ tốn gấp đôi | T3.2 (khoá theo document trước khi gọi LLM, hoặc `jobId` + lock) |
+| 2026-11-02 | T2.9 | Hai lượt phát cùng một job chạy song song vẫn gọi AI hai lần (một dòng được ghi). Với đường LLM sẽ tốn gấp đôi | T6.3 (khoá/dedupe lượt gọi LLM cùng lúc, làm cùng cache theo hash file); BẮT BUỘC trước khi dùng provider trả phí hoặc nâng concurrency. T3.2 đã quyết định chưa làm: BullMQ chỉ giao một job cho một worker, đúng một hàng nhờ khoá unique, rủi ro chỉ là tốn thêm một lần gọi free tier |
 | 2026-11-02 | T2.9 | `AI_SERVICE_MISCONFIGURED` (401/403/404 từ AI) được retry trong cửa sổ backoff (~75s mặc định); sau đó document `failed` từng cái, chưa có nút "thử lại hàng loạt" và chưa có circuit breaker | T6.7 (circuit breaker pause queue), M7/M8 (thử lại hàng loạt `failed`) |
 | 2026-11-02 | T2.9 | `.mcp.json` (untracked, `npx -y chrome-devtools-mcp@latest`, chưa ghim phiên bản) không thuộc T2.9; không đưa vào commit | Hậu quyết định giữ/ghim phiên bản/xoá |
 | 2026-11-02 | T2.10 | `TRUSTED_PROXIES` (API) và `TRUST_FORWARDED_FOR` (web, mặc định tắt) là hai khoá đi cùng nhau: chỉ bật khi có reverse proxy GHI ĐÈ `X-Forwarded-For`. Reviewer tìm ra: nếu web chuyển header của trình duyệt khi API tin `loopback` thì người dùng tự chọn được IP audit (đã sửa: web mặc định không chuyển; API bỏ giá trị không phải IP). `TRUSTED_PROXIES=` để trống trong env nay = mặc định | M4: Caddy ghi đè header + bật `TRUST_FORWARDED_FOR=true` + đặt `TRUSTED_PROXIES` theo mạng compose; thêm `TRUST_FORWARDED_FOR` vào env example của web (Hậu) |
@@ -400,3 +400,8 @@ Cập nhật: 2026-11-02
 | 2026-11-02 | T3.1 | `docker-compose`/CI chưa đặt `LLM_PROVIDER`. Mặc định `gemini` không có key → PDF/ảnh nhận 503 `LLM_NOT_CONFIGURED` (XML vẫn chạy). Test e2e cần đường LLM không gọi mạng nên đặt `LLM_PROVIDER=fake` (bị cấm khi `ENV=production`) | T3.2 (e2e PDF), T7.x (compose production) |
 | 2026-11-02 | T3.1 | Reviewer (Thấp, chưa làm): `sniff_image_mime` chỉ nhìn magic bytes nên tệp rác bắt đầu bằng `\x89PNG` hoặc `\xff\xd8\xff` vẫn tốn một lần gọi provider (trả 422 `LLM_REQUEST_REJECTED`); chưa kiểm IHDR/SOF hay giới hạn rộng×cao của ảnh. Với PDF đã giới hạn trang, cạnh dài và tổng byte ảnh | Task xử lý ảnh (cùng chỗ với EXIF) |
 | 2026-11-03 | T3.1 | SonarCloud PR #27 (cổng OK, 17 issue bảo trì, không chặn): `python:S9073` "tách assertion ghép" (`test_extract_llm.py` 37, 49, 60, 69, 87, 94, 96, 128; `test_pdf_pages.py` 52) và `python:S5778` "chỉ một lời gọi có thể ném lỗi trong `pytest.raises`" (`test_extract_llm.py` 107, 144; `test_pdf_pages.py` 69; `test_providers.py` 73, 83, 93, 102, 162). Chỉ ở test, không ở mã chạy thật | Dọn một lần khi có task đụng lại các file test này (T3.2/T3.6) hoặc ở M7 |
+| 2026-11-03 | T3.2 | Hai nơi giữ danh sách mã lỗi: `FAILURE_CODES` + vi/en ở web chép tay theo mã của `apps/ai` và `ai-errors.ts`. Thêm mã ở AI mà quên web → trang hiện "không rõ lỗi". Chưa có test chéo (cần đưa danh sách mã vào `packages/contracts`) | T3.5 hoặc task đầu tiên thêm mã lỗi mới |
+| 2026-11-03 | T3.2 | `Retry-After` của provider chưa được chuyển từ AI sang worker; backoff của worker không biết provider đòi chờ bao lâu. Mã `LLM_RATE_LIMITED` đã giữ nguyên tới cột lỗi để T6.2 bám vào | T6.2 |
+| 2026-11-03 | T3.2 | E2E PDF cần AI chạy `LLM_PROVIDER=fake`: CI đã đặt; chạy local bằng `LLM_PROVIDER=fake pnpm dev:ai` (dev stack mặc định dùng Gemini thật) | Ai chạy e2e local |
+
+| 2026-11-03 | T3.2 | Reviewer: `TOTAL_BUDGET_S` (55 s) của AI chỉ kiểm trước lần thử LẠI; đã chặn `LLM_TIMEOUT_S` ≤ 55 để một lần gọi không vượt 60 s của worker. Còn mở: mã lỗi từ AI được tin nếu khớp regex (chưa có allow-list), `res.json()` của body lỗi chưa giới hạn kích thước | Allow-list: cùng dòng "danh sách mã lỗi" ở trên; còn lại T6.2 |

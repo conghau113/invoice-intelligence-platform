@@ -14,8 +14,15 @@ import {
   isFailureCode,
 } from '../domain/ai-errors';
 
-/** One XML parse takes milliseconds; the LLM path gets its own, longer timeout in T3.2. */
-const TIMEOUT_MS = 15_000;
+/** One XML parse takes milliseconds. */
+const XML_TIMEOUT_MS = 15_000;
+
+/**
+ * PDF/image go through an LLM (seconds to tens of seconds). The AI service stops itself at 55 s
+ * (`TOTAL_BUDGET_S`), so 60 s lets it answer with its own error code before we give up and abort.
+ * Settable through AI_LLM_TIMEOUT_MS (tests use a few hundred ms).
+ */
+export const DEFAULT_LLM_TIMEOUT_MS = 60_000;
 
 /** Statuses where "try again later" is the right answer, not a verdict on the file. */
 const RETRYABLE_4XX: ReadonlySet<number> = new Set([408, 429]);
@@ -35,10 +42,12 @@ const MISCONFIGURED: ReadonlySet<number> = new Set([401, 403, 404]);
 export class HttpAiExtractor implements AiExtractor {
   private readonly endpoint: URL;
   private readonly token: string;
+  private readonly llmTimeoutMs: number;
 
   constructor(config: ConfigService<Env, true>) {
     this.endpoint = new URL('/extract', config.get('AI_SERVICE_URL', { infer: true }));
     this.token = config.get('AI_SERVICE_TOKEN', { infer: true });
+    this.llmTimeoutMs = config.get('AI_LLM_TIMEOUT_MS', { infer: true }) ?? DEFAULT_LLM_TIMEOUT_MS;
   }
 
   async extract(input: AiExtractInput): Promise<AiExtractResponse> {
@@ -56,7 +65,9 @@ export class HttpAiExtractor implements AiExtractor {
         method: 'POST',
         body: form,
         headers,
-        signal: AbortSignal.timeout(TIMEOUT_MS),
+        signal: AbortSignal.timeout(
+          input.sourceType === 'xml' ? XML_TIMEOUT_MS : this.llmTimeoutMs,
+        ),
       });
     } catch {
       throw new TransientExtractionError(); // refused, reset, DNS or timeout
@@ -65,7 +76,12 @@ export class HttpAiExtractor implements AiExtractor {
     if (res.ok) return this.parse(res);
     // 501 is the service saying "this path does not exist yet": permanent, unlike a crash (500/502/503).
     if ((res.status >= 500 && res.status !== 501) || RETRYABLE_4XX.has(res.status)) {
-      throw new TransientExtractionError();
+      // Keep the AI service's reason (LLM_UNAVAILABLE, LLM_RATE_LIMITED...) for when the attempts
+      // run out; a proxy's 502 has no usable code and gets the generic one.
+      const body = (await res.json().catch(() => null)) as { code?: unknown } | null;
+      throw isFailureCode(body?.code)
+        ? new TransientExtractionError(body.code)
+        : new TransientExtractionError();
     }
     if (MISCONFIGURED.has(res.status)) throw new TransientExtractionError(AI_SERVICE_MISCONFIGURED);
     // Other 4xx: the service looked at the request and said no. Retrying would get the same answer.
@@ -75,7 +91,7 @@ export class HttpAiExtractor implements AiExtractor {
 
   private async parse(res: Response): Promise<AiExtractResponse> {
     // Reading and parsing are separate steps because they fail for different reasons: a body cut
-    // off or timed out while it was read (the 15 s signal covers it) is the network's, so try
+    // off or timed out while it was read (the timeout signal covers it) is the network's, so try
     // again; text that is not JSON is the service's mistake, permanent.
     let text: string;
     try {

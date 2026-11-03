@@ -3,6 +3,19 @@ export const EXTRACTION_SCHEMA_INVALID = 'EXTRACTION_SCHEMA_INVALID';
 export const FILE_MISSING = 'FILE_MISSING';
 export const FILE_TOO_LARGE = 'FILE_TOO_LARGE';
 
+/**
+ * Error taxonomy of the AI service's answer (`HttpAiExtractor.extract`), the one place to read it:
+ *  - transient, BullMQ retries (5 attempts, backoff): network error or timeout, 5xx except 501
+ *    (LLM_UNAVAILABLE, LLM_TIMEOUT_OR_NETWORK, LLM_MISCONFIGURED, LLM_NOT_CONFIGURED,
+ *    LLM_BAD_RESPONSE), 408, 429 (LLM_RATE_LIMITED), and 401/403/404 (our own settings, see below).
+ *    When the attempts run out the document fails with the service's code, else a generic one.
+ *  - permanent, `failed` at once: any other 4xx (PDF_INVALID, PDF_TOO_MANY_PAGES, PDF_TOO_LARGE,
+ *    IMAGE_UNSUPPORTED, LLM_REQUEST_REJECTED, LLM_NO_CANDIDATE, XML_*, FILE_TOO_LARGE), 501, and a
+ *    200 whose body is not a valid invoice (EXTRACTION_SCHEMA_INVALID).
+ * Why: retrying a permanent error wastes 5 paid calls to get the same answer; failing a transient
+ * one at once loses a document that the next attempt would have read.
+ */
+
 /** Same shape the state machine accepts for a reason code. */
 const CODE = /^[A-Z][A-Z0-9_]{1,63}$/;
 export const isFailureCode = (v: unknown): v is string => typeof v === 'string' && CODE.test(v);

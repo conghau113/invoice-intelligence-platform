@@ -30,11 +30,12 @@ describe('HttpAiExtractor (real HTTP against a local stub)', () => {
   let seen: Seen | undefined;
   let reply: (res: import('node:http').ServerResponse) => void;
 
-  const extractor = () => {
+  const extractor = (extra: Partial<Env> = {}) => {
     const { port } = server.address() as AddressInfo;
     const env: Partial<Env> = {
       AI_SERVICE_URL: `http://127.0.0.1:${port}`,
       AI_SERVICE_TOKEN: TOKEN,
+      ...extra,
     };
     return new HttpAiExtractor({ get: (k: keyof Env) => env[k] } as unknown as ConfigService<
       Env,
@@ -189,6 +190,85 @@ describe('HttpAiExtractor (real HTTP against a local stub)', () => {
     await expect(extractor().extract(input)).rejects.toMatchObject({
       code: 'EXTRACTION_SCHEMA_INVALID',
     });
+  });
+
+  it.each([
+    [503, 'LLM_UNAVAILABLE'],
+    [503, 'LLM_TIMEOUT_OR_NETWORK'],
+    [429, 'LLM_RATE_LIMITED'],
+  ])(
+    'a %i from the AI service is transient and keeps its code for when the attempts run out (%s)',
+    async (status, code) => {
+      reply = json(status, { code, message: 'text that may contain document content' });
+      const err = await extractor()
+        .extract({ ...input, sourceType: 'pdf' })
+        .catch((e: unknown) => e);
+      expect(err).toBeInstanceOf(TransientExtractionError);
+      expect((err as TransientExtractionError).code).toBe(code);
+    },
+  );
+
+  it.each([
+    [
+      'a body that is not JSON (a proxy 502)',
+      (res: import('node:http').ServerResponse) =>
+        res.writeHead(502).end('<html>Bad gateway</html>'),
+    ],
+    [
+      'a code that is not code-shaped (free text)',
+      json(503, { code: 'some TEN-BI-MAT text', message: 'x' }),
+    ],
+  ])('a 5xx with %s is transient with the generic code and echoes nothing', async (_name, send) => {
+    reply = send;
+    const err = await extractor()
+      .extract({ ...input, sourceType: 'pdf' })
+      .catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(TransientExtractionError);
+    expect((err as TransientExtractionError).code).toBe('EXTRACTION_RETRIES_EXHAUSTED');
+    expect((err as Error).message).not.toContain('TEN-BI-MAT');
+  });
+
+  it.each([
+    [422, 'PDF_INVALID'],
+    [422, 'LLM_REQUEST_REJECTED'],
+    [422, 'EXTRACTION_SCHEMA_INVALID'],
+  ])('a %i %s from the LLM path is permanent and keeps the code', async (status, code) => {
+    reply = json(status, { code, message: 'x' });
+    const err = await extractor()
+      .extract({ ...input, sourceType: 'pdf' })
+      .catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(PermanentExtractionError);
+    expect((err as PermanentExtractionError).code).toBe(code);
+  });
+
+  it('the PDF/image path waits for the LLM timeout, not the 15 s of XML: a slow answer is transient once it passes', async () => {
+    reply = () => undefined; // never answers
+    const started = Date.now();
+    await expect(
+      extractor({ AI_LLM_TIMEOUT_MS: 300 }).extract({ ...input, sourceType: 'image' }),
+    ).rejects.toBeInstanceOf(TransientExtractionError);
+    const waited = Date.now() - started;
+    expect(waited).toBeGreaterThanOrEqual(250);
+    expect(waited).toBeLessThan(5_000);
+  });
+
+  it('an answer that arrives before the LLM timeout (slower than any XML parse) is accepted', async () => {
+    reply = (res) => {
+      setTimeout(() => json(200, { invoice: INVOICE, warnings: [], usage: null })(res), 150);
+    };
+    const out = await extractor({ AI_LLM_TIMEOUT_MS: 2_000 }).extract({
+      ...input,
+      sourceType: 'pdf',
+    });
+    expect(out.invoice).toBeDefined();
+  });
+
+  it('XML keeps its own limit: an answer slower than AI_LLM_TIMEOUT_MS is still accepted for xml', async () => {
+    reply = (res) => {
+      setTimeout(() => json(200, { invoice: INVOICE, warnings: [], usage: null })(res), 600);
+    };
+    const out = await extractor({ AI_LLM_TIMEOUT_MS: 200 }).extract(input); // sourceType xml
+    expect(out.invoice).toBeDefined();
   });
 
   it('a refused connection is transient', async () => {
