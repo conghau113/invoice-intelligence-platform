@@ -22,7 +22,7 @@
 
 ```text
 Mốc hiện tại: M2 (còn kiểm tra cuối mốc) → M3
-Task hiện tại: T3.3 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.10, T3.1 đến T3.2 đã DONE)
+Task hiện tại: T3.4 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.10, T3.1 đến T3.3 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-11-03
 ```
@@ -93,7 +93,7 @@ Cập nhật: 2026-11-03
 | ---- | ------------------------------------------------------------ | ------------ | ----------------- | ---------- | ----------- | ------- |
 | T3.1 | FastAPI /extract: provider abstraction + structured output   | 4            | T2.8              | `DONE`       |             |         |
 | T3.2 | Worker: đường LLM, timeout, phân loại lỗi tạm thời/vĩnh viễn | 2.5          | T3.1, T2.9        | `DONE`     |             |         |
-| T3.3 | Kiểm tra nghiệp vụ: tổng tiền, thuế, MST, ngày               | 2.5          | T3.2              | `TODO`     |             |         |
+| T3.3 | Kiểm tra nghiệp vụ: tổng tiền, thuế, MST, ngày               | 2.5          | T3.2              | `DONE`      |             | Agent: `rules.ts` (6 luật, hàm thuần `checkInvoice(invoice, today)`), worker lưu warnings, 64 test contracts; drill tắt dung sai → 8 đỏ |
 | T3.4 | Form review: RHF + Zod, xem tài liệu song song, tô field yếu | 4            | T3.3, T2.9, T1.6b | `TODO`     |             |         |
 | T3.5 | Duyệt/sửa: lưu bản sửa và diff AI vs người                   | 2.5          | T3.4              | `TODO`     |             |         |
 | T3.6 | Phòng prompt injection & rò PII trong pipeline trích xuất    | 2            | T3.1              | `TODO`     |             |         |
@@ -404,4 +404,7 @@ Cập nhật: 2026-11-03
 | 2026-11-03 | T3.2 | `Retry-After` của provider chưa được chuyển từ AI sang worker; backoff của worker không biết provider đòi chờ bao lâu. Mã `LLM_RATE_LIMITED` đã giữ nguyên tới cột lỗi để T6.2 bám vào | T6.2 |
 | 2026-11-03 | T3.2 | E2E PDF cần AI chạy `LLM_PROVIDER=fake`: CI đã đặt; chạy local bằng `LLM_PROVIDER=fake pnpm dev:ai` (dev stack mặc định dùng Gemini thật) | Ai chạy e2e local |
 
-| 2026-11-03 | T3.2 | Reviewer: `TOTAL_BUDGET_S` (55 s) của AI chỉ kiểm trước lần thử LẠI; đã chặn `LLM_TIMEOUT_S` ≤ 55 để một lần gọi không vượt 60 s của worker. Còn mở: mã lỗi từ AI được tin nếu khớp regex (chưa có allow-list), `res.json()` của body lỗi chưa giới hạn kích thước | Allow-list: cùng dòng "danh sách mã lỗi" ở trên; còn lại T6.2 |
+| 2026-11-03 | T3.2 | Reviewer: `TOTAL_BUDGET_S` (55 s) của AI chỉ kiểm trước lần thử LẠI; đã chặn `LLM_TIMEOUT_S` ≤ 55 để một lần gọi không vượt 60 s của worker. Còn mở: mã lỗi từ AI được tin nếu khớp regex (chưa có allow-list), `res.json()` của body lỗi chưa giới hạn kích thước | Allow-list: cùng dòng "danh sách mã lỗi" ở trên; còn lại T6.2 || 2026-11-03 | T3.3 | `PartySchema`/`BuyerSchema` dùng chính regex MST (`invoice.ts:11`), nên MST sai dạng từ LLM làm cả extraction fail `EXTRACTION_SCHEMA_INVALID` thay vì thành cảnh báo `TAX_CODE_FORMAT` ở field; luật MST trong `rules.ts` chỉ có tác dụng với dữ liệu đã qua schema (hoặc form T3.4 chưa qua schema). Không nới schema vì Python sinh model từ nó | T3.4/T3.5: quyết định form có cho giữ MST sai dạng để sửa không; T4.x đo tỷ lệ |
+| 2026-11-03 | T3.3 | Không thêm cảnh báo "thiếu fieldMeta" (dòng T2.7 `invoiceFieldPaths`): helper đã xuất nhưng LLM thường trả meta thiếu, cảnh báo sẽ nhiễu. Field không có meta cần được T3.4 coi là "yếu" (tô vàng) | T3.4 |
+| 2026-11-03 | T3.3 | Mã cảnh báo (`RULE_CODES`) chưa có chữ vi/en vì web chưa hiển thị warnings | T3.4: thêm khoá vi.json/en.json cho 6 mã. T3.5: gọi `checkInvoice` khi lưu bản sửa; cảnh báo không chặn duyệt (PRD §5.4) |
+| 2026-11-03 | T3.3 | Chưa xử lý tiền âm (hóa đơn điều chỉnh) và dung sai ±1 cố định cho mọi hóa đơn nhiều dòng; `vatBreakdown.base` chưa được đối chiếu với `subtotal` | Khi có dữ liệu thật ở eval M4 |

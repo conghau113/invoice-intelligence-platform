@@ -76,6 +76,7 @@ type AiMode =
   | 'garbage'
   // The LLM path as the AI service answers it (usage block, error codes of apps/ai).
   | 'llm-ok'
+  | 'llm-inconsistent' // 200 with an invoice whose total is wrong and whose date is in the future
   | 'llm-flaky' // 503 LLM_UNAVAILABLE twice, then llm-ok
   | 'llm-unavailable'
   | 'llm-rate-limited'
@@ -240,6 +241,12 @@ describe('extraction slice (upload -> worker -> AI service -> GET /documents/:id
         if (mode === 'llm-rejected') return json(422, { code: 'PDF_INVALID', message: 'x' });
         if (mode === 'llm-flaky' && aiCalls.length <= 2)
           return json(500, { code: 'LLM_UNAVAILABLE', message: 'x' });
+        if (mode === 'llm-inconsistent')
+          return json(200, {
+            invoice: { ...INVOICE, total: 0, issueDate: '2999-01-01' },
+            warnings: [],
+            usage: USAGE,
+          });
         if (mode === 'llm-ok' || mode === 'llm-flaky')
           return json(200, { invoice: INVOICE, warnings: [], usage: USAGE });
         json(200, { invoice: INVOICE, warnings: [], usage: null });
@@ -423,6 +430,19 @@ describe('extraction slice (upload -> worker -> AI service -> GET /documents/:id
     expect(res.body.extraction.data.invoiceNo).toBe(INVOICE.invoiceNo);
   });
 
+  it('T3.3: rule warnings are stored on the fields, the numbers stay as the AI returned them, and GET shows them', async () => {
+    mode = 'llm-inconsistent';
+    const up = await uploadPdf('k1').expect(201);
+    await waitForStatus(up.body.id, 'needs_review');
+    const res = await get(up.body.id).expect(200);
+    const warnings = res.body.extraction.warnings as { code: string; path: string }[];
+    expect(warnings.map((w) => [w.code, w.path])).toEqual([
+      ['TOTAL_MISMATCH', 'total'],
+      ['ISSUE_DATE_FUTURE', 'issueDate'],
+    ]);
+    expect(res.body.extraction.data.total).toBe(0); // flagged, never corrected
+  });
+
   it('T3.2: the provider fails with 500 twice, then answers: the document succeeds after the retries, one row, three calls', async () => {
     mode = 'llm-flaky';
     const up = await uploadPdf('k1').expect(201);
@@ -482,6 +502,20 @@ describe('extraction slice (upload -> worker -> AI service -> GET /documents/:id
     await get('00000000-0000-4000-8000-00000000dead').expect(404);
     await request(live.getHttpServer()).get(`/documents/${up.body.id}`).expect(401);
     await get(up.body.id, 'viewer@acme').expect(200);
+  });
+
+  it('T3.3: stored warnings that do not match the rule format are left out, the page still loads', async () => {
+    mode = 'llm-inconsistent';
+    const up = await uploadPdf('k1').expect(201);
+    await waitForStatus(up.body.id, 'needs_review');
+    await owner.query(
+      `UPDATE extractions SET warnings = '["old free text", {"code":"TOTAL_MISMATCH","path":"total","params":{"expected":1,"actual":0}}]'::jsonb WHERE document_id = $1`,
+      [up.body.id],
+    );
+    const res = await get(up.body.id).expect(200);
+    expect(res.body.extraction.warnings).toEqual([
+      { code: 'TOTAL_MISMATCH', path: 'total', params: { expected: 1, actual: 0 } },
+    ]);
   });
 
   it('an extraction row that no longer matches InvoiceSchema is a loud 500, not silently shown', async () => {

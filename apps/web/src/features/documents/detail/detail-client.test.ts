@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { InvoiceSchema, checkInvoice } from 'contracts';
 import { DetailError, fetchDocumentDetail } from './detail-client';
 import { loadInvoiceFixture } from './detail-fixtures';
 
@@ -36,7 +37,30 @@ const kind = async () => {
   return 'none';
 };
 
+describe('business rules in the browser bundle (T3.3)', () => {
+  // The web form (T3.4) recomputes warnings while the user types, with the very function the
+  // worker uses: this proves it loads and runs through the web toolchain.
+  it('flags a changed total on the fixture invoice and stays silent on the original', () => {
+    const invoice = InvoiceSchema.parse(loadInvoiceFixture());
+    expect(checkInvoice(invoice, '2999-01-01')).toEqual([]);
+    const edited = { ...invoice, total: invoice.total + 1000 };
+    expect(checkInvoice(edited, '2999-01-01').map((w) => w.code)).toEqual(['TOTAL_MISMATCH']);
+  });
+});
+
 describe('fetchDocumentDetail', () => {
+  it('accepts stored rule warnings and rejects ones the API should never send', async () => {
+    const w = { code: 'TOTAL_MISMATCH', path: 'total', params: { expected: 2, actual: 1 } };
+    fetchMock.mockResolvedValueOnce(
+      Response.json(doc({ extraction: { ...doc().extraction, warnings: [w] } })),
+    );
+    expect((await fetchDocumentDetail(ID)).extraction?.warnings).toEqual([w]);
+    fetchMock.mockResolvedValueOnce(
+      Response.json(doc({ extraction: { ...doc().extraction, warnings: ['free text'] } })),
+    );
+    await expect(fetchDocumentDetail(ID)).rejects.toBeInstanceOf(DetailError);
+  });
+
   it('asks the BFF route and returns the parsed document with its invoice', async () => {
     fetchMock.mockResolvedValue(Response.json(doc()));
     const res = await fetchDocumentDetail(ID);

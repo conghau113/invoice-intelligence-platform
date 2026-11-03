@@ -1,4 +1,4 @@
-import { InvoiceSchema } from 'contracts';
+import { InvoiceSchema, RuleWarningSchema } from 'contracts';
 import { z } from 'zod';
 import { DOCUMENT_STATUSES } from '@/components/common/status-badge';
 import { SOURCE_TYPES } from '../list-params';
@@ -18,7 +18,7 @@ const detailSchema = z.object({
       source: z.enum(SOURCE_TYPES),
       // The same schema the worker and the API validate with (packages/contracts).
       data: InvoiceSchema,
-      warnings: z.array(z.unknown()),
+      warnings: z.array(RuleWarningSchema),
       createdAt: z.iso.datetime(),
     })
     .nullable(),

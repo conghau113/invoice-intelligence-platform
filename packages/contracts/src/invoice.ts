@@ -8,7 +8,7 @@ import { z } from 'zod';
 const Money = z.int();
 
 // [0-9] not \d: Python's regex engines match Unicode digits for \d, JS does not.
-const TAX_CODE = /^[0-9]{10}(-[0-9]{3})?$/;
+export const TAX_CODE = /^[0-9]{10}(-[0-9]{3})?$/;
 
 export const PartySchema = z
   .strictObject({
