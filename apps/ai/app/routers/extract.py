@@ -1,35 +1,47 @@
 from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, Depends, Form, UploadFile
+from fastapi import APIRouter, Depends, Form, Request, UploadFile
 from fastapi.responses import JSONResponse
 
+from app.providers import build_provider
+from app.providers.base import LLMError, LLMProvider
 from app.security import require_service_token
-from app.services.xml_invoice import MAX_XML_BYTES, XmlInvoiceError, parse_xml_invoice
+from app.services.extract import ExtractError, extract
+from app.services.xml_invoice import MAX_XML_BYTES
 
 router = APIRouter(dependencies=[Depends(require_service_token)])
 
 SourceType = Literal["xml", "pdf", "image"]  # same vocabulary as documents.source_type
+MAX_FILE_BYTES = MAX_XML_BYTES  # 10 MiB, same cap as the API upload
 
 
 def _error(status: int, code: str, message: str) -> JSONResponse:
     return JSONResponse(status_code=status, content={"code": code, "message": message})
 
 
+def get_llm_provider(request: Request) -> LLMProvider:
+    """Built on first use and kept: building needs a key the XML path does not."""
+    state = request.app.state
+    if getattr(state, "llm_provider", None) is None:
+        state.llm_provider = build_provider(state.settings)
+    return state.llm_provider
+
+
 @router.post("/extract", response_model=None)
-def extract(
+def extract_endpoint(
+    request: Request,
     file: UploadFile,
     source_type: Annotated[SourceType, Form(alias="sourceType")],
     schema_version: Annotated[str | None, Form(alias="schemaVersion")] = None,
 ) -> dict[str, Any] | JSONResponse:
-    if source_type != "xml":
-        # The LLM path arrives in M3 (T3.1).
-        return _error(501, "EXTRACTION_PATH_NOT_IMPLEMENTED", "Only xml is supported yet")
-    # A sync handler runs in FastAPI's threadpool, so a slow parse cannot block the event loop.
-    # Read one byte past the cap: Content-Length is the client's claim, not a limit.
-    data = file.file.read(MAX_XML_BYTES + 1)
+    # A sync handler runs in FastAPI's threadpool, so slow parsing or a slow provider cannot block
+    # the event loop. Read one byte past the cap: Content-Length is the client's claim, not a limit.
+    data = file.file.read(MAX_FILE_BYTES + 1)
+    if len(data) > MAX_FILE_BYTES:
+        return _error(413, "FILE_TOO_LARGE", "File is larger than the 10 MiB limit")
     try:
-        invoice = parse_xml_invoice(data)
-    except XmlInvoiceError as err:
-        status = 413 if err.code == "FILE_TOO_LARGE" else 422
-        return _error(status, err.code, err.message)
-    return {"invoice": invoice, "warnings": [], "usage": None}
+        return extract(data, source_type, lambda: get_llm_provider(request))
+    except LLMError as err:  # provider could not even be built (missing key)
+        return _error(err.status, err.code, "The model provider is not available")
+    except ExtractError as err:
+        return _error(err.status, err.code, err.message)

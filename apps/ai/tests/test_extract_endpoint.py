@@ -27,13 +27,6 @@ def test_xml_returns_invoice_with_integer_money() -> None:
     assert not re.search(r'"(total|subtotal|amount|base|unitPrice)":\s*\d+\.\d', res.text)
 
 
-@pytest.mark.parametrize("source_type", ["pdf", "image"])
-def test_other_sources_are_not_implemented_yet(source_type: str) -> None:
-    res = post(b"%PDF-1.7 SAMPLE", source_type, "f.pdf")
-    assert res.status_code == 501
-    assert res.json()["code"] == "EXTRACTION_PATH_NOT_IMPLEMENTED"
-
-
 def test_unknown_source_type_is_rejected() -> None:
     assert post(b"x", "docx").status_code == 422
 

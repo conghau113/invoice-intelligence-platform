@@ -80,6 +80,7 @@ export class AiExtractionHandler implements ExtractionHandler {
           data: result.invoice,
           warnings: result.warnings,
           model: result.usage?.model ?? null,
+          promptVersion: result.usage?.promptVersion ?? null,
           inputTokens: result.usage?.inputTokens ?? null,
           outputTokens: result.usage?.outputTokens ?? null,
           latencyMs: result.usage?.latencyMs ?? measuredMs,
