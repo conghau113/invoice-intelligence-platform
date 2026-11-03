@@ -27,9 +27,23 @@ describe('validateEnv', () => {
       REDIS_URL,
       ...AI,
       QUEUE_BACKOFF_BASE_MS: 5000,
+      AI_LLM_TIMEOUT_MS: 60000,
       TRUSTED_PROXIES: 'loopback',
       OIDC_AUDIENCE: 'api',
     });
+  });
+
+  it('AI_LLM_TIMEOUT_MS is read as a number and refuses a value too small to work (the 60 s default is in the first test)', () => {
+    const base = {
+      NODE_ENV: 'test',
+      OIDC_ISSUER_URL: ISSUER,
+      DATABASE_URL: DB_URL,
+      DATA_DIR,
+      REDIS_URL,
+      ...AI,
+    };
+    expect(validateEnv({ ...base, AI_LLM_TIMEOUT_MS: '90000' }).AI_LLM_TIMEOUT_MS).toBe(90000);
+    expect(() => validateEnv({ ...base, AI_LLM_TIMEOUT_MS: '5' })).toThrow(/AI_LLM_TIMEOUT_MS/);
   });
 
   it('parses "false" as false (not a truthy string)', () => {

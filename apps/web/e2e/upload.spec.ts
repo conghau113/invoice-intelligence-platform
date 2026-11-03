@@ -35,6 +35,27 @@ function invoiceXml(name: string) {
   };
 }
 
+// A committed synthetic PDF. Bytes after %%EOF are ignored by readers; the nonce changes the hash.
+const SAMPLE_PDF = join(
+  process.cwd(),
+  '..',
+  'ai',
+  'tests',
+  'fixtures',
+  'pdf_invoices',
+  'invoice-00.pdf',
+);
+// What the AI service's fake LLM provider answers (apps/ai/app/providers/fake.py).
+const FAKE_LLM_SELLER = 'Công ty SAMPLE Bán';
+
+function invoicePdf(name: string) {
+  return {
+    name,
+    mimeType: 'application/pdf',
+    buffer: Buffer.concat([readFileSync(SAMPLE_PDF), Buffer.from(`\n% SAMPLE ${randomUUID()}\n`)]),
+  };
+}
+
 async function uploadFile(page: Page, file: ReturnType<typeof invoiceXml>) {
   const answer = page.waitForResponse(
     (r) => r.url().endsWith('/api/documents/upload') && r.request().method() === 'POST',
@@ -77,6 +98,31 @@ test.describe('upload to extracted data', () => {
     await expect(page.getByTestId('seller')).toContainText(SELLER);
     await expect(page.getByTestId('invoice-total')).toBeVisible();
     await expect(page.getByTestId('invoice-lines').getByRole('row')).not.toHaveCount(1);
+  });
+
+  // T3.2: the same slice on the LLM path. Needs the AI service started with LLM_PROVIDER=fake
+  // (the CI e2e job does; locally: `LLM_PROVIDER=fake pnpm dev:ai`), so no network or key is used.
+  test('a PDF goes through the queue, worker and LLM path to needs_review with data', async ({
+    page,
+  }) => {
+    await login(page, 'accountant');
+    await page.goto('/vi/upload');
+    await page.waitForLoadState('networkidle');
+
+    const { status, id } = await uploadFile(page, invoicePdf('e2e-invoice.pdf'));
+    expect(status).toBe(201);
+
+    await page.goto('/vi/documents');
+    const row = page.getByTestId(`document-row-${id}`);
+    await expect(
+      row,
+      'not needs_review: are the worker and the AI service (LLM_PROVIDER=fake pnpm dev:ai) running?',
+    ).toHaveAttribute('data-status', 'needs_review', { timeout: 45_000 });
+
+    await page.getByTestId(`document-link-${id}`).click();
+    await expect(page).toHaveURL(new RegExp(`/vi/documents/${id}$`), { timeout: 30_000 });
+    await expect(page.getByTestId('seller')).toContainText(FAKE_LLM_SELLER);
+    await expect(page.getByTestId('invoice-total')).toBeVisible();
   });
 
   // That no second job starts is proved in the API integration tests (documents-create, queue).

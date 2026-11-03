@@ -166,7 +166,7 @@ jobs:
       - name: Install Chromium
         run: pnpm --filter web exec playwright install --with-deps chromium
       # The upload test follows a document through the queue: the worker takes the job and calls
-      # the AI service (deterministic XML path, no LLM).
+      # the AI service (XML parser, and the LLM path with the fake provider: no network, no key).
       - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           version: 0.13.0
@@ -179,7 +179,7 @@ jobs:
         run: |
           export DATABASE_URL="postgres://invoice_app:${APP_DB_PASSWORD}@localhost:5433/invoice"
           trap 'kill $(jobs -p) 2>/dev/null || true' EXIT
-          (cd apps/ai && exec uv run --frozen --no-build uvicorn app.main:app --port 8000) > "$RUNNER_TEMP/ai.log" 2>&1 &
+          (cd apps/ai && exec env LLM_PROVIDER=fake uv run --frozen --no-build uvicorn app.main:app --port 8000) > "$RUNNER_TEMP/ai.log" 2>&1 &
           (cd apps/api && exec node dist/worker.js) > "$RUNNER_TEMP/worker.log" 2>&1 &
           worker=$!
           for _ in $(seq 1 30); do curl -fsS http://localhost:8000/health && break; sleep 1; done

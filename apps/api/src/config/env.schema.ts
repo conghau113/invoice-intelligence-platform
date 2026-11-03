@@ -26,6 +26,9 @@ export const envSchema = z.object({
   // Internal AI service (ADR 0002): base URL and the shared bearer token the worker sends (API.md).
   AI_SERVICE_URL: z.url(),
   AI_SERVICE_TOKEN: z.string().min(16),
+  // How long the worker waits for /extract on the PDF/image (LLM) path; XML has its own short limit.
+  // Keep it above the AI service's own 55 s budget so the service can answer with its error code.
+  AI_LLM_TIMEOUT_MS: z.coerce.number().int().min(100).max(300_000).default(60_000),
   // Peers whose X-Forwarded-For the API believes, so audit rows get the caller's address instead of
   // the web server's. Default: only a proxy on the same machine (dev, CI). In deployment set the
   // reverse proxy's address or network (M4). Never a value that trusts everyone (see trusted-proxies.ts).

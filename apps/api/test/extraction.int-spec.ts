@@ -67,7 +67,28 @@ function requireVar(name: string): string {
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 type AiMode =
-  'ok' | 'down' | 'unauthorized' | 'unavailable' | 'malformed' | 'not-implemented' | 'garbage';
+  | 'ok'
+  | 'down'
+  | 'unauthorized'
+  | 'unavailable'
+  | 'malformed'
+  | 'not-implemented'
+  | 'garbage'
+  // The LLM path as the AI service answers it (usage block, error codes of apps/ai).
+  | 'llm-ok'
+  | 'llm-flaky' // 503 LLM_UNAVAILABLE twice, then llm-ok
+  | 'llm-unavailable'
+  | 'llm-rate-limited'
+  | 'llm-rejected';
+
+const USAGE = {
+  model: 'gemini-test',
+  promptVersion: 'invoice_extraction/v1',
+  inputTokens: 1500,
+  outputTokens: 800,
+  latencyMs: 3200,
+  costUsd: 0.001634,
+};
 
 describe('extraction slice (upload -> worker -> AI service -> GET /documents/:id)', () => {
   let owner: Pool;
@@ -213,6 +234,14 @@ describe('extraction slice (upload -> worker -> AI service -> GET /documents/:id
           return json(501, { code: 'EXTRACTION_PATH_NOT_IMPLEMENTED' });
         if (mode === 'garbage')
           return json(200, { invoice: { total: 'lots' }, warnings: [], usage: null });
+        if (mode === 'llm-unavailable') return json(503, { code: 'LLM_UNAVAILABLE', message: 'x' });
+        if (mode === 'llm-rate-limited')
+          return json(429, { code: 'LLM_RATE_LIMITED', message: 'x' });
+        if (mode === 'llm-rejected') return json(422, { code: 'PDF_INVALID', message: 'x' });
+        if (mode === 'llm-flaky' && aiCalls.length <= 2)
+          return json(500, { code: 'LLM_UNAVAILABLE', message: 'x' });
+        if (mode === 'llm-ok' || mode === 'llm-flaky')
+          return json(200, { invoice: INVOICE, warnings: [], usage: USAGE });
         json(200, { invoice: INVOICE, warnings: [], usage: null });
       });
     });
@@ -358,17 +387,79 @@ describe('extraction slice (upload -> worker -> AI service -> GET /documents/:id
     expect((await get(up.body.id).expect(200)).body.failureCode).toBe('XML_MALFORMED');
   });
 
-  it('a PDF reaches the AI as sourceType=pdf and fails with EXTRACTION_PATH_NOT_IMPLEMENTED until M3', async () => {
-    mode = 'not-implemented';
-    const up = await upload(
-      Buffer.from('%PDF-1.7\nSAMPLE\n'),
+  const uploadPdf = (key: string) =>
+    upload(
+      Buffer.from(`%PDF-1.7\nSAMPLE ${key} ${Math.random()}\n`),
       'a.pdf',
       'application/pdf',
-      'k1',
-    ).expect(201);
-    await waitForStatus(up.body.id, 'failed');
+      key,
+    );
+  const row = async (id: string) =>
+    (
+      await owner.query(
+        `SELECT source, model, prompt_version, input_tokens, output_tokens, latency_ms, cost_usd
+           FROM extractions WHERE document_id = $1`,
+        [id],
+      )
+    ).rows[0] as Record<string, unknown>;
+
+  it('T3.2: a PDF reaches the AI as sourceType=pdf, becomes needs_review with data, and keeps model, prompt version, tokens, cost and latency', async () => {
+    mode = 'llm-ok';
+    const up = await uploadPdf('k1').expect(201);
+    await waitForStatus(up.body.id, 'needs_review');
     expect(aiCalls).toHaveLength(1);
     expect(aiCalls[0]?.sourceType).toBe('pdf');
+
+    expect(await row(up.body.id)).toMatchObject({
+      source: 'pdf',
+      model: USAGE.model,
+      prompt_version: USAGE.promptVersion,
+      input_tokens: USAGE.inputTokens,
+      output_tokens: USAGE.outputTokens,
+      latency_ms: USAGE.latencyMs,
+      cost_usd: '0.001634',
+    });
+    const res = await get(up.body.id).expect(200);
+    expect(res.body.extraction.data.invoiceNo).toBe(INVOICE.invoiceNo);
+  });
+
+  it('T3.2: the provider fails with 500 twice, then answers: the document succeeds after the retries, one row, three calls', async () => {
+    mode = 'llm-flaky';
+    const up = await uploadPdf('k1').expect(201);
+    await waitForStatus(up.body.id, 'needs_review');
+    expect(aiCalls).toHaveLength(3);
+    expect(await extractionCount(up.body.id)).toBe(1);
+    expect((await get(up.body.id).expect(200)).body.failureCode).toBeNull();
+  });
+
+  it.each([
+    ['llm-unavailable', 'LLM_UNAVAILABLE'],
+    ['llm-rate-limited', 'LLM_RATE_LIMITED'],
+  ] as const)(
+    "T3.2: %s is transient: 5 attempts, then failed with the AI service's own code %s",
+    async (m, code) => {
+      mode = m;
+      const up = await uploadPdf('k1').expect(201);
+      await waitForStatus(up.body.id, 'failed');
+      expect(aiCalls).toHaveLength(5);
+      expect(await extractionCount(up.body.id)).toBe(0);
+      expect((await get(up.body.id).expect(200)).body.failureCode).toBe(code);
+    },
+  );
+
+  it('T3.2: a permanent LLM-path answer (422 PDF_INVALID) fails at once with that code, no retry', async () => {
+    mode = 'llm-rejected';
+    const up = await uploadPdf('k1').expect(201);
+    await waitForStatus(up.body.id, 'failed');
+    expect(aiCalls).toHaveLength(1);
+    expect((await get(up.body.id).expect(200)).body.failureCode).toBe('PDF_INVALID');
+  });
+
+  it('T3.2: a PDF on a service that has no LLM path yet (501) is still a permanent failure', async () => {
+    mode = 'not-implemented';
+    const up = await uploadPdf('k1').expect(201);
+    await waitForStatus(up.body.id, 'failed');
+    expect(aiCalls).toHaveLength(1);
     expect((await get(up.body.id).expect(200)).body.failureCode).toBe(
       'EXTRACTION_PATH_NOT_IMPLEMENTED',
     );
