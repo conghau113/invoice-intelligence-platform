@@ -23,3 +23,6 @@ test-results/
 
 # Throw-away storage used by api tests
 apps/api/.test-data/
+
+# Local MCP server config (per developer, may point at local tools or hold tokens)
+.mcp.json
