@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { checkInvoice, mergeWarnings, todayInVietnam } from 'contracts';
 import { and, eq } from 'drizzle-orm';
 import type { Readable } from 'node:stream';
 import { documents, extractions } from '../../../db/schema';
@@ -68,6 +69,12 @@ export class AiExtractionHandler implements ExtractionHandler {
       traceparent: job.traceparent,
     });
     const measuredMs = Date.now() - started;
+    // Business rules (T3.3, packages/contracts): warnings on fields, no number is changed. The
+    // same function runs in the web form and, from T3.5, when a correction is saved.
+    const warnings = mergeWarnings(
+      result.warnings,
+      checkInvoice(result.invoice, todayInVietnam(new Date())),
+    );
 
     await this.tenantDb.run(job.tenantId, (tx) =>
       tx
@@ -78,7 +85,7 @@ export class AiExtractionHandler implements ExtractionHandler {
           documentVersion: doc.version,
           source: doc.sourceType,
           data: result.invoice,
-          warnings: result.warnings,
+          warnings,
           model: result.usage?.model ?? null,
           promptVersion: result.usage?.promptVersion ?? null,
           inputTokens: result.usage?.inputTokens ?? null,

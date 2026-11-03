@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { desc, eq } from 'drizzle-orm';
-import { InvoiceSchema, type Invoice } from 'contracts';
+import { InvoiceSchema, RuleWarningSchema, type Invoice, type RuleWarning } from 'contracts';
 import { isUuid } from '../../../common/uuid';
 import { documents, extractions } from '../../../db/schema';
 import { TenantDbService } from '../../../db/tenant-db.service';
@@ -12,7 +12,7 @@ export interface ExtractionView {
   documentVersion: number;
   source: string;
   data: Invoice;
-  warnings: unknown[];
+  warnings: RuleWarning[];
   createdAt: Date;
 }
 
@@ -59,7 +59,13 @@ export class DocumentDetailService {
 
     // Validate on the way out as well as on the way in (Phát sinh T2.7): jsonb is only "some JSON".
     const data = InvoiceSchema.safeParse(row.data);
-    if (!data.success || !Array.isArray(row.warnings)) throw new ExtractionDataInvalidError();
+    if (!data.success) throw new ExtractionDataInvalidError();
+    // Warnings are advice, not data: an entry that does not match (a row written before T3.3)
+    // is left out instead of making the whole page fail.
+    const warnings = (Array.isArray(row.warnings) ? row.warnings : []).flatMap((w: unknown) => {
+      const parsed = RuleWarningSchema.safeParse(w);
+      return parsed.success ? [parsed.data] : [];
+    });
     return {
       ...doc,
       extraction: {
@@ -67,7 +73,7 @@ export class DocumentDetailService {
         documentVersion: row.documentVersion,
         source: row.source,
         data: data.data,
-        warnings: row.warnings as unknown[],
+        warnings,
         createdAt: row.createdAt,
       },
     };
