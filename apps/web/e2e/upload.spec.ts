@@ -1,7 +1,5 @@
-import { randomUUID } from 'node:crypto';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { FAKE_LLM_SELLER, invoicePdf, invoiceXml, SELLER, uploadFile } from './support/documents';
 import { login } from './support/login';
 
 /**
@@ -11,59 +9,6 @@ import { login } from './support/login';
  * the e2e job of the CI workflow): without them the document stays `queued` and this test fails on
  * purpose, with a message that says so.
  */
-
-// Playwright runs from apps/web. The synthetic invoice is the one the AI service tests use, so
-// there is a single copy. A comment with a random nonce changes the bytes of every run: the API
-// dedupes by content hash per tenant, so identical bytes would be "duplicate" on a second run.
-const SAMPLE = join(
-  process.cwd(),
-  '..',
-  'ai',
-  'tests',
-  'fixtures',
-  'xml_invoices',
-  'invoice-00.xml',
-);
-const SELLER = 'Công ty SAMPLE Bán 0';
-
-function invoiceXml(name: string) {
-  const original = readFileSync(SAMPLE, 'utf8');
-  return {
-    name,
-    mimeType: 'application/xml',
-    buffer: Buffer.from(original.replace('<HDon>', `<!-- SAMPLE ${randomUUID()} -->\n<HDon>`)),
-  };
-}
-
-// A committed synthetic PDF. Bytes after %%EOF are ignored by readers; the nonce changes the hash.
-const SAMPLE_PDF = join(
-  process.cwd(),
-  '..',
-  'ai',
-  'tests',
-  'fixtures',
-  'pdf_invoices',
-  'invoice-00.pdf',
-);
-// What the AI service's fake LLM provider answers (apps/ai/app/providers/fake.py).
-const FAKE_LLM_SELLER = 'Công ty SAMPLE Bán';
-
-function invoicePdf(name: string) {
-  return {
-    name,
-    mimeType: 'application/pdf',
-    buffer: Buffer.concat([readFileSync(SAMPLE_PDF), Buffer.from(`\n% SAMPLE ${randomUUID()}\n`)]),
-  };
-}
-
-async function uploadFile(page: Page, file: ReturnType<typeof invoiceXml>) {
-  const answer = page.waitForResponse(
-    (r) => r.url().endsWith('/api/documents/upload') && r.request().method() === 'POST',
-  );
-  await page.getByTestId('file-input').setInputFiles(file);
-  const res = await answer;
-  return { status: res.status(), id: ((await res.json()) as { id: string }).id };
-}
 
 test.describe('upload to extracted data', () => {
   test('XML goes through the queue and worker; the list shows it and the detail page its data', async ({
@@ -95,8 +40,8 @@ test.describe('upload to extracted data', () => {
     // Generous: `next dev` compiles the detail route on its first visit.
     await expect(page).toHaveURL(new RegExp(`/vi/documents/${id}$`), { timeout: 30_000 });
     await expect(page.getByTestId('invoice-data')).toBeVisible();
-    await expect(page.getByTestId('seller')).toContainText(SELLER);
-    await expect(page.getByTestId('invoice-total')).toBeVisible();
+    await expect(page.getByTestId('field-seller.name')).toHaveValue(SELLER);
+    await expect(page.getByTestId('field-total')).toBeVisible();
     await expect(page.getByTestId('invoice-lines').getByRole('row')).not.toHaveCount(1);
   });
 
@@ -121,8 +66,8 @@ test.describe('upload to extracted data', () => {
 
     await page.getByTestId(`document-link-${id}`).click();
     await expect(page).toHaveURL(new RegExp(`/vi/documents/${id}$`), { timeout: 30_000 });
-    await expect(page.getByTestId('seller')).toContainText(FAKE_LLM_SELLER);
-    await expect(page.getByTestId('invoice-total')).toBeVisible();
+    await expect(page.getByTestId('field-seller.name')).toHaveValue(FAKE_LLM_SELLER);
+    await expect(page.getByTestId('field-total')).toBeVisible();
   });
 
   // That no second job starts is proved in the API integration tests (documents-create, queue).

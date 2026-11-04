@@ -41,7 +41,7 @@ const state = { data: undefined, error: null, isPending: false, refetch: () => u
 const render = (locale: 'en' | 'vi' = 'en') =>
   renderToStaticMarkup(
     <NextIntlClientProvider locale={locale} messages={locale === 'en' ? en : vi_}>
-      <DocumentDetailScreen id={ID} />
+      <DocumentDetailScreen id={ID} canApprove />
     </NextIntlClientProvider>,
   );
 beforeEach(() => {
@@ -49,26 +49,47 @@ beforeEach(() => {
 });
 
 describe('DocumentDetailScreen', () => {
-  it('shows the extracted invoice read-only: parties, lines and the total formatted for the locale', () => {
+  it('shows the review screen: the original beside an editable form, status in the locale', () => {
     hook.result = { ...state, data: base };
     const html = render();
+    expect(html).toContain('data-testid="review-screen"');
+    expect(html).toContain('data-testid="document-viewer"');
+    expect(html).toContain('data-source="xml"');
     expect(html).toContain('data-testid="invoice-data"');
-    expect(html).toContain('0000123');
-    expect(html).toContain('Công ty SAMPLE Bán');
-    expect(html).toContain('Dịch vụ SAMPLE');
     expect(html).toContain('Needs review');
-    expect(html).not.toMatch(/<input|<textarea|contenteditable/); // review form is M3 (T3.4)
-    expect(html).toContain('₫1,100,000');
-    expect(render('vi')).toMatch(/1\.100\.000\s?₫/);
+    expect(html).toContain('data-testid="check-form"'); // may edit
+    expect(html).toContain('No warnings');
+    // Money inputs are controlled, so the server markup already carries the amount (VND: whole units).
+    expect(html).toContain('value="1100000"');
     expect(render('vi')).toContain('Cần kiểm tra');
+    expect(render('vi')).toContain('Không có cảnh báo');
   });
 
-  it('shows a dash when the buyer has no tax code', () => {
-    const noCode = structuredClone(base);
-    (noCode.extraction as { data: { buyer: { taxCode: string | null } } }).data.buyer.taxCode =
-      null;
-    hook.result = { ...state, data: noCode };
-    expect(render()).toMatch(/Tax code<\/dt><dd[^>]*>—</);
+  it('a person without the approve permission sees the form read-only, with no check button', () => {
+    hook.result = { ...state, data: base };
+    const html = renderToStaticMarkup(
+      <NextIntlClientProvider locale="en" messages={en}>
+        <DocumentDetailScreen id={ID} canApprove={false} />
+      </NextIntlClientProvider>,
+    );
+    expect(html).toContain('readOnly=""');
+    expect(html).not.toContain('data-testid="check-form"');
+    expect(html).toContain('You can read this invoice but not change it.');
+  });
+
+  it('says when the extraction belongs to an older version of the document', () => {
+    hook.result = { ...state, data: { ...base, version: 3 } };
+    expect(render()).toContain('version 1 of the document; it is now version 3');
+  });
+
+  it('a failed document that still has an older extraction shows the failure and the old values', () => {
+    hook.result = {
+      ...state,
+      data: { ...base, version: 2, status: 'failed', failureCode: 'XML_MALFORMED' },
+    };
+    const html = render();
+    expect(html).toContain('The file is not well-formed XML.');
+    expect(html).toContain('data-testid="review-screen"');
   });
 
   it('shows "waiting" while the document is queued or processing, not an empty invoice', () => {

@@ -28,6 +28,7 @@ import { LocalFsStorage } from '../src/modules/storage/infra/local-fs.storage';
 import { useTestRoots } from '../src/modules/storage/testing/test-root';
 
 const ACME = '00000000-0000-4000-8000-0000000000a1';
+const GLOBEX = '00000000-0000-4000-8000-0000000000b1';
 const USER = '00000000-0000-4000-8000-00000000f004';
 const newRoot = useTestRoots();
 
@@ -91,15 +92,21 @@ describe('POST /documents/upload (HTTP -> Postgres -> LocalFs)', () => {
         {
           provide: TOKEN_VERIFIER,
           useValue: {
-            verify: (token: string) =>
-              Promise.resolve({
+            // Token "<role>" (tenant acme) or "<role>@<tenant alias>".
+            verify: (token: string) => {
+              const [role, alias = 'acme'] = token.split('@');
+              return Promise.resolve({
                 sub: USER,
-                organization: ['acme'],
-                realm_access: { roles: [token] },
-              }),
+                organization: [alias],
+                realm_access: { roles: [role] },
+              });
+            },
           },
         },
-        { provide: TENANT_DIRECTORY, useValue: { idForAlias: () => Promise.resolve(ACME) } },
+        {
+          provide: TENANT_DIRECTORY,
+          useValue: { idForAlias: (a: string) => Promise.resolve(a === 'globex' ? GLOBEX : ACME) },
+        },
         { provide: ConfigService, useValue: {} },
         { provide: APP_GUARD, useClass: JwtAuthGuard },
         { provide: APP_GUARD, useClass: PermissionsGuard },
@@ -160,5 +167,50 @@ describe('POST /documents/upload (HTTP -> Postgres -> LocalFs)', () => {
       .post('/documents/upload')
       .attach('file', pdf('z'), 'a.pdf')
       .expect(401);
+  });
+
+  describe('GET /documents/:id/file', () => {
+    const get = (id: string, who = 'viewer') =>
+      request(app.getHttpServer())
+        .get(`/documents/${id}/file`)
+        .set('Authorization', `Bearer ${who}`);
+    const xml = Buffer.from('<?xml version="1.0"?><HDon><!-- SAMPLE --></HDon>');
+
+    it('streams the stored bytes with inert headers; a viewer may read', async () => {
+      const up = await post(pdf('file-1'), 'f1').expect(201);
+      const res = await get(up.body.id).expect(200);
+
+      expect(res.headers['content-type']).toBe('application/pdf');
+      expect(res.headers['x-content-type-options']).toBe('nosniff');
+      expect(res.headers['content-security-policy']).toBe('sandbox');
+      expect(res.headers['cache-control']).toBe('private, no-store');
+      expect(Buffer.from(res.body as Buffer).equals(pdf('file-1'))).toBe(true);
+    });
+
+    it('serves XML as text/plain, never as markup', async () => {
+      const up = await request(app.getHttpServer())
+        .post('/documents/upload')
+        .set('Authorization', 'Bearer accountant')
+        .set('Idempotency-Key', 'fx')
+        .attach('file', xml, { filename: 'a.xml', contentType: 'application/xml' })
+        .expect(201);
+      const res = await get(up.body.id).expect(200);
+      expect(res.headers['content-type']).toBe('text/plain; charset=utf-8');
+      expect(res.text).toContain('<HDon>');
+    });
+
+    it('another tenant, a malformed id, an unknown id: 404; no token: 401', async () => {
+      const up = await post(pdf('file-2'), 'f2').expect(201);
+      await get(up.body.id, 'tenant_admin@globex').expect(404);
+      await get('not-a-uuid').expect(404);
+      await get('00000000-0000-4000-8000-00000000dead').expect(404);
+      await request(app.getHttpServer()).get(`/documents/${up.body.id}/file`).expect(401);
+    });
+
+    it('a row whose bytes are gone is 404, not a 500', async () => {
+      const up = await post(pdf('file-3'), 'f3').expect(201);
+      await rm(path.join(root, 'tenant'), { recursive: true, force: true });
+      await get(up.body.id).expect(404);
+    });
   });
 });

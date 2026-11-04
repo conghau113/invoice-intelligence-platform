@@ -334,5 +334,61 @@
     "totals": "Totals",
     "subtotal": "Subtotal",
     "total": "Total"
+  },
+  "Review": {
+    "viewer": {
+      "title": "Original document",
+      "toolbar": "Viewer controls",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "zoomReset": "Reset zoom",
+      "prevPage": "Previous page",
+      "nextPage": "Next page",
+      "pageOf": "Page {page} of {total}",
+      "loading": "Loading the document",
+      "loadError": "The original file could not be shown",
+      "imageAlt": "Scanned invoice",
+      "evidencePage": "Evidence, page {page}",
+      "evidenceHint": "Click a field to see where the AI found its value.",
+      "evidenceXml": "Evidence"
+    },
+    "warningsTitle": "{count, plural, =0 {No warnings} one {# warning} other {# warnings}}",
+    "noWarnings": "The numbers, dates and tax codes pass every check.",
+    "legend": "Yellow fields need a look: the AI was unsure, gave no confidence, or a check failed. Hover or focus a field to see why. Nothing is ever changed for you.",
+    "reason": {
+      "lowConfidence": "The AI is only {percent}% sure of this value.",
+      "noMeta": "The AI gave no confidence for this field.",
+      "noMetaMany": "The AI gave no confidence for: {fields}."
+    },
+    "warning": {
+      "LINES_SUM_MISMATCH": "The line amounts add up to {expected}, but the subtotal is {actual}.",
+      "LINE_AMOUNT_MISMATCH": "Quantity × unit price is {expected}, but the amount is {actual}.",
+      "TOTAL_MISMATCH": "Subtotal plus VAT is {expected}, but the total is {actual}.",
+      "TAX_CODE_FORMAT": "A tax code is 10 digits, or 10 digits, a dash and 3 digits.",
+      "ISSUE_DATE_FUTURE": "The issue date is in the future.",
+      "CURRENCY_NOT_ALLOWED": "This currency is not one of the {allowed} allowed (VND, USD, EUR, JPY)."
+    },
+    "errors": {
+      "invalidType": "Enter a valid value.",
+      "tooSmall": "This cannot be empty or too small.",
+      "tooBig": "This value is too large.",
+      "invalidFormat": "The format is not valid.",
+      "invalid": "This value is not valid."
+    },
+    "hints": {
+      "taxCode": "10 digits, or 10 digits + dash + 3 digits. Leave empty if there is none."
+    },
+    "lineN": "Line {n}",
+    "addLine": "Add line",
+    "removeLine": "Remove line {n}",
+    "removeColumn": "Remove",
+    "sumOfLines": "Lines add up to {amount}",
+    "check": "Check the data",
+    "checked": "The data is valid. Nothing was saved: saving and approval are not available yet.",
+    "hasErrors": "{count, plural, one {# field has an error} other {# fields have errors}}. Fix them to continue.",
+    "readOnly": "You can read this invoice but not change it.",
+    "outdated": "These values come from version {extraction} of the document; it is now version {current}.",
+    "newerExtraction": "A newer extraction is available. Your edits here are kept until you load it.",
+    "loadNewer": "Load the newer one (discards edits)"
   }
 }
