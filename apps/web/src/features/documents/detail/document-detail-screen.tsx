@@ -5,159 +5,22 @@ import type { ReactNode } from 'react';
 import { PageLayout } from '@/components/common/page-layout';
 import { StatePanel } from '@/components/common/state-panel';
 import { StatusBadge } from '@/components/common/status-badge';
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { formatDate, formatMoney, formatNumber } from '@/i18n/format';
+import { formatDate } from '@/i18n/format';
 import { Link } from '@/i18n/navigation';
+import { ReviewScreen } from '@/features/review/review-screen';
 import { QueryProvider } from '../query-provider';
-import type { DocumentDetail } from './detail-client';
+import type { DetailError } from './detail-client';
 import { useDocumentDetail } from './use-document-detail';
 
-export function DocumentDetailScreen({ id }: Readonly<{ id: string }>) {
+export function DocumentDetailScreen({
+  id,
+  canApprove,
+}: Readonly<{ id: string; canApprove: boolean }>) {
   return (
     <QueryProvider>
-      <Detail id={id} />
+      <Detail id={id} canEdit={canApprove} />
     </QueryProvider>
-  );
-}
-
-type Invoice = NonNullable<DocumentDetail['extraction']>['data'];
-
-/** formatMoney knows VND and USD only; any other ISO code is shown as a plain number plus the code. */
-function useMoney(currency: string) {
-  const locale = useLocale();
-  return (minor: number) =>
-    currency === 'VND' || currency === 'USD'
-      ? formatMoney(minor, currency, locale)
-      : `${formatNumber(minor, locale)} ${currency}`;
-}
-
-function Field({ label, children }: Readonly<{ label: string; children: ReactNode }>) {
-  return (
-    <div className="flex flex-col gap-0.5">
-      <dt className="text-xs text-muted-foreground">{label}</dt>
-      <dd className="text-sm break-words">{children}</dd>
-    </div>
-  );
-}
-
-function Card({
-  title,
-  children,
-  ...rest
-}: Readonly<{ title: string; children: ReactNode; 'data-testid'?: string }>) {
-  return (
-    <section {...rest} className="flex flex-col gap-3 rounded-lg border bg-card p-4">
-      <h2 className="text-base font-semibold">{title}</h2>
-      {children}
-    </section>
-  );
-}
-
-function InvoiceView({ invoice }: Readonly<{ invoice: Invoice }>) {
-  const t = useTranslations('DocumentDetail');
-  const locale = useLocale();
-  const money = useMoney(invoice.currency);
-  const none = t('none');
-
-  return (
-    <div className="flex flex-col gap-4" data-testid="invoice-data">
-      <Card title={t('invoiceInfo')}>
-        <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          <Field label={t('invoiceNo')}>{invoice.invoiceNo}</Field>
-          <Field label={t('series')}>{invoice.series}</Field>
-          <Field label={t('issueDate')}>
-            {formatDate(`${invoice.issueDate}T00:00:00+07:00`, locale)}
-          </Field>
-          <Field label={t('currency')}>{invoice.currency}</Field>
-        </dl>
-      </Card>
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card title={t('seller')} data-testid="seller">
-          <dl className="flex flex-col gap-3">
-            <Field label={t('name')}>{invoice.seller.name}</Field>
-            <Field label={t('taxCode')}>{invoice.seller.taxCode}</Field>
-            <Field label={t('address')}>{invoice.seller.address}</Field>
-          </dl>
-        </Card>
-        <Card title={t('buyer')} data-testid="buyer">
-          <dl className="flex flex-col gap-3">
-            <Field label={t('name')}>{invoice.buyer.name}</Field>
-            <Field label={t('taxCode')}>{invoice.buyer.taxCode ?? none}</Field>
-            <Field label={t('address')}>{invoice.buyer.address}</Field>
-          </dl>
-        </Card>
-      </div>
-      <Card title={t('lines')}>
-        <Table data-testid="invoice-lines">
-          <TableCaption className="sr-only">{t('linesCaption')}</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t('description')}</TableHead>
-              <TableHead className="text-right">{t('quantity')}</TableHead>
-              <TableHead>{t('unit')}</TableHead>
-              <TableHead className="text-right">{t('unitPrice')}</TableHead>
-              <TableHead className="text-right">{t('vatRate')}</TableHead>
-              <TableHead className="text-right">{t('amount')}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {invoice.lines.map((line, i) => (
-              <TableRow key={`${i}-${line.description}`}>
-                <TableCell className="whitespace-normal">{line.description}</TableCell>
-                <TableCell className="text-right">{formatNumber(line.quantity, locale)}</TableCell>
-                <TableCell>{line.unit}</TableCell>
-                <TableCell className="text-right">{money(line.unitPrice)}</TableCell>
-                <TableCell className="text-right">{formatNumber(line.vatRate, locale)}%</TableCell>
-                <TableCell className="text-right">{money(line.amount)}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card title={t('vatBreakdown')}>
-          {invoice.vatBreakdown.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{none}</p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('vatRate')}</TableHead>
-                  <TableHead className="text-right">{t('vatBase')}</TableHead>
-                  <TableHead className="text-right">{t('vatAmount')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {invoice.vatBreakdown.map((v, i) => (
-                  <TableRow key={`${i}-${v.rate}`}>
-                    <TableCell>{formatNumber(v.rate, locale)}%</TableCell>
-                    <TableCell className="text-right">{money(v.base)}</TableCell>
-                    <TableCell className="text-right">{money(v.amount)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </Card>
-        <Card title={t('totals')}>
-          <dl className="flex flex-col gap-3">
-            <Field label={t('subtotal')}>{money(invoice.subtotal)}</Field>
-            <Field label={t('total')}>
-              <strong data-testid="invoice-total">{money(invoice.total)}</strong>
-            </Field>
-          </dl>
-        </Card>
-      </div>
-    </div>
   );
 }
 
@@ -214,13 +77,32 @@ function FailureReason({ code }: Readonly<{ code: string | null }>) {
   );
 }
 
-function Detail({ id }: Readonly<{ id: string }>) {
+/** What to offer under a load error: sign in again, nothing (it can never work), or retry. */
+function ErrorAction({ kind, retry }: Readonly<{ kind: DetailError['kind']; retry: () => void }>) {
+  const t = useTranslations('DocumentDetail');
+  if (kind === 'session') {
+    return (
+      <Link href="/login" className="text-sm underline">
+        {t('signIn')}
+      </Link>
+    );
+  }
+  if (kind === 'notFound' || kind === 'forbidden') return null;
+  return (
+    <Button type="button" variant="outline" size="sm" onClick={retry}>
+      {t('retry')}
+    </Button>
+  );
+}
+
+function Detail({ id, canEdit }: Readonly<{ id: string; canEdit: boolean }>) {
   const t = useTranslations('DocumentDetail');
   const ts = useTranslations('Status');
   const tt = useTranslations('Documents');
   const locale = useLocale();
   const { data, error, isPending, refetch } = useDocumentDetail(id);
 
+  const reviewing = data?.extraction != null; // the split view takes the height the shell has left
   let body: ReactNode;
   if (error && !data) {
     body = (
@@ -228,23 +110,18 @@ function Detail({ id }: Readonly<{ id: string }>) {
         kind="error"
         title={t(`errors.${error.kind}.title`)}
         description={t(`errors.${error.kind}.hint`)}
-        action={
-          error.kind === 'session' ? (
-            <Link href="/login" className="text-sm underline">
-              {t('signIn')}
-            </Link>
-          ) : error.kind === 'notFound' || error.kind === 'forbidden' ? null : (
-            <Button type="button" variant="outline" size="sm" onClick={() => void refetch()}>
-              {t('retry')}
-            </Button>
-          )
-        }
+        action={<ErrorAction kind={error.kind} retry={() => void refetch()} />}
       />
     );
   } else if (isPending || data === undefined) {
     body = <StatePanel kind="loading" title={t('loading')} />;
   } else if (data.extraction !== null) {
-    body = <InvoiceView invoice={data.extraction.data} />;
+    body = (
+      <>
+        {data.status === 'failed' && <FailureReason code={data.failureCode} />}
+        <ReviewScreen document={data} extraction={data.extraction} canEdit={canEdit} />
+      </>
+    );
   } else if (data.status === 'failed') {
     body = <FailureReason code={data.failureCode} />;
   } else if (
@@ -266,7 +143,7 @@ function Detail({ id }: Readonly<{ id: string }>) {
   }
 
   return (
-    <PageLayout data-testid="document-detail">
+    <PageLayout fill={reviewing} data-testid="document-detail">
       <Link href="/documents" className="text-sm underline">
         {t('back')}
       </Link>
@@ -290,11 +167,7 @@ function Detail({ id }: Readonly<{ id: string }>) {
             </time>
           </p>
         )}
-        {error && data && (
-          <p role="status" className="text-sm text-destructive">
-            {t('staleHint')}
-          </p>
-        )}
+        {error && data && <output className="text-sm text-destructive">{t('staleHint')}</output>}
       </header>
       {body}
     </PageLayout>

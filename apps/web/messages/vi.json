@@ -334,5 +334,61 @@
     "totals": "Tổng cộng",
     "subtotal": "Tiền trước thuế",
     "total": "Tổng thanh toán"
+  },
+  "Review": {
+    "viewer": {
+      "title": "Tài liệu gốc",
+      "toolbar": "Điều khiển xem tài liệu",
+      "zoomIn": "Phóng to",
+      "zoomOut": "Thu nhỏ",
+      "zoomReset": "Đặt lại mức phóng",
+      "prevPage": "Trang trước",
+      "nextPage": "Trang sau",
+      "pageOf": "Trang {page} / {total}",
+      "loading": "Đang tải tài liệu",
+      "loadError": "Không hiển thị được tệp gốc",
+      "imageAlt": "Ảnh hoá đơn",
+      "evidencePage": "Bằng chứng, trang {page}",
+      "evidenceHint": "Bấm vào một ô để xem AI lấy giá trị đó ở đâu.",
+      "evidenceXml": "Bằng chứng"
+    },
+    "warningsTitle": "{count, plural, =0 {Không có cảnh báo} other {# cảnh báo}}",
+    "noWarnings": "Số tiền, ngày và mã số thuế đều qua mọi kiểm tra.",
+    "legend": "Ô màu vàng cần xem lại: AI chưa chắc chắn, không cho biết độ tin cậy, hoặc một kiểm tra không đạt. Rê chuột hoặc chọn ô để xem lý do. Hệ thống không bao giờ tự sửa giá trị của bạn.",
+    "reason": {
+      "lowConfidence": "AI chỉ chắc {percent}% về giá trị này.",
+      "noMeta": "AI không cho biết độ tin cậy của ô này.",
+      "noMetaMany": "AI không cho biết độ tin cậy của: {fields}."
+    },
+    "warning": {
+      "LINES_SUM_MISMATCH": "Các dòng cộng lại là {expected}, nhưng tiền trước thuế ghi {actual}.",
+      "LINE_AMOUNT_MISMATCH": "Số lượng × đơn giá là {expected}, nhưng thành tiền ghi {actual}.",
+      "TOTAL_MISMATCH": "Tiền trước thuế cộng VAT là {expected}, nhưng tổng cộng ghi {actual}.",
+      "TAX_CODE_FORMAT": "Mã số thuế gồm 10 chữ số, hoặc 10 chữ số, dấu gạch ngang và 3 chữ số.",
+      "ISSUE_DATE_FUTURE": "Ngày lập hoá đơn nằm trong tương lai.",
+      "CURRENCY_NOT_ALLOWED": "Loại tiền này không nằm trong {allowed} loại được phép (VND, USD, EUR, JPY)."
+    },
+    "errors": {
+      "invalidType": "Nhập một giá trị hợp lệ.",
+      "tooSmall": "Không được để trống hoặc quá nhỏ.",
+      "tooBig": "Giá trị quá lớn.",
+      "invalidFormat": "Định dạng không hợp lệ.",
+      "invalid": "Giá trị không hợp lệ."
+    },
+    "hints": {
+      "taxCode": "10 chữ số, hoặc 10 chữ số + dấu gạch ngang + 3 chữ số. Để trống nếu không có."
+    },
+    "lineN": "Dòng {n}",
+    "addLine": "Thêm dòng",
+    "removeLine": "Xoá dòng {n}",
+    "removeColumn": "Xoá",
+    "sumOfLines": "Các dòng cộng lại là {amount}",
+    "check": "Kiểm tra dữ liệu",
+    "checked": "Dữ liệu hợp lệ. Chưa lưu gì: tính năng lưu và duyệt chưa có.",
+    "hasErrors": "{count, plural, other {# ô có lỗi}}. Hãy sửa để tiếp tục.",
+    "readOnly": "Bạn xem được hoá đơn này nhưng không được sửa.",
+    "outdated": "Các giá trị này thuộc phiên bản {extraction} của tài liệu; hiện là phiên bản {current}.",
+    "newerExtraction": "Có bản trích xuất mới hơn. Các chỉnh sửa ở đây được giữ cho tới khi bạn tải bản mới.",
+    "loadNewer": "Tải bản mới (bỏ chỉnh sửa)"
   }
 }

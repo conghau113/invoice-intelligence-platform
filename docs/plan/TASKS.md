@@ -22,9 +22,9 @@
 
 ```text
 Mốc hiện tại: M2 (còn kiểm tra cuối mốc) → M3
-Task hiện tại: T3.4 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.10, T3.1 đến T3.3 đã DONE)
+Task hiện tại: T3.5 (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.10, T3.1 đến T3.4 đã DONE)
 Chặn bởi: không
-Cập nhật: 2026-11-03
+Cập nhật: 2026-11-04
 ```
 
 
@@ -94,7 +94,7 @@ Cập nhật: 2026-11-03
 | T3.1 | FastAPI /extract: provider abstraction + structured output   | 4            | T2.8              | `DONE`       |             |         |
 | T3.2 | Worker: đường LLM, timeout, phân loại lỗi tạm thời/vĩnh viễn | 2.5          | T3.1, T2.9        | `DONE`     |             |         |
 | T3.3 | Kiểm tra nghiệp vụ: tổng tiền, thuế, MST, ngày               | 2.5          | T3.2              | `DONE`      |             | Agent: `rules.ts` (6 luật, hàm thuần `checkInvoice(invoice, today)`), worker lưu warnings, 64 test contracts; drill tắt dung sai → 8 đỏ |
-| T3.4 | Form review: RHF + Zod, xem tài liệu song song, tô field yếu | 4            | T3.3, T2.9, T1.6b | `TODO`     |             |         |
+| T3.4 | Form review: RHF + Zod, xem tài liệu song song, tô field yếu | 4            | T3.3, T2.9, T1.6b | `DONE`     |             | Agent: `features/review/` (RHF 7.91 + `@hookform/resolvers` 7.0.1 + `pdfjs-dist` 6.5.438, cả ba trong allow-list): viewer PDF (pdf.js, text layer tô evidence)/ảnh/XML có zoom, form dùng `InvoiceSchema` qua resolver, `useFieldArray` dòng hàng, cảnh báo `checkInvoice` tính lại khi gõ, ô yếu tô vàng + tooltip. Thêm `GET /documents/:id/file` (API + BFF; XML trả `text/plain`, `nosniff`, `sandbox`). Nút `Kiểm tra dữ liệu` chưa lưu gì (T3.5). Web 443 + api 310 unit, int `documents-http` 8; Playwright `review` 7; drill (bỏ resolver, đóng băng cảnh báo) → đỏ. Không dùng RTL: repo chưa có DOM test, logic ở hàm thuần + RHF `createFormControl` chạy trong node |
 | T3.5 | Duyệt/sửa: lưu bản sửa và diff AI vs người                   | 2.5          | T3.4              | `TODO`     |             |         |
 | T3.6 | Phòng prompt injection & rò PII trong pipeline trích xuất    | 2            | T3.1              | `TODO`     |             |         |
 
@@ -408,3 +408,9 @@ Cập nhật: 2026-11-03
 | 2026-11-03 | T3.3 | Không thêm cảnh báo "thiếu fieldMeta" (dòng T2.7 `invoiceFieldPaths`): helper đã xuất nhưng LLM thường trả meta thiếu, cảnh báo sẽ nhiễu. Field không có meta cần được T3.4 coi là "yếu" (tô vàng) | T3.4 |
 | 2026-11-03 | T3.3 | Mã cảnh báo (`RULE_CODES`) chưa có chữ vi/en vì web chưa hiển thị warnings | T3.4: thêm khoá vi.json/en.json cho 6 mã. T3.5: gọi `checkInvoice` khi lưu bản sửa; cảnh báo không chặn duyệt (PRD §5.4) |
 | 2026-11-03 | T3.3 | Chưa xử lý tiền âm (hóa đơn điều chỉnh) và dung sai ±1 cố định cho mọi hóa đơn nhiều dòng; `vatBreakdown.base` chưa được đối chiếu với `subtotal` | Khi có dữ liệu thật ở eval M4 |
+| 2026-11-03 | T3.4 | Chưa có CSP toàn ứng dụng (`script-src 'self'`, `worker-src 'self'`, `img-src 'self'`): viewer PDF/ảnh chỉ dựa vào header riêng của route file. security-auditor đề xuất như lớp thêm. `Content-Security-Policy: sandbox` làm viewer PDF gốc của Chrome không mở được URL file trực tiếp (chủ ý) | M7 (bảo mật/hardening) |
+| 2026-11-03 | T3.4 | Nút `Kiểm tra dữ liệu` chỉ chạy schema, không gửi gì; label đổi thành `Duyệt` và gắn `onValid` (prop có sẵn ở `InvoiceForm`) khi có API. Form chỉ đọc giá trị ban đầu một lần: bản trích xuất mới chỉ hiện banner, người dùng tự bấm tải. Chưa có cảnh báo rời trang khi còn chỉnh sửa chưa lưu | T3.5 |
+| 2026-11-03 | T3.4 | Ô yếu vẫn vàng sau khi người dùng sửa (độ tin cậy là của AI, không đổi); chưa có "đã xác nhận" từng ô. Evidence chỉ có `{page, text}` nên tô theo cụm chữ trong text layer, không có khung toạ độ; PDF scan (không text layer) chỉ nhảy trang, không tô | T4.x (khi đo độ tin cậy), nếu `evidence` có bbox thì đổi `PdfViewer` |
+| 2026-11-03 | T3.4 | MST sai dạng từ LLM vẫn làm extraction fail `EXTRACTION_SCHEMA_INVALID` (không tới form); form chặn MST sai dạng khi gõ. Không nới schema (Python sinh model từ nó) | T4.x đo tỷ lệ; quyết định nới schema nếu cao |
+| 2026-11-03 | T3.4 | `pdf_viewer.css` (~170 KB) được import trong chunk PDF tải lười; fonts chuẩn/cmap của pdf.js chưa cấu hình nên PDF không nhúng font có thể hiển thị sai chữ. XML lớn (tới 10 MB) hiển thị nguyên trong `<pre>` | Khi có PDF/XML thật lớn (M4/M7) |
+| 2026-11-03 | T3.4 | Playwright `app-shell` ca `375px` đỏ khi chạy với `next dev`: nút "N" của Next dev-tools che nút menu nên không bấm được (ảnh `test-results`). CI chạy bản production nên không gặp; không liên quan thay đổi này (60/61 test xanh) | Ai chạy e2e local: tắt dev indicator (`devIndicators: false`) hoặc chạy bản build |

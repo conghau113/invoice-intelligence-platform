@@ -14,5 +14,7 @@ export default async function DocumentDetailPage({
   if (!UUID.test(id) || me.kind !== 'ok' || !me.data.permissions.includes('document:read')) {
     notFound();
   }
-  return <DocumentDetailScreen id={id} />;
+  // Editing the form needs the same permission as approving; a viewer sees it read-only.
+  const canApprove = me.data.permissions.includes('document:approve');
+  return <DocumentDetailScreen id={id} canApprove={canApprove} />;
 }

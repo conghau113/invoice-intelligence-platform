@@ -3,10 +3,12 @@ import {
   Controller,
   Get,
   Headers,
+  Param,
   Post,
   Query,
   Req,
   Res,
+  StreamableFile,
   UnauthorizedException,
   UploadedFile,
   UseGuards,
@@ -19,6 +21,7 @@ import { SkipTenantTransaction } from '../../../db/skip-tenant-transaction.decor
 import type { AuthenticatedRequest } from '../../auth/http/authenticated-request';
 import { RequirePermission } from '../../auth/http/require-permission.decorator';
 import { DocumentsListService, type DocumentPage } from '../application/documents-list.service';
+import { DocumentFileService } from '../application/document-file.service';
 import { DocumentsService, type DocumentView } from '../application/documents.service';
 import { parseDocumentListQuery } from '../domain/document-list-query';
 import { IDEMPOTENCY_KEY_REQUIRED, parseIdempotencyKey } from '../domain/idempotency';
@@ -31,6 +34,7 @@ export class DocumentsController {
   constructor(
     private readonly documents: DocumentsService,
     private readonly list: DocumentsListService,
+    private readonly files: DocumentFileService,
   ) {}
 
   /** API.md "Documents": page/limit pagination with a total (ADR 0019), filters and sort. Runs in the request's tenant transaction. */
@@ -42,6 +46,26 @@ export class DocumentsController {
   ): Promise<DocumentPage> {
     if (!req.user) throw new UnauthorizedException();
     return this.list.list(req.user.tenantId, parseDocumentListQuery(query));
+  }
+
+  /**
+   * API.md: streams the original file after the permission and tenant check. The headers make the
+   * response inert if a browser opens it directly: `nosniff` and `sandbox` stop any script or
+   * markup inside from running, `no-store` keeps it out of shared caches. The viewer fetches the
+   * bytes itself (pdf.js), so the sandbox does not get in its way.
+   */
+  @RequirePermission('document:read')
+  @Get(':id/file')
+  async file(
+    @Param('id') id: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<StreamableFile> {
+    const file = await this.files.open(id);
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Content-Security-Policy', 'sandbox');
+    res.setHeader('Content-Disposition', 'inline');
+    res.setHeader('Cache-Control', 'private, no-store');
+    return new StreamableFile(file.stream, { type: file.contentType });
   }
 
   /**
