@@ -29,7 +29,7 @@ Accountants at small and mid-size companies receive supplier invoices as e-invoi
 | Header | Language switcher, tenant switcher, notifications | all |
 
 ## 5. Business rules
-1. Line amounts sum to the subtotal; subtotal + VAT = total (±1 minor-unit rounding tolerance).
+1. Line amounts sum to the subtotal; subtotal + VAT = total (±1 minor-unit rounding tolerance). A total of 0 is unusual and gets a warning even when the sums agree.
 2. Vietnamese tax code: 10 digits, or 10 digits + `-` + 3 digits for branches.
 3. Issue date cannot be in the future; currency must be in the allowed list (VND, USD, EUR, JPY at v1).
 4. Rule violations are **warnings** shown on the field; the system never silently changes numbers.

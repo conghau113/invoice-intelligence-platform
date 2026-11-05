@@ -1,5 +1,6 @@
 from functools import lru_cache
 from typing import Literal
+from urllib.parse import urlsplit
 
 from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -36,6 +37,13 @@ class Settings(BaseSettings):
         # The fallback receives the API key and the invoice: never over plain http.
         if self.llm_fallback_base_url and not self.llm_fallback_base_url.startswith("https://"):
             raise ValueError("LLM_FALLBACK_BASE_URL must start with https://")
+        # A key inside the URL is copied to wherever the URL is written; it belongs in a header.
+        if self.llm_fallback_base_url:
+            url = urlsplit(self.llm_fallback_base_url)
+            if url.username or url.password or url.query or url.fragment:
+                raise ValueError("LLM_FALLBACK_BASE_URL must not carry credentials or a query")
+        if self.log_level == "debug" and self.env == "production":
+            raise ValueError("LOG_LEVEL=debug is not allowed when ENV=production")
         return self
 
 

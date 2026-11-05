@@ -28,7 +28,7 @@ Invoice
 
 `fieldMeta` is part of the Invoice, so `extractions.data` stores it too. `fieldPath` is a fixed grammar (`seller.name`, `total`, `lines.0.amount`, `vatBreakdown.1.rate`, …); unknown keys are rejected, and business-rule warnings and field corrections use the same paths. `fieldMeta` need not cover every field. "No value" is always `null` with the key present, never a missing key (so Zod, JSON Schema and pydantic agree). `evidence` is `null` when there is no page (XML); it holds an excerpt of the document, so never log it. The buyer's tax code may be `null` (individual buyers).
 
-Business rules (shared TS code, also run in the worker): lines sum to subtotal; subtotal + VAT = total (±1 minor unit rounding); tax code **format** is 10 digits or 10+3 (`0123456789-001`); issue date not in the future; currency in an allow-list. Rules produce **warnings**, they never auto-correct numbers. The tax-code check digit is deliberately **not** validated: synthetic data uses invalid check digits so it can never match a real business (docs/LEGAL.md).
+Business rules (shared TS code, also run in the worker): lines sum to subtotal; subtotal + VAT = total (±1 minor unit rounding); a total of 0 is flagged even when the sums agree; tax code **format** is 10 digits or 10+3 (`0123456789-001`); issue date not in the future; currency in an allow-list. Rules produce **warnings**, they never auto-correct numbers. The tax-code check digit is deliberately **not** validated: synthetic data uses invalid check digits so it can never match a real business (docs/LEGAL.md).
 
 ## 4. Extraction
 

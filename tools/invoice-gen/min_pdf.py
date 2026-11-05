@@ -53,22 +53,39 @@ def lines_for(inv: dict) -> list[tuple[int, str]]:
     return rows
 
 
-def build_pdf(inv: dict) -> bytes:
+def build_pdf(inv: dict, hidden: str | None = None) -> bytes:
+    """`hidden` (test fixtures only): text a viewer does not paint, placed where PDFs can hide it."""
     y = 790
     ops = []
     for size, text in lines_for(inv):
         ops.append(f"BT /F1 {size} Tf 40 {y} Td ({ascii_text(text)}) Tj ET")
         y -= size + 14
     ops.append("BT /F1 40 Tf 120 300 Td (SAMPLE) Tj ET")  # watermark
+    if hidden is not None:
+        secret = ascii_text(hidden)
+        ops.append(f"BT /F1 11 Tf 3 Tr 40 80 Td ({secret}) Tj ET")  # render mode 3: invisible
+        ops.append(f"q 1 1 1 rg BT /F1 11 Tf 40 60 Td ({secret}) Tj ET Q")  # white on white
     stream = "\n".join(ops).encode("latin-1")
+    annots = b"/Annots [6 0 R] " if hidden is not None else b""
     objs = [
         b"<< /Type /Catalog /Pages 2 0 R >>",
         b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
         b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] "
-        b"/Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+        b"/Resources << /Font << /F1 4 0 R >> >> " + annots + b"/Contents 5 0 R >>",
         b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
         b"<< /Length " + str(len(stream)).encode() + b" >>\nstream\n" + stream + b"\nendstream",
     ]
+    info_ref = ""
+    if hidden is not None:
+        secret_bytes = ascii_text(hidden).encode("latin-1")
+        # No appearance stream and the Hidden flag (F 2): an annotation that carries text only.
+        objs.append(
+            b"<< /Type /Annot /Subtype /Text /Rect [0 0 1 1] /F 2 /Contents ("
+            + secret_bytes
+            + b") >>"
+        )
+        objs.append(b"<< /Title (" + secret_bytes + b") >>")  # document metadata
+        info_ref = f" /Info {len(objs)} 0 R"
     out = bytearray(b"%PDF-1.4\n")
     offsets = []
     for i, body in enumerate(objs, 1):
@@ -78,7 +95,9 @@ def build_pdf(inv: dict) -> bytes:
     out += f"xref\n0 {len(objs) + 1}\n0000000000 65535 f \n".encode()
     for off in offsets:
         out += f"{off:010d} 00000 n \n".encode()
-    out += f"trailer\n<< /Size {len(objs) + 1} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n".encode()
+    out += (
+        f"trailer\n<< /Size {len(objs) + 1} /Root 1 0 R{info_ref} >>\nstartxref\n{xref}\n%%EOF\n"
+    ).encode()
     return bytes(out)
 
 

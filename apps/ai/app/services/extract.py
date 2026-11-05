@@ -5,6 +5,7 @@ nothing else is done with it (never executed, never used as a query). Logs carry
 timings only, never document text, field values or provider bodies (CLAUDE.md).
 """
 
+import hashlib
 import json
 import logging
 import time
@@ -142,7 +143,9 @@ def extract_llm(images: list[ImagePart], provider: LLMProvider) -> dict[str, Any
         out_tokens += result.output_tokens  # failed attempts are billed too
         try:
             invoice = _to_contract(result.text)
-        except (ValidationError, ValueError) as err:  # JSONDecodeError is a ValueError
+        # JSONDecodeError is a ValueError. RecursionError: absurdly nested JSON; uncaught it would
+        # be a 500, which the worker retries, paying for the model again on every attempt.
+        except (ValidationError, ValueError, RecursionError) as err:
             last_problem = (
                 describe_errors(err) if isinstance(err, ValidationError) else type(err).__name__
             )
@@ -181,6 +184,14 @@ def extract_llm(images: list[ImagePart], provider: LLMProvider) -> dict[str, Any
 def extract(
     data: bytes, source_type: SourceType, get_provider: Callable[[], LLMProvider]
 ) -> dict[str, Any]:
+    # The hash is the same value as documents.content_hash, so a log line can be tied to a document
+    # without this stateless service knowing its id or anything that is written in it.
+    log.info(
+        "extract start source=%s bytes=%d sha256=%s",
+        source_type,
+        len(data),
+        hashlib.sha256(data).hexdigest(),
+    )
     if source_type == "xml":
         try:
             invoice = parse_xml_invoice(data)

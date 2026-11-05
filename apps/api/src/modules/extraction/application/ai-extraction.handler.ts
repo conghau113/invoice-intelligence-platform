@@ -70,10 +70,11 @@ export class AiExtractionHandler implements ExtractionHandler {
     });
     const measuredMs = Date.now() - started;
     // Business rules (T3.3, packages/contracts): warnings on fields, no number is changed. The
-    // same function runs in the web form and, from T3.5, when a correction is saved.
+    // same function runs in the web form and, from T3.5, when a correction is saved. The rules come
+    // first: on the same code and path the first one wins, so the AI service cannot restate a result.
     const warnings = mergeWarnings(
-      result.warnings,
       checkInvoice(result.invoice, todayInVietnam(new Date())),
+      result.warnings,
     );
 
     await this.tenantDb.run(job.tenantId, (tx) =>

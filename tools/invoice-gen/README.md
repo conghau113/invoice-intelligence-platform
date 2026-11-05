@@ -12,6 +12,15 @@ Writes `invoice-NN.xml` and `invoice-NN.expected.json` (ground truth) to
 and compares with the committed files. Data is synthetic: tax codes get a wrong check digit and
 names carry `SAMPLE` (docs/LEGAL.md). Never commit real invoices.
 
+```bash
+cd apps/ai && uv run python ../../tools/invoice-gen/min_injection.py
+```
+
+Writes the attack fixtures of T3.6: `apps/ai/tests/fixtures/injection/` (the same invoice as PDF and
+XML with an injection sentence as a line description, plus a clean PDF and its twin with the sentence
+hidden) and `packages/contracts/fixtures/injection.obeyed-*.json` (what a model that obeyed would
+answer). `tests/test_injection.py` regenerates them and compares with the committed files.
+
 ## XML structure the parser supports
 
 A subset of the public Vietnamese e-invoice element names:

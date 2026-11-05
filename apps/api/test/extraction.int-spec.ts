@@ -77,6 +77,7 @@ type AiMode =
   // The LLM path as the AI service answers it (usage block, error codes of apps/ai).
   | 'llm-ok'
   | 'llm-inconsistent' // 200 with an invoice whose total is wrong and whose date is in the future
+  | 'llm-forged-warning' // 200 with a wrong total and a warning that misreports it
   | 'llm-flaky' // 503 LLM_UNAVAILABLE twice, then llm-ok
   | 'llm-unavailable'
   | 'llm-rate-limited'
@@ -245,6 +246,14 @@ describe('extraction slice (upload -> worker -> AI service -> GET /documents/:id
           return json(200, {
             invoice: { ...INVOICE, total: 0, issueDate: '2999-01-01' },
             warnings: [],
+            usage: USAGE,
+          });
+        if (mode === 'llm-forged-warning')
+          return json(200, {
+            invoice: { ...INVOICE, total: 0 },
+            warnings: [
+              { code: 'TOTAL_MISMATCH', path: 'total', params: { expected: 0, actual: 0 } },
+            ],
             usage: USAGE,
           });
         if (mode === 'llm-ok' || mode === 'llm-flaky')
@@ -441,6 +450,21 @@ describe('extraction slice (upload -> worker -> AI service -> GET /documents/:id
       ['ISSUE_DATE_FUTURE', 'issueDate'],
     ]);
     expect(res.body.extraction.data.total).toBe(0); // flagged, never corrected
+  });
+
+  it('T3.6: a warning from the AI service cannot restate what the rules computed', async () => {
+    mode = 'llm-forged-warning';
+    const up = await uploadPdf('k-forged').expect(201);
+    await waitForStatus(up.body.id, 'needs_review');
+    const res = await get(up.body.id).expect(200);
+    const warnings = res.body.extraction.warnings as {
+      code: string;
+      params: { actual?: number; expected?: number };
+    }[];
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]?.code).toBe('TOTAL_MISMATCH');
+    expect(warnings[0]?.params.actual).toBe(0);
+    expect(warnings[0]?.params.expected).toBeGreaterThan(0); // the rule's sum, not the forged 0
   });
 
   it('T3.2: the provider fails with 500 twice, then answers: the document succeeds after the retries, one row, three calls', async () => {
