@@ -4,6 +4,7 @@ import { TenantDbService } from '../../../db/tenant-db.service';
 import { auditLogs, documents } from '../../../db/schema';
 import {
   assertTransition,
+  DocumentVersionConflictError,
   isDocumentStatus,
   nextVersion,
   type DocumentStatus,
@@ -15,6 +16,12 @@ export interface TransitionContext {
   actorId: string | null;
   /** Machine-readable reason (e.g. a failure code). Never document content or PII. */
   code?: string;
+  /**
+   * The version the caller read earlier. Compared under the row lock, so nothing can change between
+   * the check and the update. The status check is still needed: approving does not bump the version,
+   * so two tabs that both read version 1 are told apart by `approved` -> `approved` being invalid.
+   */
+  expectedVersion?: number;
 }
 
 export interface TransitionResult {
@@ -62,6 +69,9 @@ export class DocumentStateMachine {
     if (!row) throw new DocumentNotFoundError();
     if (!isDocumentStatus(row.status)) throw new Error('Unknown document status in database');
 
+    if (ctx.expectedVersion !== undefined && ctx.expectedVersion !== row.version) {
+      throw new DocumentVersionConflictError();
+    }
     assertTransition(row.status, to);
     const version = nextVersion(row.status, to, row.version);
 

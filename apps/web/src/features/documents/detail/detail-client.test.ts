@@ -26,8 +26,16 @@ const doc = (over: object = {}) => ({
     warnings: [],
     createdAt: '2026-10-26T03:04:06.000Z',
   },
+  invoice: null,
   ...over,
 });
+const APPROVED = {
+  id: '7c6d5e4f-3a2b-4c1d-8e9f-0a1b2c3d4e5f',
+  documentVersion: 1,
+  data: loadInvoiceFixture(),
+  warnings: [],
+  approvedAt: '2026-10-27T03:04:06.000Z',
+};
 const kind = async () => {
   try {
     await fetchDocumentDetail(ID);
@@ -57,6 +65,15 @@ describe('fetchDocumentDetail', () => {
     expect((await fetchDocumentDetail(ID)).extraction?.warnings).toEqual([w]);
     fetchMock.mockResolvedValueOnce(
       Response.json(doc({ extraction: { ...doc().extraction, warnings: ['free text'] } })),
+    );
+    await expect(fetchDocumentDetail(ID)).rejects.toBeInstanceOf(DetailError);
+  });
+
+  it('accepts an approved invoice and rejects a stored one that breaks the schema', async () => {
+    fetchMock.mockResolvedValueOnce(Response.json(doc({ status: 'approved', invoice: APPROVED })));
+    expect((await fetchDocumentDetail(ID)).invoice?.id).toBe(APPROVED.id);
+    fetchMock.mockResolvedValueOnce(
+      Response.json(doc({ invoice: { ...APPROVED, data: { invoiceNo: 'SAMPLE' } } })),
     );
     await expect(fetchDocumentDetail(ID)).rejects.toBeInstanceOf(DetailError);
   });

@@ -22,6 +22,16 @@ const detailSchema = z.object({
       createdAt: z.iso.datetime(),
     })
     .nullable(),
+  /** What a person approved; the review screen shows this instead of the AI's values. */
+  invoice: z
+    .object({
+      id: z.uuid(),
+      documentVersion: z.number().int(),
+      data: InvoiceSchema,
+      warnings: z.array(RuleWarningSchema),
+      approvedAt: z.iso.datetime(),
+    })
+    .nullable(),
 });
 export type DocumentDetail = z.infer<typeof detailSchema>;
 

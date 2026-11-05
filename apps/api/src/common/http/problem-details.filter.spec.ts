@@ -61,6 +61,24 @@ describe('ProblemDetailsFilter', () => {
     });
   });
 
+  it('body-parser errors keep their 4xx status, a fixed text and no quote of the body', () => {
+    const parserError = (type: string, status: number) =>
+      Object.assign(new Error('Unexpected token in SAMPLE-SECRET'), { type, status });
+
+    const tooLarge = run(parserError('entity.too.large', 413));
+    expect(tooLarge.res.status).toHaveBeenCalledWith(413);
+    expect(tooLarge.body.code).toBe('BODY_TOO_LARGE');
+
+    const malformed = run(parserError('entity.parse.failed', 400));
+    expect(malformed.res.status).toHaveBeenCalledWith(400);
+    expect(malformed.body.code).toBe('BODY_INVALID');
+    expect(JSON.stringify(malformed.body)).not.toContain('SAMPLE-SECRET');
+
+    // A 5xx with the same shape is not a client mistake.
+    expect(run(parserError('stream.encoding.set', 500)).res.status).toHaveBeenCalledWith(500);
+    expect(logError).toHaveBeenCalledTimes(1);
+  });
+
   it('never echoes the query string, even for Nest built-in 404 messages', () => {
     const { body } = run(new NotFoundException('Cannot GET /x?q=Nguyen'));
     expect(JSON.stringify(body)).not.toContain('Nguyen');

@@ -19,7 +19,7 @@ export function DocumentDetailScreen({
 }: Readonly<{ id: string; canApprove: boolean }>) {
   return (
     <QueryProvider>
-      <Detail id={id} canEdit={canApprove} />
+      <Detail id={id} canApprove={canApprove} />
     </QueryProvider>
   );
 }
@@ -95,7 +95,7 @@ function ErrorAction({ kind, retry }: Readonly<{ kind: DetailError['kind']; retr
   );
 }
 
-function Detail({ id, canEdit }: Readonly<{ id: string; canEdit: boolean }>) {
+function Detail({ id, canApprove }: Readonly<{ id: string; canApprove: boolean }>) {
   const t = useTranslations('DocumentDetail');
   const ts = useTranslations('Status');
   const tt = useTranslations('Documents');
@@ -119,7 +119,12 @@ function Detail({ id, canEdit }: Readonly<{ id: string; canEdit: boolean }>) {
     body = (
       <>
         {data.status === 'failed' && <FailureReason code={data.failureCode} />}
-        <ReviewScreen document={data} extraction={data.extraction} canEdit={canEdit} />
+        <ReviewScreen
+          document={data}
+          extraction={data.extraction}
+          canApprove={canApprove}
+          onChanged={() => void refetch()}
+        />
       </>
     );
   } else if (data.status === 'failed') {

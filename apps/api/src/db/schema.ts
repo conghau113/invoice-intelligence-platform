@@ -3,6 +3,8 @@ import {
   bigint,
   char,
   check,
+  date,
+  foreignKey,
   index,
   inet,
   integer,
@@ -102,6 +104,8 @@ export const documents = pgTable(
   },
   (t) => [
     unique('documents_tenant_hash_unique').on(t.tenantId, t.contentHash),
+    // Target of the composite foreign keys below: a child row cannot point at another tenant's parent.
+    unique('documents_id_tenant_unique').on(t.id, t.tenantId),
     // The list page (GET /documents) orders by (created_at, id); `id` is the tie-breaker that keeps pages deterministic.
     index('documents_tenant_created_idx').on(t.tenantId, t.createdAt.desc(), t.id.desc()),
     index('documents_tenant_status_created_idx').on(
@@ -155,10 +159,127 @@ export const extractions = pgTable(
   },
   (t) => [
     unique('extractions_document_version_unique').on(t.documentId, t.documentVersion),
+    unique('extractions_id_tenant_unique').on(t.id, t.tenantId),
     index('extractions_tenant_created_idx').on(t.tenantId, t.createdAt.desc()),
     check('extractions_source_check', sql`${t.source} in ('pdf', 'image', 'xml')`),
     check('extractions_document_version_check', sql`${t.documentVersion} >= 1`),
     check('extractions_latency_check', sql`${t.latencyMs} >= 0`),
+  ],
+);
+
+/**
+ * What a person approved (DATA_MODEL.md). Written only by approval, at most one row per document
+ * (`UNIQUE (document_id)` is also the last line of defence against a double approval). The columns
+ * are what aggregate questions filter on; `data` is the whole approved Invoice incl. `fieldMeta`,
+ * validated by `InvoiceSchema`, from which the columns are derived in the same insert. The foreign
+ * keys are composite because an ordinary FK check ignores RLS and would accept another tenant's id.
+ */
+export const invoices = pgTable(
+  'invoices',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    documentId: uuid('document_id').notNull(),
+    documentVersion: integer('document_version').notNull(),
+    invoiceNo: text('invoice_no').notNull(),
+    series: text('series').notNull(),
+    issueDate: date('issue_date', { mode: 'string' }).notNull(),
+    sellerTaxCode: text('seller_tax_code').notNull(),
+    sellerName: text('seller_name').notNull(),
+    // Individual buyers have no tax code.
+    buyerTaxCode: text('buyer_tax_code'),
+    currency: char('currency', { length: 3 }).notNull(),
+    // Minor units. `mode: 'number'` is safe: InvoiceSchema only accepts safe integers.
+    subtotal: bigint('subtotal', { mode: 'number' }).notNull(),
+    vatAmount: bigint('vat_amount', { mode: 'number' }).notNull(),
+    total: bigint('total', { mode: 'number' }).notNull(),
+    data: jsonb('data').notNull(),
+    // The rule warnings at approval: they never block it (PRD 5.4), so keep what was accepted.
+    warnings: jsonb('warnings')
+      .notNull()
+      .default(sql`'[]'::jsonb`),
+    // No FK, like `uploaded_by`: users are provisioned lazily.
+    approvedBy: uuid('approved_by').notNull(),
+    approvedAt: timestamp('approved_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    unique('invoices_document_unique').on(t.documentId),
+    unique('invoices_id_tenant_unique').on(t.id, t.tenantId),
+    foreignKey({
+      name: 'invoices_document_tenant_fk',
+      columns: [t.documentId, t.tenantId],
+      foreignColumns: [documents.id, documents.tenantId],
+    }),
+    index('invoices_tenant_issue_date_idx').on(t.tenantId, t.issueDate),
+    index('invoices_tenant_seller_tax_code_idx').on(t.tenantId, t.sellerTaxCode),
+    check('invoices_document_version_check', sql`${t.documentVersion} >= 1`),
+  ],
+);
+
+/** One row per line of an approved invoice. `line_no` is 1-based; its field path is `lines.<line_no - 1>`. */
+export const invoiceLines = pgTable(
+  'invoice_lines',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    invoiceId: uuid('invoice_id').notNull(),
+    lineNo: integer('line_no').notNull(),
+    description: text('description').notNull(),
+    // Unconstrained numeric: a fixed scale would silently round what the person approved.
+    quantity: numeric('quantity').notNull(),
+    unit: text('unit').notNull(),
+    unitPrice: bigint('unit_price', { mode: 'number' }).notNull(),
+    vatRate: numeric('vat_rate').notNull(),
+    amount: bigint('amount', { mode: 'number' }).notNull(),
+  },
+  (t) => [
+    unique('invoice_lines_invoice_line_unique').on(t.invoiceId, t.lineNo),
+    foreignKey({
+      name: 'invoice_lines_invoice_tenant_fk',
+      columns: [t.invoiceId, t.tenantId],
+      foreignColumns: [invoices.id, invoices.tenantId],
+    }),
+    check('invoice_lines_line_no_check', sql`${t.lineNo} >= 1`),
+  ],
+);
+
+/**
+ * One row per field the reviewer changed compared with the extraction. Computed by the server, never
+ * taken from the client. Values are document content: never log them. A NULL value means the field
+ * had no value on that side (`buyer.taxCode`, or a line that was added or removed).
+ */
+export const fieldCorrections = pgTable(
+  'field_corrections',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    extractionId: uuid('extraction_id').notNull(),
+    // The document version approved: re-approving after a reopen compares with the same extraction.
+    documentVersion: integer('document_version').notNull(),
+    fieldPath: text('field_path').notNull(),
+    aiValue: jsonb('ai_value'),
+    humanValue: jsonb('human_value'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    unique('field_corrections_extraction_version_path_unique').on(
+      t.extractionId,
+      t.documentVersion,
+      t.fieldPath,
+    ),
+    foreignKey({
+      name: 'field_corrections_extraction_tenant_fk',
+      columns: [t.extractionId, t.tenantId],
+      foreignColumns: [extractions.id, extractions.tenantId],
+    }),
+    index('field_corrections_tenant_path_idx').on(t.tenantId, t.fieldPath),
+    check('field_corrections_document_version_check', sql`${t.documentVersion} >= 1`),
   ],
 );
 
