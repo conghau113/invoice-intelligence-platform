@@ -72,6 +72,34 @@ def test_fallback_url_must_be_https(monkeypatch: pytest.MonkeyPatch, url: str) -
     assert Settings(_env_file=None).llm_fallback_base_url == "https://llm.example/v1"
 
 
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://user:pass@llm.example/v1",
+        "https://user@llm.example/v1",
+        "https://llm.example/v1?key=abc",
+        "https://llm.example/v1#key=abc",
+    ],
+)
+def test_fallback_url_must_not_carry_credentials(monkeypatch: pytest.MonkeyPatch, url: str) -> None:
+    monkeypatch.setenv("LLM_FALLBACK_BASE_URL", url)
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None)
+
+
+def test_debug_logging_is_refused_in_production(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("ENV", "production")
+    monkeypatch.setenv("LOG_LEVEL", "debug")
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None)
+
+
+def test_debug_logging_is_allowed_outside_production(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("ENV", "development")
+    monkeypatch.setenv("LOG_LEVEL", "debug")
+    assert Settings(_env_file=None).log_level == "debug"
+
+
 def test_llm_timeout_must_fit_the_workers_60s_abort(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("LLM_TIMEOUT_S", "55")
     assert Settings(_env_file=None).llm_timeout_s == 55

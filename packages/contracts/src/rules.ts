@@ -12,6 +12,7 @@ export const RULE_CODES = [
   'LINES_SUM_MISMATCH', // sum of lines[].amount != subtotal           (path: subtotal)
   'LINE_AMOUNT_MISMATCH', // round(quantity * unitPrice) != amount      (path: lines.i.amount)
   'TOTAL_MISMATCH', // subtotal + sum of VAT != total                  (path: total)
+  'TOTAL_ZERO', // the sums agree but the total is 0                   (path: total)
   'TAX_CODE_FORMAT', // not 10 digits or 10-3 digits                    (path: *.taxCode)
   'ISSUE_DATE_FUTURE', // date after today in Vietnam                   (path: issueDate)
   'CURRENCY_NOT_ALLOWED', // outside ALLOWED_CURRENCIES                 (path: currency)
@@ -99,6 +100,11 @@ export function checkInvoice(invoice: Invoice, today: string): RuleWarning[] {
       path: 'total',
       params: { expected: invoice.subtotal + vat, actual: invoice.total },
     });
+  } else if (invoice.total === 0) {
+    // Sums cannot see a document that talked the model into zeroing every amount (LLM01). A real
+    // zero invoice exists (free goods), so this only asks a human to look. Not raised next to
+    // TOTAL_MISMATCH: that field is already flagged, a second message adds nothing.
+    out.push({ code: 'TOTAL_ZERO', path: 'total', params: {} });
   }
 
   if (!TAX_CODE.test(invoice.seller.taxCode)) {

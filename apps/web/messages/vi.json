@@ -364,6 +364,7 @@
       "LINES_SUM_MISMATCH": "Các dòng cộng lại là {expected}, nhưng tiền trước thuế ghi {actual}.",
       "LINE_AMOUNT_MISMATCH": "Số lượng × đơn giá là {expected}, nhưng thành tiền ghi {actual}.",
       "TOTAL_MISMATCH": "Tiền trước thuế cộng VAT là {expected}, nhưng tổng cộng ghi {actual}.",
+      "TOTAL_ZERO": "Tổng cộng bằng 0. Hãy so lại các số tiền với tài liệu gốc.",
       "TAX_CODE_FORMAT": "Mã số thuế gồm 10 chữ số, hoặc 10 chữ số, dấu gạch ngang và 3 chữ số.",
       "ISSUE_DATE_FUTURE": "Ngày lập hoá đơn nằm trong tương lai.",
       "CURRENCY_NOT_ALLOWED": "Loại tiền này không nằm trong {allowed} loại được phép (VND, USD, EUR, JPY)."

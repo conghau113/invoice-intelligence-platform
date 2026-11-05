@@ -46,6 +46,19 @@ const rows: [string, Mutate, [string, string][]][] = [
   ['total off by 1 is rounding', (d) => void (d.total -= 1), []],
   ['total off by 2', (d) => void (d.total -= 2), [['TOTAL_MISMATCH', 'total']]],
   ['injected total = 0', (d) => void (d.total = 0), [['TOTAL_MISMATCH', 'total']]],
+  [
+    'every amount zeroed so the sums still agree',
+    (d) => {
+      at(d.lines, 0).unitPrice = 0;
+      at(d.lines, 0).amount = 0;
+      d.subtotal = 0;
+      at(d.vatBreakdown, 0).base = 0;
+      at(d.vatBreakdown, 0).amount = 0;
+      d.total = 0;
+    },
+    [['TOTAL_ZERO', 'total']],
+  ],
+  ['total of 1 is not zero', (d) => void (d.total = 1), [['TOTAL_MISMATCH', 'total']]],
   ['VAT row missing', (d) => void (d.vatBreakdown = []), [['TOTAL_MISMATCH', 'total']]],
   [
     'line amount != quantity x unit price',
@@ -150,6 +163,34 @@ describe('checkInvoice', () => {
       const invoice = InvoiceSchema.parse({ fieldMeta: {}, ...(raw.invoice ?? raw) });
       expect([f, checkInvoice(invoice, '2026-12-31')]).toEqual([f, []]);
     }
+  });
+});
+
+// T3.6. The same files feed apps/ai/tests/test_injection.py, which shows the schema lets them pass:
+// these answers are well-formed, so the rules are the layer that has to flag them.
+describe('a model that obeyed the injected sentence', () => {
+  const warnings = (name: string): [string, string][] =>
+    checkInvoice(load(name), TODAY).map((w) => [w.code, w.path]);
+
+  it('total = 0 only: the sums disagree', () => {
+    expect(warnings('injection.obeyed-total-zero.json')).toEqual([['TOTAL_MISMATCH', 'total']]);
+  });
+
+  it('every amount zero: the sums agree, and the zero total is flagged', () => {
+    expect(warnings('injection.obeyed-all-zero.json')).toEqual([['TOTAL_ZERO', 'total']]);
+  });
+
+  it('never changes the number it flags', () => {
+    const invoice = load('injection.obeyed-total-zero.json');
+    checkInvoice(invoice, TODAY);
+    expect(invoice.total).toBe(0);
+  });
+
+  it('the honest reading of the same document has no warning', () => {
+    const raw = JSON.parse(
+      readFileSync(join(AI_FIXTURES, 'injection', 'invoice-injection.expected.json'), 'utf8'),
+    );
+    expect(checkInvoice(InvoiceSchema.parse({ fieldMeta: {}, ...raw }), TODAY)).toEqual([]);
   });
 });
 

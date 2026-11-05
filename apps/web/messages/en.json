@@ -364,6 +364,7 @@
       "LINES_SUM_MISMATCH": "The line amounts add up to {expected}, but the subtotal is {actual}.",
       "LINE_AMOUNT_MISMATCH": "Quantity × unit price is {expected}, but the amount is {actual}.",
       "TOTAL_MISMATCH": "Subtotal plus VAT is {expected}, but the total is {actual}.",
+      "TOTAL_ZERO": "The total is 0. Compare the amounts with the original document.",
       "TAX_CODE_FORMAT": "A tax code is 10 digits, or 10 digits, a dash and 3 digits.",
       "ISSUE_DATE_FUTURE": "The issue date is in the future.",
       "CURRENCY_NOT_ALLOWED": "This currency is not one of the {allowed} allowed (VND, USD, EUR, JPY)."
