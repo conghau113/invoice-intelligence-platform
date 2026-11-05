@@ -71,6 +71,20 @@
       "when": 1793016324537,
       "tag": "0009_extractions_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793815610234,
+      "tag": "0010_invoices",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793815616359,
+      "tag": "0011_invoices_rls",
+      "breakpoints": true
     }
   ]
 }

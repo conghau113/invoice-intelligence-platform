@@ -35,6 +35,7 @@ const base: DocumentDetail = {
     warnings: [],
     createdAt: '2026-10-26T03:04:06.000Z',
   },
+  invoice: null,
 };
 const state = { data: undefined, error: null, isPending: false, refetch: () => undefined };
 
@@ -57,7 +58,7 @@ describe('DocumentDetailScreen', () => {
     expect(html).toContain('data-source="xml"');
     expect(html).toContain('data-testid="invoice-data"');
     expect(html).toContain('Needs review');
-    expect(html).toContain('data-testid="check-form"'); // may edit
+    expect(html).toContain('data-testid="approve-form"'); // may edit
     expect(html).toContain('No warnings');
     // Money inputs are controlled, so the server markup already carries the amount (VND: whole units).
     expect(html).toContain('value="1100000"');
@@ -65,7 +66,7 @@ describe('DocumentDetailScreen', () => {
     expect(render('vi')).toContain('Không có cảnh báo');
   });
 
-  it('a person without the approve permission sees the form read-only, with no check button', () => {
+  it('a person without the approve permission sees the form read-only, with no approve button', () => {
     hook.result = { ...state, data: base };
     const html = renderToStaticMarkup(
       <NextIntlClientProvider locale="en" messages={en}>
@@ -73,8 +74,39 @@ describe('DocumentDetailScreen', () => {
       </NextIntlClientProvider>,
     );
     expect(html).toContain('readOnly=""');
-    expect(html).not.toContain('data-testid="check-form"');
+    expect(html).not.toContain('data-testid="approve-form"');
     expect(html).toContain('You can read this invoice but not change it.');
+  });
+
+  it('an approved document shows what the person approved, read-only, not the AI values', () => {
+    const extraction = base.extraction!;
+    hook.result = {
+      ...state,
+      data: {
+        ...base,
+        status: 'approved',
+        invoice: {
+          id: '7c6d5e4f-3a2b-4c1d-8e9f-0a1b2c3d4e5f',
+          documentVersion: 1,
+          data: { ...extraction.data, total: 987654 },
+          warnings: [],
+          approvedAt: '2026-10-27T03:04:06.000Z',
+        },
+      },
+    };
+    const html = render();
+    // Money inputs are controlled, so the server markup carries the value.
+    expect(html).toContain('value="987654"');
+    expect(html).not.toContain(`value="${extraction.data.total}"`);
+    expect(html).not.toContain('data-testid="approve-form"');
+    expect(html).toContain('This invoice is approved, so it can no longer be changed.');
+    expect(html).toContain('This invoice was approved on');
+    expect(render('vi')).toContain('Hoá đơn đã duyệt nên không sửa được nữa.');
+  });
+
+  it('a document that is not waiting for review cannot be approved, even with the permission', () => {
+    hook.result = { ...state, data: { ...base, status: 'failed', version: 2 } };
+    expect(render()).not.toContain('data-testid="approve-form"');
   });
 
   it('says when the extraction belongs to an older version of the document', () => {

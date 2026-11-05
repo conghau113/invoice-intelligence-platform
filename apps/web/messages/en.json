@@ -383,12 +383,26 @@
     "removeLine": "Remove line {n}",
     "removeColumn": "Remove",
     "sumOfLines": "Lines add up to {amount}",
-    "check": "Check the data",
-    "checked": "The data is valid. Nothing was saved: saving and approval are not available yet.",
     "hasErrors": "{count, plural, one {# field has an error} other {# fields have errors}}. Fix them to continue.",
     "readOnly": "You can read this invoice but not change it.",
     "outdated": "These values come from version {extraction} of the document; it is now version {current}.",
     "newerExtraction": "A newer extraction is available. Your edits here are kept until you load it.",
-    "loadNewer": "Load the newer one (discards edits)"
+    "loadNewer": "Load the newer one (discards edits)",
+    "approve": "Approve",
+    "approving": "Approving…",
+    "approvedNow": "Approved. {count, plural, =0 {You changed no field compared with the AI.} one {You changed # field compared with the AI.} other {You changed # fields compared with the AI.}}",
+    "approvedAt": "This invoice was approved on {date}.",
+    "approvedReadOnly": "This invoice is approved, so it can no longer be changed.",
+    "newerApproved": "This invoice has just been approved. Your edits were not saved.",
+    "approveError": {
+      "conflict": "This document has just been approved or changed, by someone else or by your own earlier click. The version you are editing was not saved.",
+      "session": "Your session has ended. Please sign in again.",
+      "forbidden": "You may not approve this invoice.",
+      "notFound": "This document was not found.",
+      "invalid": "The server refused this data. Please check the fields.",
+      "tooLarge": "This invoice is too large to save.",
+      "unreachable": "The server cannot be reached. Nothing was saved, please try again.",
+      "error": "The approval failed. Please try again."
+    }
   }
 }

@@ -41,6 +41,18 @@ export class InvalidDocumentTransitionError extends Error {
   }
 }
 
+/** The caller reviewed another version than the current one (optimistic concurrency, API.md). */
+export const VERSION_CONFLICT_CODE = 'VERSION_CONFLICT';
+
+export class DocumentVersionConflictError extends Error {
+  readonly code = VERSION_CONFLICT_CODE;
+
+  constructor() {
+    super('The document has a newer version');
+    this.name = 'DocumentVersionConflictError';
+  }
+}
+
 export const isDocumentStatus = (value: unknown): value is DocumentStatus =>
   (DOCUMENT_STATUSES as readonly unknown[]).includes(value);
 

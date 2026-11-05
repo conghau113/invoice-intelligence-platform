@@ -383,12 +383,26 @@
     "removeLine": "Xoá dòng {n}",
     "removeColumn": "Xoá",
     "sumOfLines": "Các dòng cộng lại là {amount}",
-    "check": "Kiểm tra dữ liệu",
-    "checked": "Dữ liệu hợp lệ. Chưa lưu gì: tính năng lưu và duyệt chưa có.",
     "hasErrors": "{count, plural, other {# ô có lỗi}}. Hãy sửa để tiếp tục.",
     "readOnly": "Bạn xem được hoá đơn này nhưng không được sửa.",
     "outdated": "Các giá trị này thuộc phiên bản {extraction} của tài liệu; hiện là phiên bản {current}.",
     "newerExtraction": "Có bản trích xuất mới hơn. Các chỉnh sửa ở đây được giữ cho tới khi bạn tải bản mới.",
-    "loadNewer": "Tải bản mới (bỏ chỉnh sửa)"
+    "loadNewer": "Tải bản mới (bỏ chỉnh sửa)",
+    "approve": "Duyệt",
+    "approving": "Đang duyệt…",
+    "approvedNow": "Đã duyệt. {count, plural, =0 {Bạn không sửa ô nào so với AI.} other {Bạn đã sửa # ô so với AI.}}",
+    "approvedAt": "Hoá đơn này đã được duyệt lúc {date}.",
+    "approvedReadOnly": "Hoá đơn đã duyệt nên không sửa được nữa.",
+    "newerApproved": "Hoá đơn này vừa được duyệt. Chỉnh sửa của bạn chưa được lưu.",
+    "approveError": {
+      "conflict": "Tài liệu này vừa được duyệt hoặc thay đổi, có thể bởi người khác hoặc từ lần bấm trước của bạn. Bản đang sửa chưa được lưu.",
+      "session": "Phiên đăng nhập đã hết. Hãy đăng nhập lại.",
+      "forbidden": "Bạn không có quyền duyệt hoá đơn này.",
+      "notFound": "Không tìm thấy tài liệu này.",
+      "invalid": "Máy chủ từ chối dữ liệu này. Hãy kiểm tra lại các ô.",
+      "tooLarge": "Hoá đơn quá lớn để lưu.",
+      "unreachable": "Không kết nối được máy chủ. Chưa có gì được lưu, hãy thử lại.",
+      "error": "Không duyệt được. Hãy thử lại."
+    }
   }
 }

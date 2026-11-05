@@ -14,11 +14,15 @@ import {
 } from '../../modules/documents/domain/document-list-query';
 import { DocumentNotFoundError } from '../../modules/documents/domain/document-not-found.error';
 import {
+  DocumentVersionConflictError,
   INVALID_TRANSITION_CODE,
   InvalidDocumentTransitionError,
+  VERSION_CONFLICT_CODE,
 } from '../../modules/documents/domain/document-status';
 import { ExtractionDataInvalidError } from '../../modules/extraction/domain/ai-errors';
 import { JobNotFailedError } from '../../modules/queue/application/admin-jobs.service';
+import { IF_MATCH_REQUIRED } from '../../modules/review/domain/if-match';
+import { ExtractionMissingError, INVOICE_INVALID } from '../../modules/review/domain/review-errors';
 
 const KNOWN_CODES: ReadonlySet<string> = new Set([
   'FORBIDDEN_PERMISSION',
@@ -31,7 +35,22 @@ const KNOWN_CODES: ReadonlySet<string> = new Set([
   'QUEUE_UNAVAILABLE',
   INVALID_TRANSITION_CODE,
   'JOB_NOT_FAILED',
+  IF_MATCH_REQUIRED,
+  INVOICE_INVALID,
 ]);
+
+/**
+ * body-parser fails before any route runs, with an error that is not a Nest HttpException: a client
+ * mistake (too large, not JSON, wrong charset) has a 4xx `status` and a `type`. Its message may quote
+ * the body, so only the status is used.
+ */
+const bodyParserStatus = (e: unknown): number | undefined => {
+  if (typeof e !== 'object' || e === null) return undefined;
+  const { type, status } = e as { type?: unknown; status?: unknown };
+  return typeof type === 'string' && typeof status === 'number' && status >= 400 && status < 500
+    ? status
+    : undefined;
+};
 
 /** Domain errors carry no HTTP knowledge; this is the one place that gives them a status. */
 function domainProblem(
@@ -46,6 +65,27 @@ function domainProblem(
       code: INVALID_TRANSITION_CODE,
       detail: 'The document is not in a state that allows this',
     };
+  }
+  const parserStatus = bodyParserStatus(e);
+  if (parserStatus === HttpStatus.PAYLOAD_TOO_LARGE) {
+    return {
+      status: parserStatus,
+      code: 'BODY_TOO_LARGE',
+      detail: 'The request body is too large',
+    };
+  }
+  if (parserStatus !== undefined) {
+    return { status: parserStatus, code: 'BODY_INVALID', detail: 'The request body is invalid' };
+  }
+  if (e instanceof DocumentVersionConflictError) {
+    return {
+      status: HttpStatus.CONFLICT,
+      code: VERSION_CONFLICT_CODE,
+      detail: 'The document has changed since it was loaded',
+    };
+  }
+  if (e instanceof ExtractionMissingError) {
+    return { status: HttpStatus.CONFLICT, code: e.code, detail: 'The document has no extraction' };
   }
   if (e instanceof InvalidQueryError) {
     return {

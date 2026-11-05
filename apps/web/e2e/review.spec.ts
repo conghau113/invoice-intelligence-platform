@@ -85,7 +85,7 @@ test.describe('review screen', () => {
     await expect(page.getByTestId('line-1')).toHaveCount(0);
   });
 
-  test('the form cannot be checked while it has schema errors, and nothing is sent either way', async ({
+  test('the form cannot be approved while it has schema errors: nothing is sent', async ({
     page,
   }) => {
     await openPdfReview(page);
@@ -97,19 +97,11 @@ test.describe('review screen', () => {
 
     await page.getByTestId('field-seller.taxCode').fill('123');
     await expect(page.getByTestId('form-errors')).toBeVisible();
-    await page.getByTestId('check-form').click();
-    await expect(page.getByTestId('form-checked')).toHaveCount(0);
+    await page.getByTestId('approve-form').click();
     await expect(page.getByTestId('field-seller.taxCode')).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByTestId('approved-now')).toHaveCount(0);
 
-    await page.getByTestId('field-seller.taxCode').fill('0100000001');
-    await expect(page.getByTestId('form-errors')).toHaveCount(0);
-    await page.getByTestId('check-form').click();
-    await expect(page.getByTestId('form-checked')).toBeVisible();
-    // Any edit invalidates the "checked" note.
-    await page.getByTestId('field-seller.name').fill('Công ty SAMPLE Bán 2');
-    await expect(page.getByTestId('form-checked')).toHaveCount(0);
-
-    expect(writes, 'T3.4 saves nothing; saving is T3.5').toEqual([]);
+    expect(writes, 'a form with schema errors must not reach the API').toEqual([]);
   });
 
   test('clicking a field jumps the viewer to its evidence and highlights it; zoom works', async ({
@@ -203,6 +195,112 @@ test.describe('review screen', () => {
     await page.getByTestId('newer-extraction').getByRole('button').click();
     await expect(page.getByTestId('newer-extraction')).toHaveCount(0);
     await expect(page.getByTestId('field-seller.name')).toHaveValue('Công ty SAMPLE Bán');
+  });
+
+  test('T3.5: correcting and approving saves the corrected values; afterwards the form is read-only', async ({
+    page,
+  }) => {
+    const id = await openPdfReview(page);
+    await page.getByTestId('field-seller.name').fill('Công ty SAMPLE Đã Sửa');
+    await page.getByTestId('approve-form').click();
+
+    await expect(page.getByTestId('approved-now')).toContainText('Bạn đã sửa 1 ô');
+    await expect(page.getByTestId('approve-form')).toHaveCount(0);
+    await expect(page.getByTestId('field-seller.name')).toHaveValue('Công ty SAMPLE Đã Sửa');
+    await expect(page.getByTestId('field-seller.name')).toHaveAttribute('readonly', '');
+
+    // A fresh load comes from the database: the approved value, not the AI's.
+    await page.goto(`/vi/documents/${id}`, { timeout: 30_000 });
+    await expect(page.getByTestId('field-seller.name')).toHaveValue('Công ty SAMPLE Đã Sửa');
+    await expect(page.getByTestId('document-detail')).toContainText('Hoá đơn này đã được duyệt');
+    await expect(page.getByTestId('approve-form')).toHaveCount(0);
+  });
+
+  test('T3.5: two tabs approve the same document; the later one gets 409 and keeps what it typed', async ({
+    page,
+    context,
+  }) => {
+    const id = await openPdfReview(page);
+    const tabB = await context.newPage();
+    await tabB.goto(`/vi/documents/${id}`, { timeout: 30_000 });
+    await expect(tabB.getByTestId('review-screen')).toBeVisible({ timeout: 30_000 });
+    await tabB.getByTestId('field-seller.name').fill('Bản của tab B');
+
+    await page.getByTestId('approve-form').click();
+    await expect(page.getByTestId('approved-now')).toBeVisible();
+
+    const answer = tabB.waitForResponse(
+      (r) => r.url().endsWith(`/api/documents/${id}/approve`) && r.request().method() === 'POST',
+    );
+    await tabB.getByTestId('approve-form').click();
+    expect((await answer).status()).toBe(409);
+    await expect(tabB.getByTestId('approve-error')).toContainText('vừa được duyệt hoặc thay đổi');
+    await expect(tabB.getByTestId('field-seller.name')).toHaveValue('Bản của tab B');
+
+    // The page learned why: the choice to see the approved version is the person's.
+    await tabB.getByTestId('newer-extraction').getByRole('button').click();
+    await expect(tabB.getByTestId('field-seller.name')).toHaveValue('Công ty SAMPLE Bán');
+    await expect(tabB.getByTestId('approve-form')).toHaveCount(0);
+  });
+
+  test('T3.5: the version sent is the one the form was loaded with, not the latest the page knows', async ({
+    page,
+  }) => {
+    await login(page, 'accountant');
+    const id = await uploadAndWait(page, invoicePdf('frozen.pdf'));
+    let reopened = false;
+    await page.route(`**/api/documents/${id}`, async (route) => {
+      const res = await route.fetch();
+      const body = await res.json();
+      if (reopened) body.version = 2;
+      await route.fulfill({ response: res, json: body });
+    });
+    await page.goto(`/vi/documents/${id}`, { timeout: 30_000 });
+    await expect(page.getByTestId('review-screen')).toBeVisible({ timeout: 30_000 });
+
+    reopened = true; // the next refetch says the document moved on
+    const refetched = page.waitForResponse((r) => r.url().endsWith(`/api/documents/${id}`));
+    await page.evaluate(() =>
+      document.dispatchEvent(new Event('visibilitychange', { bubbles: true })),
+    );
+    await refetched;
+    await expect(page.getByTestId('review-screen')).toContainText('hiện là phiên bản 2');
+
+    const sent = page.waitForRequest((r) => r.url().endsWith(`/api/documents/${id}/approve`));
+    await page.getByTestId('approve-form').click();
+    expect((await sent).headers()['if-match']).toBe('"1"');
+  });
+
+  test('T3.5: a viewer is refused by the API whatever the page shows', async ({ page }) => {
+    // The demo viewer belongs to another tenant, so this checks the permission on the real stack;
+    // the missing button is checked in document-detail-screen.test.tsx.
+    await login(page, 'viewer');
+    const res = await page.request.post(
+      '/api/documents/00000000-0000-4000-8000-00000000dead/approve',
+      {
+        headers: {
+          origin: 'http://localhost:3000',
+          'content-type': 'application/json',
+          'if-match': '"1"',
+        },
+        data: {},
+      },
+    );
+    expect(res.status()).toBe(403);
+    expect((await res.json()).code).toBe('FORBIDDEN_PERMISSION');
+  });
+
+  test('T3.5: closing the tab with unsaved edits asks first', async ({ page }) => {
+    await openPdfReview(page);
+    const dialogs: string[] = [];
+    page.on('dialog', (d) => {
+      dialogs.push(d.type());
+      void d.dismiss();
+    });
+    await page.getByTestId('field-seller.name').click();
+    await page.getByTestId('field-seller.name').fill('Chưa lưu');
+    await page.close({ runBeforeUnload: true });
+    await expect.poll(() => dialogs).toEqual(['beforeunload']);
   });
 
   test('a field with a reason shows it as text, not only in a tooltip', async ({ page }) => {

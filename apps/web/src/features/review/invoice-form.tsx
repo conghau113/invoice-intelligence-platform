@@ -3,7 +3,7 @@
 import { todayInVietnam, type Invoice, type RuleWarning } from 'contracts';
 import { Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { Fragment, useCallback, useDeferredValue, useMemo, useState } from 'react';
+import { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
 import {
   Controller,
   FormProvider,
@@ -378,8 +378,14 @@ export interface InvoiceFormProps {
   canEdit: boolean;
   /** The reviewer focused a field: the viewer shows its evidence (a new object each time). */
   onEvidence: (evidence: ViewerEvidence | null) => void;
-  /** Called with the validated Invoice. Saving and approval are T3.5; until then nothing is sent. */
-  onValid?: (invoice: Invoice) => void;
+  /** Called with the validated Invoice when the person approves; never with schema errors. */
+  onValid: (invoice: Invoice) => void;
+  /** An approval is on its way: the button waits. */
+  submitting: boolean;
+  /** Why the last approval did not happen, already translated. */
+  submitError: string | null;
+  /** Says why the form is read-only when it is not about permissions. */
+  readOnlyText?: string;
 }
 
 export function InvoiceForm({
@@ -387,6 +393,9 @@ export function InvoiceForm({
   canEdit,
   onEvidence,
   onValid,
+  submitting,
+  submitError,
+  readOnlyText,
 }: Readonly<InvoiceFormProps>) {
   const t = useTranslations('Review');
   const td = useTranslations('DocumentDetail');
@@ -412,9 +421,14 @@ export function InvoiceForm({
   if (live !== null && live !== kept) setKept(live);
   const warnings = live ?? kept;
 
-  // "Checked" holds only for exactly the values that were checked; any edit clears it.
-  const [checkedSnapshot, setCheckedSnapshot] = useState<string | null>(null);
-  const checked = checkedSnapshot !== null && checkedSnapshot === JSON.stringify(values);
+  // Closing the tab or reloading with unsaved edits asks first. Links inside the app are not covered.
+  const unsaved = canEdit && methods.formState.isDirty;
+  useEffect(() => {
+    if (!unsaved) return;
+    const warn = (e: BeforeUnloadEvent) => e.preventDefault();
+    globalThis.addEventListener('beforeunload', warn);
+    return () => globalThis.removeEventListener('beforeunload', warn);
+  }, [unsaved]);
 
   const currency = values.currency ?? extraction.data.currency;
   const money = useMoney(currency);
@@ -479,10 +493,7 @@ export function InvoiceForm({
           data-testid="invoice-data"
           className="flex flex-col gap-4"
           onSubmit={(e) => {
-            void handleSubmit((invoice) => {
-              onValid?.(invoice);
-              setCheckedSnapshot(JSON.stringify(getValues()));
-            })(e);
+            void handleSubmit((invoice) => onValid(invoice))(e);
           }}
         >
           <section
@@ -548,19 +559,21 @@ export function InvoiceForm({
 
           <div className="flex flex-wrap items-center gap-3">
             {canEdit && (
-              <Button type="submit" data-testid="check-form">
-                {t('check')}
+              <Button type="submit" data-testid="approve-form" disabled={submitting}>
+                {submitting ? t('approving') : t('approve')}
               </Button>
             )}
-            {!canEdit && <p className="text-sm text-muted-foreground">{t('readOnly')}</p>}
+            {!canEdit && (
+              <p className="text-sm text-muted-foreground">{readOnlyText ?? t('readOnly')}</p>
+            )}
             {errorCount > 0 && (
               <p role="alert" data-testid="form-errors" className="text-sm text-destructive">
                 {t('hasErrors', { count: errorCount })}
               </p>
             )}
-            {checked && (
-              <p role="status" data-testid="form-checked" className="text-sm text-success">
-                {t('checked')}
+            {submitError !== null && (
+              <p role="alert" data-testid="approve-error" className="text-sm text-destructive">
+                {submitError}
               </p>
             )}
           </div>

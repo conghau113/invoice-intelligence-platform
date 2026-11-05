@@ -516,7 +516,7 @@ erDiagram
 | `documents`                       | Trạng thái theo state machine; `UNIQUE (tenant_id, content_hash)` cho idempotency; `version` tăng khi mở lại sau duyệt                                            |
 | `extractions`                     | **Chỉ thêm, không sửa**: mỗi lần chạy là một dòng (model, phiên bản prompt, token, chi phí, độ trễ) → báo cáo chi phí và so sánh A/B có sẵn                       |
 | `field_corrections`               | Một dòng cho mỗi field người duyệt đã sửa → nuôi chỉ số "tỷ lệ sửa"                                                                                               |
-| `invoices`, `invoice_lines`       | Chỉ ghi khi duyệt; `row_version` cho khóa lạc quan                                                                                                                |
+| `invoices`, `invoice_lines`       | Chỉ ghi khi duyệt; khóa lạc quan dùng `documents.version`                                                                                                                |
 | `chunks`                          | `vector(768)` + HNSW, `tsvector` + GIN, `refs` để trích dẫn                                                                                                       |
 | `audit_logs`                      | Chỉ thêm; **chỉ lưu id và tên hành động, không lưu nội dung trích xuất**                                                                                          |
 
@@ -578,7 +578,7 @@ Cơ sở: REST, JSON, `/api/v1`, OpenAPI sinh từ decorator NestJS.
 | Lỗi         | RFC 9457 Problem Details: `{type, title, status, detail, instance, code, traceId}`                           |
 | Phân trang  | Theo cursor: `?limit=20&cursor=...` → `{items, nextCursor}`                                                  |
 | Idempotency | Header `Idempotency-Key` cho POST tạo mới; phát lại trả bản phản hồi cũ trong 24 giờ                         |
-| Đồng thời   | `If-Match: <rowVersion>` khi duyệt/sửa; cũ thì `409`                                                         |
+| Đồng thời   | `If-Match: "<version>"` khi duyệt; cũ thì `409`                                                         |
 | Rate limit  | `429` kèm `Retry-After` và `RateLimit-*`                                                                     |
 | Truy vết    | `traceparent` (W3C) được nhận và truyền đi                                                                   |
 | Demo        | `DEMO_READ_ONLY=true` → mọi request không phải GET trả `403 DEMO_READ_ONLY`; hỏi đáp chỉ trả đáp án tính sẵn |

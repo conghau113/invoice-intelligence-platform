@@ -22,9 +22,9 @@ erDiagram
   memberships { uuid tenant_id FK; uuid user_id FK; text role }
   documents { uuid id PK; uuid tenant_id; text status; text failure_code; text source_type; text storage_key; char64 content_hash; int version; uuid uploaded_by; timestamptz created_at }
   extractions { uuid id PK; uuid tenant_id; uuid document_id FK; int document_version; text source; jsonb data; jsonb warnings; text model; text prompt_version; int input_tokens; int output_tokens; int latency_ms; numeric cost_usd; timestamptz created_at }
-  field_corrections { uuid id PK; uuid tenant_id; uuid extraction_id FK; text field_path; jsonb ai_value; jsonb human_value }
-  invoices { uuid id PK; uuid tenant_id; uuid document_id FK; text invoice_no; text series; date issue_date; text seller_tax_code; text seller_name; text buyer_tax_code; char3 currency; bigint subtotal; bigint vat_amount; bigint total; uuid approved_by; int row_version }
-  invoice_lines { uuid id PK; uuid tenant_id; uuid invoice_id FK; int line_no; text description; numeric quantity; bigint unit_price; numeric vat_rate; bigint amount }
+  field_corrections { uuid id PK; uuid tenant_id; uuid extraction_id FK; int document_version; text field_path; jsonb ai_value; jsonb human_value; timestamptz created_at }
+  invoices { uuid id PK; uuid tenant_id; uuid document_id FK; text invoice_no; text series; date issue_date; text seller_tax_code; text seller_name; text buyer_tax_code; char3 currency; bigint subtotal; bigint vat_amount; bigint total; int document_version; jsonb data; jsonb warnings; uuid approved_by; timestamptz approved_at }
+  invoice_lines { uuid id PK; uuid tenant_id; uuid invoice_id FK; int line_no; text description; numeric quantity; text unit; bigint unit_price; numeric vat_rate; bigint amount }
   chunks { uuid id PK; uuid tenant_id; uuid invoice_id FK; text kind; text content; tsvector content_tsv; vector768 embedding; jsonb refs }
   audit_logs { bigint id PK; uuid tenant_id; uuid actor_id; text action; text entity; uuid entity_id; jsonb meta; inet ip; timestamptz at }
   notifications { uuid id PK; uuid tenant_id; uuid user_id; text type; jsonb payload; timestamptz read_at }
@@ -51,9 +51,14 @@ erDiagram
 
 ### field_corrections
 - One row per field the reviewer changed. Feeds the "human correction rate" metric (T4.6) — an online signal that complements the offline eval.
+- Computed by the API from the stored extraction, never taken from the client. `field_path` uses the `fieldMeta` grammar; a NULL value means that side had no value (`buyer.taxCode`, or a line added or removed). Lines are compared by position, so removing a line in the middle also reports the lines after it. Values are document content: never log them.
+- `UNIQUE (extraction_id, document_version, field_path)`. Index `(tenant_id, field_path)` for the metric. Each field of a line added or removed is its own row, so one added line counts as six.
 
 ### invoices, invoice_lines
-- Written only on approval. `row_version` enables optimistic concurrency (T3.5).
+- Written only on approval, in one transaction with the status change, `field_corrections` and audit. The app role has `SELECT, INSERT` only. `UNIQUE (document_id)`: at most one invoice per document, so a document can be approved once today. Reopening (no task yet) must change this: approving again would hit the unique key, and the app role cannot remove the old row.
+- The optimistic-concurrency token is `documents.version`, sent as `If-Match` (API.md), because an invoice row does not exist before the first approval. Approving does not bump the version, so the check is version **and** status, both under the row lock in `DocumentStateMachine`: a stale version gives `VERSION_CONFLICT`, an already approved document gives `INVALID_DOCUMENT_TRANSITION`, both `409`.
+- `data` is the whole approved Invoice incl. `fieldMeta`, validated when written and when read; a `fieldMeta` entry is kept only if the stored extraction holds the same meta and the path exists on the invoice, so a client cannot invent evidence: the review screen and chunking (T5.1) need fields and pages the columns do not hold. The columns are derived from it in the same insert, for aggregate questions. `warnings` are the rule warnings accepted at approval (they never block it, PRD 5.4).
+- `invoices`, `invoice_lines` and `field_corrections` reference their parent with a composite foreign key that includes `tenant_id`: an ordinary FK check ignores RLS and would accept another tenant's id.
 - Indexes: `(tenant_id, issue_date)`, `(tenant_id, seller_tax_code)` for aggregate questions.
 
 ### chunks
