@@ -84,6 +84,18 @@ Strings are in `messages/{vi,en}.json` under `Styleguide`, `Status`, `Theme`.
 - Not built (no feature behind it): global search, version badge, row checkboxes and bulk menu. Read-only banner shows when `DEMO_READ_ONLY=true`; it informs, the API refuses the writes.
 - Verified in a real browser by `apps/web/e2e/layout-table.spec.ts` (geometry at 0/1/5/many rows, header alignment after sideways scroll, no page-level scroll from 1920x1080 down to 1280x320, collapse, route changes, zoom as CSS viewports).
 
+## Review form field states (T3.7)
+
+Yellow is kept for a reason to doubt the value, so the reviewer can still see which fields matter (`fieldMark` in `features/review/weak-fields.ts`).
+
+| State | When | Frame | Words | Icon |
+|---|---|---|---|---|
+| Warning | The AI rated its confidence below 80%, or a business rule failed | `warning` border on `warning-soft` | Under a labelled field; tooltip and a note under the line in a table | Triangle on the top right corner, outside the line of text |
+| No confidence | The AI said nothing about this field | Dashed `input` border, same background as an unmarked field | One sentence per card (`NoMetaNote`), plus the control's own description | None |
+| Unmarked | Neither | Default | Legend: unmarked is not verified, confidence is the AI's own rating (`SECURITY.md` section 6) | None; never a "checked" mark |
+
+A dashed frame and words carry the difference, not colour alone. All colours are existing tokens covered by `contrast.test.ts`; `e2e/review.spec.ts` also measures the rendered colours in both themes and that the icon stays off the value in the narrowest cell. Dates in the form show in the interface language and stay ISO 8601 as values (`date-text.ts`): a native `type="date"` follows the browser's language instead.
+
 ## Accessibility checklist
 
 - [x] Text contrast at least 4.5:1, UI boundaries and focus ring at least 3:1 (tested, light and dark).

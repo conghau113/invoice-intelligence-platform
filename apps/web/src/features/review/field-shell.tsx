@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { useReview } from './review-context';
+import { fieldMark, type WeakReason } from './weak-fields';
 
 export type ControlProps = {
   id: string;
@@ -16,10 +17,12 @@ export type ControlProps = {
 };
 
 /**
- * Label + control + schema error, and the "look at this" treatment for a weak field: a yellow
- * frame and a tooltip with the reasons (low confidence, no confidence, rule warnings). The reasons
- * are also in an sr-only description, so they do not depend on hovering. Focusing the control asks
- * the viewer to jump to the field's evidence.
+ * Label + control + schema error, and how much attention the field asks for (`fieldMark`):
+ * - a reason to doubt the value: yellow frame, warning icon, tooltip with the reasons;
+ * - no confidence from the AI: only a dashed frame, no yellow and no icon; the card says in one
+ *   sentence what the frame means (`NoMetaNote`).
+ * The reasons are also the control's description, so they do not depend on hovering or on seeing the
+ * frame. Focusing the control asks the viewer to jump to the field's evidence.
  */
 export function FieldShell({
   path,
@@ -42,9 +45,10 @@ export function FieldShell({
   const id = useId();
   const { weak, readOnly, reasonText, onFocusPath } = useReview();
   const reasons = weak.get(path) ?? [];
-  const isWeak = reasons.length > 0;
+  const mark = fieldMark(reasons);
+  const visibleReason = mark === 'warning' && !hideLabel;
   const described = [
-    isWeak && `${id}-reasons`,
+    mark !== null && `${id}-reasons`,
     hint && `${id}-hint`,
     error && `${id}-error`,
   ].filter(Boolean);
@@ -62,39 +66,20 @@ export function FieldShell({
       <Label htmlFor={id} className={hideLabel ? 'sr-only' : undefined}>
         {label}
       </Label>
-      {isWeak ? (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div
-              data-weak="true"
-              data-path={path}
-              className="relative rounded-lg [&_input]:border-warning [&_input]:bg-warning-soft [&_input]:text-warning-soft-foreground"
-            >
-              {control}
-              <TriangleAlert
-                aria-hidden
-                className="pointer-events-none absolute top-1/2 right-2 size-3.5 -translate-y-1/2 text-warning"
-              />
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <ul className="flex list-disc flex-col gap-1 pl-4">
-              {reasons.map((r, i) => (
-                <li key={`${r.kind}-${i}`}>{reasonText(r)}</li>
-              ))}
-            </ul>
-          </TooltipContent>
-        </Tooltip>
-      ) : (
-        control
-      )}
-      {isWeak && (
-        // Visible for fields with their own label (touch has no hover); table cells rely on the
-        // tooltip and the warnings list, a visible line in every cell would drown the table.
+      <MarkedControl
+        mark={mark}
+        path={path}
+        reasons={reasons}
+        reasonText={reasonText}
+        control={control}
+      />
+      {mark !== null && (
+        // A warning is visible on a field with its own label (touch has no hover). Table cells rely
+        // on the tooltip and the notes under the table, a visible line in every cell would drown it.
         <span
           id={`${id}-reasons`}
-          className={hideLabel ? 'sr-only' : 'text-xs text-warning'}
-          data-testid={hideLabel ? undefined : 'weak-reason'}
+          className={visibleReason ? 'text-xs text-warning' : 'sr-only'}
+          data-testid={visibleReason ? 'weak-reason' : undefined}
         >
           {reasons.map(reasonText).join(' ')}
         </span>
@@ -110,5 +95,55 @@ export function FieldShell({
         </p>
       )}
     </div>
+  );
+}
+
+function MarkedControl({
+  mark,
+  path,
+  reasons,
+  reasonText,
+  control,
+}: Readonly<{
+  mark: ReturnType<typeof fieldMark>;
+  path: string;
+  reasons: readonly WeakReason[];
+  reasonText: (reason: WeakReason) => string;
+  control: ReactNode;
+}>) {
+  if (mark === null) return control;
+  if (mark === 'noMeta') {
+    return (
+      <div data-no-meta="true" data-path={path} className="rounded-lg [&_input]:border-dashed">
+        {control}
+      </div>
+    );
+  }
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div
+          data-weak="true"
+          data-path={path}
+          className="relative rounded-lg [&_input]:border-warning [&_input]:bg-warning-soft [&_input]:text-warning-soft-foreground"
+        >
+          {control}
+          {/* On the corner, above the line of text: inside the box it would cover a right-aligned
+              number, and padding for it would leave a narrow table cell no room for the number. */}
+          <TriangleAlert
+            aria-hidden
+            data-testid="weak-icon"
+            className="pointer-events-none absolute -top-1.5 -right-1.5 size-3.5 rounded-full bg-card text-warning"
+          />
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>
+        <ul className="flex list-disc flex-col gap-1 pl-4">
+          {reasons.map((r, i) => (
+            <li key={`${r.kind}-${i}`}>{reasonText(r)}</li>
+          ))}
+        </ul>
+      </TooltipContent>
+    </Tooltip>
   );
 }

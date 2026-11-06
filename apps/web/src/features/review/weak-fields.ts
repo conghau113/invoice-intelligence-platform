@@ -5,14 +5,26 @@ export const LOW_CONFIDENCE = 0.8;
 
 export type WeakReason =
   | { kind: 'lowConfidence'; confidence: number }
-  /** The AI gave no confidence for this field (LLMs often skip some); unknown is treated as weak. */
+  /** The AI gave no confidence for this field (LLMs often skip some): unknown, not a problem. */
   | { kind: 'noMeta' }
   | { kind: 'warning'; code: RuleWarning['code']; params: RuleWarning['params'] };
 
 /**
- * Which fields the reviewer should look at, and why. A pure function of the current form values
- * and the live warnings. Paths come from `invoiceFieldPaths`, so a line the user just added (no
- * meta) is listed too.
+ * How loudly a field is marked. Yellow is kept for a reason to doubt the value: if every field the
+ * AI said nothing about were yellow too, the reviewer could no longer see which ones matter. An
+ * unmarked field is not a verified one: confidence is the AI's own claim (SECURITY.md section 6).
+ */
+export type FieldMark = 'warning' | 'noMeta' | null;
+
+export function fieldMark(reasons: readonly WeakReason[]): FieldMark {
+  if (reasons.length === 0) return null;
+  return reasons.some((r) => r.kind !== 'noMeta') ? 'warning' : 'noMeta';
+}
+
+/**
+ * Why the reviewer might look at each field. A pure function of the current form values and the
+ * live warnings. Paths come from `invoiceFieldPaths`, so a line the user just added (no meta) is
+ * listed too. `fieldMark` turns the reasons into how the field is shown.
  */
 export function weakFields(
   invoice: Pick<Invoice, 'lines' | 'vatBreakdown' | 'seller' | 'buyer' | 'fieldMeta'>,

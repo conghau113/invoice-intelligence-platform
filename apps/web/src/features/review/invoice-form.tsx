@@ -2,7 +2,7 @@
 
 import { todayInVietnam, type Invoice, type RuleWarning } from 'contracts';
 import { Plus, Trash2 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
 import {
   Controller,
@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { DateInput } from './date-input';
 import { FieldShell } from './field-shell';
 import {
   invoiceResolver,
@@ -37,7 +38,13 @@ import { NumericInput } from './numeric-input';
 import { ReviewProvider, useReview } from './review-context';
 import type { ViewerEvidence } from './viewer/types';
 import { useMoney } from './use-money';
-import { shiftLineMeta, weakFields, type WeakReason } from './weak-fields';
+import {
+  fieldMark,
+  LOW_CONFIDENCE,
+  shiftLineMeta,
+  weakFields,
+  type WeakReason,
+} from './weak-fields';
 
 const EMPTY_LINE: FormValues['lines'][number] = {
   description: '',
@@ -61,6 +68,27 @@ function Card({
   );
 }
 
+/**
+ * Says in words what a dashed frame means, once per card: repeated under every field the sentence
+ * would be as much noise as the yellow it replaced. Each control also has it as its description.
+ */
+function NoMetaNote({ match }: Readonly<{ match: (path: string) => boolean }>) {
+  const t = useTranslations('Review');
+  const { weak } = useReview();
+  const any = [...weak].some(([path, reasons]) => match(path) && fieldMark(reasons) === 'noMeta');
+  if (!any) return null;
+  return (
+    <p data-testid="no-meta-note" className="text-xs text-muted-foreground">
+      {t('reason.noMetaNote')}
+    </p>
+  );
+}
+
+const inGroup =
+  (...prefixes: string[]) =>
+  (path: string) =>
+    prefixes.some((prefix) => path === prefix || path.startsWith(`${prefix}.`));
+
 function useFieldError(name: string): string | undefined {
   const {
     formState: { errors },
@@ -75,14 +103,12 @@ function TextField({
   label,
   hint,
   hideLabel,
-  type = 'text',
   className,
 }: Readonly<{
   name: Path<FormValues>;
   label: string;
   hint?: string;
   hideLabel?: boolean;
-  type?: 'text' | 'date';
   className?: string;
 }>) {
   const { register } = useFormContext<FormValues>();
@@ -98,7 +124,7 @@ function TextField({
     >
       {({ readOnly, ...control }) => (
         <Input
-          type={type}
+          type="text"
           readOnly={readOnly}
           data-testid={`field-${name}`}
           {...control}
@@ -162,6 +188,38 @@ function NumberField({
   );
 }
 
+/** The issue date: ISO 8601 in the form and in what is sent, the interface language on screen. */
+function DateField({ name, label }: Readonly<{ name: 'issueDate'; label: string }>) {
+  const { control } = useFormContext<FormValues>();
+  const t = useTranslations('Review');
+  const locale = useLocale();
+  const error = useFieldError(name);
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FieldShell path={name} label={label} hint={t('hints.date')} error={error}>
+          {(c) => (
+            <DateInput
+              {...c}
+              name={field.name}
+              ref={field.ref}
+              onBlur={field.onBlur}
+              value={field.value}
+              onChange={field.onChange}
+              locale={locale}
+              pickLabel={t('pickDate')}
+              onPick={c.onFocus}
+              data-testid={`field-${name}`}
+            />
+          )}
+        </FieldShell>
+      )}
+    />
+  );
+}
+
 /** Label of a field path for the warning list: "Line 2 · Amount". */
 function usePathLabel() {
   const t = useTranslations('DocumentDetail');
@@ -209,27 +267,24 @@ function Lines({ canEdit }: Readonly<{ canEdit: boolean }>) {
 
   /**
    * Why this line's cells are yellow, as visible text (a tooltip does not open on touch). Rule
-   * warnings are left out: the warnings box above already lists them. Cells with no AI
-   * confidence are grouped into one sentence, or a new line would repeat it six times.
+   * warnings are left out: the warnings box above already lists them. Cells with no AI confidence
+   * are not repeated on every line: `NoMetaNote` under the table explains the dashed frame.
    */
   const notesFor = (i: number): string[] => {
     const notes: string[] = [];
-    const unknown: string[] = [];
     for (const [path, reasons] of weak) {
       if (!path.startsWith(`lines.${i}.`)) continue;
       const column = pathLabel(path).split(' · ').at(-1) ?? path;
       for (const r of reasons) {
-        if (r.kind === 'noMeta') unknown.push(column);
-        else if (r.kind === 'lowConfidence') notes.push(`${column}: ${reasonText(r)}`);
+        if (r.kind === 'lowConfidence') notes.push(`${column}: ${reasonText(r)}`);
       }
     }
-    if (unknown.length > 0) notes.push(tr('reason.noMetaMany', { fields: unknown.join(', ') }));
     return notes;
   };
   const lastLine = fields.length <= 1;
 
   return (
-    <Card title={t('lines')}>
+    <Card title={t('lines')} data-testid="lines-card">
       <div className="overflow-x-auto">
         <Table data-testid="invoice-lines" className="min-w-[44rem]">
           <TableHeader>
@@ -254,14 +309,14 @@ function Lines({ canEdit }: Readonly<{ canEdit: boolean }>) {
               return (
                 <Fragment key={row.id}>
                   <TableRow data-testid={`line-${i}`}>
-                    <TableCell className="align-top whitespace-normal">
+                    <TableCell className="py-1.5 align-top whitespace-normal">
                       <TextField
                         name={`lines.${i}.description`}
                         label={`${n} · ${t('description')}`}
                         hideLabel
                       />
                     </TableCell>
-                    <TableCell className="align-top">
+                    <TableCell className="py-1.5 align-top">
                       <NumberField
                         name={`lines.${i}.quantity`}
                         label={`${n} · ${t('quantity')}`}
@@ -269,10 +324,10 @@ function Lines({ canEdit }: Readonly<{ canEdit: boolean }>) {
                         hideLabel
                       />
                     </TableCell>
-                    <TableCell className="align-top">
+                    <TableCell className="py-1.5 align-top">
                       <TextField name={`lines.${i}.unit`} label={`${n} · ${t('unit')}`} hideLabel />
                     </TableCell>
-                    <TableCell className="align-top">
+                    <TableCell className="py-1.5 align-top">
                       <NumberField
                         name={`lines.${i}.unitPrice`}
                         label={`${n} · ${t('unitPrice')}`}
@@ -280,7 +335,7 @@ function Lines({ canEdit }: Readonly<{ canEdit: boolean }>) {
                         hideLabel
                       />
                     </TableCell>
-                    <TableCell className="align-top">
+                    <TableCell className="py-1.5 align-top">
                       <NumberField
                         name={`lines.${i}.vatRate`}
                         label={`${n} · ${t('vatRate')}`}
@@ -288,7 +343,7 @@ function Lines({ canEdit }: Readonly<{ canEdit: boolean }>) {
                         hideLabel
                       />
                     </TableCell>
-                    <TableCell className="align-top">
+                    <TableCell className="py-1.5 align-top">
                       <NumberField
                         name={`lines.${i}.amount`}
                         label={`${n} · ${t('amount')}`}
@@ -297,7 +352,7 @@ function Lines({ canEdit }: Readonly<{ canEdit: boolean }>) {
                       />
                     </TableCell>
                     {canEdit && (
-                      <TableCell className="align-top">
+                      <TableCell className="py-1.5 align-top">
                         <Button
                           type="button"
                           variant="ghost"
@@ -332,6 +387,7 @@ function Lines({ canEdit }: Readonly<{ canEdit: boolean }>) {
           </TableBody>
         </Table>
       </div>
+      <NoMetaNote match={inGroup('lines')} />
       {canEdit && (
         <div>
           <Button
@@ -368,6 +424,7 @@ function VatRows() {
           ))}
         </div>
       )}
+      <NoMetaNote match={inGroup('vatBreakdown')} />
     </Card>
   );
 }
@@ -517,16 +574,20 @@ export function InvoiceForm({
                 ))}
               </ul>
             )}
-            <p className="mt-2 text-xs text-muted-foreground">{t('legend')}</p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {t('legend', { percent: Math.round(LOW_CONFIDENCE * 100) })}
+            </p>
           </section>
 
           <Card title={td('invoiceInfo')}>
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            {/* The date needs room for all ten characters next to its calendar button. */}
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-[1fr_1fr_10rem_6rem]">
               <TextField name="invoiceNo" label={td('invoiceNo')} />
               <TextField name="series" label={td('series')} />
-              <TextField name="issueDate" label={td('issueDate')} type="date" />
+              <DateField name="issueDate" label={td('issueDate')} />
               <TextField name="currency" label={td('currency')} />
             </div>
+            <NoMetaNote match={inGroup('invoiceNo', 'series', 'issueDate', 'currency')} />
           </Card>
 
           <div className="grid gap-4 xl:grid-cols-2">
@@ -534,11 +595,13 @@ export function InvoiceForm({
               <TextField name="seller.name" label={td('name')} />
               <TextField name="seller.taxCode" label={td('taxCode')} hint={t('hints.taxCode')} />
               <TextField name="seller.address" label={td('address')} />
+              <NoMetaNote match={inGroup('seller')} />
             </Card>
             <Card title={td('buyer')} data-testid="buyer">
               <TextField name="buyer.name" label={td('name')} />
               <TextField name="buyer.taxCode" label={td('taxCode')} hint={t('hints.taxCode')} />
               <TextField name="buyer.address" label={td('address')} />
+              <NoMetaNote match={inGroup('buyer')} />
             </Card>
           </div>
 
@@ -554,6 +617,7 @@ export function InvoiceForm({
                 hint={lineSum === null ? undefined : t('sumOfLines', { amount: money(lineSum) })}
               />
               <NumberField name="total" label={td('total')} money />
+              <NoMetaNote match={inGroup('subtotal', 'total')} />
             </Card>
           </div>
 
