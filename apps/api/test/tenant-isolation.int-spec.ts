@@ -9,7 +9,7 @@ import { Pool, type PoolClient } from 'pg';
 import { sql } from 'drizzle-orm';
 import { TenantDbService } from '../src/db/tenant-db.service';
 import * as schema from '../src/db/schema';
-import { tablesWithoutRls } from './support/rls';
+import { tablesWithoutRls, unsafeViews } from './support/rls';
 
 const ACME = '00000000-0000-4000-8000-0000000000a1';
 const GLOBEX = '00000000-0000-4000-8000-0000000000a2';
@@ -120,6 +120,34 @@ describe('tenant isolation in Postgres (RLS)', () => {
         await single.query('CREATE TABLE half_done (id int)');
         await single.query('ALTER TABLE half_done ENABLE ROW LEVEL SECURITY');
         expect(await tablesWithoutRls(single)).toEqual(['forgotten_table', 'half_done']);
+      } finally {
+        await single.query('ROLLBACK');
+        await single.end();
+      }
+    });
+
+    it('every view in public reads with the rights of the caller and is not granted to everyone', async () => {
+      expect(await unsafeViews(owner)).toEqual([]); // names every offending view
+    });
+
+    it('reports a view that does not (negative control, rolled back)', async () => {
+      const single = new Pool({ connectionString: requireVar('DATABASE_OWNER_URL'), max: 1 });
+      try {
+        await single.query('BEGIN');
+        await single.query('CREATE VIEW a_owner_rights AS SELECT id FROM tenants');
+        await single.query(
+          'CREATE VIEW b_for_everyone WITH (security_invoker = true) AS SELECT id FROM tenants',
+        );
+        await single.query('GRANT SELECT ON b_for_everyone TO PUBLIC');
+        await single.query(
+          'CREATE VIEW c_fine WITH (security_invoker = true) AS SELECT id FROM tenants',
+        );
+        await single.query('CREATE MATERIALIZED VIEW d_snapshot AS SELECT id FROM tenants');
+        expect(await unsafeViews(single)).toEqual([
+          'a_owner_rights',
+          'b_for_everyone',
+          'd_snapshot',
+        ]);
       } finally {
         await single.query('ROLLBACK');
         await single.end();

@@ -8,6 +8,11 @@ import type { Invoice } from 'contracts';
 export const MAX_APPROVED_LINES = 500;
 export const MAX_APPROVED_VAT_ROWS = 20;
 export const MAX_APPROVED_TEXT = 1000;
+/**
+ * Reopening keeps what was approved and the app role cannot delete it, so without a cap one account
+ * could loop reopen and approve and fill the shared database. Far above any real correction.
+ */
+export const MAX_DOCUMENT_VERSION = 20;
 
 /** Postgres `text` and `jsonb` refuse NUL: without this check it would be a 500 from client input. */
 const acceptable = (text: string): boolean =>

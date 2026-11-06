@@ -388,14 +388,17 @@
     "sumOfLines": "Lines add up to {amount}",
     "hasErrors": "{count, plural, one {# field has an error} other {# fields have errors}}. Fix them to continue.",
     "readOnly": "You can read this invoice but not change it.",
-    "outdated": "These values come from version {extraction} of the document; it is now version {current}.",
+    "reopenedFrom": "You are correcting the invoice approved at version {version}. It does not count as approved until it is approved again.",
+    "newerReopened": "This document has just been reopened and is now version {current}. Your edits were not saved.",
     "newerExtraction": "A newer extraction is available. Your edits here are kept until you load it.",
     "loadNewer": "Load the newer one (discards edits)",
     "approve": "Approve",
     "approving": "Approving…",
     "approvedNow": "Approved. {count, plural, =0 {You changed no field compared with the AI.} one {You changed # field compared with the AI.} other {You changed # fields compared with the AI.}}",
     "approvedAt": "This invoice was approved on {date}.",
-    "approvedReadOnly": "This invoice is approved, so it can no longer be changed.",
+    "approvedReadOnly": "This invoice is approved, so it is read-only.",
+    "reopen": "Reopen",
+    "reopening": "Reopening…",
     "newerApproved": "This invoice has just been approved. Your edits were not saved.",
     "approveError": {
       "conflict": "This document has just been approved or changed, by someone else or by your own earlier click. The version you are editing was not saved.",
@@ -406,6 +409,15 @@
       "tooLarge": "This invoice is too large to save.",
       "unreachable": "The server cannot be reached. Nothing was saved, please try again.",
       "error": "The approval failed. Please try again."
+    },
+    "reopenError": {
+      "conflict": "This document has just been changed, by someone else or by your own earlier click. The screen now shows the current version.",
+      "session": "Your session has ended. Please sign in again.",
+      "forbidden": "You may not reopen this invoice.",
+      "notFound": "This document was not found.",
+      "unreachable": "The server cannot be reached. The invoice was not reopened, please try again.",
+      "limit": "This invoice has been reopened too many times and cannot be reopened again. The approved version is unchanged.",
+      "error": "The invoice could not be reopened. Please try again."
     }
   }
 }

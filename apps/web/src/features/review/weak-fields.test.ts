@@ -38,6 +38,21 @@ describe('weakFields', () => {
     expect(weakFields(full(fixture()), []).size).toBe(0);
   });
 
+  it('without AI marks only the rule warnings stay: what a person approved has no AI doubts', () => {
+    const inv = full(fixture());
+    inv.fieldMeta['invoiceNo'] = { confidence: 0.1, evidence: null };
+    delete inv.fieldMeta['series'];
+    const w: RuleWarning = {
+      code: 'TOTAL_MISMATCH',
+      path: 'total',
+      params: { expected: 1, actual: 2 },
+    };
+    const weak = weakFields(inv, [w], { aiMarks: false });
+    expect([...weak.keys()]).toEqual(['total']);
+    expect(weakFields(inv, [w]).has('invoiceNo')).toBe(true);
+    expect(weakFields(inv, [w]).has('series')).toBe(true);
+  });
+
   it('flags confidence below 0.8, but not 0.8 itself', () => {
     const inv = full(fixture());
     inv.fieldMeta['invoiceNo'] = { confidence: LOW_CONFIDENCE - 0.01, evidence: null };

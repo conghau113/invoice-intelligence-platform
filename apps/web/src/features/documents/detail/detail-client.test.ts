@@ -27,6 +27,7 @@ const doc = (over: object = {}) => ({
     createdAt: '2026-10-26T03:04:06.000Z',
   },
   invoice: null,
+  reopenedFrom: null,
   ...over,
 });
 const APPROVED = {
@@ -76,6 +77,15 @@ describe('fetchDocumentDetail', () => {
       Response.json(doc({ invoice: { ...APPROVED, data: { invoiceNo: 'SAMPLE' } } })),
     );
     await expect(fetchDocumentDetail(ID)).rejects.toBeInstanceOf(DetailError);
+  });
+
+  it('accepts what a document was reopened from and rejects a stored one that breaks the schema', async () => {
+    fetchMock.mockResolvedValueOnce(Response.json(doc({ version: 2, reopenedFrom: APPROVED })));
+    expect((await fetchDocumentDetail(ID)).reopenedFrom?.id).toBe(APPROVED.id);
+    fetchMock.mockResolvedValueOnce(
+      Response.json(doc({ reopenedFrom: { ...APPROVED, data: { invoiceNo: 'SAMPLE' } } })),
+    );
+    await expect(fetchDocumentDetail(ID)).rejects.toBeInstanceOf(Error);
   });
 
   it('asks the BFF route and returns the parsed document with its invoice', async () => {

@@ -443,6 +443,8 @@ export interface InvoiceFormProps {
   submitError: string | null;
   /** Says why the form is read-only when it is not about permissions. */
   readOnlyText?: string;
+  /** This is an approved invoice: the AI's doubts are not marked, only the rule warnings. */
+  approved?: boolean;
 }
 
 export function InvoiceForm({
@@ -453,6 +455,7 @@ export function InvoiceForm({
   submitting,
   submitError,
   readOnlyText,
+  approved = false,
 }: Readonly<InvoiceFormProps>) {
   const t = useTranslations('Review');
   const td = useTranslations('DocumentDetail');
@@ -493,7 +496,10 @@ export function InvoiceForm({
   const fractionDigits = minorDigits(
     /^[A-Z]{3}$/.test(currency) ? currency : extraction.data.currency,
   );
-  const weak = useMemo(() => weakFields(deferred, warnings), [deferred, warnings]);
+  const weak = useMemo(
+    () => weakFields(deferred, warnings, { aiMarks: !approved }),
+    [deferred, warnings, approved],
+  );
   const lineSum = sumOfLines(values.lines ?? []);
 
   const reasonText = useCallback(
@@ -574,9 +580,11 @@ export function InvoiceForm({
                 ))}
               </ul>
             )}
-            <p className="mt-2 text-xs text-muted-foreground">
-              {t('legend', { percent: Math.round(LOW_CONFIDENCE * 100) })}
-            </p>
+            {!approved && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                {t('legend', { percent: Math.round(LOW_CONFIDENCE * 100) })}
+              </p>
+            )}
           </section>
 
           <Card title={td('invoiceInfo')}>

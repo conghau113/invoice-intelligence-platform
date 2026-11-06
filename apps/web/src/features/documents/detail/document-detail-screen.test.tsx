@@ -36,6 +36,7 @@ const base: DocumentDetail = {
     createdAt: '2026-10-26T03:04:06.000Z',
   },
   invoice: null,
+  reopenedFrom: null,
 };
 const state = { data: undefined, error: null, isPending: false, refetch: () => undefined };
 
@@ -99,19 +100,64 @@ describe('DocumentDetailScreen', () => {
     expect(html).toContain('value="987654"');
     expect(html).not.toContain(`value="${extraction.data.total}"`);
     expect(html).not.toContain('data-testid="approve-form"');
-    expect(html).toContain('This invoice is approved, so it can no longer be changed.');
+    expect(html).toContain('This invoice is approved, so it is read-only.');
     expect(html).toContain('This invoice was approved on');
-    expect(render('vi')).toContain('Hoá đơn đã duyệt nên không sửa được nữa.');
+    expect(html).toContain('data-testid="reopen"');
+    expect(render('vi')).toContain('Hoá đơn đã duyệt nên chỉ xem được.');
+  });
+
+  it('a person without the permission sees no Reopen button on an approved invoice', () => {
+    const extraction = base.extraction!;
+    hook.result = {
+      ...state,
+      data: {
+        ...base,
+        status: 'approved',
+        invoice: {
+          id: '7c6d5e4f-3a2b-4c1d-8e9f-0a1b2c3d4e5f',
+          documentVersion: 1,
+          data: extraction.data,
+          warnings: [],
+          approvedAt: '2026-10-27T03:04:06.000Z',
+        },
+      },
+    };
+    const html = renderToStaticMarkup(
+      <NextIntlClientProvider locale="en" messages={en} timeZone="Asia/Ho_Chi_Minh">
+        <DocumentDetailScreen id={ID} canApprove={false} />
+      </NextIntlClientProvider>,
+    );
+    expect(html).not.toContain('data-testid="reopen"');
+  });
+
+  it('a reopened invoice starts from what was approved, editable, and is not called approved', () => {
+    const extraction = base.extraction!;
+    hook.result = {
+      ...state,
+      data: {
+        ...base,
+        status: 'needs_review',
+        version: 2,
+        reopenedFrom: {
+          id: '7c6d5e4f-3a2b-4c1d-8e9f-0a1b2c3d4e5f',
+          documentVersion: 1,
+          data: { ...extraction.data, total: 987654 },
+          warnings: [],
+          approvedAt: '2026-10-27T03:04:06.000Z',
+        },
+      },
+    };
+    const html = render();
+    expect(html).toContain('value="987654"');
+    expect(html).toContain('data-testid="approve-form"');
+    expect(html).not.toContain('data-testid="reopen"');
+    expect(html).toContain('You are correcting the invoice approved at version 1.');
+    expect(html).not.toContain('This invoice was approved on');
   });
 
   it('a document that is not waiting for review cannot be approved, even with the permission', () => {
     hook.result = { ...state, data: { ...base, status: 'failed', version: 2 } };
     expect(render()).not.toContain('data-testid="approve-form"');
-  });
-
-  it('says when the extraction belongs to an older version of the document', () => {
-    hook.result = { ...state, data: { ...base, version: 3 } };
-    expect(render()).toContain('version 1 of the document; it is now version 3');
   });
 
   it('a failed document that still has an older extraction shows the failure and the old values', () => {

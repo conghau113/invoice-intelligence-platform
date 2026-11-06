@@ -17,6 +17,11 @@ export type ApproveErrorKind =
 export type ApproveOutcome =
   { ok: true; corrections: number } | { ok: false; kind: ApproveErrorKind };
 
+/** Why a reopen did not happen (`Review.reopenError.<kind>`): it has no body to be refused. */
+export type ReopenErrorKind = Exclude<ApproveErrorKind, 'invalid' | 'tooLarge'> | 'limit';
+
+export type ReopenOutcome = { ok: true } | { ok: false; kind: ReopenErrorKind };
+
 const KIND_BY_STATUS: Readonly<Record<number, ApproveErrorKind>> = {
   400: 'invalid',
   401: 'session',
@@ -26,6 +31,12 @@ const KIND_BY_STATUS: Readonly<Record<number, ApproveErrorKind>> = {
   413: 'tooLarge',
   422: 'invalid',
 };
+
+async function failureOf(res: Response): Promise<{ kind: ApproveErrorKind; code: unknown }> {
+  const { code } = (await res.json().catch(() => ({}))) as { code?: unknown };
+  if (res.status === 502 && code === 'API_UNREACHABLE') return { kind: 'unreachable', code };
+  return { kind: KIND_BY_STATUS[res.status] ?? 'error', code };
+}
 
 /**
  * Browser side: posts to the same-origin BFF route. `version` must be the one the form was loaded
@@ -48,16 +59,29 @@ export async function approveDocument(
   } catch {
     return { ok: false, kind: 'unreachable' };
   }
-  if (!res.ok) {
-    const body = (await res.json().catch(() => ({}))) as { code?: unknown };
-    if (res.status === 502 && body.code === 'API_UNREACHABLE') {
-      return { ok: false, kind: 'unreachable' };
-    }
-    return { ok: false, kind: KIND_BY_STATUS[res.status] ?? 'error' };
-  }
+  if (!res.ok) return { ok: false, kind: (await failureOf(res)).kind };
   const parsed = resultSchema.safeParse(await res.json().catch(() => null));
   // The approval happened; only the count is unknown, and a wrong shape is still not a success to show.
   return parsed.success
     ? { ok: true, corrections: parsed.data.corrections }
     : { ok: false, kind: 'error' };
+}
+
+/** Same rule for `version` as above: the one the person was looking at when they asked to reopen. */
+export async function reopenDocument(id: string, version: number): Promise<ReopenOutcome> {
+  let res: Response;
+  try {
+    res = await fetch(`/api/documents/${encodeURIComponent(id)}/reopen`, {
+      method: 'POST',
+      headers: { 'if-match': `"${version}"` },
+      cache: 'no-store',
+    });
+  } catch {
+    return { ok: false, kind: 'unreachable' };
+  }
+  if (res.ok) return { ok: true };
+  const { kind, code } = await failureOf(res);
+  // Also a 409, but nothing changed: telling the person to look again would not help them.
+  if (code === 'REOPEN_LIMIT_REACHED') return { ok: false, kind: 'limit' };
+  return { ok: false, kind: kind === 'invalid' || kind === 'tooLarge' ? 'error' : kind };
 }

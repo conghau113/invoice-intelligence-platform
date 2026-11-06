@@ -22,7 +22,11 @@ import {
 import { ExtractionDataInvalidError } from '../../modules/extraction/domain/ai-errors';
 import { JobNotFailedError } from '../../modules/queue/application/admin-jobs.service';
 import { IF_MATCH_REQUIRED } from '../../modules/review/domain/if-match';
-import { ExtractionMissingError, INVOICE_INVALID } from '../../modules/review/domain/review-errors';
+import {
+  ExtractionMissingError,
+  INVOICE_INVALID,
+  REOPEN_LIMIT_REACHED,
+} from '../../modules/review/domain/review-errors';
 
 const KNOWN_CODES: ReadonlySet<string> = new Set([
   'FORBIDDEN_PERMISSION',
@@ -37,6 +41,7 @@ const KNOWN_CODES: ReadonlySet<string> = new Set([
   'JOB_NOT_FAILED',
   IF_MATCH_REQUIRED,
   INVOICE_INVALID,
+  REOPEN_LIMIT_REACHED,
 ]);
 
 /**

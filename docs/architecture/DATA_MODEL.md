@@ -10,7 +10,7 @@ erDiagram
   users ||--o{ memberships : has
   tenants ||--o{ documents : owns
   documents ||--o{ extractions : "has versions"
-  documents ||--o| invoices : "approved as"
+  documents ||--o{ invoices : "approved as, one per version"
   invoices ||--o{ invoice_lines : contains
   extractions ||--o{ field_corrections : "corrected by human"
   invoices ||--o{ chunks : "indexed as"
@@ -40,12 +40,12 @@ erDiagram
 ### documents
 - `status` follows the state machine in `ARCHITECTURE.md §8`; only `DocumentStateMachine` writes it.
 - `UNIQUE (tenant_id, content_hash)` → duplicate uploads return the existing row (idempotency).
-- `version` increments when a document is reopened after approval.
+- `version` increments when a document is reopened after approval, and only then. Approving keeps it.
 - `failure_code` is the reason (an `UPPER_SNAKE` code, never content) while `status = 'failed'`, otherwise `NULL`. `DocumentStateMachine` writes it in the same `UPDATE` as `status`, so the detail page reads it without scanning `audit_logs`.
 - Indexes: `(tenant_id, status, created_at DESC)` for the list page; `(tenant_id, content_hash)` unique.
 
 ### extractions
-- Append-only (the app role has no `UPDATE`/`DELETE`) and **at most one row per `(document_id, document_version)`**: that unique key makes the worker idempotent, because a job delivered twice inserts the same row twice and the second insert does nothing. Reopening an approved document bumps `documents.version` and so gets a new row. Comparing models or prompts (A/B) is done by `eval/`, not by storing several runs per version here.
+- Append-only (the app role has no `UPDATE`/`DELETE`) and **at most one row per `(document_id, document_version)`**: that unique key makes the worker idempotent, because a job delivered twice inserts the same row twice and the second insert does nothing. Reopening does not extract again, so a reopened document keeps the row of its earlier version and `document_version` can be lower than `documents.version`. Comparing models or prompts (A/B) is done by `eval/`, not by storing several runs per version here.
 - `source` (`xml | pdf | image`) says which path produced `data`. `model`, `prompt_version`, token counts and `cost_usd` are `NULL` on the XML path (no LLM); `latency_ms` is always set (measured by the worker when the AI service reports none).
 - `data` holds the Invoice JSON exactly as validated by `packages/contracts`, and is validated again when it is read (`GET /documents/:id`). `warnings` is stored as returned by the AI service.
 
@@ -53,9 +53,14 @@ erDiagram
 - One row per field the reviewer changed. Feeds the "human correction rate" metric (T4.6) — an online signal that complements the offline eval.
 - Computed by the API from the stored extraction, never taken from the client. `field_path` uses the `fieldMeta` grammar; a NULL value means that side had no value (`buyer.taxCode`, or a line added or removed). Lines are compared by position, so removing a line in the middle also reports the lines after it. Values are document content: never log them.
 - `UNIQUE (extraction_id, document_version, field_path)`. Index `(tenant_id, field_path)` for the metric. Each field of a line added or removed is its own row, so one added line counts as six.
+- Every approval diffs the whole invoice against the extraction, so a later version repeats what an earlier one changed. Rows are never removed. **The metric reads the view `current_field_corrections`** (see below), which counts each document once: a field changed at version 1 and put back at version 2 no longer counts, and a reopened document counts nothing until it is approved again.
 
 ### invoices, invoice_lines
-- Written only on approval, in one transaction with the status change, `field_corrections` and audit. The app role has `SELECT, INSERT` only. `UNIQUE (document_id)`: at most one invoice per document, so a document can be approved once today. Reopening (no task yet) must change this: approving again would hit the unique key, and the app role cannot remove the old row.
+- Written only on approval, in one transaction with the status change, `field_corrections` and audit. The app role has `SELECT, INSERT` only. `UNIQUE (document_id, document_version)`: at most one invoice per version of a document.
+- **These tables are history, not "what is approved".** Reopening keeps the rows, because the form reopens with those values and what was approved stays on record. Anything that asks what is approved now (Q&A in T5.x, aggregates) **must read the views `current_invoices` and `current_invoice_lines`**; reading the tables directly counts old versions too. The rule behind the views: a row is current when `document_version = documents.version`. A row at version N is written only by approving version N and reopening always bumps the version, so no status check is needed.
+- The `current_*` views use `security_invoker`, so the caller's RLS applies to the tables below them. The RLS gate in `test/support/rls.ts` refuses any view in `public` without it, or granted to `PUBLIC`.
+- **A migration that changes these tables must also recreate the views.** Postgres expands `SELECT *` once, when the view is created: a column added later is missing from the view until then (`review.int-spec.ts` fails on this), and dropping or retyping a column fails while a view reads it. drizzle-kit does not know the views.
+- Because rows are never removed, a document can reach version 20 at most (`MAX_DOCUMENT_VERSION`), which bounds what one account can store by looping reopen and approve.
 - The optimistic-concurrency token is `documents.version`, sent as `If-Match` (API.md), because an invoice row does not exist before the first approval. Approving does not bump the version, so the check is version **and** status, both under the row lock in `DocumentStateMachine`: a stale version gives `VERSION_CONFLICT`, an already approved document gives `INVALID_DOCUMENT_TRANSITION`, both `409`.
 - `data` is the whole approved Invoice incl. `fieldMeta`, validated when written and when read; a `fieldMeta` entry is kept only if the stored extraction holds the same meta and the path exists on the invoice, so a client cannot invent evidence: the review screen and chunking (T5.1) need fields and pages the columns do not hold. The columns are derived from it in the same insert, for aggregate questions. `warnings` are the rule warnings accepted at approval (they never block it, PRD 5.4).
 - `invoices`, `invoice_lines` and `field_corrections` reference their parent with a composite foreign key that includes `tenant_id`: an ordinary FK check ignores RLS and would accept another tenant's id.

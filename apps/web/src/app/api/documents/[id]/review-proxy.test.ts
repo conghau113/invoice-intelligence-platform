@@ -14,25 +14,27 @@ vi.mock('@/auth/env', () => ({
   authEnv: () => ({ NEXTAUTH_URL: 'http://localhost:3000' }),
 }));
 
-import { POST } from './route';
+import { POST as approve } from './approve/route';
+import { POST as reopen } from './reopen/route';
 
 const ID = '3f1c9a52-7d0e-4b7a-9c1d-2a6f0b8e4d11';
 const ORIGIN = 'http://localhost:3000';
+const RESULT = { id: ID, status: 'changed', version: 4 };
 const fetchMock = vi.fn();
 beforeEach(() => {
   vi.stubEnv('API_BASE_URL', 'http://api.test');
   state.token = 'tok';
   vi.stubGlobal('fetch', fetchMock);
   fetchMock.mockReset();
-  fetchMock.mockImplementation(() => Promise.resolve(Response.json({ status: 'approved' })));
+  fetchMock.mockImplementation(() => Promise.resolve(Response.json(RESULT)));
 });
 afterEach(() => {
   vi.unstubAllEnvs();
   vi.unstubAllGlobals();
 });
 
-const post = (id: string, headers: Record<string, string> = {}, body: string | null = '{"a":1}') =>
-  POST(
+const postApprove = (id: string, headers: Record<string, string> = {}) =>
+  approve(
     new NextRequest(`${ORIGIN}/api/documents/${id}/approve`, {
       method: 'POST',
       headers: {
@@ -41,29 +43,39 @@ const post = (id: string, headers: Record<string, string> = {}, body: string | n
         'if-match': '"3"',
         ...headers,
       },
-      body,
+      body: '{"a":1}',
     }),
     { params: Promise.resolve({ id }) },
   );
 
-describe('POST /api/documents/[id]/approve', () => {
-  it('forwards the body and If-Match with the token and tenant, and returns the result', async () => {
+const postReopen = (id: string, headers: Record<string, string> = {}) =>
+  reopen(
+    new NextRequest(`${ORIGIN}/api/documents/${id}/reopen`, {
+      method: 'POST',
+      headers: { origin: ORIGIN, 'if-match': '"3"', ...headers },
+    }),
+    { params: Promise.resolve({ id }) },
+  );
+
+describe.each([
+  ['approve', postApprove],
+  ['reopen', postReopen],
+])('POST /api/documents/[id]/%s', (action, post) => {
+  it('forwards If-Match with the token and tenant, and returns the result', async () => {
     const res = await post(ID);
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ status: 'approved' });
+    expect(await res.json()).toEqual(RESULT);
     const [url, init] = fetchMock.mock.calls[0] as [
       string,
-      { method: string; headers: Record<string, string>; body: ReadableStream },
+      { method: string; headers: Record<string, string> },
     ];
-    expect(url).toBe(`http://api.test/documents/${ID}/approve`);
+    expect(url).toBe(`http://api.test/documents/${ID}/${action}`);
     expect(init.method).toBe('POST');
     expect(init.headers).toMatchObject({
       authorization: 'Bearer tok',
       'x-tenant': 'globex',
       'if-match': '"3"',
-      'content-type': 'application/json',
     });
-    expect(await new Response(init.body).text()).toBe('{"a":1}');
   });
 
   it('refuses a cross-site post without calling the API', async () => {
@@ -75,19 +87,6 @@ describe('POST /api/documents/[id]/approve', () => {
   it('refuses an id that is not a uuid, so nothing can be appended to the path', async () => {
     const res = await post('..%2Fadmin');
     expect(res.status).toBe(404);
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
-
-  it('refuses a body that is not JSON', async () => {
-    const res = await post(ID, { 'content-type': 'text/plain' });
-    expect(res.status).toBe(400);
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
-
-  it('refuses a body declared over the limit without calling the API', async () => {
-    const res = await post(ID, { 'content-length': String(1024 * 1024 + 1) });
-    expect(res.status).toBe(413);
-    expect(await res.json()).toEqual({ code: 'BODY_TOO_LARGE' });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -120,5 +119,38 @@ describe('POST /api/documents/[id]/approve', () => {
     const down = await post(ID);
     expect(down.status).toBe(502);
     expect(await down.json()).toEqual({ code: 'API_UNREACHABLE' });
+  });
+});
+
+describe('what only approve does: it carries the invoice', () => {
+  it('forwards the body as JSON', async () => {
+    await postApprove(ID);
+    const [, init] = fetchMock.mock.calls[0] as [
+      string,
+      { headers: Record<string, string>; body: ReadableStream },
+    ];
+    expect(init.headers['content-type']).toBe('application/json');
+    expect(await new Response(init.body).text()).toBe('{"a":1}');
+  });
+
+  it('refuses a body that is not JSON', async () => {
+    const res = await postApprove(ID, { 'content-type': 'text/plain' });
+    expect(res.status).toBe(400);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('refuses a body declared over the limit without calling the API', async () => {
+    const res = await postApprove(ID, { 'content-length': String(1024 * 1024 + 1) });
+    expect(res.status).toBe(413);
+    expect(await res.json()).toEqual({ code: 'BODY_TOO_LARGE' });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('what only reopen does: it has no body', () => {
+  it('sends none', async () => {
+    await postReopen(ID);
+    const [, init] = fetchMock.mock.calls[0] as [string, { body?: unknown }];
+    expect(init.body).toBeUndefined();
   });
 });

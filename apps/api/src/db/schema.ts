@@ -169,10 +169,12 @@ export const extractions = pgTable(
 
 /**
  * What a person approved (DATA_MODEL.md). Written only by approval, at most one row per document
- * (`UNIQUE (document_id)` is also the last line of defence against a double approval). The columns
- * are what aggregate questions filter on; `data` is the whole approved Invoice incl. `fieldMeta`,
- * validated by `InvoiceSchema`, from which the columns are derived in the same insert. The foreign
- * keys are composite because an ordinary FK check ignores RLS and would accept another tenant's id.
+ * version (the unique key is also the last line of defence against a double approval). Reopening
+ * keeps the old rows, so this table is history: to ask what is approved NOW, read the view
+ * `current_invoices` (migration 0013), or old versions are counted too. The columns are what
+ * aggregate questions filter on; `data` is the whole approved Invoice incl. `fieldMeta`, validated
+ * by `InvoiceSchema`, from which the columns are derived in the same insert. The foreign keys are
+ * composite because an ordinary FK check ignores RLS and would accept another tenant's id.
  */
 export const invoices = pgTable(
   'invoices',
@@ -205,7 +207,7 @@ export const invoices = pgTable(
     approvedAt: timestamp('approved_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
-    unique('invoices_document_unique').on(t.documentId),
+    unique('invoices_document_version_unique').on(t.documentId, t.documentVersion),
     unique('invoices_id_tenant_unique').on(t.id, t.tenantId),
     foreignKey({
       name: 'invoices_document_tenant_fk',

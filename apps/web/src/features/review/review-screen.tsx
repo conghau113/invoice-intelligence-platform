@@ -8,27 +8,35 @@ import { Button } from '@/components/ui/button';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { formatDate } from '@/i18n/format';
 import type { DocumentDetail } from '../documents/detail/detail-client';
-import { approveDocument, type ApproveErrorKind } from './approve-client';
+import {
+  approveDocument,
+  reopenDocument,
+  type ApproveErrorKind,
+  type ReopenErrorKind,
+} from './approve-client';
 import { InvoiceForm } from './invoice-form';
 import type { ViewerEvidence } from './viewer/types';
 import { DocumentViewer } from './viewer/document-viewer';
 
 type Extraction = NonNullable<DocumentDetail['extraction']>;
 
-/** What the form is showing: an approved invoice wins over the AI's values. */
+/** What the form is showing: an approved invoice, else what was reopened, else the AI's values. */
 interface Shown {
   source: { id: string; documentVersion: number; data: Invoice; warnings: RuleWarning[] };
   approvedAt: string | null;
+  /** The version approved before a reopen, when the form started from it. */
+  reopenedFromVersion: number | null;
   /** The document version when this was loaded: what an approval must claim to have reviewed. */
   version: number;
 }
 
 const toShown = (
-  document: Pick<DocumentDetail, 'version' | 'invoice'>,
+  document: Pick<DocumentDetail, 'version' | 'invoice' | 'reopenedFrom'>,
   extraction: Extraction,
 ): Shown => ({
-  source: document.invoice ?? extraction,
+  source: document.invoice ?? document.reopenedFrom ?? extraction,
   approvedAt: document.invoice?.approvedAt ?? null,
+  reopenedFromVersion: document.reopenedFrom?.documentVersion ?? null,
   version: document.version,
 });
 
@@ -37,9 +45,9 @@ const toShown = (
  * narrow screen). Clicking a field makes the viewer jump to where the AI found its value.
  *
  * The form is built once from the data it was given. A refetch that returns something else (someone
- * approved it, or it was reopened and extracted again) does NOT replace it: the reviewer is told and
- * decides, because replacing it would throw away what they typed. The version sent with an approval
- * is frozen with that data for the same reason: it says what the person actually reviewed.
+ * approved or reopened it) does NOT replace a form being edited: the reviewer is told and decides,
+ * because replacing it would throw away what they typed. The version sent with an approval is frozen
+ * with that data for the same reason: it says what the person actually reviewed.
  */
 export function ReviewScreen({
   document,
@@ -47,12 +55,15 @@ export function ReviewScreen({
   canApprove,
   onChanged,
 }: Readonly<{
-  document: Pick<DocumentDetail, 'id' | 'sourceType' | 'version' | 'status' | 'invoice'>;
+  document: Pick<
+    DocumentDetail,
+    'id' | 'sourceType' | 'version' | 'status' | 'invoice' | 'reopenedFrom'
+  >;
   extraction: Extraction;
   /** The person holds `document:approve`. Editing also needs a document waiting for review. */
   canApprove: boolean;
-  /** Ask the page to load the document again. */
-  onChanged: () => void;
+  /** Ask the page to load the document again; settles when it has. */
+  onChanged: () => unknown;
 }>) {
   const t = useTranslations('Review');
   const locale = useLocale();
@@ -61,45 +72,77 @@ export function ReviewScreen({
   const [evidence, setEvidence] = useState<ViewerEvidence | null>(null);
 
   const [submitting, setSubmitting] = useState(false);
-  // Set synchronously: a second click before React re-renders must not send a second approval.
+  // Set synchronously: a second click before React re-renders must not send a second request.
   const inFlight = useRef(false);
   const [approveError, setApproveError] = useState<ApproveErrorKind | null>(null);
+  const [reopening, setReopening] = useState(false);
+  const [reopenError, setReopenError] = useState<ReopenErrorKind | null>(null);
   /** This person just approved; holds how many fields they changed. */
   const [justApproved, setJustApproved] = useState<number | null>(null);
 
-  const newerAvailable = latest.source.id !== shown.source.id;
-  // Their own approval comes back from the refetch: nothing of theirs is lost, so follow it.
-  if (justApproved !== null && newerAvailable && latest.approvedAt !== null) setShown(latest);
+  // The source id alone is not enough: a reopened form starts from the invoice already on screen.
+  const newerAvailable = latest.source.id !== shown.source.id || latest.version !== shown.version;
+  // Nothing typed can be lost: the form is read-only, or what was typed has just been saved.
+  if (newerAvailable && (shown.approvedAt !== null || justApproved !== null)) {
+    setShown(latest);
+    setEvidence(null);
+    // "Approved just now" would be about a version that no longer counts as approved.
+    if (latest.approvedAt === null) setJustApproved(null);
+  }
 
-  // The values belong to an older version of the document (it was reopened since).
-  const outdated = shown.source.documentVersion < document.version;
   const canEdit =
     canApprove &&
     document.status === 'needs_review' &&
     shown.approvedAt === null &&
     justApproved === null;
+  const canReopen = canApprove && document.status === 'approved' && shown.approvedAt !== null;
 
   async function approve(invoice: Invoice) {
     if (inFlight.current) return;
     inFlight.current = true;
     setSubmitting(true);
     setApproveError(null);
+    setReopenError(null);
     const outcome = await approveDocument(document.id, shown.version, invoice);
     inFlight.current = false;
     setSubmitting(false);
     if (outcome.ok) setJustApproved(outcome.corrections);
     else setApproveError(outcome.kind);
     // Success shows the approved invoice; a conflict shows what changed, without touching the form.
-    if (outcome.ok || outcome.kind === 'conflict') onChanged();
+    if (outcome.ok || outcome.kind === 'conflict') void onChanged();
+  }
+
+  async function reopen() {
+    if (inFlight.current) return;
+    inFlight.current = true;
+    setReopening(true);
+    setReopenError(null);
+    try {
+      const outcome = await reopenDocument(document.id, shown.version);
+      if (!outcome.ok) setReopenError(outcome.kind);
+      if (outcome.ok) setApproveError(null);
+      // Both a success and a conflict: the page follows what the document is now. The button waits
+      // for that, because clicking it again before the new version arrives could only be refused.
+      if (outcome.ok || outcome.kind === 'conflict') await onChanged();
+    } finally {
+      // A stuck ref would block approving as well, since the two share it.
+      inFlight.current = false;
+      setReopening(false);
+    }
+  }
+
+  /** Why the form being edited is behind the document. */
+  function newerText(): string {
+    if (latest.approvedAt !== null) return t('newerApproved');
+    if (latest.version > shown.version) return t('newerReopened', { current: latest.version });
+    return t('newerExtraction');
   }
 
   return (
     <TooltipProvider delayDuration={150}>
       <div className="flex min-h-0 flex-1 flex-col gap-3" data-testid="review-screen">
-        {outdated && (
-          <InfoBanner>
-            {t('outdated', { extraction: shown.source.documentVersion, current: document.version })}
-          </InfoBanner>
+        {shown.reopenedFromVersion !== null && (
+          <InfoBanner>{t('reopenedFrom', { version: shown.reopenedFromVersion })}</InfoBanner>
         )}
         {justApproved !== null && (
           <output data-testid="approved-now" className="text-sm text-success">
@@ -116,12 +159,12 @@ export function ReviewScreen({
             })}
           </InfoBanner>
         )}
-        {newerAvailable && justApproved === null && (
+        {newerAvailable && justApproved === null && shown.approvedAt === null && (
           <output
             data-testid="newer-extraction"
             className="flex flex-wrap items-center gap-3 rounded-lg border border-warning/40 bg-warning-soft px-3 py-2 text-sm text-warning-soft-foreground"
           >
-            <span>{latest.approvedAt === null ? t('newerExtraction') : t('newerApproved')}</span>
+            <span>{newerText()}</span>
             <Button
               type="button"
               size="sm"
@@ -136,6 +179,28 @@ export function ReviewScreen({
             </Button>
           </output>
         )}
+        {(canReopen || reopenError !== null) && (
+          <div className="flex flex-wrap items-center gap-3">
+            {canReopen && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                data-testid="reopen"
+                disabled={reopening}
+                onClick={() => void reopen()}
+              >
+                {reopening ? t('reopening') : t('reopen')}
+              </Button>
+            )}
+            {/* Out here, not in the form: a conflict replaces the form with what is current. */}
+            {reopenError !== null && (
+              <p role="alert" data-testid="reopen-error" className="text-sm text-destructive">
+                {t(`reopenError.${reopenError}`)}
+              </p>
+            )}
+          </div>
+        )}
         <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto lg:grid lg:grid-cols-2 lg:overflow-hidden">
           <div className="flex h-[70vh] flex-none flex-col lg:h-auto lg:min-h-0">
             <DocumentViewer
@@ -149,6 +214,7 @@ export function ReviewScreen({
               key={shown.source.id}
               extraction={shown.source}
               canEdit={canEdit}
+              approved={shown.approvedAt !== null}
               readOnlyText={shown.approvedAt === null ? undefined : t('approvedReadOnly')}
               onEvidence={setEvidence}
               onValid={(invoice) => void approve(invoice)}
