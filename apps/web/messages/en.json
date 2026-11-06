@@ -354,11 +354,11 @@
     },
     "warningsTitle": "{count, plural, =0 {No warnings} one {# warning} other {# warnings}}",
     "noWarnings": "The numbers, dates and tax codes pass every check.",
-    "legend": "Yellow fields need a look: the AI was unsure, gave no confidence, or a check failed. Hover or focus a field to see why. Nothing is ever changed for you.",
+    "legend": "Yellow fields with a triangle need a look: the AI rated its own confidence below {percent}%, or a check failed. Hover a field to see why. Dashed fields: the AI gave no confidence. An unmarked field is not a verified one, because the confidence is the AI's own rating: compare with the original. Nothing is ever changed for you.",
     "reason": {
-      "lowConfidence": "The AI is only {percent}% sure of this value.",
-      "noMeta": "The AI gave no confidence for this field.",
-      "noMetaMany": "The AI gave no confidence for: {fields}."
+      "lowConfidence": "By its own rating, the AI is only {percent}% sure of this value.",
+      "noMeta": "The AI gave no confidence.",
+      "noMetaNote": "Dashed fields: the AI gave no confidence."
     },
     "warning": {
       "LINES_SUM_MISMATCH": "The line amounts add up to {expected}, but the subtotal is {actual}.",
@@ -377,11 +377,13 @@
       "invalid": "This value is not valid."
     },
     "hints": {
+      "date": "Format: month/day/year.",
       "taxCode": "10 digits, or 10 digits + dash + 3 digits. Leave empty if there is none."
     },
     "lineN": "Line {n}",
     "addLine": "Add line",
     "removeLine": "Remove line {n}",
+    "pickDate": "Pick a date on the calendar",
     "removeColumn": "Remove",
     "sumOfLines": "Lines add up to {amount}",
     "hasErrors": "{count, plural, one {# field has an error} other {# fields have errors}}. Fix them to continue.",

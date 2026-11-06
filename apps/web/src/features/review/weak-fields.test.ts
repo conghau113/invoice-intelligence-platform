@@ -1,7 +1,7 @@
 import type { Invoice, RuleWarning } from 'contracts';
 import { describe, expect, it } from 'vitest';
 import { loadInvoiceFixture } from '../documents/detail/detail-fixtures';
-import { LOW_CONFIDENCE, shiftLineMeta, weakFields } from './weak-fields';
+import { fieldMark, LOW_CONFIDENCE, shiftLineMeta, weakFields } from './weak-fields';
 
 const fixture = () => loadInvoiceFixture() as unknown as Invoice;
 const full = (inv: Invoice): Invoice => {
@@ -47,7 +47,7 @@ describe('weakFields', () => {
     expect(weak.has('series')).toBe(false);
   });
 
-  it('treats a field without meta as weak (the AI gave no confidence)', () => {
+  it('lists a field without meta with its own reason (the AI gave no confidence)', () => {
     const inv = full(fixture());
     delete inv.fieldMeta['issueDate'];
     expect(weakFields(inv, []).get('issueDate')).toEqual([{ kind: 'noMeta' }]);
@@ -67,11 +67,34 @@ describe('weakFields', () => {
     ]);
   });
 
-  it('lists a line added by the user (no meta) as weak', () => {
+  it('lists a line added by the user (no meta)', () => {
     const inv = full(fixture());
     inv.lines = [...inv.lines, { ...inv.lines[0]! }];
     const weak = weakFields(inv, []);
     expect(weak.get(`lines.${inv.lines.length - 1}.amount`)).toEqual([{ kind: 'noMeta' }]);
+  });
+});
+
+describe('fieldMark', () => {
+  const low = { kind: 'lowConfidence', confidence: 0.5 } as const;
+  const none = { kind: 'noMeta' } as const;
+  const broken = { kind: 'warning', code: 'TOTAL_MISMATCH', params: {} } as const;
+
+  it.each([
+    ['nothing to say', [], null],
+    ['only no confidence', [none], 'noMeta'],
+    ['low confidence', [low], 'warning'],
+    ['a broken rule', [broken], 'warning'],
+    ['a broken rule on a field with no confidence', [none, broken], 'warning'],
+  ] as const)('%s', (_name, reasons, mark) => {
+    expect(fieldMark(reasons)).toBe(mark);
+  });
+
+  it('an invoice with no confidence at all has no field marked as a warning', () => {
+    const inv = { ...full(fixture()), fieldMeta: {} };
+    const marks = [...weakFields(inv, []).values()].map(fieldMark);
+    expect(marks.length).toBeGreaterThan(0);
+    expect(new Set(marks)).toEqual(new Set(['noMeta']));
   });
 });
 

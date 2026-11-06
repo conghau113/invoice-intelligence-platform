@@ -354,11 +354,11 @@
     },
     "warningsTitle": "{count, plural, =0 {Không có cảnh báo} other {# cảnh báo}}",
     "noWarnings": "Số tiền, ngày và mã số thuế đều qua mọi kiểm tra.",
-    "legend": "Ô màu vàng cần xem lại: AI chưa chắc chắn, không cho biết độ tin cậy, hoặc một kiểm tra không đạt. Rê chuột hoặc chọn ô để xem lý do. Hệ thống không bao giờ tự sửa giá trị của bạn.",
+    "legend": "Ô vàng có biểu tượng tam giác cần xem lại: AI tự đánh giá độ tin cậy dưới {percent}%, hoặc một kiểm tra không đạt. Rê chuột lên ô để xem lý do. Ô viền đứt: AI không cho biết độ tin cậy. Ô không đánh dấu chưa phải là đã xác minh, vì độ tin cậy do AI tự đánh giá: hãy so với bản gốc. Hệ thống không bao giờ tự sửa giá trị của bạn.",
     "reason": {
-      "lowConfidence": "AI chỉ chắc {percent}% về giá trị này.",
-      "noMeta": "AI không cho biết độ tin cậy của ô này.",
-      "noMetaMany": "AI không cho biết độ tin cậy của: {fields}."
+      "lowConfidence": "AI tự đánh giá chỉ chắc {percent}% về giá trị này.",
+      "noMeta": "AI không cho biết độ tin cậy.",
+      "noMetaNote": "Ô viền đứt: AI không cho biết độ tin cậy."
     },
     "warning": {
       "LINES_SUM_MISMATCH": "Các dòng cộng lại là {expected}, nhưng tiền trước thuế ghi {actual}.",
@@ -377,11 +377,13 @@
       "invalid": "Giá trị không hợp lệ."
     },
     "hints": {
+      "date": "Dạng ngày/tháng/năm.",
       "taxCode": "10 chữ số, hoặc 10 chữ số + dấu gạch ngang + 3 chữ số. Để trống nếu không có."
     },
     "lineN": "Dòng {n}",
     "addLine": "Thêm dòng",
     "removeLine": "Xoá dòng {n}",
+    "pickDate": "Chọn ngày trên lịch",
     "removeColumn": "Xoá",
     "sumOfLines": "Các dòng cộng lại là {amount}",
     "hasErrors": "{count, plural, other {# ô có lỗi}}. Hãy sửa để tiếp tục.",

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { contrastRatio } from '../src/styles/contrast';
 import { invoicePdf, invoiceXml, uploadFile } from './support/documents';
 import { login } from './support/login';
 
@@ -37,12 +38,13 @@ test.describe('review screen', () => {
   }) => {
     await openPdfReview(page);
 
-    // invoiceNo: confidence 0.6 -> low confidence. series: no meta at all -> unknown, also weak.
+    // invoiceNo: confidence 0.6 -> low confidence, yellow. series: no meta at all -> only a light mark.
     const invoiceNo = page.locator('[data-weak][data-path="invoiceNo"]');
     await expect(invoiceNo).toBeVisible();
     await invoiceNo.hover();
-    await expect(page.getByRole('tooltip').first()).toContainText('AI chỉ chắc 60%');
-    await expect(page.locator('[data-weak][data-path="series"]')).toBeVisible();
+    await expect(page.getByRole('tooltip').first()).toContainText('AI tự đánh giá chỉ chắc 60%');
+    await expect(page.locator('[data-no-meta][data-path="series"]')).toBeVisible();
+    await expect(page.locator('[data-weak][data-path="series"]')).toHaveCount(0);
 
     // total: confidence 0.95 and the numbers add up -> nothing to flag.
     await expect(page.locator('[data-weak][data-path="total"]')).toHaveCount(0);
@@ -75,12 +77,13 @@ test.describe('review screen', () => {
     await openPdfReview(page);
     await page.getByTestId('add-line').click();
     await expect(page.getByTestId('line-1')).toBeVisible();
-    // A new line has no confidence from the AI, so it is flagged; its empty text fails the schema.
-    await expect(page.locator('[data-weak][data-path="lines.1.amount"]')).toBeVisible();
-    // ...and the reason is visible text under the line, not only a tooltip.
-    await expect(page.getByTestId('line-notes-1')).toContainText(
-      'AI không cho biết độ tin cậy của',
+    // A new line has no confidence from the AI: lightly marked; its empty text fails the schema.
+    await expect(page.locator('[data-no-meta][data-path="lines.1.amount"]')).toBeVisible();
+    // ...and the reason is visible text, once under the table instead of on every line.
+    await expect(page.getByTestId('lines-card').getByTestId('no-meta-note')).toContainText(
+      'AI không cho biết độ tin cậy',
     );
+    await expect(page.getByTestId('line-notes-1')).toHaveCount(0);
     await page.getByRole('button', { name: 'Xoá dòng 2' }).click();
     await expect(page.getByTestId('line-1')).toHaveCount(0);
   });
@@ -307,6 +310,291 @@ test.describe('review screen', () => {
     await openPdfReview(page);
     await expect(
       page.locator('[data-path="invoiceNo"]').locator('..').getByTestId('weak-reason'),
-    ).toContainText('AI chỉ chắc 60%');
+    ).toContainText('AI tự đánh giá chỉ chắc 60%');
+  });
+});
+
+/** Changes what the page reads for this document; the API and the database are not touched. */
+async function withExtraction(page: Page, id: string, change: (data: ExtractedData) => void) {
+  await page.route(`**/api/documents/${id}`, async (route) => {
+    const res = await route.fetch();
+    const body = await res.json();
+    change(body.extraction.data);
+    await route.fulfill({ response: res, json: body });
+  });
+}
+
+type ExtractedData = {
+  fieldMeta: Record<
+    string,
+    { confidence: number; evidence: { page: number; text: string } | null } | undefined
+  >;
+  lines: { quantity: number }[];
+};
+
+async function openWith(page: Page, change: (data: ExtractedData) => void): Promise<string> {
+  await login(page, 'accountant');
+  const id = await uploadAndWait(page, invoicePdf('t37.pdf'));
+  await withExtraction(page, id, change);
+  await page.goto(`/vi/documents/${id}`, { timeout: 30_000 });
+  await expect(page.getByTestId('review-screen')).toBeVisible({ timeout: 30_000 });
+  return id;
+}
+
+const background = (page: Page, testId: string) =>
+  page.getByTestId(testId).evaluate((el) => getComputedStyle(el).backgroundColor);
+
+test.describe('T3.7: which fields ask for attention', () => {
+  test('an invoice that only lacks confidence has no warning field; low confidence and a broken rule are still yellow', async ({
+    page,
+  }) => {
+    await openWith(page, (data) => {
+      delete data.fieldMeta['invoiceNo'];
+    });
+
+    // Most fields have no confidence (fake.py gives only `total` one here), and none looks like a warning.
+    await expect(page.locator('[data-no-meta]').first()).toBeVisible();
+    expect(await page.locator('[data-no-meta]').count()).toBeGreaterThan(10);
+    await expect(page.locator('[data-weak]')).toHaveCount(0);
+    await expect(page.getByTestId('weak-icon')).toHaveCount(0);
+
+    const plain = await background(page, 'field-total');
+    expect(await background(page, 'field-series')).toBe(plain);
+    await expect(page.getByTestId('field-series')).toHaveCSS('border-style', 'dashed');
+    await expect(page.getByTestId('field-total')).toHaveCSS('border-style', 'solid');
+    // The reason is words, not only a colour or a frame.
+    await expect(page.getByTestId('seller').getByTestId('no-meta-note')).toHaveText(
+      'Ô viền đứt: AI không cho biết độ tin cậy.',
+    );
+    await expect(page.getByTestId('field-series')).toHaveAccessibleDescription(
+      'AI không cho biết độ tin cậy.',
+    );
+    await expect(page.getByTestId('field-lines.0.unit')).toHaveAccessibleDescription(
+      'AI không cho biết độ tin cậy.',
+    );
+    // A clean form must not read as a checked one (SECURITY.md section 6).
+    await expect(page.getByTestId('warnings')).toContainText('chưa phải là đã xác minh');
+
+    // A broken rule on the same screen is a real warning.
+    await page.getByTestId('field-lines.0.amount').fill('1200000');
+    const amount = page.locator('[data-weak][data-path="lines.0.amount"]');
+    await expect(amount).toBeVisible();
+    await expect(amount.getByTestId('weak-icon')).toBeVisible();
+    expect(await background(page, 'field-lines.0.amount')).not.toBe(plain);
+  });
+
+  test('low confidence is yellow, unlike a field the AI said nothing about', async ({ page }) => {
+    await openPdfReview(page);
+    await expect(page.locator('[data-weak][data-path="invoiceNo"]')).toBeVisible();
+    const plain = await background(page, 'field-total');
+    expect(await background(page, 'field-invoiceNo')).not.toBe(plain);
+    expect(await background(page, 'field-series')).toBe(plain);
+  });
+
+  test('the warning icon stays off the number in the narrowest cell, and the number is not cut', async ({
+    page,
+  }) => {
+    await openWith(page, (data) => {
+      data.fieldMeta['lines.0.quantity'] = { confidence: 0.5, evidence: null };
+      data.fieldMeta['lines.0.vatRate'] = { confidence: 0.5, evidence: null };
+      data.fieldMeta['total'] = { confidence: 0.5, evidence: null };
+    });
+
+    for (const path of ['lines.0.quantity', 'lines.0.vatRate', 'total']) {
+      const cell = page.locator(`[data-weak][data-path="${path}"]`);
+      const icon = await cell.getByTestId('weak-icon').boundingBox();
+      expect(icon, path).not.toBeNull();
+      const text = await page.getByTestId(`field-${path}`).evaluate((el) => {
+        const input = el as HTMLInputElement;
+        const style = getComputedStyle(input);
+        const context = document.createElement('canvas').getContext('2d')!;
+        context.font = style.font;
+        const measured = context.measureText(input.value);
+        const box = input.getBoundingClientRect();
+        const right =
+          box.right -
+          Number.parseFloat(style.borderRightWidth) -
+          Number.parseFloat(style.paddingRight);
+        const height = measured.fontBoundingBoxAscent + measured.fontBoundingBoxDescent;
+        return {
+          left: right - measured.width,
+          right,
+          top: box.top + (box.height - height) / 2,
+          bottom: box.top + (box.height + height) / 2,
+          value: input.value,
+          cut: input.scrollWidth > input.clientWidth,
+        };
+      });
+      expect(text.value, path).not.toBe('');
+      expect(text.cut, `${path}: the value does not fit`).toBe(false);
+      const apart =
+        icon!.x >= text.right ||
+        icon!.x + icon!.width <= text.left ||
+        icon!.y >= text.bottom ||
+        icon!.y + icon!.height <= text.top;
+      expect(apart, `${path}: icon ${JSON.stringify(icon)} over text ${JSON.stringify(text)}`).toBe(
+        true,
+      );
+    }
+
+    // In the first row too, the scrolling table must not cut the icon off.
+    const table = await page.locator('[data-slot="table-container"]').first().boundingBox();
+    const first = await page
+      .locator('[data-path="lines.0.quantity"]')
+      .getByTestId('weak-icon')
+      .boundingBox();
+    expect(first!.y).toBeGreaterThanOrEqual(table!.y);
+  });
+
+  for (const theme of ['light', 'dark'] as const) {
+    test(`marks are readable in the ${theme} theme`, async ({ page, context }) => {
+      await context.addCookies([{ name: 'theme', value: theme, url: 'http://localhost:3000' }]);
+      await openPdfReview(page);
+
+      const colours = await page.evaluate(() => {
+        const hex = (rgb: string) =>
+          `#${(rgb.match(/\d+/g) ?? [])
+            .slice(0, 3)
+            .map((n) => Number(n).toString(16).padStart(2, '0'))
+            .join('')}`;
+        const read = (selector: string, property: 'color' | 'borderTopColor' | 'backgroundColor') =>
+          hex(getComputedStyle(document.querySelector(selector)!)[property]);
+        const reason = (path: string) => `[data-path="${path}"] ~ [data-testid="weak-reason"]`;
+        return {
+          card: read('[data-testid="seller"]', 'backgroundColor'),
+          noMetaText: read('[data-testid="seller"] [data-testid="no-meta-note"]', 'color'),
+          noMetaBorder: read('[data-path="series"] input', 'borderTopColor'),
+          warningText: read(reason('invoiceNo'), 'color'),
+          icon: read('[data-path="invoiceNo"] [data-testid="weak-icon"]', 'color'),
+          iconBackground: read(
+            '[data-path="invoiceNo"] [data-testid="weak-icon"]',
+            'backgroundColor',
+          ),
+          warningValue: read('[data-path="invoiceNo"] input', 'color'),
+          warningField: read('[data-path="invoiceNo"] input', 'backgroundColor'),
+        };
+      });
+      expect(contrastRatio(colours.noMetaText, colours.card)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(colours.noMetaBorder, colours.card)).toBeGreaterThanOrEqual(3);
+      expect(contrastRatio(colours.warningText, colours.card)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(colours.icon, colours.iconBackground)).toBeGreaterThanOrEqual(3);
+      expect(contrastRatio(colours.warningValue, colours.warningField)).toBeGreaterThanOrEqual(4.5);
+    });
+  }
+});
+
+test.describe('T3.7: the issue date follows the interface language, whatever the browser language', () => {
+  test('shown in the interface language; an unchanged date is not a correction', async ({
+    page,
+  }) => {
+    const id = await openPdfReview(page); // Desktop Chrome here is en-US: a native date box would show 01/15/2026
+    const date = page.getByTestId('field-issueDate');
+    await expect(date).toHaveValue('15/01/2026');
+    await expect(date).toHaveAttribute('type', 'text');
+    // All ten characters fit next to the calendar button.
+    expect(await date.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+    await expect(page.getByTestId('document-detail')).toContainText('Dạng ngày/tháng/năm.');
+
+    await page.goto(`/en/documents/${id}`, { timeout: 30_000 });
+    await expect(date).toHaveValue('01/15/2026');
+    await expect(page.getByTestId('document-detail')).toContainText('Format: month/day/year.');
+
+    await page.goto(`/vi/documents/${id}`, { timeout: 30_000 });
+    const sent = page.waitForRequest((r) => r.url().endsWith(`/api/documents/${id}/approve`));
+    await page.getByTestId('approve-form').click();
+    expect((await sent).postDataJSON().issueDate).toBe('2026-01-15');
+    await expect(page.getByTestId('approved-now')).toContainText('Bạn không sửa ô nào');
+  });
+
+  test('typing 08/01/2026 sends 2026-01-08, and the saved value reads 08/01/2026 again', async ({
+    page,
+  }) => {
+    const id = await openPdfReview(page);
+    const date = page.getByTestId('field-issueDate');
+    await date.fill('8/1/2026');
+    await date.blur();
+    await expect(date).toHaveValue('08/01/2026');
+
+    const sent = page.waitForRequest((r) => r.url().endsWith(`/api/documents/${id}/approve`));
+    await page.getByTestId('approve-form').click();
+    expect((await sent).postDataJSON().issueDate).toBe('2026-01-08');
+    await expect(page.getByTestId('approved-now')).toContainText('Bạn đã sửa 1 ô');
+
+    await page.goto(`/vi/documents/${id}`, { timeout: 30_000 });
+    await expect(date).toHaveValue('08/01/2026');
+    await expect(date).toHaveAttribute('readonly', '');
+    await expect(page.getByRole('button', { name: 'Chọn ngày trên lịch' })).toHaveCount(0);
+  });
+
+  test('a date that does not exist cannot be approved; a future date warns', async ({ page }) => {
+    await openPdfReview(page);
+    const writes: string[] = [];
+    page.on('request', (r) => {
+      if (r.url().includes('/api/') && r.method() !== 'GET') writes.push(r.url());
+    });
+    const date = page.getByTestId('field-issueDate');
+    await date.fill('31/02/2026');
+    await date.blur();
+    await expect(date).toHaveValue('31/02/2026'); // kept as typed, so the person can fix it
+    await expect(date).toHaveAttribute('aria-invalid', 'true');
+    await page.getByTestId('approve-form').click();
+    await expect(page.getByTestId('approved-now')).toHaveCount(0);
+    expect(writes).toEqual([]);
+
+    await date.fill('01/01/2999');
+    await expect(
+      page.getByTestId('warnings').locator('li[data-code="ISSUE_DATE_FUTURE"]'),
+    ).toBeVisible();
+    await expect(page.locator('[data-weak][data-path="issueDate"]')).toBeVisible();
+  });
+
+  test('the calendar writes through the same ISO value, also over text that was not a date', async ({
+    page,
+  }) => {
+    await openPdfReview(page);
+    const date = page.getByTestId('field-issueDate');
+    await date.fill('31/02/2026');
+    await expect(date).toHaveAttribute('aria-invalid', 'true');
+    await page.getByTestId('field-issueDate-picker').fill('2026-03-09');
+    await expect(date).toHaveValue('09/03/2026');
+    await expect(date).not.toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByRole('button', { name: 'Chọn ngày trên lịch' })).toBeVisible();
+  });
+
+  test('switching the language in the app rewrites the date; what was typed is still sent as ISO', async ({
+    page,
+  }) => {
+    const id = await openPdfReview(page);
+    await expect(page.getByTestId('field-issueDate')).toHaveValue('15/01/2026');
+    await page.getByTestId('language-switcher').selectOption('en');
+    await expect(page).toHaveURL(new RegExp(`/en/documents/${id}`));
+    const date = page.getByTestId('field-issueDate');
+    await expect(date).toHaveValue('01/15/2026');
+    await date.fill('01/08/2026'); // January in en
+    const sent = page.waitForRequest((r) => r.url().endsWith(`/api/documents/${id}/approve`));
+    await page.getByTestId('approve-form').click();
+    expect((await sent).postDataJSON().issueDate).toBe('2026-01-08');
+  });
+
+  test('the calendar button shows the evidence like the box does, and never throws if the browser refuses', async ({
+    page,
+  }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    await page.addInitScript(() => {
+      HTMLInputElement.prototype.showPicker = () => {
+        throw new DOMException('refused', 'NotAllowedError');
+      };
+    });
+    await openWith(page, (data) => {
+      data.fieldMeta['issueDate'] = {
+        confidence: 0.9,
+        evidence: { page: 1, text: 'Tong thanh toan: 687,000 VND' },
+      };
+    });
+    await page.getByRole('button', { name: 'Chọn ngày trên lịch' }).click();
+    await expect(page.getByTestId('evidence-caption')).toContainText('Tong thanh toan');
+    expect(errors).toEqual([]);
+    await expect(page.getByTestId('field-issueDate')).toHaveValue('15/01/2026');
   });
 });
