@@ -5,6 +5,7 @@ import { auditLogs, documents } from '../../../db/schema';
 import {
   assertTransition,
   DocumentVersionConflictError,
+  InvalidDocumentTransitionError,
   isDocumentStatus,
   nextVersion,
   type DocumentStatus,
@@ -22,6 +23,11 @@ export interface TransitionContext {
    * so two tabs that both read version 1 are told apart by `approved` -> `approved` being invalid.
    */
   expectedVersion?: number;
+  /**
+   * The only status this operation may start from. Needed when a target has several valid sources:
+   * `processing` -> `needs_review` is a valid edge, but reopening a document must not take it.
+   */
+  expectedFrom?: DocumentStatus;
 }
 
 export interface TransitionResult {
@@ -71,6 +77,9 @@ export class DocumentStateMachine {
 
     if (ctx.expectedVersion !== undefined && ctx.expectedVersion !== row.version) {
       throw new DocumentVersionConflictError();
+    }
+    if (ctx.expectedFrom !== undefined && ctx.expectedFrom !== row.status) {
+      throw new InvalidDocumentTransitionError(row.status, to);
     }
     assertTransition(row.status, to);
     const version = nextVersion(row.status, to, row.version);

@@ -85,6 +85,27 @@
       "when": 1793815616359,
       "tag": "0011_invoices_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793965113521,
+      "tag": "0012_invoices_per_version",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793965125124,
+      "tag": "0013_current_views",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1793968673233,
+      "tag": "0014_current_invoice_lines",
+      "breakpoints": true
     }
   ]
 }

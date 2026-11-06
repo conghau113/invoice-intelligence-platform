@@ -274,6 +274,108 @@ test.describe('review screen', () => {
     expect((await sent).headers()['if-match']).toBe('"1"');
   });
 
+  test('T3.8: approve, reopen, correct and approve again without reloading the page', async ({
+    page,
+  }) => {
+    const id = await openPdfReview(page);
+    await page.getByTestId('field-seller.name').fill('Công ty SAMPLE Lần Một');
+    await page.getByTestId('approve-form').click();
+    await expect(page.getByTestId('approved-now')).toBeVisible();
+
+    await page.getByTestId('reopen').click();
+
+    // Opens with what was approved, not the AI's value, and can be edited at once.
+    const name = page.getByTestId('field-seller.name');
+    await expect(name).toHaveValue('Công ty SAMPLE Lần Một');
+    await expect(name).not.toHaveAttribute('readonly', '');
+    await expect(page.getByTestId('review-screen')).toContainText('Đang sửa lại từ bản đã duyệt');
+    await expect(page.getByTestId('approved-now')).toHaveCount(0);
+    await expect(page.getByTestId('reopen')).toHaveCount(0);
+
+    await name.fill('Công ty SAMPLE Lần Hai');
+    const sent = page.waitForRequest((r) => r.url().endsWith(`/api/documents/${id}/approve`));
+    await page.getByTestId('approve-form').click();
+    expect((await sent).headers()['if-match']).toBe('"2"');
+    // Still compared with the AI: one field differs, however many times it was edited.
+    await expect(page.getByTestId('approved-now')).toContainText('Bạn đã sửa 1 ô');
+
+    await page.goto(`/vi/documents/${id}`, { timeout: 30_000 });
+    await expect(page.getByTestId('field-seller.name')).toHaveValue('Công ty SAMPLE Lần Hai');
+    await expect(page.getByTestId('document-detail')).toContainText('Hoá đơn này đã được duyệt');
+    await expect(page.getByTestId('reopen')).toBeVisible();
+  });
+
+  test('T3.8: two tabs reopen the same invoice; the later one gets 409 and follows the document', async ({
+    page,
+    context,
+  }) => {
+    const id = await openPdfReview(page);
+    await page.getByTestId('approve-form').click();
+    await expect(page.getByTestId('approved-now')).toBeVisible();
+
+    const tabB = await context.newPage();
+    await tabB.goto(`/vi/documents/${id}`, { timeout: 30_000 });
+    await expect(tabB.getByTestId('reopen')).toBeVisible({ timeout: 30_000 });
+
+    await page.getByTestId('reopen').click();
+    await expect(page.getByTestId('approve-form')).toBeVisible();
+
+    const answer = tabB.waitForResponse((r) => r.url().endsWith(`/api/documents/${id}/reopen`));
+    await tabB.getByTestId('reopen').click();
+    expect((await answer).status()).toBe(409);
+    await expect(tabB.getByTestId('reopen-error')).toContainText('vừa được thay đổi');
+    await expect(tabB.getByTestId('review-screen')).toContainText('Đang sửa lại từ bản đã duyệt');
+    await expect(tabB.getByTestId('approve-form')).toBeVisible();
+  });
+
+  test('T3.8: a form being edited keeps what was typed when the document is reopened elsewhere', async ({
+    page,
+    context,
+  }) => {
+    const id = await openPdfReview(page);
+    const tabB = await context.newPage();
+    await tabB.goto(`/vi/documents/${id}`, { timeout: 30_000 });
+    await expect(tabB.getByTestId('review-screen')).toBeVisible({ timeout: 30_000 });
+    await tabB.getByTestId('field-seller.name').fill('Bản của tab B');
+
+    await page.getByTestId('approve-form').click();
+    await expect(page.getByTestId('approved-now')).toBeVisible();
+    await page.getByTestId('reopen').click();
+    await expect(page.getByTestId('approve-form')).toBeVisible();
+
+    const answer = tabB.waitForResponse((r) => r.url().endsWith(`/api/documents/${id}/approve`));
+    await tabB.getByTestId('approve-form').click();
+    expect((await answer).status()).toBe(409);
+    await expect(tabB.getByTestId('field-seller.name')).toHaveValue('Bản của tab B');
+    await expect(tabB.getByTestId('newer-extraction')).toContainText('hiện là phiên bản 2');
+  });
+
+  test('T3.8: an approved form marks no AI doubts; the reopened form shows them again', async ({
+    page,
+  }) => {
+    await openPdfReview(page);
+    const invoiceNoMark = page.locator('[data-weak="true"][data-path="invoiceNo"]');
+    await expect(invoiceNoMark.first()).toBeVisible();
+
+    await page.getByTestId('approve-form').click();
+    await expect(page.getByTestId('reopen')).toBeVisible();
+    await expect(invoiceNoMark).toHaveCount(0);
+
+    await page.getByTestId('reopen').click();
+    await expect(page.getByTestId('approve-form')).toBeVisible();
+    await expect(invoiceNoMark.first()).toBeVisible();
+  });
+
+  test('T3.8: a viewer is refused by the API whatever the page shows', async ({ page }) => {
+    await login(page, 'viewer');
+    const res = await page.request.post(
+      '/api/documents/00000000-0000-4000-8000-00000000dead/reopen',
+      { headers: { origin: 'http://localhost:3000', 'if-match': '"1"' } },
+    );
+    expect(res.status()).toBe(403);
+    expect((await res.json()).code).toBe('FORBIDDEN_PERMISSION');
+  });
+
   test('T3.5: a viewer is refused by the API whatever the page shows', async ({ page }) => {
     // The demo viewer belongs to another tenant, so this checks the permission on the real stack;
     // the missing button is checked in document-detail-screen.test.tsx.

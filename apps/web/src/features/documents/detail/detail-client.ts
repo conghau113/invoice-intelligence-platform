@@ -3,6 +3,14 @@ import { z } from 'zod';
 import { DOCUMENT_STATUSES } from '@/components/common/status-badge';
 import { SOURCE_TYPES } from '../list-params';
 
+const approvedInvoiceSchema = z.object({
+  id: z.uuid(),
+  documentVersion: z.number().int(),
+  data: InvoiceSchema,
+  warnings: z.array(RuleWarningSchema),
+  approvedAt: z.iso.datetime(),
+});
+
 const detailSchema = z.object({
   id: z.uuid(),
   status: z.enum(DOCUMENT_STATUSES),
@@ -22,16 +30,10 @@ const detailSchema = z.object({
       createdAt: z.iso.datetime(),
     })
     .nullable(),
-  /** What a person approved; the review screen shows this instead of the AI's values. */
-  invoice: z
-    .object({
-      id: z.uuid(),
-      documentVersion: z.number().int(),
-      data: InvoiceSchema,
-      warnings: z.array(RuleWarningSchema),
-      approvedAt: z.iso.datetime(),
-    })
-    .nullable(),
+  /** What a person approved at the current version; the screen shows this instead of the AI's values. */
+  invoice: approvedInvoiceSchema.nullable(),
+  /** After a reopen: what was approved before. Not approved any more; the form starts from it. */
+  reopenedFrom: approvedInvoiceSchema.nullable(),
 });
 export type DocumentDetail = z.infer<typeof detailSchema>;
 

@@ -1,0 +1,2 @@
+ALTER TABLE "invoices" DROP CONSTRAINT "invoices_document_unique";--> statement-breakpoint
+ALTER TABLE "invoices" ADD CONSTRAINT "invoices_document_version_unique" UNIQUE("document_id","document_version");

@@ -25,7 +25,16 @@ export interface ApprovedInvoiceView {
   approvedAt: Date;
 }
 
-/** API.md `GET /documents/:id`: the document, its latest extraction (null until one exists) and approved invoice. */
+type StoredInvoice = Omit<ApprovedInvoiceView, 'data' | 'warnings'> & {
+  data: unknown;
+  warnings: unknown;
+};
+
+/**
+ * API.md `GET /documents/:id`: the document, its latest extraction (null until one exists), and
+ * either the invoice approved at the current version or, after a reopen, the one it was reopened
+ * from. Never both: a reopened invoice is not approved, but the form starts from its values.
+ */
 export interface DocumentDetail {
   id: string;
   status: string;
@@ -36,6 +45,7 @@ export interface DocumentDetail {
   failureCode: string | null;
   extraction: ExtractionView | null;
   invoice: ApprovedInvoiceView | null;
+  reopenedFrom: ApprovedInvoiceView | null;
 }
 
 /**
@@ -84,13 +94,28 @@ export class DocumentDetailService {
         approvedAt: invoices.approvedAt,
       })
       .from(invoices)
-      .where(eq(invoices.documentId, id));
+      .where(eq(invoices.documentId, id))
+      .orderBy(desc(invoices.documentVersion))
+      .limit(1);
+    // A row exists at version N only if version N was approved, and reopening always moves on.
+    const current = approved?.documentVersion === doc.version;
 
     return {
       ...doc,
       extraction: row ? this.toExtractionView(row) : null,
-      invoice: approved ? this.toInvoiceView(approved) : null,
+      invoice: approved && current ? this.toInvoiceView(approved) : null,
+      reopenedFrom: approved && !current ? this.toReopenedView(approved) : null,
     };
+  }
+
+  /**
+   * Only a starting point for the form, unlike the current invoice. If an older row no longer passes
+   * the schema (it was tightened since), the form falls back to the extraction: failing here would
+   * leave a reopened document that nobody can open or approve again.
+   */
+  private toReopenedView(row: StoredInvoice): ApprovedInvoiceView | null {
+    const data = InvoiceSchema.safeParse(row.data);
+    return data.success ? { ...row, data: data.data, warnings: readWarnings(row.warnings) } : null;
   }
 
   private toExtractionView(row: typeof extractions.$inferSelect): ExtractionView {
@@ -107,9 +132,7 @@ export class DocumentDetailService {
     };
   }
 
-  private toInvoiceView(
-    row: Omit<ApprovedInvoiceView, 'data' | 'warnings'> & { data: unknown; warnings: unknown },
-  ): ApprovedInvoiceView {
+  private toInvoiceView(row: StoredInvoice): ApprovedInvoiceView {
     const data = InvoiceSchema.safeParse(row.data);
     if (!data.success) throw new ExtractionDataInvalidError();
     return { ...row, data: data.data, warnings: readWarnings(row.warnings) };

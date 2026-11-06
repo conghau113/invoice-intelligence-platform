@@ -123,7 +123,7 @@ function Detail({ id, canApprove }: Readonly<{ id: string; canApprove: boolean }
           document={data}
           extraction={data.extraction}
           canApprove={canApprove}
-          onChanged={() => void refetch()}
+          onChanged={() => refetch()}
         />
       </>
     );

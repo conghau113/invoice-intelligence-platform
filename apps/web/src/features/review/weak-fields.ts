@@ -24,18 +24,22 @@ export function fieldMark(reasons: readonly WeakReason[]): FieldMark {
 /**
  * Why the reviewer might look at each field. A pure function of the current form values and the
  * live warnings. Paths come from `invoiceFieldPaths`, so a line the user just added (no meta) is
- * listed too. `fieldMark` turns the reasons into how the field is shown.
+ * listed too. `fieldMark` turns the reasons into how the field is shown. `aiMarks: false` keeps only
+ * the rule warnings: on an approved invoice a person has already looked, so the AI's doubts ask for
+ * nothing more. A reopened form keeps them, because the person is checking the document again.
  */
 export function weakFields(
   invoice: Pick<Invoice, 'lines' | 'vatBreakdown' | 'seller' | 'buyer' | 'fieldMeta'>,
   warnings: readonly RuleWarning[],
+  { aiMarks = true }: Readonly<{ aiMarks?: boolean }> = {},
 ): Map<string, WeakReason[]> {
   const out = new Map<string, WeakReason[]>();
   const add = (path: string, reason: WeakReason) =>
     out.set(path, [...(out.get(path) ?? []), reason]);
 
   const meta: Record<string, FieldMeta | undefined> = invoice.fieldMeta;
-  for (const path of invoiceFieldPaths(invoice as Invoice)) {
+  const paths = aiMarks ? invoiceFieldPaths(invoice as Invoice) : [];
+  for (const path of paths) {
     const m = meta[path];
     if (m === undefined) add(path, { kind: 'noMeta' });
     else if (m.confidence < LOW_CONFIDENCE) {

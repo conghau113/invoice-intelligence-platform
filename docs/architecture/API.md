@@ -12,7 +12,7 @@
 | Pagination | `?page=1&limit=20` → `{items, meta: {page, limit, total, totalPages}}` (`page` from 1, at most 10 000; `limit` 1–100, default 20; ADR 0019). `total` is counted after tenant and filters. A `page` past `totalPages` answers empty `items` with the true `meta`. Append-only streams (audit, events) use cursors instead; none exists yet |
 | Filtering/sorting | `?status=needs_review&type=xml&from=2026-09-01&to=2026-09-30&sort=-createdAt` — `type` is `xml`, `pdf` or `image`; `from`/`to` are whole days, both inclusive, in `Asia/Ho_Chi_Minh`; `sort` is `createdAt` or `-createdAt` (default), always followed by `id` as tie-breaker. Anything else is `400 INVALID_QUERY` |
 | Idempotency | `Idempotency-Key` header on POSTs that create resources; replay returns the original response for 24 h |
-| Concurrency | `If-Match: "<document version>"` on approve (required, else `428 IF_MATCH_REQUIRED`); stale version → `409 VERSION_CONFLICT`; already approved → `409 INVALID_DOCUMENT_TRANSITION` |
+| Concurrency | `If-Match: "<document version>"` on approve and reopen (required, else `428 IF_MATCH_REQUIRED`); stale version → `409 VERSION_CONFLICT`; a status the action cannot start from (already approved, or reopening what is not approved) → `409 INVALID_DOCUMENT_TRANSITION` |
 | Rate limits | `429` with `Retry-After` and `RateLimit-*` headers (ADR 0012) |
 | Tracing | W3C `traceparent` accepted and propagated; `traceId` echoed in errors |
 | Versioning | URL major version (`/v1`); additive changes only within a version |
@@ -39,11 +39,11 @@
 |---|---|---|---|
 | POST | `/documents/upload` | `document:create` | `multipart/form-data` (one file ≤ 10 MB, streamed); type checked by magic bytes; dedupe by (tenant, sha256); `Idempotency-Key` required |
 | GET | `/documents` | `document:read` | Paginated list with filters; items are `{id, status, sourceType, version, createdAt}`, plus `meta` |
-| GET | `/documents/:id` | `document:read` | `{id, status, sourceType, version, createdAt, failureCode, extraction, invoice}`; `failureCode` is set only while `failed`; `extraction` is `null` until one exists, else `{id, documentVersion, source, data (Invoice incl. fieldMeta), warnings, createdAt}`; `invoice` is `null` until approved, else `{id, documentVersion, data, warnings, approvedAt}`. Another tenant's id and a malformed id are both `404`; stored data that no longer matches the schema is `500 EXTRACTION_DATA_INVALID` |
+| GET | `/documents/:id` | `document:read` | `{id, status, sourceType, version, createdAt, failureCode, extraction, invoice, reopenedFrom}`; `failureCode` is set only while `failed`; `extraction` is `null` until one exists, else `{id, documentVersion, source, data (Invoice incl. fieldMeta), warnings, createdAt}`; `invoice` is the invoice approved at the current version, else `null`, as `{id, documentVersion, data, warnings, approvedAt}`; `reopenedFrom` has the same shape: the invoice approved before a reopen, not approved any more, and `null` whenever `invoice` is set, the document was never approved, or that older row no longer passes the schema (the form then starts from the extraction). Another tenant's id and a malformed id are both `404`; stored data that no longer matches the schema is `500 EXTRACTION_DATA_INVALID` |
 | GET | `/documents/:id/file` | `document:read` | Streams the file through the API after the permission check (no public file URLs) |
 | POST | `/documents/:id/retry` | `document:manage` | Only from `failed` |
 | POST | `/documents/:id/approve` | `document:approve` | Body = corrected Invoice (JSON, ≤ 1 MB here and 100 KB on every other route, else `413 BODY_TOO_LARGE`; malformed JSON `400 BODY_INVALID`; schema failure or over the limits, ≤ 500 lines, ≤ 20 VAT rows, text ≤ 1,000 characters without NUL, `422 INVOICE_INVALID`); `If-Match` required. `200 {id, status, version, invoiceId, corrections, warnings}`; warnings never block |
-| POST | `/documents/:id/reopen` | `document:approve` | `approved → needs_review`, version+1 |
+| POST | `/documents/:id/reopen` | `document:approve` | `approved → needs_review`, version+1, from `approved` only; no body; `If-Match` required. `200 {id, status, version}`. A document can reach version 20 at most, beyond that `409 REOPEN_LIMIT_REACHED`. Does not extract again |
 
 ### Q&A
 | Method | Path | Permission | Notes |
