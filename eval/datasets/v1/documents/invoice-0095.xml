@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TCA</KHHDon>
+      <SHDon>5865999</SHDon>
+      <NLap>2026-08-08</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Mai Trần Công ty TNHH SAMPLE</Ten>
+        <MST>3810984936-168</MST>
+        <DChi>Số 75 Khóm 46 Phố số 33 Phường Bình Minh TP. Hà Nội 01524</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE</Ten>
+        <MST>0618511992</MST>
+        <DChi>69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay K7170</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>16</SLuong>
+          <DGia>616500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>9864000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Giấy in khổ A4 A4655</THHDVu>
+          <DVTinh>ram</DVTinh>
+          <SLuong>14</SLuong>
+          <DGia>169500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2373000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Ghế xoay văn phòng P5943</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>13.25</SLuong>
+          <DGia>608500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>8062625</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất T5103</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>4.5</SLuong>
+          <DGia>208000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>936000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Giấy in khổ A4 P5368</THHDVu>
+          <DVTinh>ram</DVTinh>
+          <SLuong>15</SLuong>
+          <DGia>879000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>13185000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>34420625</TgTien>
+            <TThue>2753650</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>34420625</TgTCThue>
+        <TgTTTBSo>37174275</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S25B</KHHDon>
+      <SHDon>INV-256911422</SHDon>
+      <NLap>2025-12-30</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Dennis and Sons SAMPLE</Ten>
+        <MST>9585736384</MST>
+        <DChi>3194 Matthew Well Suite 879 East Beth, RI 14099</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Jones-Murphy SAMPLE</Ten>
+        <MST>2495063815</MST>
+        <DChi>529 Dominique Square Mirandahaven, UT 41158</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Office ballpoint pens E8310</THHDVu>
+          <DVTinh>box</DVTinh>
+          <SLuong>9.25</SLuong>
+          <DGia>362.46</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>3352.76</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Swivel office chair M7614</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>20</SLuong>
+          <DGia>814.25</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>16285.00</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>19637.76</TgTien>
+            <TThue>1963.78</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>19637.76</TgTCThue>
+        <TgTTTBSo>21601.54</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

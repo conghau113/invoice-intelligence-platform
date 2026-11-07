@@ -1,0 +1,68 @@
+{
+  "seller": {
+    "name": "Nguyễn và Đặng Công ty Hợp danh SAMPLE",
+    "taxCode": "5964976311",
+    "address": "2/20/516 phố 28 phường Đông Hòa Thành phố Hồ Chí Minh 92729"
+  },
+  "buyer": {
+    "name": "Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE",
+    "taxCode": "0618511992",
+    "address": "69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng"
+  },
+  "invoiceNo": "8788553",
+  "series": "C26TCB",
+  "issueDate": "2026-01-22",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Sơn nước nội thất H9458",
+      "quantity": 20.25,
+      "unit": "lít",
+      "unitPrice": 772000,
+      "vatRate": 0,
+      "amount": 15633000
+    },
+    {
+      "description": "Bút bi văn phòng T6696",
+      "quantity": 1.25,
+      "unit": "hộp",
+      "unitPrice": 240500,
+      "vatRate": 0,
+      "amount": 300625
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán D6704",
+      "quantity": 20,
+      "unit": "tháng",
+      "unitPrice": 659000,
+      "vatRate": 0,
+      "amount": 13180000
+    },
+    {
+      "description": "Bút bi văn phòng P8363",
+      "quantity": 1,
+      "unit": "hộp",
+      "unitPrice": 464500,
+      "vatRate": 0,
+      "amount": 464500
+    },
+    {
+      "description": "Thép cuộn cán nóng D8621",
+      "quantity": 19,
+      "unit": "tấn",
+      "unitPrice": 342000,
+      "vatRate": 0,
+      "amount": 6498000
+    }
+  ],
+  "subtotal": 36076125,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 36076125,
+      "amount": 0
+    }
+  ],
+  "total": 36076125,
+  "fieldMeta": {}
+}

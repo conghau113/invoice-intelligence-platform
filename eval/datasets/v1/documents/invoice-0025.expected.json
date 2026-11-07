@@ -1,0 +1,68 @@
+{
+  "seller": {
+    "name": "Nguyễn Công ty Hợp danh SAMPLE",
+    "taxCode": "6801611429-434",
+    "address": "9 Đường Trần Bình Trọng xã An Hải Thanh Hóa 95532"
+  },
+  "buyer": {
+    "name": "Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE",
+    "taxCode": "0618511992",
+    "address": "69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng"
+  },
+  "invoiceNo": "8927998",
+  "series": "C26TCC",
+  "issueDate": "2026-02-21",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp K1018",
+      "quantity": 14.25,
+      "unit": "lần",
+      "unitPrice": 184500,
+      "vatRate": 0,
+      "amount": 2629125
+    },
+    {
+      "description": "Phí bảo trì phần mềm K2894",
+      "quantity": 16.25,
+      "unit": "tháng",
+      "unitPrice": 537000,
+      "vatRate": 0,
+      "amount": 8726250
+    },
+    {
+      "description": "Thiết bị chuyển mạch N3965",
+      "quantity": 17,
+      "unit": "bộ",
+      "unitPrice": 33500,
+      "vatRate": 0,
+      "amount": 569500
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa N7071",
+      "quantity": 7,
+      "unit": "chuyến",
+      "unitPrice": 339500,
+      "vatRate": 0,
+      "amount": 2376500
+    },
+    {
+      "description": "Nước uống đóng chai M7814",
+      "quantity": 4,
+      "unit": "thùng",
+      "unitPrice": 307500,
+      "vatRate": 0,
+      "amount": 1230000
+    }
+  ],
+  "subtotal": 15531375,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 15531375,
+      "amount": 0
+    }
+  ],
+  "total": 15531375,
+  "fieldMeta": {}
+}

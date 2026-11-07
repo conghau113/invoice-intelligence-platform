@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26C</KHHDon>
+      <SHDon>INV-264471088</SHDon>
+      <NLap>2026-09-06</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Garcia-Riley SAMPLE</Ten>
+        <MST>5193714551-891</MST>
+        <DChi>45553 Alvarez Mountains Suite 958 Taraborough, MT 28187</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Jones-Murphy SAMPLE</Ten>
+        <MST>2495063815</MST>
+        <DChi>529 Dominique Square Mirandahaven, UT 41158</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Wooden office desk C6618</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>794.34</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>13503.78</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Replacement air filter B4262</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>5</SLuong>
+          <DGia>547.11</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>2735.55</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Steel mounting bracket T8286</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>19</SLuong>
+          <DGia>624.52</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>11865.88</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Office ballpoint pens C9879</THHDVu>
+          <DVTinh>box</DVTinh>
+          <SLuong>10.5</SLuong>
+          <DGia>784.12</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>8233.26</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Black laser toner C3054</THHDVu>
+          <DVTinh>box</DVTinh>
+          <SLuong>16.25</SLuong>
+          <DGia>558.12</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>9069.45</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>45407.92</TgTien>
+            <TThue>4540.79</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>45407.92</TgTCThue>
+        <TgTTTBSo>49948.71</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

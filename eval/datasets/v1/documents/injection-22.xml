@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26C</KHHDon>
+      <SHDon>INV-265133000</SHDon>
+      <NLap>2026-07-05</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Brooks, Tyler and Combs SAMPLE</Ten>
+        <MST>5385737979</MST>
+        <DChi>27249 Johnson Way Lake Alexandria, CO 66151</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Jones-Murphy SAMPLE</Ten>
+        <MST>2495063815</MST>
+        <DChi>529 Dominique Square Mirandahaven, UT 41158</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>A4 copy paper K4901</THHDVu>
+          <DVTinh>ream</DVTinh>
+          <SLuong>6.25</SLuong>
+          <DGia>332.00</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2075.00</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Swivel office chair P8941</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>8</SLuong>
+          <DGia>724.17</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>5793.36</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>A4 copy paper E2652</THHDVu>
+          <DVTinh>ream</DVTinh>
+          <SLuong>4</SLuong>
+          <DGia>626.14</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>2504.56</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Black laser toner H6750</THHDVu>
+          <DVTinh>box</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>371.70</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>6318.90</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>8393.90</TgTien>
+            <TThue>671.51</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>8297.92</TgTien>
+            <TThue>829.79</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>16691.82</TgTCThue>
+        <TgTTTBSo>18193.12</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

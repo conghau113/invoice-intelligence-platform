@@ -92,7 +92,7 @@ Design patterns used deliberately (and where): **Ports & Adapters** (StoragePort
 │   ├── contracts/      Zod schemas, rules, JSON Schema export
 │   └── logger/         Shared pino config with redaction
 ├── tools/invoice-gen/  Synthetic invoice generator (JSON + XML + PDF, legally safe fake data)
-├── eval/               Datasets (manifests), runners, reports
+├── eval/               Frozen datasets (files + manifest), runners, reports
 ├── infra/              keycloak realm, caddy, grafana dashboards, prod compose, backup scripts
 ├── load/               k6 scripts
 ├── docs/               Product, architecture, ADRs, plan, setup, legal, reports, interview

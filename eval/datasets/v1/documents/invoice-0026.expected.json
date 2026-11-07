@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Mai Trần Công ty TNHH SAMPLE",
+    "taxCode": "3810984936-168",
+    "address": "Số 75 Khóm 46 Phố số 33 Phường Bình Minh TP. Hà Nội 01524"
+  },
+  "buyer": {
+    "name": "Hoàng Công ty TNHH SAMPLE",
+    "taxCode": "9624084463",
+    "address": "32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng"
+  },
+  "invoiceNo": "2079482",
+  "series": "C26TBE",
+  "issueDate": "2026-04-23",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Dịch vụ tư vấn kế toán K5217",
+      "quantity": 6.5,
+      "unit": "tháng",
+      "unitPrice": 262500,
+      "vatRate": 5,
+      "amount": 1706250
+    },
+    {
+      "description": "Bàn làm việc gỗ C4697",
+      "quantity": 5,
+      "unit": "cái",
+      "unitPrice": 784500,
+      "vatRate": 5,
+      "amount": 3922500
+    },
+    {
+      "description": "Bàn làm việc gỗ K1479",
+      "quantity": 4.5,
+      "unit": "cái",
+      "unitPrice": 680500,
+      "vatRate": 5,
+      "amount": 3062250
+    },
+    {
+      "description": "Nước uống đóng chai H1784",
+      "quantity": 6.25,
+      "unit": "thùng",
+      "unitPrice": 840000,
+      "vatRate": 5,
+      "amount": 5250000
+    }
+  ],
+  "subtotal": 13941000,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 13941000,
+      "amount": 697050
+    }
+  ],
+  "total": 14638050,
+  "fieldMeta": {}
+}

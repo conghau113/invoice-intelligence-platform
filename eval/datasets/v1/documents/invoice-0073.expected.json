@@ -1,0 +1,52 @@
+{
+  "seller": {
+    "name": "Garcia-Riley SAMPLE",
+    "taxCode": "5193714551-891",
+    "address": "45553 Alvarez Mountains Suite 958 Taraborough, MT 28187"
+  },
+  "buyer": {
+    "name": "Evans, Higgins and English SAMPLE",
+    "taxCode": "9499051941",
+    "address": "236 Deanna Lock Ellischester, VI 27552"
+  },
+  "invoiceNo": "INV-267835803",
+  "series": "S26C",
+  "issueDate": "2026-09-05",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Ground coffee A3538",
+      "quantity": 1,
+      "unit": "kg",
+      "unitPrice": 74273,
+      "vatRate": 0,
+      "amount": 74273
+    },
+    {
+      "description": "Black laser toner T6936",
+      "quantity": 7,
+      "unit": "box",
+      "unitPrice": 20608,
+      "vatRate": 0,
+      "amount": 144256
+    },
+    {
+      "description": "Software maintenance fee K2729",
+      "quantity": 14,
+      "unit": "month",
+      "unitPrice": 82408,
+      "vatRate": 0,
+      "amount": 1153712
+    }
+  ],
+  "subtotal": 1372241,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 1372241,
+      "amount": 0
+    }
+  ],
+  "total": 1372241,
+  "fieldMeta": {}
+}

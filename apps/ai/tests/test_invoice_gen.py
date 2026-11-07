@@ -9,6 +9,7 @@ import random
 import re
 import struct
 import sys
+import unicodedata
 from collections import Counter
 from collections.abc import Iterator
 from dataclasses import replace
@@ -23,7 +24,7 @@ from app.schemas.generated import Invoice
 from app.services.xml_invoice import parse_xml_invoice
 
 GENERATOR_DIR = Path(__file__).resolve().parents[3] / "tools" / "invoice-gen"
-GENERATOR_MODULES = ("gen_data", "gen_render", "generate", "verify", "min_xml")
+GENERATOR_MODULES = ("gen_data", "gen_injection", "gen_render", "generate", "verify", "min_xml")
 
 
 @pytest.fixture(scope="module")
@@ -36,6 +37,7 @@ def gen() -> Iterator[SimpleNamespace]:
             render=importlib.import_module("gen_render"),
             generate=importlib.import_module("generate"),
             verify=importlib.import_module("verify"),
+            injection=importlib.import_module("gen_injection"),
         )
     finally:
         sys.path.remove(str(GENERATOR_DIR))
@@ -402,3 +404,74 @@ def test_exif_block_holds_the_orientation_and_keeps_the_picture(gen: SimpleNames
 def test_exif_refuses_a_file_that_is_not_a_jpeg(gen: SimpleNamespace) -> None:
     with pytest.raises(gen.render.RenderError, match="NOT_A_JPEG"):
         gen.render.add_exif_orientation(b"\x89PNG", 6)
+
+
+# --- Attack documents: scored apart from the 100, so they need their own guarantees ---------------
+
+
+def _attack_documents(gen: SimpleNamespace) -> list[Any]:
+    return gen.injection.build_injection_documents(42)
+
+
+def test_every_sentence_is_tried_in_every_position(gen: SimpleNamespace) -> None:
+    docs = _attack_documents(gen)
+    cells = Counter((doc.attack["sentence"], doc.attack["position"]) for doc in docs)
+    assert len(docs) == 24
+    for sentence in gen.injection.SENTENCES:
+        for position in gen.injection.POSITIONS:
+            assert cells[(sentence, position)] >= 1
+    assert [doc.id for doc in docs] == [f"injection-{i:02d}" for i in range(24)]
+    assert [doc.variant.name for doc in docs].count("png-clean") == 4
+
+
+def test_the_sentence_is_where_the_position_says(gen: SimpleNamespace) -> None:
+    for doc in _attack_documents(gen):
+        sentence = gen.injection.SENTENCES[doc.attack["sentence"]][0]
+        position = doc.attack["position"]
+        inv = doc.invoice
+        assert (inv["lines"][0]["description"] == sentence) == (position == "line-first")
+        assert (inv["lines"][-1]["description"] == sentence) == (position == "line-last")
+        assert (inv["seller"]["address"] == sentence) == (position == "seller-address")
+        assert (doc.note == sentence) == position.startswith("note")
+        assert len(inv["lines"]) >= 2  # otherwise first and last would be the same position
+        assert unicodedata.normalize("NFC", sentence) == sentence
+
+
+def test_obeying_the_goal_would_give_a_different_answer(gen: SimpleNamespace) -> None:
+    """A goal equal to the ground truth could never tell an attack that worked from a good read."""
+    for doc in _attack_documents(gen):
+        goal = doc.attack["goal"]
+        assert doc.invoice[goal["path"]] != goal["value"]
+
+
+def test_attack_documents_keep_the_data_rules(gen: SimpleNamespace) -> None:
+    report = gen.verify.Report()
+    for doc in _attack_documents(gen):
+        gen.verify.check_ground_truth(report, doc.id, doc.invoice)
+    assert report.problems == []
+    assert report.tax_codes > 0
+
+
+def test_a_note_is_printed_escaped_only_on_the_attack_document(gen: SimpleNamespace) -> None:
+    note = gen.injection.NEAR_WHITE
+    normal = gen.data.build_document(42, 0)
+    assert note not in gen.render.render_html(normal)
+    attacked = replace(normal, note="<b>a & b</b>", note_color=note)
+    html = gen.render.render_html(attacked)
+    assert note in html
+    assert html_module.escape("<b>a & b</b>", quote=False) in html
+    assert "<b>a & b</b>" not in html
+
+
+def test_building_attack_documents_changes_nothing_in_the_normal_ones(gen: SimpleNamespace) -> None:
+    before = gen.data.build_document(42, 0)
+    first = _attack_documents(gen)
+    assert gen.data.build_document(42, 0) == before
+    assert _attack_documents(gen) == first  # repeatable
+
+
+def test_a_normal_manifest_entry_has_no_attack_key(gen: SimpleNamespace) -> None:
+    normal = gen.generate.manifest_entry(gen.data.build_document(42, 0), {}, "x.pdf", 1)
+    assert "attack" not in normal
+    attacked = gen.generate.manifest_entry(_attack_documents(gen)[0], {}, "x.pdf", 1)
+    assert attacked["attack"]["goal"]["path"] == "total"

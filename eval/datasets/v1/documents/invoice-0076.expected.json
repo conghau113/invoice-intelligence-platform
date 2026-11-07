@@ -1,0 +1,97 @@
+{
+  "seller": {
+    "name": "Garcia-Riley SAMPLE",
+    "taxCode": "5193714551-891",
+    "address": "45553 Alvarez Mountains Suite 958 Taraborough, MT 28187"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-262913287",
+  "series": "S26A",
+  "issueDate": "2026-02-17",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Software maintenance fee A3146",
+      "quantity": 16,
+      "unit": "month",
+      "unitPrice": 46066,
+      "vatRate": 8,
+      "amount": 737056
+    },
+    {
+      "description": "Bottled drinking water E2861",
+      "quantity": 12.25,
+      "unit": "case",
+      "unitPrice": 6174,
+      "vatRate": 8,
+      "amount": 75632
+    },
+    {
+      "description": "Office ballpoint pens A8256",
+      "quantity": 2,
+      "unit": "box",
+      "unitPrice": 42373,
+      "vatRate": 0,
+      "amount": 84746
+    },
+    {
+      "description": "Steel mounting bracket K4913",
+      "quantity": 16.5,
+      "unit": "pc",
+      "unitPrice": 56455,
+      "vatRate": 0,
+      "amount": 931508
+    },
+    {
+      "description": "Network cable R1367",
+      "quantity": 17.5,
+      "unit": "meter",
+      "unitPrice": 39700,
+      "vatRate": 8,
+      "amount": 694750
+    },
+    {
+      "description": "Steel mounting bracket N5243",
+      "quantity": 4,
+      "unit": "pc",
+      "unitPrice": 7376,
+      "vatRate": 0,
+      "amount": 29504
+    },
+    {
+      "description": "Replacement air filter A7252",
+      "quantity": 14,
+      "unit": "pc",
+      "unitPrice": 13603,
+      "vatRate": 8,
+      "amount": 190442
+    },
+    {
+      "description": "A4 copy paper T3715",
+      "quantity": 15,
+      "unit": "ream",
+      "unitPrice": 35221,
+      "vatRate": 0,
+      "amount": 528315
+    }
+  ],
+  "subtotal": 3271953,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 1574073,
+      "amount": 0
+    },
+    {
+      "rate": 8,
+      "base": 1697880,
+      "amount": 135830
+    }
+  ],
+  "total": 3407783,
+  "fieldMeta": {}
+}

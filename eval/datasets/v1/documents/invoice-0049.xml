@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26B</KHHDon>
+      <SHDon>INV-264188654</SHDon>
+      <NLap>2026-01-31</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Garcia-Riley SAMPLE</Ten>
+        <MST>5193714551-891</MST>
+        <DChi>45553 Alvarez Mountains Suite 958 Taraborough, MT 28187</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Mark Wilson SAMPLE</Ten>
+        <DChi>089 Carly Extension Apt. 743 Kellyborough, PW 14865</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Black laser toner H8928</THHDVu>
+          <DVTinh>box</DVTinh>
+          <SLuong>9.5</SLuong>
+          <DGia>333500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>3168250</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Accounting advisory service D5356</THHDVu>
+          <DVTinh>month</DVTinh>
+          <SLuong>20</SLuong>
+          <DGia>289500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>5790000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Swivel office chair A5435</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>697500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>11857500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Ground coffee A2549</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>16</SLuong>
+          <DGia>42500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>680000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>21495750</TgTien>
+            <TThue>0</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>21495750</TgTCThue>
+        <TgTTTBSo>21495750</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

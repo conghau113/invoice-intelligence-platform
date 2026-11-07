@@ -1,0 +1,52 @@
+{
+  "seller": {
+    "name": "Dennis and Sons SAMPLE",
+    "taxCode": "9585736384",
+    "address": "3194 Matthew Well Suite 879 East Beth, RI 14099"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-258720605",
+  "series": "S25A",
+  "issueDate": "2025-11-05",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Bottled drinking water D9757",
+      "quantity": 20.25,
+      "unit": "case",
+      "unitPrice": 577000,
+      "vatRate": 8,
+      "amount": 11684250
+    },
+    {
+      "description": "Replacement air filter T7812",
+      "quantity": 6,
+      "unit": "pc",
+      "unitPrice": 375000,
+      "vatRate": 8,
+      "amount": 2250000
+    },
+    {
+      "description": "Bottled drinking water T5141",
+      "quantity": 1,
+      "unit": "case",
+      "unitPrice": 66500,
+      "vatRate": 8,
+      "amount": 66500
+    }
+  ],
+  "subtotal": 14000750,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 14000750,
+      "amount": 1120060
+    }
+  ],
+  "total": 15120810,
+  "fieldMeta": {}
+}

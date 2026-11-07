@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26C</KHHDon>
+      <SHDon>INV-263149613</SHDon>
+      <NLap>2026-02-21</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Dennis and Sons SAMPLE</Ten>
+        <MST>9585736384</MST>
+        <DChi>3194 Matthew Well Suite 879 East Beth, RI 14099</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Stephanie Wood SAMPLE</Ten>
+        <DChi>12381 Deborah Wells Taraburgh, GA 31604</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Domestic freight service H4850</THHDVu>
+          <DVTinh>trip</DVTinh>
+          <SLuong>15</SLuong>
+          <DGia>398.74</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>5981.10</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Network switch E4183</THHDVu>
+          <DVTinh>set</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>792.72</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>2378.16</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bottled drinking water K2480</THHDVu>
+          <DVTinh>case</DVTinh>
+          <SLuong>13.5</SLuong>
+          <DGia>348.24</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>4701.24</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Interior wall paint E4680</THHDVu>
+          <DVTinh>liter</DVTinh>
+          <SLuong>5</SLuong>
+          <DGia>699.27</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>3496.35</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Black laser toner R4633</THHDVu>
+          <DVTinh>box</DVTinh>
+          <SLuong>19.5</SLuong>
+          <DGia>50.02</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>975.39</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>17532.24</TgTien>
+            <TThue>0.00</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>17532.24</TgTCThue>
+        <TgTTTBSo>17532.24</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

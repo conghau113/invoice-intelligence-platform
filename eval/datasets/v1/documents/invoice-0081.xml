@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TBC</KHHDon>
+      <SHDon>0679407</SHDon>
+      <NLap>2026-06-14</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Phạm Công ty Hợp danh SAMPLE</Ten>
+        <MST>5325048491</MST>
+        <DChi>Số 4 Ngõ 57 Giải Phóng, Phường Hòa Bình, Tỉnh Khánh Hòa</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Bùi và Lê Tập Đoàn SAMPLE</Ten>
+        <MST>1125986119</MST>
+        <DChi>Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng T1399</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>19.25</SLuong>
+          <DGia>780000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>15015000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ B4609</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>378000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1134000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch P4948</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>884500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>15036500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch A1046</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>18.5</SLuong>
+          <DGia>660000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>12210000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dây cáp mạng R2337</THHDVu>
+          <DVTinh>mét</DVTinh>
+          <SLuong>8</SLuong>
+          <DGia>411000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>3288000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa C4370</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>1.5</SLuong>
+          <DGia>843500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1265250</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>47948750</TgTien>
+            <TThue>2397438</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>47948750</TgTCThue>
+        <TgTTTBSo>50346188</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

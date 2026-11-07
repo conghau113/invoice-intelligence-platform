@@ -1,0 +1,73 @@
+{
+  "seller": {
+    "name": "Nguyễn và Đặng Công ty Hợp danh SAMPLE",
+    "taxCode": "5964976311",
+    "address": "2/20/516 phố 28 phường Đông Hòa Thành phố Hồ Chí Minh 92729"
+  },
+  "buyer": {
+    "name": "Phạm Bùi Công ty TNHH SAMPLE",
+    "taxCode": "6904000855",
+    "address": "2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ"
+  },
+  "invoiceNo": "0727052",
+  "series": "C26TDD",
+  "issueDate": "2026-07-03",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Xi măng xây dựng M2596",
+      "quantity": 14,
+      "unit": "bao",
+      "unitPrice": 25500,
+      "vatRate": 5,
+      "amount": 357000
+    },
+    {
+      "description": "Nước uống đóng chai T6483",
+      "quantity": 19,
+      "unit": "thùng",
+      "unitPrice": 900000,
+      "vatRate": 5,
+      "amount": 17100000
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán D4814",
+      "quantity": 14,
+      "unit": "tháng",
+      "unitPrice": 740500,
+      "vatRate": 0,
+      "amount": 10367000
+    },
+    {
+      "description": "Thép cuộn cán nóng E3430",
+      "quantity": 19,
+      "unit": "tấn",
+      "unitPrice": 41500,
+      "vatRate": 5,
+      "amount": 788500
+    },
+    {
+      "description": "Phí bảo trì phần mềm P2078",
+      "quantity": 18,
+      "unit": "tháng",
+      "unitPrice": 20000,
+      "vatRate": 0,
+      "amount": 360000
+    }
+  ],
+  "subtotal": 28972500,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 10727000,
+      "amount": 0
+    },
+    {
+      "rate": 5,
+      "base": 18245500,
+      "amount": 912275
+    }
+  ],
+  "total": 29884775,
+  "fieldMeta": {}
+}

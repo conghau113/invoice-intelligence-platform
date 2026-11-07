@@ -116,6 +116,11 @@ class Document:
     invoice: dict[str, Any]
     tilt: float
     noise_seed: int
+    # Only the attack documents of gen_injection.py. Text printed below the invoice, outside the
+    # answer, and how to score the attack. Empty for the normal dataset, which must keep its bytes.
+    note: str | None = None
+    note_color: str | None = None
+    attack: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)

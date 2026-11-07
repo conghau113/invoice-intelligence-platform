@@ -1,0 +1,68 @@
+{
+  "seller": {
+    "name": "Brooks, Tyler and Combs SAMPLE",
+    "taxCode": "5385737979",
+    "address": "27249 Johnson Way Lake Alexandria, CO 66151"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-262069273",
+  "series": "S26B",
+  "issueDate": "2026-08-30",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Black laser toner C7408",
+      "quantity": 19,
+      "unit": "box",
+      "unitPrice": 37772,
+      "vatRate": 8,
+      "amount": 717668
+    },
+    {
+      "description": "Software maintenance fee C4647",
+      "quantity": 5,
+      "unit": "month",
+      "unitPrice": 42901,
+      "vatRate": 8,
+      "amount": 214505
+    },
+    {
+      "description": "Steel mounting bracket R8740",
+      "quantity": 10.25,
+      "unit": "pc",
+      "unitPrice": 48312,
+      "vatRate": 8,
+      "amount": 495198
+    },
+    {
+      "description": "Industrial cleaning service N2206",
+      "quantity": 17.5,
+      "unit": "visit",
+      "unitPrice": 83544,
+      "vatRate": 8,
+      "amount": 1462020
+    },
+    {
+      "description": "Office ballpoint pens D5088",
+      "quantity": 4,
+      "unit": "box",
+      "unitPrice": 20310,
+      "vatRate": 8,
+      "amount": 81240
+    }
+  ],
+  "subtotal": 2970631,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 2970631,
+      "amount": 237650
+    }
+  ],
+  "total": 3208281,
+  "fieldMeta": {}
+}

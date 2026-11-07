@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Bùi Phạm Công ty TNHH MTV SAMPLE",
+    "taxCode": "5819736628",
+    "address": "Số 13/845 Khóm 70 Đường Hoàng Văn Thụ Phường Hòa Bình Tuyên Quang 01422"
+  },
+  "buyer": {
+    "name": "Bùi Tấn Jane SAMPLE",
+    "taxCode": null,
+    "address": "Số 620 Ngõ 33 đường số 4 phường Dương Minh Châu Thành phố Hà Nội"
+  },
+  "invoiceNo": "2511268",
+  "series": "C26TEB",
+  "issueDate": "2026-05-08",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Dây cáp mạng R8557",
+      "quantity": 16,
+      "unit": "mét",
+      "unitPrice": 73760,
+      "vatRate": 8,
+      "amount": 1180160
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán T3415",
+      "quantity": 1,
+      "unit": "tháng",
+      "unitPrice": 2317,
+      "vatRate": 8,
+      "amount": 2317
+    },
+    {
+      "description": "Cà phê rang xay N7710",
+      "quantity": 5.25,
+      "unit": "kg",
+      "unitPrice": 39125,
+      "vatRate": 8,
+      "amount": 205406
+    },
+    {
+      "description": "Sơn nước nội thất T9050",
+      "quantity": 9,
+      "unit": "lít",
+      "unitPrice": 65504,
+      "vatRate": 8,
+      "amount": 589536
+    }
+  ],
+  "subtotal": 1977419,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 1977419,
+      "amount": 158194
+    }
+  ],
+  "total": 2135613,
+  "fieldMeta": {}
+}

@@ -1,0 +1,57 @@
+{
+  "seller": {
+    "name": "Hoàng và Nguyễn Công ty TNHH MTV SAMPLE",
+    "taxCode": "3507497709",
+    "address": "97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng"
+  },
+  "buyer": {
+    "name": "Trần Phú John SAMPLE",
+    "taxCode": null,
+    "address": "Số 7/66 Phố 89, Xã Hoàng Mai, Lai Châu"
+  },
+  "invoiceNo": "3240875",
+  "series": "C26TAB",
+  "issueDate": "2026-03-06",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Dây cáp mạng E3284",
+      "quantity": 7,
+      "unit": "mét",
+      "unitPrice": 15840,
+      "vatRate": 5,
+      "amount": 110880
+    },
+    {
+      "description": "Thiết bị chuyển mạch R3858",
+      "quantity": 12.5,
+      "unit": "bộ",
+      "unitPrice": 1734,
+      "vatRate": 10,
+      "amount": 21675
+    },
+    {
+      "description": "Giấy in khổ A4 B4050",
+      "quantity": 7.5,
+      "unit": "ram",
+      "unitPrice": 7203,
+      "vatRate": 10,
+      "amount": 54023
+    }
+  ],
+  "subtotal": 186578,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 110880,
+      "amount": 5544
+    },
+    {
+      "rate": 10,
+      "base": 75698,
+      "amount": 7570
+    }
+  ],
+  "total": 199692,
+  "fieldMeta": {}
+}

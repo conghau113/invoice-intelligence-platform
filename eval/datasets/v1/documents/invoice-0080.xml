@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S25C</KHHDon>
+      <SHDon>INV-255399976</SHDon>
+      <NLap>2025-10-10</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Brooks, Tyler and Combs SAMPLE</Ten>
+        <MST>5385737979</MST>
+        <DChi>27249 Johnson Way Lake Alexandria, CO 66151</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Sharp-Torres SAMPLE</Ten>
+        <MST>8330646319</MST>
+        <DChi>2029 Kathy Branch New Kimberlychester, PR 22771</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Swivel office chair C6895</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>20.25</SLuong>
+          <DGia>155.07</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>3140.17</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Office ballpoint pens B3119</THHDVu>
+          <DVTinh>box</DVTinh>
+          <SLuong>14.25</SLuong>
+          <DGia>836.78</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>11924.12</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Replacement air filter K4770</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>4</SLuong>
+          <DGia>587.11</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>2348.44</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Ground coffee H8051</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>11.25</SLuong>
+          <DGia>29.81</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>335.36</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>17748.09</TgTien>
+            <TThue>0.00</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>17748.09</TgTCThue>
+        <TgTTTBSo>17748.09</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

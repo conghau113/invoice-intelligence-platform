@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Brooks, Tyler and Combs SAMPLE",
+    "taxCode": "5385737979",
+    "address": "27249 Johnson Way Lake Alexandria, CO 66151"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-255399976",
+  "series": "S25C",
+  "issueDate": "2025-10-10",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Swivel office chair C6895",
+      "quantity": 20.25,
+      "unit": "pc",
+      "unitPrice": 15507,
+      "vatRate": 0,
+      "amount": 314017
+    },
+    {
+      "description": "Office ballpoint pens B3119",
+      "quantity": 14.25,
+      "unit": "box",
+      "unitPrice": 83678,
+      "vatRate": 0,
+      "amount": 1192412
+    },
+    {
+      "description": "Replacement air filter K4770",
+      "quantity": 4,
+      "unit": "pc",
+      "unitPrice": 58711,
+      "vatRate": 0,
+      "amount": 234844
+    },
+    {
+      "description": "Ground coffee H8051",
+      "quantity": 11.25,
+      "unit": "kg",
+      "unitPrice": 2981,
+      "vatRate": 0,
+      "amount": 33536
+    }
+  ],
+  "subtotal": 1774809,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 1774809,
+      "amount": 0
+    }
+  ],
+  "total": 1774809,
+  "fieldMeta": {}
+}

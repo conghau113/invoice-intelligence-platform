@@ -1,0 +1,65 @@
+{
+  "seller": {
+    "name": "Hoàng và Mai Công ty TNHH MTV SAMPLE",
+    "taxCode": "0608405931",
+    "address": "14 Hoàng Hoa Thám, xã Đông Hòa, tỉnh Tuyên Quang"
+  },
+  "buyer": {
+    "name": "Trần Phạm Công ty TNHH SAMPLE",
+    "taxCode": "0626615882",
+    "address": "7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai"
+  },
+  "invoiceNo": "9318697",
+  "series": "C26TCA",
+  "issueDate": "2026-09-18",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Cà phê rang xay T2297",
+      "quantity": 3,
+      "unit": "kg",
+      "unitPrice": 446500,
+      "vatRate": 8,
+      "amount": 1339500
+    },
+    {
+      "description": "Thép cuộn cán nóng N2092",
+      "quantity": 12,
+      "unit": "tấn",
+      "unitPrice": 861000,
+      "vatRate": 10,
+      "amount": 10332000
+    },
+    {
+      "description": "Xi măng xây dựng A4868",
+      "quantity": 8,
+      "unit": "bao",
+      "unitPrice": 534000,
+      "vatRate": 10,
+      "amount": 4272000
+    },
+    {
+      "description": "Nước uống đóng chai H1724",
+      "quantity": 18.5,
+      "unit": "thùng",
+      "unitPrice": 7500,
+      "vatRate": 8,
+      "amount": 138750
+    }
+  ],
+  "subtotal": 16082250,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 1478250,
+      "amount": 118260
+    },
+    {
+      "rate": 10,
+      "base": 14604000,
+      "amount": 1460400
+    }
+  ],
+  "total": 17660910,
+  "fieldMeta": {}
+}

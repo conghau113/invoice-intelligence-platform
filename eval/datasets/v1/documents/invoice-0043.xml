@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TEB</KHHDon>
+      <SHDon>2511268</SHDon>
+      <NLap>2026-05-08</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Bùi Phạm Công ty TNHH MTV SAMPLE</Ten>
+        <MST>5819736628</MST>
+        <DChi>Số 13/845 Khóm 70 Đường Hoàng Văn Thụ Phường Hòa Bình Tuyên Quang 01422</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Bùi Tấn Jane SAMPLE</Ten>
+        <DChi>Số 620 Ngõ 33 đường số 4 phường Dương Minh Châu Thành phố Hà Nội</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Dây cáp mạng R8557</THHDVu>
+          <DVTinh>mét</DVTinh>
+          <SLuong>16</SLuong>
+          <DGia>737.60</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>11801.60</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán T3415</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>1</SLuong>
+          <DGia>23.17</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>23.17</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay N7710</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>5.25</SLuong>
+          <DGia>391.25</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2054.06</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất T9050</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>9</SLuong>
+          <DGia>655.04</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>5895.36</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>19774.19</TgTien>
+            <TThue>1581.94</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>19774.19</TgTCThue>
+        <TgTTTBSo>21356.13</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

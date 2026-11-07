@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TEA</KHHDon>
+      <SHDon>6411465</SHDon>
+      <NLap>2026-06-01</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Mai Trần Công ty TNHH SAMPLE</Ten>
+        <MST>3810984936-168</MST>
+        <DChi>Số 75 Khóm 46 Phố số 33 Phường Bình Minh TP. Hà Nội 01524</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE</Ten>
+        <MST>0618511992</MST>
+        <DChi>69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Dây cáp mạng R4052</THHDVu>
+          <DVTinh>mét</DVTinh>
+          <SLuong>15.25</SLuong>
+          <DGia>408500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>6229625</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ P9825</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>73000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>146000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất E7319</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>18.25</SLuong>
+          <DGia>596500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>10886125</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch E8448</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>1</SLuong>
+          <DGia>153500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>153500</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>17415250</TgTien>
+            <TThue>1393220</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>17415250</TgTCThue>
+        <TgTTTBSo>18808470</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

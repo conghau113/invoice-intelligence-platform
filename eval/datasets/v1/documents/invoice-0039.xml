@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TBE</KHHDon>
+      <SHDon>1279798</SHDon>
+      <NLap>2026-05-09</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Phạm Công ty Hợp danh SAMPLE</Ten>
+        <MST>5325048491</MST>
+        <DChi>Số 4 Ngõ 57 Giải Phóng, Phường Hòa Bình, Tỉnh Khánh Hòa</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Dương Tấn Jane SAMPLE</Ten>
+        <DChi>Số 8/61/788 Phố số 2 phường Đông Hòa tỉnh Tây Ninh</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng P1741</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>10</SLuong>
+          <DGia>135000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>1350000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng K9217</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>13</SLuong>
+          <DGia>149500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>1943500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay M2156</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>11</SLuong>
+          <DGia>360000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>3960000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa P5707</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>8000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>24000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng N8228</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>9.25</SLuong>
+          <DGia>799000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>7390750</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán M4044</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>13.25</SLuong>
+          <DGia>650500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>8619125</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen A5992</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>5</SLuong>
+          <DGia>157000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>785000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng N7941</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>13</SLuong>
+          <DGia>640500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>8326500</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>32398875</TgTien>
+            <TThue>3239888</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>32398875</TgTCThue>
+        <TgTTTBSo>35638763</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

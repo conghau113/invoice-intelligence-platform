@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C25TAB</KHHDon>
+      <SHDon>5931122</SHDon>
+      <NLap>2025-11-20</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Hoàng và Mai Công ty TNHH MTV SAMPLE</Ten>
+        <MST>0608405931</MST>
+        <DChi>14 Hoàng Hoa Thám, xã Đông Hòa, tỉnh Tuyên Quang</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Bùi và Lê Tập Đoàn SAMPLE</Ten>
+        <MST>1125986119</MST>
+        <DChi>Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm B1164</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>5</SLuong>
+          <DGia>722000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>3610000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa N3081</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>8</SLuong>
+          <DGia>362500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2900000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng A5119</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>10</SLuong>
+          <DGia>166500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>1665000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Giấy in khổ A4 A6128</THHDVu>
+          <DVTinh>ram</DVTinh>
+          <SLuong>9</SLuong>
+          <DGia>233000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2097000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Giấy in khổ A4 D9503</THHDVu>
+          <DVTinh>ram</DVTinh>
+          <SLuong>17.5</SLuong>
+          <DGia>422500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>7393750</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>17665750</TgTien>
+            <TThue>1413260</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>17665750</TgTCThue>
+        <TgTTTBSo>19079010</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

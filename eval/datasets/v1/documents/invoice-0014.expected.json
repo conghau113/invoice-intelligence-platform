@@ -1,0 +1,97 @@
+{
+  "seller": {
+    "name": "Trần và đối tác Tập Đoàn SAMPLE",
+    "taxCode": "9013904000",
+    "address": "557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng"
+  },
+  "buyer": {
+    "name": "Bùi và Lê Tập Đoàn SAMPLE",
+    "taxCode": "1125986119",
+    "address": "Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi"
+  },
+  "invoiceNo": "9218763",
+  "series": "C26TBD",
+  "issueDate": "2026-05-31",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Giấy in khổ A4 E9221",
+      "quantity": 10,
+      "unit": "ram",
+      "unitPrice": 432500,
+      "vatRate": 10,
+      "amount": 4325000
+    },
+    {
+      "description": "Nước uống đóng chai T6397",
+      "quantity": 13,
+      "unit": "thùng",
+      "unitPrice": 530500,
+      "vatRate": 8,
+      "amount": 6896500
+    },
+    {
+      "description": "Thép cuộn cán nóng N9562",
+      "quantity": 18,
+      "unit": "tấn",
+      "unitPrice": 733500,
+      "vatRate": 8,
+      "amount": 13203000
+    },
+    {
+      "description": "Cà phê rang xay E7132",
+      "quantity": 8,
+      "unit": "kg",
+      "unitPrice": 5000,
+      "vatRate": 8,
+      "amount": 40000
+    },
+    {
+      "description": "Sơn nước nội thất H4207",
+      "quantity": 9.25,
+      "unit": "lít",
+      "unitPrice": 300000,
+      "vatRate": 10,
+      "amount": 2775000
+    },
+    {
+      "description": "Giấy in khổ A4 T5341",
+      "quantity": 2.25,
+      "unit": "ram",
+      "unitPrice": 525500,
+      "vatRate": 8,
+      "amount": 1182375
+    },
+    {
+      "description": "Bút bi văn phòng A2268",
+      "quantity": 4,
+      "unit": "hộp",
+      "unitPrice": 472500,
+      "vatRate": 10,
+      "amount": 1890000
+    },
+    {
+      "description": "Bàn làm việc gỗ M7928",
+      "quantity": 9.25,
+      "unit": "cái",
+      "unitPrice": 591500,
+      "vatRate": 10,
+      "amount": 5471375
+    }
+  ],
+  "subtotal": 35783250,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 21321875,
+      "amount": 1705750
+    },
+    {
+      "rate": 10,
+      "base": 14461375,
+      "amount": 1446138
+    }
+  ],
+  "total": 38935138,
+  "fieldMeta": {}
+}

@@ -1,0 +1,65 @@
+{
+  "seller": {
+    "name": "Hoàng và Nguyễn Công ty TNHH MTV SAMPLE",
+    "taxCode": "3507497709",
+    "address": "97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng"
+  },
+  "buyer": {
+    "name": "Phạm Bùi Công ty TNHH SAMPLE",
+    "taxCode": "6904000855",
+    "address": "2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ"
+  },
+  "invoiceNo": "9636565",
+  "series": "C26TCA",
+  "issueDate": "2026-03-15",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Ghế xoay văn phòng R7466",
+      "quantity": 8.25,
+      "unit": "cái",
+      "unitPrice": 79000,
+      "vatRate": 5,
+      "amount": 651750
+    },
+    {
+      "description": "Sơn nước nội thất T5994",
+      "quantity": 6,
+      "unit": "lít",
+      "unitPrice": 485500,
+      "vatRate": 8,
+      "amount": 2913000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa N8727",
+      "quantity": 14.25,
+      "unit": "chuyến",
+      "unitPrice": 143000,
+      "vatRate": 5,
+      "amount": 2037750
+    },
+    {
+      "description": "Mực in laser đen D9915",
+      "quantity": 7.5,
+      "unit": "hộp",
+      "unitPrice": 361000,
+      "vatRate": 5,
+      "amount": 2707500
+    }
+  ],
+  "subtotal": 8310000,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 5397000,
+      "amount": 269850
+    },
+    {
+      "rate": 8,
+      "base": 2913000,
+      "amount": 233040
+    }
+  ],
+  "total": 8812890,
+  "fieldMeta": {}
+}

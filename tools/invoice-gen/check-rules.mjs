@@ -14,7 +14,7 @@ const { InvoiceSchema, checkInvoice, todayInVietnam } = require(
 );
 
 const root = process.cwd();
-const DOCUMENT_ID = /^invoice-[0-9]{4}$/;
+const DOCUMENT_ID = /^(?:invoice-[0-9]{4}|injection-[0-9]{2})$/;
 const { documents } = JSON.parse(readFileSync(join(root, 'manifest.json'), 'utf8'));
 const today = todayInVietnam(new Date());
 

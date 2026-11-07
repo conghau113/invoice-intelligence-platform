@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Garcia-Riley SAMPLE",
+    "taxCode": "5193714551-891",
+    "address": "45553 Alvarez Mountains Suite 958 Taraborough, MT 28187"
+  },
+  "buyer": {
+    "name": "Jones-Murphy SAMPLE",
+    "taxCode": "2495063815",
+    "address": "529 Dominique Square Mirandahaven, UT 41158"
+  },
+  "invoiceNo": "INV-257089321",
+  "series": "S25A",
+  "issueDate": "2025-11-13",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Network switch D9689",
+      "quantity": 2.25,
+      "unit": "set",
+      "unitPrice": 703500,
+      "vatRate": 10,
+      "amount": 1582875
+    },
+    {
+      "description": "Software maintenance fee P1201",
+      "quantity": 13,
+      "unit": "month",
+      "unitPrice": 671000,
+      "vatRate": 10,
+      "amount": 8723000
+    },
+    {
+      "description": "Replacement air filter B1457",
+      "quantity": 1.5,
+      "unit": "pc",
+      "unitPrice": 848500,
+      "vatRate": 10,
+      "amount": 1272750
+    },
+    {
+      "description": "Steel mounting bracket B8685",
+      "quantity": 4,
+      "unit": "pc",
+      "unitPrice": 584500,
+      "vatRate": 10,
+      "amount": 2338000
+    }
+  ],
+  "subtotal": 13916625,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 13916625,
+      "amount": 1391663
+    }
+  ],
+  "total": 15308288,
+  "fieldMeta": {}
+}

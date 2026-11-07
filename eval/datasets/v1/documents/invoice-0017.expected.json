@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Mai Trần Công ty TNHH SAMPLE",
+    "taxCode": "3810984936-168",
+    "address": "Số 75 Khóm 46 Phố số 33 Phường Bình Minh TP. Hà Nội 01524"
+  },
+  "buyer": {
+    "name": "Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE",
+    "taxCode": "0618511992",
+    "address": "69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng"
+  },
+  "invoiceNo": "6411465",
+  "series": "C26TEA",
+  "issueDate": "2026-06-01",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Dây cáp mạng R4052",
+      "quantity": 15.25,
+      "unit": "mét",
+      "unitPrice": 408500,
+      "vatRate": 8,
+      "amount": 6229625
+    },
+    {
+      "description": "Bàn làm việc gỗ P9825",
+      "quantity": 2,
+      "unit": "cái",
+      "unitPrice": 73000,
+      "vatRate": 8,
+      "amount": 146000
+    },
+    {
+      "description": "Sơn nước nội thất E7319",
+      "quantity": 18.25,
+      "unit": "lít",
+      "unitPrice": 596500,
+      "vatRate": 8,
+      "amount": 10886125
+    },
+    {
+      "description": "Thiết bị chuyển mạch E8448",
+      "quantity": 1,
+      "unit": "bộ",
+      "unitPrice": 153500,
+      "vatRate": 8,
+      "amount": 153500
+    }
+  ],
+  "subtotal": 17415250,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 17415250,
+      "amount": 1393220
+    }
+  ],
+  "total": 18808470,
+  "fieldMeta": {}
+}

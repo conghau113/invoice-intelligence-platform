@@ -1,0 +1,73 @@
+{
+  "seller": {
+    "name": "Hoàng và Nguyễn Công ty TNHH MTV SAMPLE",
+    "taxCode": "3507497709",
+    "address": "97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng"
+  },
+  "buyer": {
+    "name": "Bùi và Lê Tập Đoàn SAMPLE",
+    "taxCode": "1125986119",
+    "address": "Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi"
+  },
+  "invoiceNo": "3754810",
+  "series": "C26TDA",
+  "issueDate": "2026-07-26",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Dây cáp mạng P8482",
+      "quantity": 16,
+      "unit": "mét",
+      "unitPrice": 15336,
+      "vatRate": 8,
+      "amount": 245376
+    },
+    {
+      "description": "Thép cuộn cán nóng C7215",
+      "quantity": 17,
+      "unit": "tấn",
+      "unitPrice": 52162,
+      "vatRate": 10,
+      "amount": 886754
+    },
+    {
+      "description": "Bút bi văn phòng C1125",
+      "quantity": 9.25,
+      "unit": "hộp",
+      "unitPrice": 15761,
+      "vatRate": 10,
+      "amount": 145789
+    },
+    {
+      "description": "Giấy in khổ A4 D5058",
+      "quantity": 11,
+      "unit": "ram",
+      "unitPrice": 55426,
+      "vatRate": 10,
+      "amount": 609686
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán H7188",
+      "quantity": 2,
+      "unit": "tháng",
+      "unitPrice": 40103,
+      "vatRate": 10,
+      "amount": 80206
+    }
+  ],
+  "subtotal": 1967811,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 245376,
+      "amount": 19630
+    },
+    {
+      "rate": 10,
+      "base": 1722435,
+      "amount": 172244
+    }
+  ],
+  "total": 2159685,
+  "fieldMeta": {}
+}

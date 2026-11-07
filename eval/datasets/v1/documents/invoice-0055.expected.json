@@ -1,0 +1,44 @@
+{
+  "seller": {
+    "name": "Dennis and Sons SAMPLE",
+    "taxCode": "9585736384",
+    "address": "3194 Matthew Well Suite 879 East Beth, RI 14099"
+  },
+  "buyer": {
+    "name": "Jones-Murphy SAMPLE",
+    "taxCode": "2495063815",
+    "address": "529 Dominique Square Mirandahaven, UT 41158"
+  },
+  "invoiceNo": "INV-258729911",
+  "series": "S25B",
+  "issueDate": "2025-10-17",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Network switch M8410",
+      "quantity": 7.5,
+      "unit": "set",
+      "unitPrice": 52082,
+      "vatRate": 5,
+      "amount": 390615
+    },
+    {
+      "description": "Bottled drinking water K5010",
+      "quantity": 6.5,
+      "unit": "case",
+      "unitPrice": 22158,
+      "vatRate": 5,
+      "amount": 144027
+    }
+  ],
+  "subtotal": 534642,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 534642,
+      "amount": 26732
+    }
+  ],
+  "total": 561374,
+  "fieldMeta": {}
+}

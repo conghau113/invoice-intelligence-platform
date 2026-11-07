@@ -1,0 +1,388 @@
+{
+  "seller": {
+    "name": "Bùi Phạm Công ty TNHH MTV SAMPLE",
+    "taxCode": "5819736628",
+    "address": "Số 13/845 Khóm 70 Đường Hoàng Văn Thụ Phường Hòa Bình Tuyên Quang 01422"
+  },
+  "buyer": {
+    "name": "Phạm Bùi Công ty TNHH SAMPLE",
+    "taxCode": "6904000855",
+    "address": "2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ"
+  },
+  "invoiceNo": "6257924",
+  "series": "C26TAB",
+  "issueDate": "2026-06-22",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Sơn nước nội thất M9932",
+      "quantity": 16,
+      "unit": "lít",
+      "unitPrice": 75769,
+      "vatRate": 0,
+      "amount": 1212304
+    },
+    {
+      "description": "Thiết bị chuyển mạch M1575",
+      "quantity": 7.5,
+      "unit": "bộ",
+      "unitPrice": 32605,
+      "vatRate": 0,
+      "amount": 244538
+    },
+    {
+      "description": "Thép cuộn cán nóng M6515",
+      "quantity": 3,
+      "unit": "tấn",
+      "unitPrice": 70094,
+      "vatRate": 0,
+      "amount": 210282
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa D6222",
+      "quantity": 6,
+      "unit": "chuyến",
+      "unitPrice": 37243,
+      "vatRate": 0,
+      "amount": 223458
+    },
+    {
+      "description": "Nước uống đóng chai C1753",
+      "quantity": 10,
+      "unit": "thùng",
+      "unitPrice": 38644,
+      "vatRate": 0,
+      "amount": 386440
+    },
+    {
+      "description": "Nước uống đóng chai T2328",
+      "quantity": 13,
+      "unit": "thùng",
+      "unitPrice": 4618,
+      "vatRate": 0,
+      "amount": 60034
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa T3615",
+      "quantity": 16,
+      "unit": "chuyến",
+      "unitPrice": 84739,
+      "vatRate": 0,
+      "amount": 1355824
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán N4116",
+      "quantity": 8,
+      "unit": "tháng",
+      "unitPrice": 14380,
+      "vatRate": 0,
+      "amount": 115040
+    },
+    {
+      "description": "Sơn nước nội thất E4019",
+      "quantity": 19,
+      "unit": "lít",
+      "unitPrice": 11434,
+      "vatRate": 0,
+      "amount": 217246
+    },
+    {
+      "description": "Thép cuộn cán nóng P9239",
+      "quantity": 6.25,
+      "unit": "tấn",
+      "unitPrice": 60347,
+      "vatRate": 0,
+      "amount": 377169
+    },
+    {
+      "description": "Nước uống đóng chai R4846",
+      "quantity": 13,
+      "unit": "thùng",
+      "unitPrice": 27175,
+      "vatRate": 0,
+      "amount": 353275
+    },
+    {
+      "description": "Bàn làm việc gỗ T4875",
+      "quantity": 6,
+      "unit": "cái",
+      "unitPrice": 16857,
+      "vatRate": 0,
+      "amount": 101142
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp D2413",
+      "quantity": 6,
+      "unit": "lần",
+      "unitPrice": 433,
+      "vatRate": 0,
+      "amount": 2598
+    },
+    {
+      "description": "Thiết bị chuyển mạch H5819",
+      "quantity": 9.25,
+      "unit": "bộ",
+      "unitPrice": 49414,
+      "vatRate": 0,
+      "amount": 457080
+    },
+    {
+      "description": "Dây cáp mạng K9567",
+      "quantity": 17,
+      "unit": "mét",
+      "unitPrice": 32177,
+      "vatRate": 0,
+      "amount": 547009
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp H9865",
+      "quantity": 17,
+      "unit": "lần",
+      "unitPrice": 27522,
+      "vatRate": 0,
+      "amount": 467874
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp B8195",
+      "quantity": 19.25,
+      "unit": "lần",
+      "unitPrice": 73651,
+      "vatRate": 0,
+      "amount": 1417782
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa P5636",
+      "quantity": 5.25,
+      "unit": "chuyến",
+      "unitPrice": 4680,
+      "vatRate": 0,
+      "amount": 24570
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa E9516",
+      "quantity": 17.25,
+      "unit": "chuyến",
+      "unitPrice": 1311,
+      "vatRate": 0,
+      "amount": 22615
+    },
+    {
+      "description": "Thép cuộn cán nóng C8629",
+      "quantity": 9.25,
+      "unit": "tấn",
+      "unitPrice": 202,
+      "vatRate": 0,
+      "amount": 1869
+    },
+    {
+      "description": "Sơn nước nội thất E1429",
+      "quantity": 16,
+      "unit": "lít",
+      "unitPrice": 34084,
+      "vatRate": 0,
+      "amount": 545344
+    },
+    {
+      "description": "Xi măng xây dựng M3881",
+      "quantity": 1,
+      "unit": "bao",
+      "unitPrice": 33093,
+      "vatRate": 0,
+      "amount": 33093
+    },
+    {
+      "description": "Mực in laser đen K9220",
+      "quantity": 10.5,
+      "unit": "hộp",
+      "unitPrice": 11547,
+      "vatRate": 0,
+      "amount": 121244
+    },
+    {
+      "description": "Bút bi văn phòng H4650",
+      "quantity": 5.5,
+      "unit": "hộp",
+      "unitPrice": 57172,
+      "vatRate": 0,
+      "amount": 314446
+    },
+    {
+      "description": "Ghế xoay văn phòng R8614",
+      "quantity": 4,
+      "unit": "cái",
+      "unitPrice": 68946,
+      "vatRate": 0,
+      "amount": 275784
+    },
+    {
+      "description": "Ghế xoay văn phòng D8469",
+      "quantity": 7.5,
+      "unit": "cái",
+      "unitPrice": 8265,
+      "vatRate": 0,
+      "amount": 61988
+    },
+    {
+      "description": "Sơn nước nội thất R1979",
+      "quantity": 11,
+      "unit": "lít",
+      "unitPrice": 79491,
+      "vatRate": 0,
+      "amount": 874401
+    },
+    {
+      "description": "Cà phê rang xay M5569",
+      "quantity": 10,
+      "unit": "kg",
+      "unitPrice": 31563,
+      "vatRate": 0,
+      "amount": 315630
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa C7132",
+      "quantity": 11,
+      "unit": "chuyến",
+      "unitPrice": 9397,
+      "vatRate": 0,
+      "amount": 103367
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp K6185",
+      "quantity": 10,
+      "unit": "lần",
+      "unitPrice": 45795,
+      "vatRate": 0,
+      "amount": 457950
+    },
+    {
+      "description": "Sơn nước nội thất N2802",
+      "quantity": 20.5,
+      "unit": "lít",
+      "unitPrice": 58380,
+      "vatRate": 0,
+      "amount": 1196790
+    },
+    {
+      "description": "Thép cuộn cán nóng E9591",
+      "quantity": 6,
+      "unit": "tấn",
+      "unitPrice": 72854,
+      "vatRate": 0,
+      "amount": 437124
+    },
+    {
+      "description": "Thiết bị chuyển mạch R9313",
+      "quantity": 2.5,
+      "unit": "bộ",
+      "unitPrice": 17115,
+      "vatRate": 0,
+      "amount": 42788
+    },
+    {
+      "description": "Giấy in khổ A4 M2503",
+      "quantity": 7,
+      "unit": "ram",
+      "unitPrice": 18121,
+      "vatRate": 0,
+      "amount": 126847
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp E2852",
+      "quantity": 2.25,
+      "unit": "lần",
+      "unitPrice": 10420,
+      "vatRate": 0,
+      "amount": 23445
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp B4782",
+      "quantity": 10,
+      "unit": "lần",
+      "unitPrice": 52874,
+      "vatRate": 0,
+      "amount": 528740
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp B4115",
+      "quantity": 12,
+      "unit": "lần",
+      "unitPrice": 57399,
+      "vatRate": 0,
+      "amount": 688788
+    },
+    {
+      "description": "Dây cáp mạng R8411",
+      "quantity": 4.25,
+      "unit": "mét",
+      "unitPrice": 73027,
+      "vatRate": 0,
+      "amount": 310365
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa D1685",
+      "quantity": 4.25,
+      "unit": "chuyến",
+      "unitPrice": 19297,
+      "vatRate": 0,
+      "amount": 82012
+    },
+    {
+      "description": "Ghế xoay văn phòng D1082",
+      "quantity": 20,
+      "unit": "cái",
+      "unitPrice": 22605,
+      "vatRate": 0,
+      "amount": 452100
+    },
+    {
+      "description": "Bàn làm việc gỗ N4621",
+      "quantity": 15,
+      "unit": "cái",
+      "unitPrice": 10353,
+      "vatRate": 0,
+      "amount": 155295
+    },
+    {
+      "description": "Thép cuộn cán nóng E9366",
+      "quantity": 14.25,
+      "unit": "tấn",
+      "unitPrice": 8514,
+      "vatRate": 0,
+      "amount": 121325
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa R5629",
+      "quantity": 19,
+      "unit": "chuyến",
+      "unitPrice": 41877,
+      "vatRate": 0,
+      "amount": 795663
+    },
+    {
+      "description": "Giấy in khổ A4 C8709",
+      "quantity": 13,
+      "unit": "ram",
+      "unitPrice": 55900,
+      "vatRate": 0,
+      "amount": 726700
+    },
+    {
+      "description": "Bút bi văn phòng R6725",
+      "quantity": 14,
+      "unit": "hộp",
+      "unitPrice": 59828,
+      "vatRate": 0,
+      "amount": 837592
+    }
+  ],
+  "subtotal": 17426970,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 17426970,
+      "amount": 0
+    }
+  ],
+  "total": 17426970,
+  "fieldMeta": {}
+}

@@ -12,6 +12,10 @@ pnpm gen:invoices:verify              # checks those files; exit 1 on any proble
 pnpm test:invoice-gen                 # browser tests (also part of `pnpm check:full`, not of CI)
 ```
 
+`--injection` adds the 24 attack documents of `gen_injection.py`. Eval does not use `out/`: it reads
+the frozen copy in `eval/datasets/v1`, written once by `pnpm gen:invoices:freeze`, which refuses to
+overwrite it.
+
 A plain `pytest tests/test_invoice_gen_render.py` deselects everything and exits with code 5: use the
 command above.
 

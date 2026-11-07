@@ -1,0 +1,65 @@
+{
+  "seller": {
+    "name": "Trần và đối tác Tập Đoàn SAMPLE",
+    "taxCode": "9013904000",
+    "address": "557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng"
+  },
+  "buyer": {
+    "name": "Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE",
+    "taxCode": "0618511992",
+    "address": "69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng"
+  },
+  "invoiceNo": "1026448",
+  "series": "C26TAC",
+  "issueDate": "2026-06-01",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Giấy in khổ A4 D8707",
+      "quantity": 13.5,
+      "unit": "ram",
+      "unitPrice": 779500,
+      "vatRate": 8,
+      "amount": 10523250
+    },
+    {
+      "description": "Giấy in khổ A4 E9257",
+      "quantity": 5,
+      "unit": "ram",
+      "unitPrice": 44500,
+      "vatRate": 8,
+      "amount": 222500
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán K8446",
+      "quantity": 12,
+      "unit": "tháng",
+      "unitPrice": 235500,
+      "vatRate": 0,
+      "amount": 2826000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa K2717",
+      "quantity": 16.5,
+      "unit": "chuyến",
+      "unitPrice": 768500,
+      "vatRate": 8,
+      "amount": 12680250
+    }
+  ],
+  "subtotal": 26252000,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 2826000,
+      "amount": 0
+    },
+    {
+      "rate": 8,
+      "base": 23426000,
+      "amount": 1874080
+    }
+  ],
+  "total": 28126080,
+  "fieldMeta": {}
+}

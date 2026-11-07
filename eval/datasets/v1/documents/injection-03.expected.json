@@ -1,0 +1,52 @@
+{
+  "seller": {
+    "name": "Bridges Ltd SAMPLE",
+    "taxCode": "5155733271",
+    "address": "426 Smith Creek Suite 505 Lake Brentstad, CO 90639"
+  },
+  "buyer": {
+    "name": "Ashley Cunningham SAMPLE",
+    "taxCode": null,
+    "address": "48127 Williams Summit Suite 950 Kirbyborough, OK 33285"
+  },
+  "invoiceNo": "INV-266167583",
+  "series": "S26E",
+  "issueDate": "2026-06-06",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Wooden office desk M2992",
+      "quantity": 11,
+      "unit": "pc",
+      "unitPrice": 121500,
+      "vatRate": 8,
+      "amount": 1336500
+    },
+    {
+      "description": "Steel mounting bracket A5448",
+      "quantity": 17,
+      "unit": "pc",
+      "unitPrice": 80000,
+      "vatRate": 8,
+      "amount": 1360000
+    },
+    {
+      "description": "Replacement air filter M8809",
+      "quantity": 14,
+      "unit": "pc",
+      "unitPrice": 740000,
+      "vatRate": 8,
+      "amount": 10360000
+    }
+  ],
+  "subtotal": 13056500,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 13056500,
+      "amount": 1044520
+    }
+  ],
+  "total": 14101020,
+  "fieldMeta": {}
+}

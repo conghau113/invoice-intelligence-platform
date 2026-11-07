@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26B</KHHDon>
+      <SHDon>INV-265250648</SHDon>
+      <NLap>2026-04-28</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Brooks, Tyler and Combs SAMPLE</Ten>
+        <MST>5385737979</MST>
+        <DChi>27249 Johnson Way Lake Alexandria, CO 66151</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Jones-Murphy SAMPLE</Ten>
+        <MST>2495063815</MST>
+        <DChi>529 Dominique Square Mirandahaven, UT 41158</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Ground coffee D7681</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>260.82</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>521.64</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Interior wall paint D1260</THHDVu>
+          <DVTinh>liter</DVTinh>
+          <SLuong>9.5</SLuong>
+          <DGia>321.59</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>3055.11</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Domestic freight service H2698</THHDVu>
+          <DVTinh>trip</DVTinh>
+          <SLuong>19</SLuong>
+          <DGia>382.41</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>7265.79</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Steel mounting bracket T9469</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>335.82</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>671.64</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Industrial cleaning service H4874</THHDVu>
+          <DVTinh>visit</DVTinh>
+          <SLuong>14</SLuong>
+          <DGia>204.03</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>2856.42</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>14370.60</TgTien>
+            <TThue>1437.06</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>14370.60</TgTCThue>
+        <TgTTTBSo>15807.66</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

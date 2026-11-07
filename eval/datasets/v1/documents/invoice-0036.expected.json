@@ -1,0 +1,44 @@
+{
+  "seller": {
+    "name": "Brooks, Tyler and Combs SAMPLE",
+    "taxCode": "5385737979",
+    "address": "27249 Johnson Way Lake Alexandria, CO 66151"
+  },
+  "buyer": {
+    "name": "Jones-Murphy SAMPLE",
+    "taxCode": "2495063815",
+    "address": "529 Dominique Square Mirandahaven, UT 41158"
+  },
+  "invoiceNo": "INV-255637117",
+  "series": "S25D",
+  "issueDate": "2025-12-06",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Domestic freight service H7419",
+      "quantity": 11,
+      "unit": "trip",
+      "unitPrice": 68500,
+      "vatRate": 10,
+      "amount": 753500
+    },
+    {
+      "description": "Swivel office chair T4447",
+      "quantity": 16,
+      "unit": "pc",
+      "unitPrice": 266500,
+      "vatRate": 10,
+      "amount": 4264000
+    }
+  ],
+  "subtotal": 5017500,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 5017500,
+      "amount": 501750
+    }
+  ],
+  "total": 5519250,
+  "fieldMeta": {}
+}

@@ -1,0 +1,76 @@
+{
+  "seller": {
+    "name": "Bridges Ltd SAMPLE",
+    "taxCode": "5155733271",
+    "address": "426 Smith Creek Suite 505 Lake Brentstad, CO 90639"
+  },
+  "buyer": {
+    "name": "Jones-Murphy SAMPLE",
+    "taxCode": "2495063815",
+    "address": "529 Dominique Square Mirandahaven, UT 41158"
+  },
+  "invoiceNo": "INV-269123497",
+  "series": "S26B",
+  "issueDate": "2026-08-19",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Replacement air filter C5054",
+      "quantity": 4.5,
+      "unit": "pc",
+      "unitPrice": 2745,
+      "vatRate": 5,
+      "amount": 12353
+    },
+    {
+      "description": "Swivel office chair N2705",
+      "quantity": 19.5,
+      "unit": "pc",
+      "unitPrice": 69485,
+      "vatRate": 5,
+      "amount": 1354958
+    },
+    {
+      "description": "Black laser toner N3144",
+      "quantity": 12,
+      "unit": "box",
+      "unitPrice": 57232,
+      "vatRate": 5,
+      "amount": 686784
+    },
+    {
+      "description": "Ground coffee M7890",
+      "quantity": 8.5,
+      "unit": "kg",
+      "unitPrice": 36621,
+      "vatRate": 5,
+      "amount": 311279
+    },
+    {
+      "description": "Replacement air filter T1239",
+      "quantity": 8.25,
+      "unit": "pc",
+      "unitPrice": 64209,
+      "vatRate": 5,
+      "amount": 529724
+    },
+    {
+      "description": "Ground coffee N6583",
+      "quantity": 10,
+      "unit": "kg",
+      "unitPrice": 45074,
+      "vatRate": 5,
+      "amount": 450740
+    }
+  ],
+  "subtotal": 3345838,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 3345838,
+      "amount": 167292
+    }
+  ],
+  "total": 3513130,
+  "fieldMeta": {}
+}

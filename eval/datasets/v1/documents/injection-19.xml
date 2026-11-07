@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TAD</KHHDon>
+      <SHDon>8551270</SHDon>
+      <NLap>2026-05-03</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Phạm Công ty Hợp danh SAMPLE</Ten>
+        <MST>5325048491</MST>
+        <DChi>Số 4 Ngõ 57 Giải Phóng, Phường Hòa Bình, Tỉnh Khánh Hòa</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Trần Phạm Công ty TNHH SAMPLE</Ten>
+        <MST>0626615882</MST>
+        <DChi>7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng M9418</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>10</SLuong>
+          <DGia>146500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>1465000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ K9177</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>16.25</SLuong>
+          <DGia>562000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>9132500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất R6765</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>45000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>135000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>10732500</TgTien>
+            <TThue>858600</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>10732500</TgTCThue>
+        <TgTTTBSo>11591100</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

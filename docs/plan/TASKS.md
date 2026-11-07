@@ -22,7 +22,7 @@
 
 ```text
 Mốc hiện tại: M2, M3 (còn kiểm tra cuối mốc) → M4
-Task hiện tại: T4.2 TODO (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.10, T3.1 đến T3.9, T4.1 đã DONE)
+Task hiện tại: T4.1b TODO (T0.0 đến T0.9, T1.1 đến T1.8, T2.1 đến T2.10, T3.1 đến T3.9, T4.1, T4.2 đã DONE)
 Chặn bởi: không
 Cập nhật: 2026-11-07
 ```
@@ -110,11 +110,11 @@ Cập nhật: 2026-11-07
 | ID   | Task                                                               | Ước tính (h) | Phụ thuộc  | Trạng thái | Thực tế (h) | Ghi chú |
 | ---- | ------------------------------------------------------------------ | ------------ | ---------- | ---------- | ----------- | ------- |
 | T4.1 | Bộ sinh hóa đơn tổng hợp: JSON đáp án + XML + PDF/ảnh              | 4            | T2.7       | `DONE`     |             | Agent: `pnpm gen:invoices` (Python: Faker + Jinja + Chromium, 5 layout, 9 biến thể, chia 40/40/20), `pnpm gen:invoices:verify`. 100 tài liệu: 343 file, 13,7 MB, 2 lần chạy 343/343 trùng hash; 368 lượt kiểm MST, 0 qua thuật toán; đã mở 10 PDF và 5 biến thể ảnh. pytest 53 + trình duyệt 30 + Jest 11; 23 drill → đỏ. code-reviewer 0 Cao, 3 Vừa (có lỗi thật: tài liệu phụ thuộc cache Faker, hash không bắt được); mục trong phạm vi đã sửa, dữ liệu seed 42 không đổi. `check:full` exit 0. Bạn duyệt 2026-11-07: Faker, playwright (Python), font Tinos/Arimo OFL-1.1 |
-| T4.2 | Chốt bộ dữ liệu đánh giá và ngưỡng chấp nhận                       | 1.5          | T4.1       | `TODO`     |             |         |
+| T4.2 | Chốt bộ dữ liệu đánh giá và ngưỡng chấp nhận                       | 1.5          | T4.1       | `DONE`     |             | Agent: `eval/datasets/v1` (125 tài liệu, 420 file, 15,17 MB): core 40/40/20, smoke 8/8/4 chọn theo quota trước mọi lần chạy model, 24 injection, 1 regression. Cổng `check:eval-dataset` trên CI (hash từng file, ghim hash manifest, kiểm `goal`); ADR 0020 `Proposed`, chưa có số. 18 drill đỏ (1 lần xanh làm lộ test yếu, đã sửa). code-reviewer 0 Cao, 2 Vừa, 6 Thấp; đã sửa cả 8. `check:full` exit 0 |
 | T4.1b | Chuẩn hoá ảnh upload: xử lý xoay EXIF, bỏ metadata trước khi gửi provider | 3 | T4.1, T3.6 | `TODO` | | Bạn duyệt 2026-11-05: làm sau T4.1, trước khi T4.3 chốt số liệu nền |
 | T4.3 | Eval runner: độ chính xác từng field, line items, chi phí, độ trễ  | 4            | T4.2, T4.1b, T3.1 | `TODO`     |             |         |
 | T4.4 | So sánh 2 model/prompt + phân tích lỗi                             | 3            | T4.3       | `TODO`     |             |         |
-| T4.5 | CI: chạy eval smoke set thủ công/định kỳ có ngưỡng                 | 2            | T4.3       | `TODO`     |             |         |
+| T4.5 | CI: chạy eval smoke set thủ công/định kỳ có ngưỡng                 | 2            | T4.3, T4.4 | `TODO`     |             |         |
 | T4.6 | Trang số liệu AI trong web                                         | 2.5          | T4.3, T3.5, T3.8 | `TODO`     |             |         |
 | T4.7 | Deploy demo chỉ-xem lên Oracle Always Free (ARM) + DuckDNS + Caddy | 5            | T4.6       | `TODO`     |             |         |
 | T4.8 | README bản 1 + GIF demo để bắt đầu nộp hồ sơ                       | 2            | T4.7       | `TODO`     |             |         |
@@ -476,3 +476,9 @@ Cập nhật: 2026-11-07
 | 2026-11-07 | T4.1 | Phiên bản `playwright` ở `apps/ai/pyproject.toml` và `@playwright/test` ở `apps/web/package.json` (cùng 1.64.1) phải đi cùng nhau, nhưng chưa có kiểm tự động. Test trình duyệt của bộ sinh chạy ở `check:full`, không chạy trong CI | T7.4 hoặc khi nâng Playwright |
 | 2026-11-07 | T4.1 | Web dùng IBM Plex Sans qua `next/font/google`, giấy phép OFL-1.1, chưa có dòng review trong `docs/LEGAL.md` (Tinos, Arimo đã có từ T4.1). Liên quan dòng T3.9 về `next/font/local` | T7.4 (T4.7 nếu chuyển sang font local) |
 | 2026-11-07 | T4.1 | SonarCloud PR #37, bảo trì, không chặn: `python:S1192` `generate.py` 84 (`manifest.json` lặp 3 lần); `python:S6353` `verify.py` 35, 36 (`[0-9]` là chủ ý: `\d` của Python khớp cả chữ số Unicode, nên giữ). `S2245` trong `gen_data.py` qua được vì Sonar không đuổi theo tham số, không phải vì đã sửa gì: đây là báo nhầm, `random` ở đây chỉ sinh dữ liệu giả | Ai đụng `generate.py` thì dọn `S1192`; không dùng `random` cho việc liên quan bảo mật |
+| 2026-11-07 | T4.2 | Đã làm các dòng Phát sinh giao cho T4.2: ADR dùng 0020 (`M4.md`, `NFR.md` đã sửa); dataset commit trong `eval/datasets/v1` (bạn duyệt 2026-11-07, 15,17 MB, 13,5 MB khi nén); 24 tài liệu injection (T3.6); `regression-00` giữ ca mất đuôi MST (T3.7) | Xong |
+| 2026-11-07 | T4.2 | Spec T4.2 đòi ngưỡng từ lần chạy đầu nhưng cấm chạy eval. ADR 0020 để `Proposed`, chốt cách tính, chưa có số. Bạn duyệt 2026-11-07. Đã đưa vào spec: T4.3 kiểm hash, gọi thẳng `apps/ai`, tách báo cáo theo split, đo độ nhiễu smoke 3 lần; T4.4 điền sàn và chuyển ADR sang Accepted; T4.5 thêm phụ thuộc T4.4 | T4.3, T4.4, T4.5 |
+| 2026-11-07 | T4.2 | Bộ injection có 1 đến 2 mẫu mỗi ô, nên tỷ lệ tấn công chỉ là số đếm thô. Câu tấn công và vị trí do mình chọn, không đại diện cho kẻ tấn công thật. `regression-00` từ bộ sinh cũ, không có XML | T4.3: báo cáo kèm mẫu số. Thêm mẫu ở `v2` nếu cần kết luận về tỷ lệ |
+| 2026-11-07 | T4.2 | Thêm khoảng 8.000 dòng XML vào Sonar (hiện 1.775). File XML hiện có `duplicated_lines` bằng 0 nên chưa thấy nguy cơ với cổng trùng lặp 3%, nhưng chưa chạy trên PR | Khi mở PR: đọc API SonarCloud. Nếu đỏ: thêm `.sonarcloud.properties` loại `eval/datasets/**`, hỏi bạn trước |
+| 2026-11-07 | T4.2 | `regression-00` (fixture `pdf_invoices/invoice-00.pdf`, từ T3.1) chỉ có dấu `SAMPLE`, không có `SAMPLE – SYNTHETIC DATA` mà `docs/LEGAL.md` §1 yêu cầu trên mọi trang. Có từ trước T4.2 và cả bộ `min_pdf` đều vậy. Giữ nguyên để đúng byte của ca T3.7; README dataset đã ghi ngoại lệ | T7.4: rà pháp lý, sửa `min_pdf` hoặc ghi ngoại lệ vào LEGAL. Đổi file này trong dataset thì phải làm `v2` |
+| 2026-11-07 | T4.2 | Dataset đóng băng không tự chạy lại `verify`: cổng hash chỉ nói file giống lúc đóng băng, không nói nội dung đúng. `verify` có đường dẫn cố định là `out/`. Hiện đúng vì đã verify ngay trước khi đóng băng và so manifest trùng khớp 124 tài liệu | `v2`: chạy lại đúng trình tự sinh, verify, đóng băng |

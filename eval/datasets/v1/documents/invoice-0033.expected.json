@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Bùi Phạm Công ty TNHH MTV SAMPLE",
+    "taxCode": "5819736628",
+    "address": "Số 13/845 Khóm 70 Đường Hoàng Văn Thụ Phường Hòa Bình Tuyên Quang 01422"
+  },
+  "buyer": {
+    "name": "Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE",
+    "taxCode": "0618511992",
+    "address": "69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng"
+  },
+  "invoiceNo": "6940268",
+  "series": "C26TCA",
+  "issueDate": "2026-09-27",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Thép cuộn cán nóng H5910",
+      "quantity": 9,
+      "unit": "tấn",
+      "unitPrice": 866500,
+      "vatRate": 5,
+      "amount": 7798500
+    },
+    {
+      "description": "Phí bảo trì phần mềm E8850",
+      "quantity": 20.5,
+      "unit": "tháng",
+      "unitPrice": 417500,
+      "vatRate": 5,
+      "amount": 8558750
+    },
+    {
+      "description": "Bút bi văn phòng A6340",
+      "quantity": 1,
+      "unit": "hộp",
+      "unitPrice": 422000,
+      "vatRate": 5,
+      "amount": 422000
+    },
+    {
+      "description": "Nước uống đóng chai E4915",
+      "quantity": 6.25,
+      "unit": "thùng",
+      "unitPrice": 561000,
+      "vatRate": 5,
+      "amount": 3506250
+    }
+  ],
+  "subtotal": 20285500,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 20285500,
+      "amount": 1014275
+    }
+  ],
+  "total": 21299775,
+  "fieldMeta": {}
+}

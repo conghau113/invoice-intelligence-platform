@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Hoàng và Nguyễn Công ty TNHH MTV SAMPLE",
+    "taxCode": "3507497709",
+    "address": "97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng"
+  },
+  "buyer": {
+    "name": "Bùi và Lê Tập Đoàn SAMPLE",
+    "taxCode": "1125986119",
+    "address": "Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi"
+  },
+  "invoiceNo": "5896175",
+  "series": "C26TDB",
+  "issueDate": "2026-09-23",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Ghế xoay văn phòng B6535",
+      "quantity": 12,
+      "unit": "cái",
+      "unitPrice": 65500,
+      "vatRate": 5,
+      "amount": 786000
+    },
+    {
+      "description": "Sơn nước nội thất H2015",
+      "quantity": 11,
+      "unit": "lít",
+      "unitPrice": 210000,
+      "vatRate": 5,
+      "amount": 2310000
+    },
+    {
+      "description": "Dây cáp mạng N5397",
+      "quantity": 2,
+      "unit": "mét",
+      "unitPrice": 277500,
+      "vatRate": 5,
+      "amount": 555000
+    },
+    {
+      "description": "Bàn làm việc gỗ A8221",
+      "quantity": 5,
+      "unit": "cái",
+      "unitPrice": 718500,
+      "vatRate": 5,
+      "amount": 3592500
+    }
+  ],
+  "subtotal": 7243500,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 7243500,
+      "amount": 362175
+    }
+  ],
+  "total": 7605675,
+  "fieldMeta": {}
+}

@@ -1,0 +1,73 @@
+{
+  "seller": {
+    "name": "Brooks, Tyler and Combs SAMPLE",
+    "taxCode": "5385737979",
+    "address": "27249 Johnson Way Lake Alexandria, CO 66151"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-261001319",
+  "series": "S26D",
+  "issueDate": "2026-01-26",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Network cable C9331",
+      "quantity": 13,
+      "unit": "meter",
+      "unitPrice": 10830,
+      "vatRate": 8,
+      "amount": 140790
+    },
+    {
+      "description": "Bottled drinking water C8790",
+      "quantity": 8.5,
+      "unit": "case",
+      "unitPrice": 57421,
+      "vatRate": 0,
+      "amount": 488079
+    },
+    {
+      "description": "Office ballpoint pens R3349",
+      "quantity": 19,
+      "unit": "box",
+      "unitPrice": 9088,
+      "vatRate": 0,
+      "amount": 172672
+    },
+    {
+      "description": "Swivel office chair K7352",
+      "quantity": 16,
+      "unit": "pc",
+      "unitPrice": 75930,
+      "vatRate": 0,
+      "amount": 1214880
+    },
+    {
+      "description": "Steel mounting bracket T3265",
+      "quantity": 7,
+      "unit": "pc",
+      "unitPrice": 36716,
+      "vatRate": 8,
+      "amount": 257012
+    }
+  ],
+  "subtotal": 2273433,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 1875631,
+      "amount": 0
+    },
+    {
+      "rate": 8,
+      "base": 397802,
+      "amount": 31824
+    }
+  ],
+  "total": 2305257,
+  "fieldMeta": {}
+}

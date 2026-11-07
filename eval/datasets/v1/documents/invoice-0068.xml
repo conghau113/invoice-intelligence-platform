@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26A</KHHDon>
+      <SHDon>INV-269284684</SHDon>
+      <NLap>2026-07-16</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Garcia-Riley SAMPLE</Ten>
+        <MST>5193714551-891</MST>
+        <DChi>45553 Alvarez Mountains Suite 958 Taraborough, MT 28187</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Sharp-Torres SAMPLE</Ten>
+        <MST>8330646319</MST>
+        <DChi>2029 Kathy Branch New Kimberlychester, PR 22771</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Ground coffee A3046</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>13</SLuong>
+          <DGia>691.78</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>8993.14</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Domestic freight service H6351</THHDVu>
+          <DVTinh>trip</DVTinh>
+          <SLuong>4.25</SLuong>
+          <DGia>675.16</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2869.43</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Software maintenance fee K6579</THHDVu>
+          <DVTinh>month</DVTinh>
+          <SLuong>7</SLuong>
+          <DGia>748.63</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>5240.41</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Domestic freight service P1321</THHDVu>
+          <DVTinh>trip</DVTinh>
+          <SLuong>10.5</SLuong>
+          <DGia>393.76</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>4134.48</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Steel mounting bracket B2881</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>14.25</SLuong>
+          <DGia>727.93</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>10373.00</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Interior wall paint E4578</THHDVu>
+          <DVTinh>liter</DVTinh>
+          <SLuong>20</SLuong>
+          <DGia>873.50</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>17470.00</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Ground coffee D2943</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>14</SLuong>
+          <DGia>464.29</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>6500.06</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Software maintenance fee H2450</THHDVu>
+          <DVTinh>month</DVTinh>
+          <SLuong>11.25</SLuong>
+          <DGia>555.07</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>6244.54</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bottled drinking water B3616</THHDVu>
+          <DVTinh>case</DVTinh>
+          <SLuong>7</SLuong>
+          <DGia>763.74</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>5346.18</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Network switch E4505</THHDVu>
+          <DVTinh>set</DVTinh>
+          <SLuong>15</SLuong>
+          <DGia>424.16</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>6362.40</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Interior wall paint B2088</THHDVu>
+          <DVTinh>liter</DVTinh>
+          <SLuong>13</SLuong>
+          <DGia>402.27</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>5229.51</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Software maintenance fee R6450</THHDVu>
+          <DVTinh>month</DVTinh>
+          <SLuong>10</SLuong>
+          <DGia>524.62</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>5246.20</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>67172.43</TgTien>
+            <TThue>3358.62</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>16836.92</TgTien>
+            <TThue>1683.69</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>84009.35</TgTCThue>
+        <TgTTTBSo>89051.66</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

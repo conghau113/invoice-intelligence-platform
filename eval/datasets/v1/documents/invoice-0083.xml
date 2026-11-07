@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TCC</KHHDon>
+      <SHDon>9741739</SHDon>
+      <NLap>2026-01-06</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Hoàng và Mai Công ty TNHH MTV SAMPLE</Ten>
+        <MST>0608405931</MST>
+        <DChi>14 Hoàng Hoa Thám, xã Đông Hòa, tỉnh Tuyên Quang</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Trần Phạm Công ty TNHH SAMPLE</Ten>
+        <MST>0626615882</MST>
+        <DChi>7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất T9339</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>9</SLuong>
+          <DGia>140500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>1264500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Giấy in khổ A4 M7116</THHDVu>
+          <DVTinh>ram</DVTinh>
+          <SLuong>10</SLuong>
+          <DGia>263000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>2630000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất M4906</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>18</SLuong>
+          <DGia>615000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>11070000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Ghế xoay văn phòng P2498</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>6</SLuong>
+          <DGia>120000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>720000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm R7721</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>6</SLuong>
+          <DGia>475500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>2853000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng T9114</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>3.25</SLuong>
+          <DGia>568000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>1846000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm K5880</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>20.5</SLuong>
+          <DGia>296000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>6068000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ C8291</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>5.5</SLuong>
+          <DGia>805000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>4427500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch E8372</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>1.5</SLuong>
+          <DGia>633000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>949500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen T1074</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>13.25</SLuong>
+          <DGia>710500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>9414125</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>41242625</TgTien>
+            <TThue>4124263</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>41242625</TgTCThue>
+        <TgTTTBSo>45366888</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

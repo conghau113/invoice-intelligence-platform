@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S25B</KHHDon>
+      <SHDon>INV-258729911</SHDon>
+      <NLap>2025-10-17</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Dennis and Sons SAMPLE</Ten>
+        <MST>9585736384</MST>
+        <DChi>3194 Matthew Well Suite 879 East Beth, RI 14099</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Jones-Murphy SAMPLE</Ten>
+        <MST>2495063815</MST>
+        <DChi>529 Dominique Square Mirandahaven, UT 41158</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Network switch M8410</THHDVu>
+          <DVTinh>set</DVTinh>
+          <SLuong>7.5</SLuong>
+          <DGia>520.82</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>3906.15</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bottled drinking water K5010</THHDVu>
+          <DVTinh>case</DVTinh>
+          <SLuong>6.5</SLuong>
+          <DGia>221.58</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1440.27</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>5346.42</TgTien>
+            <TThue>267.32</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>5346.42</TgTCThue>
+        <TgTTTBSo>5613.74</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

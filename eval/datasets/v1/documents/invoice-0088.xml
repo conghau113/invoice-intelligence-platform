@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S25A</KHHDon>
+      <SHDon>INV-251102514</SHDon>
+      <NLap>2025-12-29</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Bridges Ltd SAMPLE</Ten>
+        <MST>5155733271</MST>
+        <DChi>426 Smith Creek Suite 505 Lake Brentstad, CO 90639</DChi>
+      </NBan>
+      <NMua>
+        <Ten>James Cooper SAMPLE</Ten>
+        <DChi>0029 Nicholas Crest North Jamesstad, WY 62438</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Black laser toner K5117</THHDVu>
+          <DVTinh>box</DVTinh>
+          <SLuong>8</SLuong>
+          <DGia>476.97</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>3815.76</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Steel mounting bracket R1833</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>1.25</SLuong>
+          <DGia>754.16</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>942.70</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Replacement air filter R7388</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>14.5</SLuong>
+          <DGia>641.01</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>9294.65</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Network switch A7774</THHDVu>
+          <DVTinh>set</DVTinh>
+          <SLuong>11</SLuong>
+          <DGia>418.65</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>4605.15</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Accounting advisory service B8016</THHDVu>
+          <DVTinh>month</DVTinh>
+          <SLuong>19.25</SLuong>
+          <DGia>565.28</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>10881.64</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Network cable K8072</THHDVu>
+          <DVTinh>meter</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>447.56</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>895.12</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>30435.02</TgTien>
+            <TThue>2434.80</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>30435.02</TgTCThue>
+        <TgTTTBSo>32869.82</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C25TEC</KHHDon>
+      <SHDon>5339986</SHDon>
+      <NLap>2025-11-10</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Nguyễn Công ty Hợp danh SAMPLE</Ten>
+        <MST>6801611429-434</MST>
+        <DChi>9 Đường Trần Bình Trọng xã An Hải Thanh Hóa 95532</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Bùi và Lê Tập Đoàn SAMPLE</Ten>
+        <MST>1125986119</MST>
+        <DChi>Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Dây cáp mạng H1116</THHDVu>
+          <DVTinh>mét</DVTinh>
+          <SLuong>4.5</SLuong>
+          <DGia>748000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>3366000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ N6920</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>2.25</SLuong>
+          <DGia>233500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>525375</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch N8188</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>184000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>3128000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Ghế xoay văn phòng B5632</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>17.5</SLuong>
+          <DGia>480000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>8400000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Giấy in khổ A4 C1477</THHDVu>
+          <DVTinh>ram</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>35000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>595000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán M5405</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>16</SLuong>
+          <DGia>164000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2624000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai K3258</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>5.25</SLuong>
+          <DGia>210500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>1105125</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm T7655</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>18.25</SLuong>
+          <DGia>138500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2527625</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>22271125</TgTien>
+            <TThue>1781690</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>22271125</TgTCThue>
+        <TgTTTBSo>24052815</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

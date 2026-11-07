@@ -1,0 +1,116 @@
+{
+  "seller": {
+    "name": "Hoàng và Nguyễn Công ty TNHH MTV SAMPLE",
+    "taxCode": "3507497709",
+    "address": "97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng"
+  },
+  "buyer": {
+    "name": "Hoàng Tấn John SAMPLE",
+    "taxCode": null,
+    "address": "9/97/750 đường 39 phường An Phú Thành phố Cần Thơ 46300"
+  },
+  "invoiceNo": "3843224",
+  "series": "C26TBE",
+  "issueDate": "2026-03-17",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Phí bảo trì phần mềm A2773",
+      "quantity": 3.25,
+      "unit": "tháng",
+      "unitPrice": 641500,
+      "vatRate": 10,
+      "amount": 2084875
+    },
+    {
+      "description": "Ghế xoay văn phòng B4922",
+      "quantity": 6,
+      "unit": "cái",
+      "unitPrice": 371500,
+      "vatRate": 10,
+      "amount": 2229000
+    },
+    {
+      "description": "Phí bảo trì phần mềm M9088",
+      "quantity": 3.5,
+      "unit": "tháng",
+      "unitPrice": 35000,
+      "vatRate": 10,
+      "amount": 122500
+    },
+    {
+      "description": "Thép cuộn cán nóng B5267",
+      "quantity": 18,
+      "unit": "tấn",
+      "unitPrice": 413000,
+      "vatRate": 10,
+      "amount": 7434000
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp R5222",
+      "quantity": 19,
+      "unit": "lần",
+      "unitPrice": 300500,
+      "vatRate": 10,
+      "amount": 5709500
+    },
+    {
+      "description": "Dây cáp mạng D6073",
+      "quantity": 11,
+      "unit": "mét",
+      "unitPrice": 655500,
+      "vatRate": 10,
+      "amount": 7210500
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp E5955",
+      "quantity": 1.25,
+      "unit": "lần",
+      "unitPrice": 316500,
+      "vatRate": 10,
+      "amount": 395625
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp R6981",
+      "quantity": 4.5,
+      "unit": "lần",
+      "unitPrice": 663000,
+      "vatRate": 10,
+      "amount": 2983500
+    },
+    {
+      "description": "Dây cáp mạng D5895",
+      "quantity": 1,
+      "unit": "mét",
+      "unitPrice": 286500,
+      "vatRate": 10,
+      "amount": 286500
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán A7432",
+      "quantity": 18,
+      "unit": "tháng",
+      "unitPrice": 746500,
+      "vatRate": 10,
+      "amount": 13437000
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán N6898",
+      "quantity": 12.25,
+      "unit": "tháng",
+      "unitPrice": 133500,
+      "vatRate": 10,
+      "amount": 1635375
+    }
+  ],
+  "subtotal": 43528375,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 43528375,
+      "amount": 4352838
+    }
+  ],
+  "total": 47881213,
+  "fieldMeta": {}
+}

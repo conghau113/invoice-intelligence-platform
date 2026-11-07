@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S25A</KHHDon>
+      <SHDon>INV-258720605</SHDon>
+      <NLap>2025-11-05</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Dennis and Sons SAMPLE</Ten>
+        <MST>9585736384</MST>
+        <DChi>3194 Matthew Well Suite 879 East Beth, RI 14099</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Sharp-Torres SAMPLE</Ten>
+        <MST>8330646319</MST>
+        <DChi>2029 Kathy Branch New Kimberlychester, PR 22771</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Bottled drinking water D9757</THHDVu>
+          <DVTinh>case</DVTinh>
+          <SLuong>20.25</SLuong>
+          <DGia>577000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>11684250</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Replacement air filter T7812</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>6</SLuong>
+          <DGia>375000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2250000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bottled drinking water T5141</THHDVu>
+          <DVTinh>case</DVTinh>
+          <SLuong>1</SLuong>
+          <DGia>66500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>66500</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>14000750</TgTien>
+            <TThue>1120060</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>14000750</TgTCThue>
+        <TgTTTBSo>15120810</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

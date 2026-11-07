@@ -1,0 +1,36 @@
+{
+  "seller": {
+    "name": "Trần và đối tác Tập Đoàn SAMPLE",
+    "taxCode": "9013904000",
+    "address": "557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng"
+  },
+  "buyer": {
+    "name": "Trần Mai Jane SAMPLE",
+    "taxCode": null,
+    "address": "Số 35/784 Hẻm 70 Nguyễn Văn Cừ Xã Hoàng Mai Điện Biên 73487"
+  },
+  "invoiceNo": "5655359",
+  "series": "C26TEB",
+  "issueDate": "2026-04-03",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Dịch vụ tư vấn kế toán C7268",
+      "quantity": 3.5,
+      "unit": "tháng",
+      "unitPrice": 96000,
+      "vatRate": 8,
+      "amount": 336000
+    }
+  ],
+  "subtotal": 336000,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 336000,
+      "amount": 26880
+    }
+  ],
+  "total": 362880,
+  "fieldMeta": {}
+}

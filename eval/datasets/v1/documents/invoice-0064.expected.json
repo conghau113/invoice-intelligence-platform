@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Dennis and Sons SAMPLE",
+    "taxCode": "9585736384",
+    "address": "3194 Matthew Well Suite 879 East Beth, RI 14099"
+  },
+  "buyer": {
+    "name": "Evans, Higgins and English SAMPLE",
+    "taxCode": "9499051941",
+    "address": "236 Deanna Lock Ellischester, VI 27552"
+  },
+  "invoiceNo": "INV-259956199",
+  "series": "S25B",
+  "issueDate": "2025-11-13",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Bottled drinking water E5836",
+      "quantity": 15,
+      "unit": "case",
+      "unitPrice": 3387,
+      "vatRate": 0,
+      "amount": 50805
+    },
+    {
+      "description": "Replacement air filter A4122",
+      "quantity": 10.5,
+      "unit": "pc",
+      "unitPrice": 27269,
+      "vatRate": 0,
+      "amount": 286325
+    },
+    {
+      "description": "Domestic freight service H1458",
+      "quantity": 19,
+      "unit": "trip",
+      "unitPrice": 58478,
+      "vatRate": 0,
+      "amount": 1111082
+    },
+    {
+      "description": "Bottled drinking water C1855",
+      "quantity": 18.25,
+      "unit": "case",
+      "unitPrice": 11286,
+      "vatRate": 0,
+      "amount": 205970
+    }
+  ],
+  "subtotal": 1654182,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 1654182,
+      "amount": 0
+    }
+  ],
+  "total": 1654182,
+  "fieldMeta": {}
+}

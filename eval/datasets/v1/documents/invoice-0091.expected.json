@@ -1,0 +1,92 @@
+{
+  "seller": {
+    "name": "Phạm Công ty Hợp danh SAMPLE",
+    "taxCode": "5325048491",
+    "address": "Số 4 Ngõ 57 Giải Phóng, Phường Hòa Bình, Tỉnh Khánh Hòa"
+  },
+  "buyer": {
+    "name": "Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE",
+    "taxCode": "0618511992",
+    "address": "69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng"
+  },
+  "invoiceNo": "4488944",
+  "series": "C25TDC",
+  "issueDate": "2025-10-02",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Xi măng xây dựng M4507",
+      "quantity": 7,
+      "unit": "bao",
+      "unitPrice": 792000,
+      "vatRate": 10,
+      "amount": 5544000
+    },
+    {
+      "description": "Mực in laser đen R5974",
+      "quantity": 2.25,
+      "unit": "hộp",
+      "unitPrice": 897000,
+      "vatRate": 10,
+      "amount": 2018250
+    },
+    {
+      "description": "Nước uống đóng chai E6044",
+      "quantity": 10.25,
+      "unit": "thùng",
+      "unitPrice": 335000,
+      "vatRate": 10,
+      "amount": 3433750
+    },
+    {
+      "description": "Phí bảo trì phần mềm C4427",
+      "quantity": 18.5,
+      "unit": "tháng",
+      "unitPrice": 393500,
+      "vatRate": 10,
+      "amount": 7279750
+    },
+    {
+      "description": "Bàn làm việc gỗ B2736",
+      "quantity": 10,
+      "unit": "cái",
+      "unitPrice": 781000,
+      "vatRate": 10,
+      "amount": 7810000
+    },
+    {
+      "description": "Xi măng xây dựng E6532",
+      "quantity": 5.25,
+      "unit": "bao",
+      "unitPrice": 508500,
+      "vatRate": 10,
+      "amount": 2669625
+    },
+    {
+      "description": "Dây cáp mạng P3329",
+      "quantity": 8,
+      "unit": "mét",
+      "unitPrice": 588500,
+      "vatRate": 10,
+      "amount": 4708000
+    },
+    {
+      "description": "Xi măng xây dựng R4775",
+      "quantity": 19.25,
+      "unit": "bao",
+      "unitPrice": 767500,
+      "vatRate": 10,
+      "amount": 14774375
+    }
+  ],
+  "subtotal": 48237750,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 48237750,
+      "amount": 4823775
+    }
+  ],
+  "total": 53061525,
+  "fieldMeta": {}
+}

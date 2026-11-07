@@ -1,0 +1,44 @@
+{
+  "seller": {
+    "name": "Garcia-Riley SAMPLE",
+    "taxCode": "5193714551-891",
+    "address": "45553 Alvarez Mountains Suite 958 Taraborough, MT 28187"
+  },
+  "buyer": {
+    "name": "Antonio Stewart SAMPLE",
+    "taxCode": null,
+    "address": "815 Frazier Ferry Apt. 781 West Rachel, NJ 42719"
+  },
+  "invoiceNo": "INV-253945776",
+  "series": "S25C",
+  "issueDate": "2025-11-27",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Steel mounting bracket E2890",
+      "quantity": 7.5,
+      "unit": "pc",
+      "unitPrice": 154000,
+      "vatRate": 5,
+      "amount": 1155000
+    },
+    {
+      "description": "Steel mounting bracket B3199",
+      "quantity": 6,
+      "unit": "pc",
+      "unitPrice": 873500,
+      "vatRate": 5,
+      "amount": 5241000
+    }
+  ],
+  "subtotal": 6396000,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 6396000,
+      "amount": 319800
+    }
+  ],
+  "total": 6715800,
+  "fieldMeta": {}
+}

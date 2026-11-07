@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TBC</KHHDon>
+      <SHDon>5337648</SHDon>
+      <NLap>2026-03-13</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Nguyễn Công ty Hợp danh SAMPLE</Ten>
+        <MST>6801611429-434</MST>
+        <DChi>9 Đường Trần Bình Trọng xã An Hải Thanh Hóa 95532</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Phạm Bùi Công ty TNHH SAMPLE</Ten>
+        <MST>6904000855</MST>
+        <DChi>2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ R6528</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>16</SLuong>
+          <DGia>815.55</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>13048.80</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất P1990</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>1</SLuong>
+          <DGia>667.02</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>667.02</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất R3344</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>586.35</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>1172.70</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Ghế xoay văn phòng M2490</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>15</SLuong>
+          <DGia>814.92</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>12223.80</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán M3449</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>12.25</SLuong>
+          <DGia>305.60</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>3743.60</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ B6247</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>6.5</SLuong>
+          <DGia>834.74</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>5425.81</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai M6471</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>19</SLuong>
+          <DGia>137.29</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2608.51</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay R5550</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>1.25</SLuong>
+          <DGia>28.26</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>35.33</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai B5614</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>20</SLuong>
+          <DGia>515.28</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>10305.60</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ P3929</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>17.5</SLuong>
+          <DGia>88.42</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>1547.35</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>45826.89</TgTien>
+            <TThue>3666.15</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>4951.63</TgTien>
+            <TThue>495.16</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>50778.52</TgTCThue>
+        <TgTTTBSo>54939.83</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

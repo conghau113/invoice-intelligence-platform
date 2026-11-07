@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TCA</KHHDon>
+      <SHDon>9636565</SHDon>
+      <NLap>2026-03-15</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Hoàng và Nguyễn Công ty TNHH MTV SAMPLE</Ten>
+        <MST>3507497709</MST>
+        <DChi>97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Phạm Bùi Công ty TNHH SAMPLE</Ten>
+        <MST>6904000855</MST>
+        <DChi>2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Ghế xoay văn phòng R7466</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>8.25</SLuong>
+          <DGia>79000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>651750</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất T5994</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>6</SLuong>
+          <DGia>485500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2913000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa N8727</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>14.25</SLuong>
+          <DGia>143000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2037750</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen D9915</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>7.5</SLuong>
+          <DGia>361000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2707500</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>5397000</TgTien>
+            <TThue>269850</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>2913000</TgTien>
+            <TThue>233040</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>8310000</TgTCThue>
+        <TgTTTBSo>8812890</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

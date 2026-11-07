@@ -1,0 +1,97 @@
+{
+  "seller": {
+    "name": "Brooks, Tyler and Combs SAMPLE",
+    "taxCode": "5385737979",
+    "address": "27249 Johnson Way Lake Alexandria, CO 66151"
+  },
+  "buyer": {
+    "name": "Breanna Bryant SAMPLE",
+    "taxCode": null,
+    "address": "454 Julian Ridge Suite 194 Johnsonborough, GA 88709"
+  },
+  "invoiceNo": "INV-265148670",
+  "series": "S26A",
+  "issueDate": "2026-04-24",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Bottled drinking water P1142",
+      "quantity": 20,
+      "unit": "case",
+      "unitPrice": 64604,
+      "vatRate": 10,
+      "amount": 1292080
+    },
+    {
+      "description": "Black laser toner H5119",
+      "quantity": 8,
+      "unit": "box",
+      "unitPrice": 18183,
+      "vatRate": 0,
+      "amount": 145464
+    },
+    {
+      "description": "Accounting advisory service N4691",
+      "quantity": 10.25,
+      "unit": "month",
+      "unitPrice": 67424,
+      "vatRate": 0,
+      "amount": 691096
+    },
+    {
+      "description": "Bottled drinking water H9911",
+      "quantity": 16,
+      "unit": "case",
+      "unitPrice": 35440,
+      "vatRate": 0,
+      "amount": 567040
+    },
+    {
+      "description": "Domestic freight service R3069",
+      "quantity": 10.5,
+      "unit": "trip",
+      "unitPrice": 24838,
+      "vatRate": 10,
+      "amount": 260799
+    },
+    {
+      "description": "Office ballpoint pens T4995",
+      "quantity": 2,
+      "unit": "box",
+      "unitPrice": 34357,
+      "vatRate": 10,
+      "amount": 68714
+    },
+    {
+      "description": "Accounting advisory service M7137",
+      "quantity": 12.25,
+      "unit": "month",
+      "unitPrice": 4215,
+      "vatRate": 0,
+      "amount": 51634
+    },
+    {
+      "description": "Network switch T7340",
+      "quantity": 16,
+      "unit": "set",
+      "unitPrice": 61488,
+      "vatRate": 10,
+      "amount": 983808
+    }
+  ],
+  "subtotal": 4060635,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 1455234,
+      "amount": 0
+    },
+    {
+      "rate": 10,
+      "base": 2605401,
+      "amount": 260540
+    }
+  ],
+  "total": 4321175,
+  "fieldMeta": {}
+}

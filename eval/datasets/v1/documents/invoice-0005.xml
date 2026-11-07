@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TEA</KHHDon>
+      <SHDon>2480165</SHDon>
+      <NLap>2026-03-06</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Trần và đối tác Tập Đoàn SAMPLE</Ten>
+        <MST>9013904000</MST>
+        <DChi>557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Bùi và Lê Tập Đoàn SAMPLE</Ten>
+        <MST>1125986119</MST>
+        <DChi>Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng H7327</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>697500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>2092500</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>2092500</TgTien>
+            <TThue>0</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>2092500</TgTCThue>
+        <TgTTTBSo>2092500</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

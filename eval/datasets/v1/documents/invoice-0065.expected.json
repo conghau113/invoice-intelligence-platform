@@ -1,0 +1,36 @@
+{
+  "seller": {
+    "name": "Nguyễn và Đặng Công ty Hợp danh SAMPLE",
+    "taxCode": "5964976311",
+    "address": "2/20/516 phố 28 phường Đông Hòa Thành phố Hồ Chí Minh 92729"
+  },
+  "buyer": {
+    "name": "Trần Phạm Công ty TNHH SAMPLE",
+    "taxCode": "0626615882",
+    "address": "7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai"
+  },
+  "invoiceNo": "0914421",
+  "series": "C26TDD",
+  "issueDate": "2026-08-04",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Thiết bị chuyển mạch C6073",
+      "quantity": 1.25,
+      "unit": "bộ",
+      "unitPrice": 706000,
+      "vatRate": 10,
+      "amount": 882500
+    }
+  ],
+  "subtotal": 882500,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 882500,
+      "amount": 88250
+    }
+  ],
+  "total": 970750,
+  "fieldMeta": {}
+}

@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26D</KHHDon>
+      <SHDon>INV-261001319</SHDon>
+      <NLap>2026-01-26</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Brooks, Tyler and Combs SAMPLE</Ten>
+        <MST>5385737979</MST>
+        <DChi>27249 Johnson Way Lake Alexandria, CO 66151</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Sharp-Torres SAMPLE</Ten>
+        <MST>8330646319</MST>
+        <DChi>2029 Kathy Branch New Kimberlychester, PR 22771</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Network cable C9331</THHDVu>
+          <DVTinh>meter</DVTinh>
+          <SLuong>13</SLuong>
+          <DGia>108.30</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>1407.90</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bottled drinking water C8790</THHDVu>
+          <DVTinh>case</DVTinh>
+          <SLuong>8.5</SLuong>
+          <DGia>574.21</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>4880.79</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Office ballpoint pens R3349</THHDVu>
+          <DVTinh>box</DVTinh>
+          <SLuong>19</SLuong>
+          <DGia>90.88</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>1726.72</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Swivel office chair K7352</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>16</SLuong>
+          <DGia>759.30</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>12148.80</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Steel mounting bracket T3265</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>7</SLuong>
+          <DGia>367.16</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2570.12</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>18756.31</TgTien>
+            <TThue>0.00</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>3978.02</TgTien>
+            <TThue>318.24</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>22734.33</TgTCThue>
+        <TgTTTBSo>23052.57</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

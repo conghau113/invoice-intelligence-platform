@@ -1,0 +1,65 @@
+{
+  "seller": {
+    "name": "Hoàng và Mai Công ty TNHH MTV SAMPLE",
+    "taxCode": "0608405931",
+    "address": "14 Hoàng Hoa Thám, xã Đông Hòa, tỉnh Tuyên Quang"
+  },
+  "buyer": {
+    "name": "Trần Phạm Công ty TNHH SAMPLE",
+    "taxCode": "0626615882",
+    "address": "7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai"
+  },
+  "invoiceNo": "1995078",
+  "series": "C26TED",
+  "issueDate": "2026-01-19",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Dịch vụ tư vấn kế toán H9218",
+      "quantity": 6,
+      "unit": "tháng",
+      "unitPrice": 723000,
+      "vatRate": 10,
+      "amount": 4338000
+    },
+    {
+      "description": "Thiết bị chuyển mạch D8436",
+      "quantity": 11,
+      "unit": "bộ",
+      "unitPrice": 849000,
+      "vatRate": 5,
+      "amount": 9339000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa D6780",
+      "quantity": 19.25,
+      "unit": "chuyến",
+      "unitPrice": 674500,
+      "vatRate": 5,
+      "amount": 12984125
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp P3982",
+      "quantity": 7,
+      "unit": "lần",
+      "unitPrice": 759000,
+      "vatRate": 10,
+      "amount": 5313000
+    }
+  ],
+  "subtotal": 31974125,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 22323125,
+      "amount": 1116156
+    },
+    {
+      "rate": 10,
+      "base": 9651000,
+      "amount": 965100
+    }
+  ],
+  "total": 34055381,
+  "fieldMeta": {}
+}

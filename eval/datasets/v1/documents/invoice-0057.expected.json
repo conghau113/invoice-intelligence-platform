@@ -1,0 +1,52 @@
+{
+  "seller": {
+    "name": "Trần và đối tác Tập Đoàn SAMPLE",
+    "taxCode": "9013904000",
+    "address": "557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng"
+  },
+  "buyer": {
+    "name": "Phạm Bùi Công ty TNHH SAMPLE",
+    "taxCode": "6904000855",
+    "address": "2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ"
+  },
+  "invoiceNo": "9821624",
+  "series": "C26TAB",
+  "issueDate": "2026-01-23",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Mực in laser đen H6331",
+      "quantity": 15,
+      "unit": "hộp",
+      "unitPrice": 470000,
+      "vatRate": 10,
+      "amount": 7050000
+    },
+    {
+      "description": "Bàn làm việc gỗ K7269",
+      "quantity": 3,
+      "unit": "cái",
+      "unitPrice": 785000,
+      "vatRate": 10,
+      "amount": 2355000
+    },
+    {
+      "description": "Bút bi văn phòng M6876",
+      "quantity": 16,
+      "unit": "hộp",
+      "unitPrice": 542500,
+      "vatRate": 10,
+      "amount": 8680000
+    }
+  ],
+  "subtotal": 18085000,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 18085000,
+      "amount": 1808500
+    }
+  ],
+  "total": 19893500,
+  "fieldMeta": {}
+}

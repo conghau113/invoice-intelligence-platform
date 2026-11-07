@@ -92,6 +92,8 @@ jobs:
         run: pnpm check:adr
       - name: Docs links
         run: pnpm check:links
+      - name: Eval dataset (hash of each file)
+        run: pnpm check:eval-dataset
       - name: Gate tests (negative cases)
         run: pnpm test:scripts
 

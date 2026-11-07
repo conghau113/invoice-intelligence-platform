@@ -1,0 +1,65 @@
+{
+  "seller": {
+    "name": "Bùi Phạm Công ty TNHH MTV SAMPLE",
+    "taxCode": "5819736628",
+    "address": "Số 13/845 Khóm 70 Đường Hoàng Văn Thụ Phường Hòa Bình Tuyên Quang 01422"
+  },
+  "buyer": {
+    "name": "Hoàng Công ty TNHH SAMPLE",
+    "taxCode": "9624084463",
+    "address": "32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng"
+  },
+  "invoiceNo": "6428117",
+  "series": "C26TEE",
+  "issueDate": "2026-02-05",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Thiết bị chuyển mạch K6746",
+      "quantity": 14,
+      "unit": "bộ",
+      "unitPrice": 346000,
+      "vatRate": 10,
+      "amount": 4844000
+    },
+    {
+      "description": "Sơn nước nội thất A9242",
+      "quantity": 17,
+      "unit": "lít",
+      "unitPrice": 814000,
+      "vatRate": 5,
+      "amount": 13838000
+    },
+    {
+      "description": "Cà phê rang xay N2902",
+      "quantity": 19,
+      "unit": "kg",
+      "unitPrice": 425000,
+      "vatRate": 5,
+      "amount": 8075000
+    },
+    {
+      "description": "Sơn nước nội thất N6480",
+      "quantity": 14,
+      "unit": "lít",
+      "unitPrice": 186500,
+      "vatRate": 5,
+      "amount": 2611000
+    }
+  ],
+  "subtotal": 29368000,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 24524000,
+      "amount": 1226200
+    },
+    {
+      "rate": 10,
+      "base": 4844000,
+      "amount": 484400
+    }
+  ],
+  "total": 31078600,
+  "fieldMeta": {}
+}

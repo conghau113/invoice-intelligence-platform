@@ -1,0 +1,44 @@
+{
+  "seller": {
+    "name": "Brooks, Tyler and Combs SAMPLE",
+    "taxCode": "5385737979",
+    "address": "27249 Johnson Way Lake Alexandria, CO 66151"
+  },
+  "buyer": {
+    "name": "Jones-Murphy SAMPLE",
+    "taxCode": "2495063815",
+    "address": "529 Dominique Square Mirandahaven, UT 41158"
+  },
+  "invoiceNo": "INV-269846202",
+  "series": "S26D",
+  "issueDate": "2026-07-23",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Network switch E6146",
+      "quantity": 9.5,
+      "unit": "set",
+      "unitPrice": 8916,
+      "vatRate": 10,
+      "amount": 84702
+    },
+    {
+      "description": "Black laser toner C4436",
+      "quantity": 5,
+      "unit": "box",
+      "unitPrice": 85013,
+      "vatRate": 10,
+      "amount": 425065
+    }
+  ],
+  "subtotal": 509767,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 509767,
+      "amount": 50977
+    }
+  ],
+  "total": 560744,
+  "fieldMeta": {}
+}

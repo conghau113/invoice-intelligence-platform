@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TEE</KHHDon>
+      <SHDon>6428117</SHDon>
+      <NLap>2026-02-05</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Bùi Phạm Công ty TNHH MTV SAMPLE</Ten>
+        <MST>5819736628</MST>
+        <DChi>Số 13/845 Khóm 70 Đường Hoàng Văn Thụ Phường Hòa Bình Tuyên Quang 01422</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Hoàng Công ty TNHH SAMPLE</Ten>
+        <MST>9624084463</MST>
+        <DChi>32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch K6746</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>14</SLuong>
+          <DGia>346000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>4844000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất A9242</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>814000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>13838000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay N2902</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>19</SLuong>
+          <DGia>425000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>8075000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất N6480</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>14</SLuong>
+          <DGia>186500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2611000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>24524000</TgTien>
+            <TThue>1226200</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>4844000</TgTien>
+            <TThue>484400</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>29368000</TgTCThue>
+        <TgTTTBSo>31078600</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

@@ -1,0 +1,129 @@
+{
+  "seller": {
+    "name": "Garcia-Riley SAMPLE",
+    "taxCode": "5193714551-891",
+    "address": "45553 Alvarez Mountains Suite 958 Taraborough, MT 28187"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-269284684",
+  "series": "S26A",
+  "issueDate": "2026-07-16",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Ground coffee A3046",
+      "quantity": 13,
+      "unit": "kg",
+      "unitPrice": 69178,
+      "vatRate": 5,
+      "amount": 899314
+    },
+    {
+      "description": "Domestic freight service H6351",
+      "quantity": 4.25,
+      "unit": "trip",
+      "unitPrice": 67516,
+      "vatRate": 5,
+      "amount": 286943
+    },
+    {
+      "description": "Software maintenance fee K6579",
+      "quantity": 7,
+      "unit": "month",
+      "unitPrice": 74863,
+      "vatRate": 5,
+      "amount": 524041
+    },
+    {
+      "description": "Domestic freight service P1321",
+      "quantity": 10.5,
+      "unit": "trip",
+      "unitPrice": 39376,
+      "vatRate": 5,
+      "amount": 413448
+    },
+    {
+      "description": "Steel mounting bracket B2881",
+      "quantity": 14.25,
+      "unit": "pc",
+      "unitPrice": 72793,
+      "vatRate": 5,
+      "amount": 1037300
+    },
+    {
+      "description": "Interior wall paint E4578",
+      "quantity": 20,
+      "unit": "liter",
+      "unitPrice": 87350,
+      "vatRate": 5,
+      "amount": 1747000
+    },
+    {
+      "description": "Ground coffee D2943",
+      "quantity": 14,
+      "unit": "kg",
+      "unitPrice": 46429,
+      "vatRate": 5,
+      "amount": 650006
+    },
+    {
+      "description": "Software maintenance fee H2450",
+      "quantity": 11.25,
+      "unit": "month",
+      "unitPrice": 55507,
+      "vatRate": 10,
+      "amount": 624454
+    },
+    {
+      "description": "Bottled drinking water B3616",
+      "quantity": 7,
+      "unit": "case",
+      "unitPrice": 76374,
+      "vatRate": 10,
+      "amount": 534618
+    },
+    {
+      "description": "Network switch E4505",
+      "quantity": 15,
+      "unit": "set",
+      "unitPrice": 42416,
+      "vatRate": 5,
+      "amount": 636240
+    },
+    {
+      "description": "Interior wall paint B2088",
+      "quantity": 13,
+      "unit": "liter",
+      "unitPrice": 40227,
+      "vatRate": 5,
+      "amount": 522951
+    },
+    {
+      "description": "Software maintenance fee R6450",
+      "quantity": 10,
+      "unit": "month",
+      "unitPrice": 52462,
+      "vatRate": 10,
+      "amount": 524620
+    }
+  ],
+  "subtotal": 8400935,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 6717243,
+      "amount": 335862
+    },
+    {
+      "rate": 10,
+      "base": 1683692,
+      "amount": 168369
+    }
+  ],
+  "total": 8905166,
+  "fieldMeta": {}
+}

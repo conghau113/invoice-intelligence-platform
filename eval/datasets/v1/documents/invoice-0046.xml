@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TCC</KHHDon>
+      <SHDon>5960587</SHDon>
+      <NLap>2026-05-07</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Trần và đối tác Tập Đoàn SAMPLE</Ten>
+        <MST>9013904000</MST>
+        <DChi>557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE</Ten>
+        <MST>0618511992</MST>
+        <DChi>69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay E7584</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>19</SLuong>
+          <DGia>631000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>11989000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán R7816</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>179000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>3043000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng A3649</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>11.5</SLuong>
+          <DGia>104500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>1201750</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng C3340</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>19.5</SLuong>
+          <DGia>793000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>15463500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng A2315</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>6</SLuong>
+          <DGia>156500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>939000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen E1187</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>16.5</SLuong>
+          <DGia>577500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>9528750</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Ghế xoay văn phòng H7546</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>16</SLuong>
+          <DGia>791000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>12656000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng E8281</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>15</SLuong>
+          <DGia>723000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>10845000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay M3324</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>17.5</SLuong>
+          <DGia>76500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>1338750</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dây cáp mạng M3063</THHDVu>
+          <DVTinh>mét</DVTinh>
+          <SLuong>8</SLuong>
+          <DGia>394000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>3152000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Ghế xoay văn phòng R7355</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>9.5</SLuong>
+          <DGia>438000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>4161000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vệ sinh công nghiệp T5352</THHDVu>
+          <DVTinh>lần</DVTinh>
+          <SLuong>9</SLuong>
+          <DGia>639500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>5755500</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>27133000</TgTien>
+            <TThue>0</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>52940250</TgTien>
+            <TThue>4235220</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>80073250</TgTCThue>
+        <TgTTTBSo>84308470</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

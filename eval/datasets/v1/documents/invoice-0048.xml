@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26B</KHHDon>
+      <SHDon>INV-269123497</SHDon>
+      <NLap>2026-08-19</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Bridges Ltd SAMPLE</Ten>
+        <MST>5155733271</MST>
+        <DChi>426 Smith Creek Suite 505 Lake Brentstad, CO 90639</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Jones-Murphy SAMPLE</Ten>
+        <MST>2495063815</MST>
+        <DChi>529 Dominique Square Mirandahaven, UT 41158</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Replacement air filter C5054</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>4.5</SLuong>
+          <DGia>27.45</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>123.53</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Swivel office chair N2705</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>19.5</SLuong>
+          <DGia>694.85</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>13549.58</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Black laser toner N3144</THHDVu>
+          <DVTinh>box</DVTinh>
+          <SLuong>12</SLuong>
+          <DGia>572.32</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>6867.84</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Ground coffee M7890</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>8.5</SLuong>
+          <DGia>366.21</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>3112.79</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Replacement air filter T1239</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>8.25</SLuong>
+          <DGia>642.09</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>5297.24</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Ground coffee N6583</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>10</SLuong>
+          <DGia>450.74</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>4507.40</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>33458.38</TgTien>
+            <TThue>1672.92</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>33458.38</TgTCThue>
+        <TgTTTBSo>35131.30</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

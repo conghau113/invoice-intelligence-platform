@@ -1,0 +1,68 @@
+{
+  "seller": {
+    "name": "Dennis and Sons SAMPLE",
+    "taxCode": "9585736384",
+    "address": "3194 Matthew Well Suite 879 East Beth, RI 14099"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-262250336",
+  "series": "S26C",
+  "issueDate": "2026-05-23",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Replacement air filter D5108",
+      "quantity": 14.25,
+      "unit": "pc",
+      "unitPrice": 68686,
+      "vatRate": 10,
+      "amount": 978776
+    },
+    {
+      "description": "Interior wall paint C9444",
+      "quantity": 13,
+      "unit": "liter",
+      "unitPrice": 80208,
+      "vatRate": 10,
+      "amount": 1042704
+    },
+    {
+      "description": "Bottled drinking water T1057",
+      "quantity": 11,
+      "unit": "case",
+      "unitPrice": 26382,
+      "vatRate": 10,
+      "amount": 290202
+    },
+    {
+      "description": "Domestic freight service K7995",
+      "quantity": 9.5,
+      "unit": "trip",
+      "unitPrice": 31246,
+      "vatRate": 10,
+      "amount": 296837
+    },
+    {
+      "description": "A4 copy paper P7424",
+      "quantity": 10,
+      "unit": "ream",
+      "unitPrice": 22111,
+      "vatRate": 10,
+      "amount": 221110
+    }
+  ],
+  "subtotal": 2829629,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 2829629,
+      "amount": 282963
+    }
+  ],
+  "total": 3112592,
+  "fieldMeta": {}
+}

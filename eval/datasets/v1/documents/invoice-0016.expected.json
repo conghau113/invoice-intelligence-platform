@@ -1,0 +1,180 @@
+{
+  "seller": {
+    "name": "Garcia-Riley SAMPLE",
+    "taxCode": "5193714551-891",
+    "address": "45553 Alvarez Mountains Suite 958 Taraborough, MT 28187"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-266770756",
+  "series": "S26E",
+  "issueDate": "2026-02-12",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Steel mounting bracket C6598",
+      "quantity": 16,
+      "unit": "pc",
+      "unitPrice": 85772,
+      "vatRate": 5,
+      "amount": 1372352
+    },
+    {
+      "description": "Office ballpoint pens K7930",
+      "quantity": 12.5,
+      "unit": "box",
+      "unitPrice": 9082,
+      "vatRate": 5,
+      "amount": 113525
+    },
+    {
+      "description": "Black laser toner K6043",
+      "quantity": 15.5,
+      "unit": "box",
+      "unitPrice": 26550,
+      "vatRate": 5,
+      "amount": 411525
+    },
+    {
+      "description": "Swivel office chair H1352",
+      "quantity": 11,
+      "unit": "pc",
+      "unitPrice": 42130,
+      "vatRate": 5,
+      "amount": 463430
+    },
+    {
+      "description": "Steel mounting bracket H2782",
+      "quantity": 12.5,
+      "unit": "pc",
+      "unitPrice": 57649,
+      "vatRate": 5,
+      "amount": 720613
+    },
+    {
+      "description": "Software maintenance fee B3172",
+      "quantity": 5,
+      "unit": "month",
+      "unitPrice": 56070,
+      "vatRate": 5,
+      "amount": 280350
+    },
+    {
+      "description": "Ground coffee A3585",
+      "quantity": 6.25,
+      "unit": "kg",
+      "unitPrice": 50334,
+      "vatRate": 5,
+      "amount": 314588
+    },
+    {
+      "description": "Ground coffee P6347",
+      "quantity": 5,
+      "unit": "kg",
+      "unitPrice": 33459,
+      "vatRate": 5,
+      "amount": 167295
+    },
+    {
+      "description": "Swivel office chair T6264",
+      "quantity": 9,
+      "unit": "pc",
+      "unitPrice": 80252,
+      "vatRate": 5,
+      "amount": 722268
+    },
+    {
+      "description": "Black laser toner M7559",
+      "quantity": 16,
+      "unit": "box",
+      "unitPrice": 56000,
+      "vatRate": 5,
+      "amount": 896000
+    },
+    {
+      "description": "Steel mounting bracket R1026",
+      "quantity": 10,
+      "unit": "pc",
+      "unitPrice": 26163,
+      "vatRate": 5,
+      "amount": 261630
+    },
+    {
+      "description": "A4 copy paper M5396",
+      "quantity": 6,
+      "unit": "ream",
+      "unitPrice": 39243,
+      "vatRate": 5,
+      "amount": 235458
+    },
+    {
+      "description": "Office ballpoint pens K7221",
+      "quantity": 16,
+      "unit": "box",
+      "unitPrice": 9320,
+      "vatRate": 5,
+      "amount": 149120
+    },
+    {
+      "description": "Black laser toner P8074",
+      "quantity": 16.5,
+      "unit": "box",
+      "unitPrice": 27746,
+      "vatRate": 5,
+      "amount": 457809
+    },
+    {
+      "description": "Ground coffee D1125",
+      "quantity": 19,
+      "unit": "kg",
+      "unitPrice": 40189,
+      "vatRate": 5,
+      "amount": 763591
+    },
+    {
+      "description": "Ground coffee B2087",
+      "quantity": 11.5,
+      "unit": "kg",
+      "unitPrice": 73825,
+      "vatRate": 5,
+      "amount": 848988
+    },
+    {
+      "description": "Software maintenance fee M6579",
+      "quantity": 14.25,
+      "unit": "month",
+      "unitPrice": 15046,
+      "vatRate": 5,
+      "amount": 214406
+    },
+    {
+      "description": "Bottled drinking water P4608",
+      "quantity": 9.5,
+      "unit": "case",
+      "unitPrice": 10790,
+      "vatRate": 5,
+      "amount": 102505
+    },
+    {
+      "description": "Software maintenance fee H6781",
+      "quantity": 2,
+      "unit": "month",
+      "unitPrice": 26289,
+      "vatRate": 5,
+      "amount": 52578
+    }
+  ],
+  "subtotal": 8548031,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 8548031,
+      "amount": 427402
+    }
+  ],
+  "total": 8975433,
+  "fieldMeta": {}
+}

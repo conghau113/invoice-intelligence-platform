@@ -1,0 +1,68 @@
+{
+  "seller": {
+    "name": "Dennis and Sons SAMPLE",
+    "taxCode": "9585736384",
+    "address": "3194 Matthew Well Suite 879 East Beth, RI 14099"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-261555239",
+  "series": "S26D",
+  "issueDate": "2026-02-14",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Swivel office chair D1667",
+      "quantity": 6,
+      "unit": "pc",
+      "unitPrice": 48792,
+      "vatRate": 0,
+      "amount": 292752
+    },
+    {
+      "description": "Steel mounting bracket C6756",
+      "quantity": 8,
+      "unit": "pc",
+      "unitPrice": 70857,
+      "vatRate": 0,
+      "amount": 566856
+    },
+    {
+      "description": "Domestic freight service R1821",
+      "quantity": 4.25,
+      "unit": "trip",
+      "unitPrice": 32750,
+      "vatRate": 0,
+      "amount": 139188
+    },
+    {
+      "description": "Software maintenance fee H2220",
+      "quantity": 3,
+      "unit": "month",
+      "unitPrice": 14175,
+      "vatRate": 0,
+      "amount": 42525
+    },
+    {
+      "description": "Black laser toner A7198",
+      "quantity": 15.5,
+      "unit": "box",
+      "unitPrice": 64704,
+      "vatRate": 0,
+      "amount": 1002912
+    }
+  ],
+  "subtotal": 2044233,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 2044233,
+      "amount": 0
+    }
+  ],
+  "total": 2044233,
+  "fieldMeta": {}
+}

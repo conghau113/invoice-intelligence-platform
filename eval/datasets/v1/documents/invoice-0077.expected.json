@@ -1,0 +1,44 @@
+{
+  "seller": {
+    "name": "Nguyễn Công ty Hợp danh SAMPLE",
+    "taxCode": "6801611429-434",
+    "address": "9 Đường Trần Bình Trọng xã An Hải Thanh Hóa 95532"
+  },
+  "buyer": {
+    "name": "Phạm Bùi Công ty TNHH SAMPLE",
+    "taxCode": "6904000855",
+    "address": "2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ"
+  },
+  "invoiceNo": "5195877",
+  "series": "C25TED",
+  "issueDate": "2025-12-06",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Mực in laser đen N4843",
+      "quantity": 13,
+      "unit": "hộp",
+      "unitPrice": 828500,
+      "vatRate": 10,
+      "amount": 10770500
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp A1393",
+      "quantity": 6.5,
+      "unit": "lần",
+      "unitPrice": 631500,
+      "vatRate": 10,
+      "amount": 4104750
+    }
+  ],
+  "subtotal": 14875250,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 14875250,
+      "amount": 1487525
+    }
+  ],
+  "total": 16362775,
+  "fieldMeta": {}
+}

@@ -27,7 +27,7 @@
     </style>
   </head>
   <body>
-    <main class="sheet">{% block content %}{% endblock %}</main>
+    <main class="sheet">{% block content %}{% endblock %}{% if note %}<p style="margin: 10px 0 0; font-size: 11px; color: {{ note_color }}">{{ note }}</p>{% endif %}</main>
     <div class="wm">{{ watermark }}</div>
   </body>
 </html>

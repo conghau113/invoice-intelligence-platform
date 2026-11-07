@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TDA</KHHDon>
+      <SHDon>3754810</SHDon>
+      <NLap>2026-07-26</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Hoàng và Nguyễn Công ty TNHH MTV SAMPLE</Ten>
+        <MST>3507497709</MST>
+        <DChi>97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Bùi và Lê Tập Đoàn SAMPLE</Ten>
+        <MST>1125986119</MST>
+        <DChi>Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Dây cáp mạng P8482</THHDVu>
+          <DVTinh>mét</DVTinh>
+          <SLuong>16</SLuong>
+          <DGia>153.36</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2453.76</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng C7215</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>521.62</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>8867.54</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng C1125</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>9.25</SLuong>
+          <DGia>157.61</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>1457.89</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Giấy in khổ A4 D5058</THHDVu>
+          <DVTinh>ram</DVTinh>
+          <SLuong>11</SLuong>
+          <DGia>554.26</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>6096.86</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán H7188</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>401.03</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>802.06</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>2453.76</TgTien>
+            <TThue>196.30</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>17224.35</TgTien>
+            <TThue>1722.44</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>19678.11</TgTCThue>
+        <TgTTTBSo>21596.85</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

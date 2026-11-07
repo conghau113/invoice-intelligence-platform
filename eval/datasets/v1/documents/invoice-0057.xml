@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TAB</KHHDon>
+      <SHDon>9821624</SHDon>
+      <NLap>2026-01-23</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Trần và đối tác Tập Đoàn SAMPLE</Ten>
+        <MST>9013904000</MST>
+        <DChi>557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Phạm Bùi Công ty TNHH SAMPLE</Ten>
+        <MST>6904000855</MST>
+        <DChi>2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen H6331</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>15</SLuong>
+          <DGia>470000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>7050000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ K7269</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>785000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>2355000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng M6876</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>16</SLuong>
+          <DGia>542500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>8680000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>18085000</TgTien>
+            <TThue>1808500</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>18085000</TgTCThue>
+        <TgTTTBSo>19893500</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

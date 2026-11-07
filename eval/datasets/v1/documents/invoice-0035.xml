@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26E</KHHDon>
+      <SHDon>INV-262183222</SHDon>
+      <NLap>2026-02-07</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Bridges Ltd SAMPLE</Ten>
+        <MST>5155733271</MST>
+        <DChi>426 Smith Creek Suite 505 Lake Brentstad, CO 90639</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Jennifer Gonzales SAMPLE</Ten>
+        <DChi>4306 Roberto Manors Lake Joannetown, CA 10244</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Replacement air filter B8296</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>9</SLuong>
+          <DGia>82.52</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>742.68</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Steel mounting bracket N6889</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>12</SLuong>
+          <DGia>760.84</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>9130.08</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Replacement air filter T2944</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>19.25</SLuong>
+          <DGia>473.22</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>9109.49</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Wooden office desk M3467</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>5</SLuong>
+          <DGia>544.67</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2723.35</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>11832.84</TgTien>
+            <TThue>591.64</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>9872.76</TgTien>
+            <TThue>987.28</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>21705.60</TgTCThue>
+        <TgTTTBSo>23284.52</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

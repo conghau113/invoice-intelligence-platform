@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TAB</KHHDon>
+      <SHDon>3240875</SHDon>
+      <NLap>2026-03-06</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Hoàng và Nguyễn Công ty TNHH MTV SAMPLE</Ten>
+        <MST>3507497709</MST>
+        <DChi>97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Trần Phú John SAMPLE</Ten>
+        <DChi>Số 7/66 Phố 89, Xã Hoàng Mai, Lai Châu</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Dây cáp mạng E3284</THHDVu>
+          <DVTinh>mét</DVTinh>
+          <SLuong>7</SLuong>
+          <DGia>158.40</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1108.80</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch R3858</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>12.5</SLuong>
+          <DGia>17.34</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>216.75</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Giấy in khổ A4 B4050</THHDVu>
+          <DVTinh>ram</DVTinh>
+          <SLuong>7.5</SLuong>
+          <DGia>72.03</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>540.23</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>1108.80</TgTien>
+            <TThue>55.44</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>756.98</TgTien>
+            <TThue>75.70</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>1865.78</TgTCThue>
+        <TgTTTBSo>1996.92</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

@@ -1,0 +1,68 @@
+{
+  "seller": {
+    "name": "Dennis and Sons SAMPLE",
+    "taxCode": "9585736384",
+    "address": "3194 Matthew Well Suite 879 East Beth, RI 14099"
+  },
+  "buyer": {
+    "name": "Stephanie Wood SAMPLE",
+    "taxCode": null,
+    "address": "12381 Deborah Wells Taraburgh, GA 31604"
+  },
+  "invoiceNo": "INV-263149613",
+  "series": "S26C",
+  "issueDate": "2026-02-21",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Domestic freight service H4850",
+      "quantity": 15,
+      "unit": "trip",
+      "unitPrice": 39874,
+      "vatRate": 0,
+      "amount": 598110
+    },
+    {
+      "description": "Network switch E4183",
+      "quantity": 3,
+      "unit": "set",
+      "unitPrice": 79272,
+      "vatRate": 0,
+      "amount": 237816
+    },
+    {
+      "description": "Bottled drinking water K2480",
+      "quantity": 13.5,
+      "unit": "case",
+      "unitPrice": 34824,
+      "vatRate": 0,
+      "amount": 470124
+    },
+    {
+      "description": "Interior wall paint E4680",
+      "quantity": 5,
+      "unit": "liter",
+      "unitPrice": 69927,
+      "vatRate": 0,
+      "amount": 349635
+    },
+    {
+      "description": "Black laser toner R4633",
+      "quantity": 19.5,
+      "unit": "box",
+      "unitPrice": 5002,
+      "vatRate": 0,
+      "amount": 97539
+    }
+  ],
+  "subtotal": 1753224,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 1753224,
+      "amount": 0
+    }
+  ],
+  "total": 1753224,
+  "fieldMeta": {}
+}

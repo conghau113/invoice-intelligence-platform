@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26E</KHHDon>
+      <SHDon>INV-264870977</SHDon>
+      <NLap>2026-03-31</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Dennis and Sons SAMPLE</Ten>
+        <MST>9585736384</MST>
+        <DChi>3194 Matthew Well Suite 879 East Beth, RI 14099</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Jones-Murphy SAMPLE</Ten>
+        <MST>2495063815</MST>
+        <DChi>529 Dominique Square Mirandahaven, UT 41158</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Software maintenance fee R4191</THHDVu>
+          <DVTinh>month</DVTinh>
+          <SLuong>1.5</SLuong>
+          <DGia>866.36</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1299.54</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>1299.54</TgTien>
+            <TThue>64.98</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>1299.54</TgTCThue>
+        <TgTTTBSo>1364.52</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

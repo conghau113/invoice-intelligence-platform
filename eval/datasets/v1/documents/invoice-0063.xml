@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TDA</KHHDon>
+      <SHDon>9042027</SHDon>
+      <NLap>2026-01-11</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Nguyễn Công ty Hợp danh SAMPLE</Ten>
+        <MST>6801611429-434</MST>
+        <DChi>9 Đường Trần Bình Trọng xã An Hải Thanh Hóa 95532</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Trần Phú Jane SAMPLE</Ten>
+        <DChi>Số 4/93/645 Phố Trần Não, xã Hoàng Mai, Quảng Trị</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch N1018</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>4.25</SLuong>
+          <DGia>550500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2339625</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai C4723</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>13.25</SLuong>
+          <DGia>598500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>7930125</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>10269750</TgTien>
+            <TThue>821580</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>10269750</TgTCThue>
+        <TgTTTBSo>11091330</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

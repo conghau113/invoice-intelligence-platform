@@ -17,7 +17,7 @@ data/*
 !data/.gitkeep
 dist-scripts/
 
-# Synthetic invoices (pnpm gen:invoices); T4.2 picks what is kept
+# Synthetic invoices (pnpm gen:invoices). What eval uses is frozen in eval/datasets
 tools/invoice-gen/out/
 
 # Playwright

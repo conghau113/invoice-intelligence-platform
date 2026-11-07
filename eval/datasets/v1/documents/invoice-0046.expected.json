@@ -1,0 +1,129 @@
+{
+  "seller": {
+    "name": "Trần và đối tác Tập Đoàn SAMPLE",
+    "taxCode": "9013904000",
+    "address": "557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng"
+  },
+  "buyer": {
+    "name": "Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE",
+    "taxCode": "0618511992",
+    "address": "69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng"
+  },
+  "invoiceNo": "5960587",
+  "series": "C26TCC",
+  "issueDate": "2026-05-07",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Cà phê rang xay E7584",
+      "quantity": 19,
+      "unit": "kg",
+      "unitPrice": 631000,
+      "vatRate": 8,
+      "amount": 11989000
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán R7816",
+      "quantity": 17,
+      "unit": "tháng",
+      "unitPrice": 179000,
+      "vatRate": 8,
+      "amount": 3043000
+    },
+    {
+      "description": "Bút bi văn phòng A3649",
+      "quantity": 11.5,
+      "unit": "hộp",
+      "unitPrice": 104500,
+      "vatRate": 0,
+      "amount": 1201750
+    },
+    {
+      "description": "Xi măng xây dựng C3340",
+      "quantity": 19.5,
+      "unit": "bao",
+      "unitPrice": 793000,
+      "vatRate": 0,
+      "amount": 15463500
+    },
+    {
+      "description": "Bút bi văn phòng A2315",
+      "quantity": 6,
+      "unit": "hộp",
+      "unitPrice": 156500,
+      "vatRate": 0,
+      "amount": 939000
+    },
+    {
+      "description": "Mực in laser đen E1187",
+      "quantity": 16.5,
+      "unit": "hộp",
+      "unitPrice": 577500,
+      "vatRate": 0,
+      "amount": 9528750
+    },
+    {
+      "description": "Ghế xoay văn phòng H7546",
+      "quantity": 16,
+      "unit": "cái",
+      "unitPrice": 791000,
+      "vatRate": 8,
+      "amount": 12656000
+    },
+    {
+      "description": "Bút bi văn phòng E8281",
+      "quantity": 15,
+      "unit": "hộp",
+      "unitPrice": 723000,
+      "vatRate": 8,
+      "amount": 10845000
+    },
+    {
+      "description": "Cà phê rang xay M3324",
+      "quantity": 17.5,
+      "unit": "kg",
+      "unitPrice": 76500,
+      "vatRate": 8,
+      "amount": 1338750
+    },
+    {
+      "description": "Dây cáp mạng M3063",
+      "quantity": 8,
+      "unit": "mét",
+      "unitPrice": 394000,
+      "vatRate": 8,
+      "amount": 3152000
+    },
+    {
+      "description": "Ghế xoay văn phòng R7355",
+      "quantity": 9.5,
+      "unit": "cái",
+      "unitPrice": 438000,
+      "vatRate": 8,
+      "amount": 4161000
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp T5352",
+      "quantity": 9,
+      "unit": "lần",
+      "unitPrice": 639500,
+      "vatRate": 8,
+      "amount": 5755500
+    }
+  ],
+  "subtotal": 80073250,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 27133000,
+      "amount": 0
+    },
+    {
+      "rate": 8,
+      "base": 52940250,
+      "amount": 4235220
+    }
+  ],
+  "total": 84308470,
+  "fieldMeta": {}
+}
