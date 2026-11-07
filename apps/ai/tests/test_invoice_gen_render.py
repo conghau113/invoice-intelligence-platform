@@ -343,7 +343,8 @@ def run_rules(root: Path) -> subprocess.CompletedProcess[str]:
     node = shutil.which("node")
     assert node is not None
     return subprocess.run(
-        [node, str(GENERATOR_DIR / "check-rules.mjs"), str(root)],
+        [node, str(GENERATOR_DIR / "check-rules.mjs")],
+        cwd=root,
         capture_output=True,
         text=True,
         timeout=60,
@@ -373,6 +374,15 @@ def test_rules_refuse_a_wrong_invoice(dataset: Path, change: dict[str, Any], exp
     result = run_rules(dataset)
     assert result.returncode == 1
     assert f"{entry['id']} {expected}" in result.stdout
+
+
+def test_rules_refuse_an_id_that_points_outside_the_folder(dataset: Path) -> None:
+    data = manifest(dataset)
+    data["documents"][0]["id"] = "../../secret"
+    (dataset / "manifest.json").write_text(json.dumps(data), encoding="utf-8")
+    result = run_rules(dataset)
+    assert result.returncode == 1
+    assert "BAD_DOCUMENT_ID" in result.stdout
 
 
 def test_rules_refuse_an_empty_dataset(tmp_path: Path) -> None:

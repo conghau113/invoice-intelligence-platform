@@ -201,12 +201,23 @@ def _lines(
 
 
 def _invoice(seed: int, index: int, locale: str, variant: Variant) -> dict[str, Any]:
-    rng = random.Random(f"{seed}:{index}:invoice")
     # Pools first: building them reseeds this same Faker, which on a cache miss would otherwise
     # replace the seed below and change the individual buyer of this document.
     sellers, buyers = _pools(seed)[locale]
     fake = _faker(locale)
     fake.seed_instance(f"{seed}:{index}:people")
+    rng = random.Random(f"{seed}:{index}:invoice")
+    return _draw_invoice(rng, fake, sellers, buyers, locale, variant)
+
+
+def _draw_invoice(
+    rng: random.Random,
+    fake: Faker,
+    sellers: tuple[Party, ...],
+    buyers: tuple[Party, ...],
+    locale: str,
+    variant: Variant,
+) -> dict[str, Any]:
     seller = rng.choice(sellers)
     if rng.random() < 0.15:  # an individual buyer has no tax code (T2.7)
         buyer = Party(_person(fake, locale), None, _text(fake.address()))
@@ -251,6 +262,13 @@ def _bucket(index: int) -> tuple[str, int]:
     return ("easy", position) if slot % 2 == 0 else ("medium", position)
 
 
+def _draw_render(rng: random.Random, variant: Variant) -> tuple[float, int]:
+    tilt = 0.0
+    if variant.image is not None and variant.image.tilt != (0.0, 0.0):
+        tilt = round(rng.uniform(*variant.image.tilt) * rng.choice([-1, 1]), 2)
+    return tilt, rng.randint(1, 1_000_000)
+
+
 def build_document(seed: int, index: int) -> Document:
     difficulty, position = _bucket(index)
     options = VARIANTS[difficulty]
@@ -259,10 +277,7 @@ def build_document(seed: int, index: int) -> Document:
     names = list(LAYOUTS)
     layout = names[(index + index // 5 + index // 25) % len(names)]
     locale = LAYOUTS[layout]
-    rng = random.Random(f"{seed}:{index}:render")
-    tilt = 0.0
-    if variant.image is not None and variant.image.tilt != (0.0, 0.0):
-        tilt = round(rng.uniform(*variant.image.tilt) * rng.choice([-1, 1]), 2)
+    tilt, noise_seed = _draw_render(random.Random(f"{seed}:{index}:render"), variant)
     return Document(
         id=f"invoice-{index:04d}",
         difficulty=difficulty,
@@ -271,5 +286,5 @@ def build_document(seed: int, index: int) -> Document:
         locale=locale,
         invoice=_invoice(seed, index, locale, variant),
         tilt=tilt,
-        noise_seed=rng.randint(1, 1_000_000),
+        noise_seed=noise_seed,
     )
