@@ -1,3 +1,4 @@
+import type { ApiErrorCode } from 'contracts';
 import { randomUUID } from 'node:crypto';
 import { Transform, type Readable } from 'node:stream';
 import { UnsupportedMediaTypeException } from '@nestjs/common';
@@ -21,7 +22,7 @@ type Done<T> = (error?: unknown, info?: T) => void;
 const unsupported = (): UnsupportedMediaTypeException =>
   new UnsupportedMediaTypeException({
     message: 'Unsupported file type',
-    code: 'UNSUPPORTED_FILE_TYPE',
+    code: 'UNSUPPORTED_FILE_TYPE' satisfies ApiErrorCode,
   });
 
 /**

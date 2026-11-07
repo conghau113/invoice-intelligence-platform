@@ -1,7 +1,9 @@
+import { isDocumentFailureCode, type DocumentFailureCode } from 'contracts';
+
 /** Failure codes the worker records. Codes only, never a message: a message may hold document content. */
-export const EXTRACTION_SCHEMA_INVALID = 'EXTRACTION_SCHEMA_INVALID';
-export const FILE_MISSING = 'FILE_MISSING';
-export const FILE_TOO_LARGE = 'FILE_TOO_LARGE';
+export const EXTRACTION_SCHEMA_INVALID = 'EXTRACTION_SCHEMA_INVALID' satisfies DocumentFailureCode;
+export const FILE_MISSING = 'FILE_MISSING' satisfies DocumentFailureCode;
+export const FILE_TOO_LARGE = 'FILE_TOO_LARGE' satisfies DocumentFailureCode;
 
 /**
  * Error taxonomy of the AI service's answer (`HttpAiExtractor.extract`), the one place to read it:
@@ -16,9 +18,11 @@ export const FILE_TOO_LARGE = 'FILE_TOO_LARGE';
  * one at once loses a document that the next attempt would have read.
  */
 
-/** Same shape the state machine accepts for a reason code. */
-const CODE = /^[A-Z][A-Z0-9_]{1,63}$/;
-export const isFailureCode = (v: unknown): v is string => typeof v === 'string' && CODE.test(v);
+/**
+ * The AI service's reason is kept only if it is on the list the web can translate. Any other value
+ * becomes the generic code: the document still fails, and a response body cannot choose what is stored.
+ */
+export const isFailureCode = isDocumentFailureCode;
 
 /**
  * The AI service answered 401/403/404: our own settings (token, URL) are wrong, not the document.
@@ -26,7 +30,7 @@ export const isFailureCode = (v: unknown): v is string => typeof v === 'string' 
  * the retry window, and when it is not, the document fails with this code (not a file error) so
  * an administrator knows to fix the configuration and retry. Circuit-breaking the queue is T6.7.
  */
-export const AI_SERVICE_MISCONFIGURED = 'AI_SERVICE_MISCONFIGURED';
+export const AI_SERVICE_MISCONFIGURED = 'AI_SERVICE_MISCONFIGURED' satisfies DocumentFailureCode;
 
 /** The stored extraction no longer matches `InvoiceSchema` (a bug or manual edit); reads fail loudly. */
 export class ExtractionDataInvalidError extends Error {

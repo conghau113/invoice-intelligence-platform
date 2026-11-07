@@ -17,7 +17,7 @@ vi.mock('@/i18n/navigation', () => ({
   ),
 }));
 
-import { DocumentDetailScreen, FAILURE_CODES } from './document-detail-screen';
+import { DocumentDetailScreen } from './document-detail-screen';
 
 const ID = '3f1c9a52-7d0e-4b7a-9c1d-2a6f0b8e4d11';
 const base: DocumentDetail = {
@@ -200,15 +200,6 @@ describe('DocumentDetailScreen', () => {
     expect(render()).toContain('The document could not be processed.');
     hook.result = { ...state, data: { ...base, status: 'failed', extraction: null } };
     expect(render()).toContain('The document could not be processed.');
-  });
-
-  it('every failure code the screen lists has a message in both languages', () => {
-    for (const messages of [en, vi_]) {
-      for (const code of FAILURE_CODES) {
-        const failure = messages.DocumentDetail.failure as Record<string, string>;
-        expect(failure[code], code).toBeTruthy();
-      }
-    }
   });
 
   it('a needs_review document with no extraction says so instead of showing nothing', () => {

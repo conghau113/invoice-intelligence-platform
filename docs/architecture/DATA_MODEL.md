@@ -41,7 +41,7 @@ erDiagram
 - `status` follows the state machine in `ARCHITECTURE.md §8`; only `DocumentStateMachine` writes it.
 - `UNIQUE (tenant_id, content_hash)` → duplicate uploads return the existing row (idempotency).
 - `version` increments when a document is reopened after approval, and only then. Approving keeps it.
-- `failure_code` is the reason (an `UPPER_SNAKE` code, never content) while `status = 'failed'`, otherwise `NULL`. `DocumentStateMachine` writes it in the same `UPDATE` as `status`, so the detail page reads it without scanning `audit_logs`.
+- `failure_code` is the reason (a code from `DOCUMENT_FAILURE_CODES` in `packages/contracts/src/error-codes.ts`, never content) while `status = 'failed'`, otherwise `NULL`. A code from the AI service that is not on the list is replaced by a generic one: `EXTRACTION_FAILED` when the answer is final, `EXTRACTION_RETRIES_EXHAUSTED` when the attempts ran out. `DocumentStateMachine` writes it in the same `UPDATE` as `status`, so the detail page reads it without scanning `audit_logs`.
 - Indexes: `(tenant_id, status, created_at DESC)` for the list page; `(tenant_id, content_hash)` unique.
 
 ### extractions

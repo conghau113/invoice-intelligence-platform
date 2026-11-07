@@ -1,3 +1,4 @@
+import type { BffErrorCode } from 'contracts';
 import { z } from 'zod';
 import { DOCUMENT_STATUSES } from '@/components/common/status-badge';
 import { SOURCE_TYPES, toApiQuery, type ListParams } from './list-params';
@@ -35,7 +36,7 @@ export class ListError extends Error {
 const kindOf = (status: number, code: unknown): ListErrorKind => {
   if (status === 401) return 'session';
   if (status === 403) return 'forbidden';
-  if (status === 502 && code === 'API_UNREACHABLE') return 'unreachable';
+  if (status === 502 && code === ('API_UNREACHABLE' satisfies BffErrorCode)) return 'unreachable';
   return 'error';
 };
 

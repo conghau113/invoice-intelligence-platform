@@ -12,6 +12,8 @@ import zlib
 import pypdfium2 as pdfium
 import pypdfium2.raw as pdfium_c
 
+from app.error_codes import registered
+
 # pdfium is not thread-safe and sync endpoints run in a threadpool: one render at a time.
 _PDFIUM_LOCK = threading.Lock()
 MAX_PAGES = 10
@@ -24,7 +26,7 @@ JPEG_MAGIC = b"\xff\xd8\xff"
 class PdfError(Exception):
     def __init__(self, code: str) -> None:
         super().__init__(code)
-        self.code = code
+        self.code = registered(code)
 
 
 def encode_png(width: int, height: int, rgb: bytes, stride: int) -> bytes:

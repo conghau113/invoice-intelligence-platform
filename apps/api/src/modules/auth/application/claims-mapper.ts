@@ -1,3 +1,4 @@
+import type { ApiErrorCode } from 'contracts';
 import { ForbiddenException } from '@nestjs/common';
 import { isUuid } from '../../../common/uuid';
 import { KNOWN_ROLES, type AuthUser, type Role } from '../domain/auth-user';
@@ -34,7 +35,10 @@ export async function mapClaimsToUser(
   let tenantAlias: string | undefined;
   if (requestedAlias === undefined) {
     if (memberOf.length > 1) {
-      throw new ForbiddenException({ message: 'Select a tenant', code: 'TENANT_REQUIRED' });
+      throw new ForbiddenException({
+        message: 'Select a tenant',
+        code: 'TENANT_REQUIRED' satisfies ApiErrorCode,
+      });
     }
     tenantAlias = memberOf[0];
   } else if (memberOf.includes(requestedAlias)) {
@@ -42,7 +46,7 @@ export async function mapClaimsToUser(
   } else {
     throw new ForbiddenException({
       message: 'Not a member of the requested tenant',
-      code: 'TENANT_NOT_MEMBER',
+      code: 'TENANT_NOT_MEMBER' satisfies ApiErrorCode,
     });
   }
   const tenantId = tenantAlias === undefined ? undefined : await tenants.idForAlias(tenantAlias);

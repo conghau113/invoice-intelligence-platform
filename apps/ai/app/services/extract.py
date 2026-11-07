@@ -15,6 +15,7 @@ from typing import Any, Literal
 
 from pydantic import ValidationError
 
+from app.error_codes import registered
 from app.providers.base import ImagePart, LLMError, LLMProvider
 from app.providers.pricing import estimate_cost_usd
 from app.schemas.generated import (
@@ -50,7 +51,7 @@ class ExtractError(Exception):
     def __init__(self, status: int, code: str, message: str) -> None:
         super().__init__(code)
         self.status = status
-        self.code = code
+        self.code = registered(code)
         self.message = message
 
 

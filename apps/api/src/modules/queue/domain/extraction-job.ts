@@ -1,3 +1,5 @@
+import type { DocumentFailureCode } from 'contracts';
+
 import { z } from 'zod';
 
 export const EXTRACTION_QUEUE = 'extraction';
@@ -46,9 +48,10 @@ export function backoffMs(
 
 /** What the worker records when a job ends or is retried: a code, never a message (may hold content). */
 export const EXTRACTION_RETRY = 'EXTRACTION_RETRY';
-export const EXTRACTION_FAILED = 'EXTRACTION_FAILED';
-export const EXTRACTION_RETRIES_EXHAUSTED = 'EXTRACTION_RETRIES_EXHAUSTED';
-export const EXTRACTION_STALLED = 'EXTRACTION_STALLED';
+export const EXTRACTION_FAILED = 'EXTRACTION_FAILED' satisfies DocumentFailureCode;
+export const EXTRACTION_RETRIES_EXHAUSTED =
+  'EXTRACTION_RETRIES_EXHAUSTED' satisfies DocumentFailureCode;
+export const EXTRACTION_STALLED = 'EXTRACTION_STALLED' satisfies DocumentFailureCode;
 export const MANUAL_RETRY = 'MANUAL_RETRY';
 /** Admin retry found the job failed in the queue while the document was still `processing`. */
 export const JOB_FAILED_IN_QUEUE = 'JOB_FAILED_IN_QUEUE';
@@ -58,7 +61,7 @@ export const JOB_FAILED_IN_QUEUE = 'JOB_FAILED_IN_QUEUE';
  * wrong): the job fails at once instead of burning 5 attempts. Any other error is retried.
  */
 export class PermanentExtractionError extends Error {
-  constructor(readonly code: string = EXTRACTION_FAILED) {
+  constructor(readonly code: DocumentFailureCode = EXTRACTION_FAILED) {
     super(code);
     this.name = 'PermanentExtractionError';
   }
@@ -71,7 +74,7 @@ export class PermanentExtractionError extends Error {
  * non-permanent error behaves like this one with the generic code.
  */
 export class TransientExtractionError extends Error {
-  constructor(readonly code: string = EXTRACTION_RETRIES_EXHAUSTED) {
+  constructor(readonly code: DocumentFailureCode = EXTRACTION_RETRIES_EXHAUSTED) {
     super(code);
     this.name = 'TransientExtractionError';
   }

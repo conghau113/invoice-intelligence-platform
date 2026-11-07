@@ -121,6 +121,15 @@ describe('HttpAiExtractor (real HTTP against a local stub)', () => {
     expect((err as PermanentExtractionError).code).toBe(code);
   });
 
+  it('a 4xx with a code that is not on the list in contracts stays permanent, with the generic code', async () => {
+    reply = json(422, { code: 'SOMETHING_NEW', message: 'x' });
+    const err = await extractor()
+      .extract(input)
+      .catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(PermanentExtractionError);
+    expect((err as PermanentExtractionError).code).toBe('EXTRACTION_FAILED');
+  });
+
   it.each([401, 403, 404])(
     'a %i answer means our settings are wrong: retried, and kept as AI_SERVICE_MISCONFIGURED',
     async (status) => {
@@ -217,6 +226,10 @@ describe('HttpAiExtractor (real HTTP against a local stub)', () => {
     [
       'a code that is not code-shaped (free text)',
       json(503, { code: 'some TEN-BI-MAT text', message: 'x' }),
+    ],
+    [
+      'a well-formed code that is not on the list in contracts',
+      json(503, { code: 'SOMETHING_NEW', message: 'x' }),
     ],
   ])('a 5xx with %s is transient with the generic code and echoes nothing', async (_name, send) => {
     reply = send;

@@ -1,3 +1,5 @@
+import { isHttpErrorCode, type HttpErrorCode } from 'contracts';
+
 export type UploadErrorKey =
   | 'unsupportedType'
   | 'tooLarge'
@@ -17,7 +19,7 @@ export interface UploadFailure {
   code?: string;
 }
 
-const BY_CODE: Readonly<Record<string, UploadErrorKey>> = {
+const BY_CODE: Readonly<Partial<Record<HttpErrorCode, UploadErrorKey>>> = {
   UNSUPPORTED_FILE_TYPE: 'unsupportedType',
   IDEMPOTENCY_KEY_REQUIRED: 'idempotency',
   IDEMPOTENCY_KEY_REUSED: 'idempotency',
@@ -29,7 +31,8 @@ const BY_CODE: Readonly<Record<string, UploadErrorKey>> = {
 
 /** Maps a failure to a key under `Upload.errors.*` (messages/{vi,en}.json). Never shows raw server text. */
 export function errorKeyFor({ status, code }: UploadFailure): UploadErrorKey {
-  if (code !== undefined && code in BY_CODE) return BY_CODE[code]!;
+  const byCode = isHttpErrorCode(code) ? BY_CODE[code] : undefined;
+  if (byCode !== undefined) return byCode;
   if (status === undefined) return 'network';
   if (status === 413) return 'tooLarge';
   if (status === 415) return 'unsupportedType';
@@ -37,6 +40,14 @@ export function errorKeyFor({ status, code }: UploadFailure): UploadErrorKey {
   if (status === 403) return 'forbidden';
   if (status >= 500) return 'server';
   return 'unknown';
+}
+
+/** The server's own reason, for the two keys that only say "something went wrong". */
+export function detailCodeFor(
+  key: UploadErrorKey,
+  { code }: UploadFailure,
+): HttpErrorCode | undefined {
+  return (key === 'unknown' || key === 'server') && isHttpErrorCode(code) ? code : undefined;
 }
 
 /**

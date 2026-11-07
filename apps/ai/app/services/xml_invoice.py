@@ -18,6 +18,7 @@ from defusedxml import DefusedXmlException
 from defusedxml.ElementTree import fromstring
 from pydantic import ValidationError
 
+from app.error_codes import registered
 from app.schemas.generated import Invoice
 
 MAX_XML_BYTES = 10 * 1024 * 1024  # same cap as the API upload
@@ -29,32 +30,12 @@ DECIMAL_PATTERN = re.compile(r"-?\d{1,18}(?:\.\d{1,6})?", re.ASCII)
 CURRENCY_EXPONENT = {"VND": 0, "USD": 2}  # minor-unit digits; unknown currency is rejected
 
 
-# Every code the parser can raise. The worker stores it and the web UI translates it
-# (FAILURE_CODES in apps/web/src/features/documents/detail/document-detail-screen.tsx and the
-# `DocumentDetail.failure` messages): add a code here, there and in both message files together.
-ERROR_CODES = frozenset(
-    {
-        "FILE_TOO_LARGE",
-        "XML_MALFORMED",
-        "XML_TOO_COMPLEX",
-        "XML_FORBIDDEN_CONSTRUCT",
-        "XML_UNSUPPORTED_STRUCTURE",
-        "XML_MISSING_FIELD",
-        "XML_INVALID_VALUE",
-        "XML_UNSUPPORTED_CURRENCY",
-        "XML_UNSUPPORTED_VAT_RATE",
-    }
-)
-
-
 class XmlInvoiceError(Exception):
     """`code` is stable (the worker and UI key on it); `message` never contains document text."""
 
     def __init__(self, code: str, message: str) -> None:
-        if code not in ERROR_CODES:  # a new code must be registered (and translated) first
-            raise ValueError("Unregistered XmlInvoiceError code")
         super().__init__(message)
-        self.code = code
+        self.code = registered(code)
         self.message = message
 
 

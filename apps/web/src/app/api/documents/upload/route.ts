@@ -3,6 +3,7 @@ import { authEnv } from '@/auth/env';
 import { isSameOrigin } from '@/auth/logout';
 import { getAccessToken } from '@/auth/session';
 import { apiBaseUrl, currentTenant } from '@/lib/api';
+import { bffError } from '@/lib/bff-error';
 
 // Same limit as the API (apps/api documents.module.ts); only used for the early 413 below.
 const MAX_BODY_BYTES = 11 * 1024 * 1024;
@@ -16,18 +17,18 @@ const MAX_BODY_BYTES = 11 * 1024 * 1024;
 export async function POST(req: NextRequest) {
   // Cookie auth + state change: refuse cross-site posts (the session cookie is SameSite=Lax).
   if (!isSameOrigin(req.headers.get('origin'), authEnv().NEXTAUTH_URL)) {
-    return NextResponse.json({ code: 'FORBIDDEN' }, { status: 403 });
+    return bffError('FORBIDDEN', 403);
   }
   const contentType = req.headers.get('content-type');
   const key = req.headers.get('idempotency-key');
   if (!req.body || !contentType?.startsWith('multipart/form-data')) {
-    return NextResponse.json({ code: 'BAD_REQUEST' }, { status: 400 });
+    return bffError('BAD_REQUEST', 400);
   }
   const length = Number(req.headers.get('content-length') ?? 0);
-  if (length > MAX_BODY_BYTES) return NextResponse.json({ code: 'TOO_LARGE' }, { status: 413 });
+  if (length > MAX_BODY_BYTES) return bffError('TOO_LARGE', 413);
 
   const [token, tenant] = await Promise.all([getAccessToken(), currentTenant()]);
-  if (token === null) return NextResponse.json({ code: 'UNAUTHENTICATED' }, { status: 401 });
+  if (token === null) return bffError('UNAUTHENTICATED', 401);
 
   const headers: Record<string, string> = {
     authorization: `Bearer ${token}`,
@@ -58,7 +59,7 @@ export async function POST(req: NextRequest) {
       cache: 'no-store',
     } as RequestInit & { duplex: 'half' });
   } catch {
-    return NextResponse.json({ code: 'UPSTREAM_UNAVAILABLE' }, { status: 502 });
+    return bffError('UPSTREAM_UNAVAILABLE', 502);
   }
 
   const out = new Headers({

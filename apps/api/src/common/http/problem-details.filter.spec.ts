@@ -5,6 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { API_ERROR_CODES } from 'contracts';
 import { DocumentNotFoundError } from '../../modules/documents/domain/document-not-found.error';
 import { InvalidDocumentTransitionError } from '../../modules/documents/domain/document-status';
 import { JobNotFailedError } from '../../modules/queue/application/admin-jobs.service';
@@ -89,6 +90,15 @@ describe('ProblemDetailsFilter', () => {
     const { body } = run(new BadRequestException(['a is required', 'b must be a number']));
     expect(body.status).toBe(400);
     expect(body.detail).toBe('a is required; b must be a number');
+  });
+
+  it.each(API_ERROR_CODES)('echoes %s, a code on the list in contracts', (code) => {
+    expect(run(new ForbiddenException({ message: 'no', code })).body.code).toBe(code);
+  });
+
+  it('does not echo a code only the web sends: the API never answers with it', () => {
+    const { body } = run(new ForbiddenException({ message: 'no', code: 'API_UNREACHABLE' }));
+    expect(body).not.toHaveProperty('code');
   });
 
   it('echoes only whitelisted error codes', () => {

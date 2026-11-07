@@ -2,6 +2,35 @@
   "Common": {
     "appName": "Invoice Intelligence Platform"
   },
+  "ApiError": {
+    "FORBIDDEN_PERMISSION": "Bạn không có quyền thực hiện việc này.",
+    "FORBIDDEN_UNDECLARED": "Chức năng này chưa được cấp quyền cho bất kỳ ai. Vui lòng báo quản trị viên.",
+    "TENANT_REQUIRED": "Bạn thuộc nhiều tổ chức. Hãy chọn một tổ chức rồi thử lại.",
+    "TENANT_NOT_MEMBER": "Bạn không thuộc tổ chức đã chọn.",
+    "UNSUPPORTED_FILE_TYPE": "Loại tệp này không được hỗ trợ.",
+    "IDEMPOTENCY_KEY_REQUIRED": "Yêu cầu tải lên thiếu thông tin cần thiết. Hãy tải lại trang rồi thử lại.",
+    "IDEMPOTENCY_KEY_REUSED": "Yêu cầu tải lên này đã được dùng cho một tệp khác. Hãy chọn lại tệp.",
+    "QUEUE_UNAVAILABLE": "Hàng đợi xử lý tạm thời không dùng được. Hãy thử lại sau ít phút.",
+    "INVALID_DOCUMENT_TRANSITION": "Trạng thái hiện tại của tài liệu không cho phép việc này.",
+    "VERSION_CONFLICT": "Tài liệu vừa được thay đổi. Hãy tải lại trang để xem bản mới nhất.",
+    "JOB_NOT_FAILED": "Tác vụ này chưa thất bại nên không cần chạy lại.",
+    "IF_MATCH_REQUIRED": "Yêu cầu thiếu thông tin phiên bản của tài liệu. Hãy tải lại trang rồi thử lại.",
+    "INVOICE_INVALID": "Dữ liệu hoá đơn chưa hợp lệ. Hãy kiểm tra lại các ô rồi thử lại.",
+    "REOPEN_LIMIT_REACHED": "Hoá đơn này đã được mở lại quá số lần cho phép.",
+    "EXTRACTION_MISSING": "Tài liệu này chưa có dữ liệu trích xuất để duyệt.",
+    "EXTRACTION_DATA_INVALID": "Dữ liệu trích xuất đã lưu bị lỗi. Vui lòng báo quản trị viên.",
+    "INVALID_QUERY": "Bộ lọc hoặc tham số tìm kiếm không hợp lệ.",
+    "BODY_TOO_LARGE": "Dữ liệu gửi lên quá lớn.",
+    "BODY_INVALID": "Dữ liệu gửi lên không hợp lệ.",
+    "UNAUTHENTICATED": "Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.",
+    "FORBIDDEN": "Yêu cầu bị từ chối. Hãy tải lại trang rồi thử lại.",
+    "NOT_FOUND": "Không tìm thấy dữ liệu này.",
+    "BAD_REQUEST": "Yêu cầu không hợp lệ.",
+    "TOO_LARGE": "Tệp quá lớn.",
+    "API_UNREACHABLE": "Không kết nối được máy chủ. Vui lòng thử lại sau.",
+    "API_ERROR": "Máy chủ trả về phản hồi không như mong đợi. Vui lòng thử lại.",
+    "UPSTREAM_UNAVAILABLE": "Máy chủ đang tạm ngưng. Vui lòng thử lại sau."
+  },
   "Home": {
     "sample": "MẪU"
   },

@@ -11,6 +11,7 @@ import {
 import { decide, localePrefix } from '@/auth/guard';
 import { routing } from '@/i18n/routing';
 import { needsRefresh, refreshAccessToken } from '@/auth/refresh';
+import { bffError } from '@/lib/bff-error';
 
 // Same as next-auth's default session maxAge.
 const MAX_AGE = 30 * 24 * 60 * 60;
@@ -24,7 +25,7 @@ function toLogin(req: NextRequest, base: string): NextResponse {
   // A fetch/XHR to /api/* follows redirects silently and would read the login page as a "200";
   // answer it with a status code it can act on instead.
   if (isApi(req.nextUrl.pathname)) {
-    const res = NextResponse.json({ code: 'UNAUTHENTICATED' }, { status: 401 });
+    const res = bffError('UNAUTHENTICATED', 401);
     for (const c of req.cookies.getAll())
       if (isSessionCookie(c.name, base)) res.cookies.delete(c.name);
     return res;

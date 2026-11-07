@@ -3,11 +3,12 @@ import { getToken } from 'next-auth/jwt';
 import { authEnv } from '@/auth/env';
 import { isSessionCookie, sessionCookieName } from '@/auth/cookie';
 import { buildEndSessionUrl, isSameOrigin } from '@/auth/logout';
+import { bffError } from '@/lib/bff-error';
 
 export async function POST(req: NextRequest) {
   const env = authEnv();
   if (!isSameOrigin(req.headers.get('origin'), env.NEXTAUTH_URL)) {
-    return NextResponse.json({ code: 'FORBIDDEN' }, { status: 403 });
+    return bffError('FORBIDDEN', 403);
   }
   const token = await getToken({ req, secret: env.NEXTAUTH_SECRET });
   const base = sessionCookieName(env.NEXTAUTH_URL);

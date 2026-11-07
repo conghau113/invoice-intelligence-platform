@@ -22,6 +22,7 @@ export function UploadList({
 }>) {
   const t = useTranslations('Upload');
   const tStatus = useTranslations('Status');
+  const tApi = useTranslations('ApiError');
   return (
     <ul aria-label={t('listLabel')} className="flex flex-col gap-2">
       {items.map((item) => {
@@ -92,9 +93,11 @@ export function UploadList({
                   : 'text-sm text-muted-foreground'
               }
             >
-              {item.state === 'error' && item.errorKey
-                ? t(`errors.${item.errorKey}`)
-                : t(`state.${item.state}`)}
+              {item.state === 'error' && item.errorCode
+                ? tApi(item.errorCode)
+                : item.state === 'error' && item.errorKey
+                  ? t(`errors.${item.errorKey}`)
+                  : t(`state.${item.state}`)}
             </p>
           </li>
         );
