@@ -4,6 +4,7 @@ import { authEnv } from '@/auth/env';
 import { safeAlias, safePath } from '@/auth/login-params';
 import { isSameOrigin } from '@/auth/logout';
 import { TENANT_COOKIE } from '@/auth/tenant';
+import { bffError } from '@/lib/bff-error';
 
 const ONE_YEAR = 365 * 24 * 60 * 60;
 
@@ -11,7 +12,7 @@ const ONE_YEAR = 365 * 24 * 60 * 60;
 export async function POST(req: NextRequest) {
   const env = authEnv();
   if (!isSameOrigin(req.headers.get('origin'), env.NEXTAUTH_URL)) {
-    return NextResponse.json({ code: 'FORBIDDEN' }, { status: 403 });
+    return bffError('FORBIDDEN', 403);
   }
   const token = await getToken({ req, secret: env.NEXTAUTH_SECRET });
   const form = await req.formData();
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest) {
   const tenant = safeAlias(typeof rawTenant === 'string' ? rawTenant : undefined);
   // Only tenants listed in the user's own signed token can be chosen.
   if (!token || tenant === undefined || !token.tenants?.includes(tenant)) {
-    return NextResponse.json({ code: 'FORBIDDEN' }, { status: 403 });
+    return bffError('FORBIDDEN', 403);
   }
   const res = NextResponse.redirect(
     new URL(safePath(typeof rawReturn === 'string' ? rawReturn : undefined), env.NEXTAUTH_URL),

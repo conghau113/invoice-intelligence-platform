@@ -2,6 +2,35 @@
   "Common": {
     "appName": "Invoice Intelligence Platform"
   },
+  "ApiError": {
+    "FORBIDDEN_PERMISSION": "You do not have permission to do this.",
+    "FORBIDDEN_UNDECLARED": "Nobody has been given access to this function yet. Please tell an administrator.",
+    "TENANT_REQUIRED": "You belong to several organizations. Choose one and try again.",
+    "TENANT_NOT_MEMBER": "You are not a member of the selected organization.",
+    "UNSUPPORTED_FILE_TYPE": "This file type is not supported.",
+    "IDEMPOTENCY_KEY_REQUIRED": "The upload request is missing required information. Reload the page and try again.",
+    "IDEMPOTENCY_KEY_REUSED": "This upload request was already used for another file. Choose the file again.",
+    "QUEUE_UNAVAILABLE": "The processing queue is temporarily unavailable. Try again in a few minutes.",
+    "INVALID_DOCUMENT_TRANSITION": "The document is not in a state that allows this.",
+    "VERSION_CONFLICT": "The document has just changed. Reload the page to see the latest version.",
+    "JOB_NOT_FAILED": "This job has not failed, so it does not need to run again.",
+    "IF_MATCH_REQUIRED": "The request is missing the document version. Reload the page and try again.",
+    "INVOICE_INVALID": "The invoice data is not valid. Check the fields and try again.",
+    "REOPEN_LIMIT_REACHED": "This invoice has been reopened as many times as allowed.",
+    "EXTRACTION_MISSING": "This document has no extracted data to approve.",
+    "EXTRACTION_DATA_INVALID": "The stored extracted data is damaged. Please tell an administrator.",
+    "INVALID_QUERY": "The filter or search parameters are not valid.",
+    "BODY_TOO_LARGE": "The data sent is too large.",
+    "BODY_INVALID": "The data sent is not valid.",
+    "UNAUTHENTICATED": "Your session has expired. Please sign in again.",
+    "FORBIDDEN": "The request was refused. Reload the page and try again.",
+    "NOT_FOUND": "This could not be found.",
+    "BAD_REQUEST": "The request is not valid.",
+    "TOO_LARGE": "The file is too large.",
+    "API_UNREACHABLE": "The server could not be reached. Please try again later.",
+    "API_ERROR": "The server sent an unexpected response. Please try again.",
+    "UPSTREAM_UNAVAILABLE": "The server is unavailable right now. Please try again later."
+  },
   "Home": {
     "sample": "SAMPLE"
   },

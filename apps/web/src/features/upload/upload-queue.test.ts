@@ -158,6 +158,25 @@ describe('UploadQueue', () => {
     expect(calls).toHaveLength(4);
   });
 
+  it("keeps the server's listed code behind a vague key, and forgets it on retry", async () => {
+    const { transport, calls } = fakeTransport();
+    const q = new UploadQueue(transport);
+    q.add([file('a.pdf')]);
+    calls[0]!.finish({ kind: 'error', failure: { status: 502, code: 'UPSTREAM_UNAVAILABLE' } });
+    await tick();
+    expect(state(q, 'a.pdf')).toMatchObject({
+      errorKey: 'server',
+      errorCode: 'UPSTREAM_UNAVAILABLE',
+    });
+    q.retry(state(q, 'a.pdf').id);
+    expect(state(q, 'a.pdf').errorCode).toBeUndefined();
+    calls[1]!.finish({ kind: 'error', failure: { status: 503, code: 'QUEUE_UNAVAILABLE' } });
+    await tick();
+    // A specific key already says it all, so no code is kept next to it.
+    expect(state(q, 'a.pdf')).toMatchObject({ errorKey: 'queueUnavailable' });
+    expect(state(q, 'a.pdf').errorCode).toBeUndefined();
+  });
+
   it('retries a failed file with the SAME idempotency key', async () => {
     const { transport, calls } = fakeTransport();
     const q = new UploadQueue(transport);

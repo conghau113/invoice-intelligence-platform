@@ -1,8 +1,10 @@
+import type { ApiErrorCode } from 'contracts';
+
 import { z } from 'zod';
 import { DOCUMENT_STATUSES, type DocumentStatus } from './document-status';
 import { SOURCE_TYPES, type SourceType } from './file-type';
 
-export const INVALID_QUERY = 'INVALID_QUERY';
+export const INVALID_QUERY = 'INVALID_QUERY' satisfies ApiErrorCode;
 
 export const SORTS = ['-createdAt', 'createdAt'] as const;
 export type DocumentSort = (typeof SORTS)[number];

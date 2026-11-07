@@ -318,7 +318,9 @@ describe('GET /documents (HTTP -> Postgres, RLS on)', () => {
       await clean();
       await seedDocuments(owner, TENANTS.acme, SEEDED, 'int');
       await seedDocuments(owner, TENANTS.globex, 300, 'int');
-      await owner.query('ANALYZE documents');
+      // VACUUM as well: an index-only scan is priced by the visibility map, which only VACUUM sets.
+      // With ANALYZE alone the planner's choice depended on whether autovacuum had run yet.
+      await owner.query('VACUUM ANALYZE documents');
     }, 60000);
 
     it.each([
@@ -355,14 +357,22 @@ describe('GET /documents (HTTP -> Postgres, RLS on)', () => {
           .from(schema.documents)
           .where(and(...lists.conditions(TENANTS.acme, parseDocumentListQuery({})))),
       );
+      // The time is logged, not asserted: on a busy machine it says nothing about the query. What
+      // the test holds on to is the plan's shape: the count reads the table (or one index) once.
       console.log(`EXPLAIN count (no filter):\n${all}`);
-      expect(all).toMatch(/Execution Time: [0-4]\.\d+ ms/);
+      const reads = all
+        .split('\n')
+        .filter((line) => line.includes(' Scan ') && !line.includes('Bitmap Index Scan'));
+      expect(reads).toHaveLength(1);
     });
 
-    it('a deep page still answers fast (the planner may scan the table: offset 780 of 1.000)', async () => {
+    it('a deep page still returns a full page (the planner may scan the table: offset 780 of 1.000)', async () => {
       const plan = await plans({ page: '40', limit: '20' });
+      // This checks the result only, not the plan or the speed: those are logged here, and speed
+      // under load is measured by k6 (T6.6). A slower plan does not turn this test red.
       console.log(`EXPLAIN page 40:\n${plan}`);
-      expect(plan).toMatch(/Execution Time: \d\.\d+ ms/);
+      const limit = plan.split('\n').find((line) => line.includes('Limit'));
+      expect(limit?.split('actual ')[1]).toContain('rows=20');
     });
 
     it('first page timing over 20 runs (logged, not asserted: timing is flaky in CI)', async () => {

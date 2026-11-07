@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { errorKeyFor, isRetryable } from './error-keys';
+import { detailCodeFor, errorKeyFor, isRetryable } from './error-keys';
 import en from '../../../messages/en.json';
 import vi from '../../../messages/vi.json';
 
@@ -19,6 +19,11 @@ describe('errorKeyFor', () => {
     [{}, 'network'],
     [{ status: 500, code: 'SOMETHING_NEW' }, 'server'],
   ] as const)('%j -> %s', (failure, key) => expect(errorKeyFor(failure)).toBe(key));
+
+  it('a property name from Object.prototype is not a code', () => {
+    expect(errorKeyFor({ status: 500, code: 'toString' })).toBe('server');
+    expect(errorKeyFor({ status: 418, code: 'constructor' })).toBe('unknown');
+  });
 
   it('every key it can return has a message in both languages', () => {
     const keys = [
@@ -47,5 +52,20 @@ describe('errorKeyFor', () => {
     expect(isRetryable('forbidden')).toBe(false);
     expect(isRetryable('idempotency')).toBe(false);
     expect(isRetryable('sessionExpired')).toBe(false);
+  });
+});
+
+describe('detailCodeFor', () => {
+  it('names the listed code behind a key that only says something went wrong', () => {
+    expect(detailCodeFor('server', { status: 500, code: 'EXTRACTION_DATA_INVALID' })).toBe(
+      'EXTRACTION_DATA_INVALID',
+    );
+    expect(detailCodeFor('unknown', { status: 400, code: 'INVALID_QUERY' })).toBe('INVALID_QUERY');
+  });
+
+  it('adds nothing when the key is already specific, or the code is not listed', () => {
+    expect(detailCodeFor('tooLarge', { status: 413, code: 'TOO_LARGE' })).toBeUndefined();
+    expect(detailCodeFor('server', { status: 500, code: 'SOMETHING_NEW' })).toBeUndefined();
+    expect(detailCodeFor('server', { status: 500 })).toBeUndefined();
   });
 });

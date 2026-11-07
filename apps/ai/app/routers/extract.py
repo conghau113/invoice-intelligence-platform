@@ -3,6 +3,7 @@ from typing import Annotated, Any, Literal
 from fastapi import APIRouter, Depends, Form, Request, UploadFile
 from fastapi.responses import JSONResponse
 
+from app.error_codes import registered
 from app.providers import build_provider
 from app.providers.base import LLMError, LLMProvider
 from app.security import require_service_token
@@ -16,7 +17,7 @@ MAX_FILE_BYTES = MAX_XML_BYTES  # 10 MiB, same cap as the API upload
 
 
 def _error(status: int, code: str, message: str) -> JSONResponse:
-    return JSONResponse(status_code=status, content={"code": code, "message": message})
+    return JSONResponse(status_code=status, content={"code": registered(code), "message": message})
 
 
 def get_llm_provider(request: Request) -> LLMProvider:

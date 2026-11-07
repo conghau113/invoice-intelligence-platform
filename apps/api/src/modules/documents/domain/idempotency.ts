@@ -1,8 +1,10 @@
+import type { ApiErrorCode } from 'contracts';
+
 /** How long a key keeps replaying the original response (API.md, Conventions). */
 export const IDEMPOTENCY_WINDOW_HOURS = 24;
 
-export const IDEMPOTENCY_KEY_REQUIRED = 'IDEMPOTENCY_KEY_REQUIRED';
-export const IDEMPOTENCY_KEY_REUSED = 'IDEMPOTENCY_KEY_REUSED';
+export const IDEMPOTENCY_KEY_REQUIRED = 'IDEMPOTENCY_KEY_REQUIRED' satisfies ApiErrorCode;
+export const IDEMPOTENCY_KEY_REUSED = 'IDEMPOTENCY_KEY_REUSED' satisfies ApiErrorCode;
 
 const MAX_KEY_LENGTH = 255;
 

@@ -246,6 +246,25 @@ test.describe('review screen', () => {
     await expect(tabB.getByTestId('approve-form')).toHaveCount(0);
   });
 
+  test('T3.9: a failure with no specific message says the reason from the shared code list', async ({
+    page,
+  }) => {
+    const id = await openPdfReview(page);
+    await page.route(`**/api/documents/${id}/approve`, (route) =>
+      route.fulfill({ status: 500, json: { code: 'EXTRACTION_DATA_INVALID' } }),
+    );
+    await page.getByTestId('approve-form').click();
+    await expect(page.getByTestId('approve-error')).toContainText(
+      'Dữ liệu trích xuất đã lưu bị lỗi',
+    );
+    await page.route(`**/api/documents/${id}/approve`, (route) =>
+      route.fulfill({ status: 500, json: { code: 'Nguyen Van A' } }),
+    );
+    await page.getByTestId('approve-form').click();
+    await expect(page.getByTestId('approve-error')).toContainText('Không duyệt được');
+    await expect(page.getByTestId('approve-error')).not.toContainText('Nguyen Van A');
+  });
+
   test('T3.5: the version sent is the one the form was loaded with, not the latest the page knows', async ({
     page,
   }) => {

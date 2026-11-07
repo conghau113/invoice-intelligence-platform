@@ -43,6 +43,21 @@ describe('UploadList', () => {
     expect(refused).not.toContain('Thử lại');
   });
 
+  it("says the server's reason when the key alone would only say something went wrong", () => {
+    const html = render([
+      item({
+        state: 'error',
+        errorKey: 'server',
+        errorCode: 'UPSTREAM_UNAVAILABLE',
+        retryable: true,
+      }),
+    ]);
+    expect(html).toContain(en.ApiError.UPSTREAM_UNAVAILABLE);
+    expect(render([item({ state: 'error', errorKey: 'server', retryable: true })])).toContain(
+      en.Upload.errors.server,
+    );
+  });
+
   it('shows the document status badge for done and duplicate rows', () => {
     const done = render([item({ state: 'done', document: { id: 'd', status: 'queued' } })], 'vi');
     expect(done).toContain('data-status="queued"');

@@ -76,7 +76,7 @@ test.describe('app shell and data table geometry', () => {
     await page.setViewportSize({ width: 1280, height: 800 });
     const seen: Awaited<ReturnType<typeof geometry>>[] = [];
     for (const total of [0, 1, 5, 20, 500]) {
-      await page.unrouteAll();
+      await page.unrouteAll({ behavior: 'ignoreErrors' });
       await mockList(page, total);
       await openList(page);
       seen.push(await geometry(page));
@@ -97,19 +97,19 @@ test.describe('app shell and data table geometry', () => {
     await openList(page);
     const full = await geometry(page);
 
-    await page.unrouteAll();
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
     await mockList(page, 20, 1500); // loading: measured while the skeleton is on screen
     await page.goto('/vi/documents');
     await expect(page.getByTestId('table-panel')).toHaveAttribute('aria-busy', 'true');
     expect(await geometry(page)).toEqual(full);
 
-    await page.unrouteAll();
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
     await mockList(page, 0);
     await openList(page);
     await expect(page.getByTestId('table-state')).toBeVisible();
     expect(await geometry(page)).toEqual(full);
 
-    await page.unrouteAll();
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
     await page.route('**/api/documents?*', (r) =>
       r.fulfill({ status: 502, json: { code: 'API_UNREACHABLE' } }),
     );

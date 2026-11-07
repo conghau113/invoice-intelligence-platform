@@ -14,7 +14,7 @@ import path from 'node:path';
 import { Pool } from 'pg';
 import request from 'supertest';
 import { Queue } from 'bullmq';
-import { GenericContainer, Wait, type StartedTestContainer } from 'testcontainers';
+import type { StartedTestContainer } from 'testcontainers';
 import type { Env } from '../src/config/env.schema';
 import { ProblemDetailsFilter } from '../src/common/http/problem-details.filter';
 import * as schema from '../src/db/schema';
@@ -32,6 +32,8 @@ import { PermanentExtractionError } from '../src/modules/queue/domain/extraction
 import { ExtractionWorker } from '../src/modules/queue/infra/extraction-worker';
 import { QueueAdminModule } from '../src/modules/queue/queue-admin.module';
 import { EXTRACTION_QUEUE_PORT } from '../src/modules/queue/application/extraction-queue.port';
+import { queueReady } from './support/queue-ready';
+import { startRedis } from './support/reachable-container';
 import { STORAGE_PORT } from '../src/modules/storage/application/storage.port';
 import { LocalFsStorage } from '../src/modules/storage/infra/local-fs.storage';
 import { useTestRoots } from '../src/modules/storage/testing/test-root';
@@ -148,11 +150,13 @@ describe('extraction queue (HTTP -> Postgres -> Redis -> worker)', () => {
     }
     throw new Error(`document did not reach ${want}, is ${await statusOf(id)}`);
   }
+  // By id, not `at`: id is taken under the row lock of the transition, so it is the real order. `at`
+  // is the wall clock when the transaction began, and it once put a later step first here.
   const trail = async (id: string): Promise<string[]> =>
     (
       await owner.query(
         `SELECT meta FROM audit_logs WHERE entity_id = $1 AND action = 'document.status_changed'
-         ORDER BY at, id`,
+         ORDER BY id`,
         [id],
       )
     ).rows.map((r) => `${r.meta.from}>${r.meta.to}`);
@@ -175,13 +179,11 @@ describe('extraction queue (HTTP -> Postgres -> Redis -> worker)', () => {
     owner = new Pool({ connectionString: requireVar('DATABASE_OWNER_URL'), max: 1 });
     pool = new Pool({ connectionString: requireVar('DATABASE_URL'), max: 8 });
     root = await newRoot();
-    redis = await new GenericContainer('redis:8')
-      .withExposedPorts(6379)
-      .withWaitStrategy(Wait.forLogMessage('Ready to accept connections'))
-      .start();
+    redis = await startRedis();
     redisUrl = `redis://${redis.getHost()}:${redis.getMappedPort(6379)}`;
 
     live = await makeApp(redisUrl);
+    await queueReady(live);
     const processor = new ExtractionProcessor(
       live.get(TenantDbService),
       live.get(DocumentStateMachine, { strict: false }),
@@ -459,11 +461,9 @@ describe('extraction queue (HTTP -> Postgres -> Redis -> worker)', () => {
 
   it('Redis dies while the API is connected -> 503 within seconds, not a hang', async () => {
     // Its own Redis and no worker: the shared Redis must stay up so the worker shuts down cleanly.
-    const doomed = await new GenericContainer('redis:8')
-      .withExposedPorts(6379)
-      .withWaitStrategy(Wait.forLogMessage('Ready to accept connections'))
-      .start();
+    const doomed = await startRedis();
     const app = await makeApp(`redis://${doomed.getHost()}:${doomed.getMappedPort(6379)}`);
+    await queueReady(app);
     await upload(app, 'before', 'k1').expect(201); // the API is connected and working
 
     await doomed.stop();

@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
+import { isApiErrorCode, type ApiErrorCode } from 'contracts';
 import type { Request, Response } from 'express';
 import { STATUS_CODES } from 'node:http';
 import {
@@ -21,28 +22,7 @@ import {
 } from '../../modules/documents/domain/document-status';
 import { ExtractionDataInvalidError } from '../../modules/extraction/domain/ai-errors';
 import { JobNotFailedError } from '../../modules/queue/application/admin-jobs.service';
-import { IF_MATCH_REQUIRED } from '../../modules/review/domain/if-match';
-import {
-  ExtractionMissingError,
-  INVOICE_INVALID,
-  REOPEN_LIMIT_REACHED,
-} from '../../modules/review/domain/review-errors';
-
-const KNOWN_CODES: ReadonlySet<string> = new Set([
-  'FORBIDDEN_PERMISSION',
-  'FORBIDDEN_UNDECLARED',
-  'TENANT_REQUIRED',
-  'TENANT_NOT_MEMBER',
-  'UNSUPPORTED_FILE_TYPE',
-  'IDEMPOTENCY_KEY_REQUIRED',
-  'IDEMPOTENCY_KEY_REUSED',
-  'QUEUE_UNAVAILABLE',
-  INVALID_TRANSITION_CODE,
-  'JOB_NOT_FAILED',
-  IF_MATCH_REQUIRED,
-  INVOICE_INVALID,
-  REOPEN_LIMIT_REACHED,
-]);
+import { ExtractionMissingError } from '../../modules/review/domain/review-errors';
 
 /**
  * body-parser fails before any route runs, with an error that is not a Nest HttpException: a client
@@ -60,7 +40,7 @@ const bodyParserStatus = (e: unknown): number | undefined => {
 /** Domain errors carry no HTTP knowledge; this is the one place that gives them a status. */
 function domainProblem(
   e: unknown,
-): { status: HttpStatus; code?: string; detail: string } | undefined {
+): { status: HttpStatus; code?: ApiErrorCode; detail: string } | undefined {
   if (e instanceof DocumentNotFoundError) {
     return { status: HttpStatus.NOT_FOUND, detail: 'Document not found' };
   }
@@ -119,8 +99,8 @@ export interface ProblemDetails {
   status: number;
   detail: string;
   instance: string;
-  /** Stable machine-readable reason, only for codes set by our own guards. */
-  code?: string;
+  /** Stable machine-readable reason, only from the list in `contracts`. */
+  code?: ApiErrorCode;
 }
 
 /**
@@ -163,13 +143,13 @@ export class ProblemDetailsFilter implements ExceptionFilter {
     res.status(status).type('application/problem+json').json(body);
   }
 
-  /** Only whitelisted codes are echoed, never a value derived from the request. */
-  private codeOf(exception: unknown): string | undefined {
+  /** Only codes from the list in `contracts` are echoed, never a value derived from the request. */
+  private codeOf(exception: unknown): ApiErrorCode | undefined {
     if (!(exception instanceof HttpException)) return undefined;
     const response = exception.getResponse();
     if (typeof response !== 'object' || response === null) return undefined;
     const code = (response as { code?: unknown }).code;
-    return typeof code === 'string' && KNOWN_CODES.has(code) ? code : undefined;
+    return isApiErrorCode(code) ? code : undefined;
   }
 
   private detailOf(exception: unknown, status: number): string {

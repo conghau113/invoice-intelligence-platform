@@ -1,4 +1,10 @@
-import type { Invoice } from 'contracts';
+import {
+  isHttpErrorCode,
+  type ApiErrorCode,
+  type BffErrorCode,
+  type HttpErrorCode,
+  type Invoice,
+} from 'contracts';
 import { z } from 'zod';
 
 const resultSchema = z.object({ corrections: z.number().int().min(0) });
@@ -14,13 +20,17 @@ export type ApproveErrorKind =
   | 'unreachable'
   | 'error';
 
-export type ApproveOutcome =
-  { ok: true; corrections: number } | { ok: false; kind: ApproveErrorKind };
+/** `code` only on `error`: no more specific message fits, so the form says what the server said. */
+export type ApproveFailure = { kind: ApproveErrorKind; code?: HttpErrorCode };
+
+export type ApproveOutcome = { ok: true; corrections: number } | ({ ok: false } & ApproveFailure);
 
 /** Why a reopen did not happen (`Review.reopenError.<kind>`): it has no body to be refused. */
 export type ReopenErrorKind = Exclude<ApproveErrorKind, 'invalid' | 'tooLarge'> | 'limit';
 
-export type ReopenOutcome = { ok: true } | { ok: false; kind: ReopenErrorKind };
+export type ReopenFailure = { kind: ReopenErrorKind; code?: HttpErrorCode };
+
+export type ReopenOutcome = { ok: true } | ({ ok: false } & ReopenFailure);
 
 const KIND_BY_STATUS: Readonly<Record<number, ApproveErrorKind>> = {
   400: 'invalid',
@@ -34,9 +44,13 @@ const KIND_BY_STATUS: Readonly<Record<number, ApproveErrorKind>> = {
 
 async function failureOf(res: Response): Promise<{ kind: ApproveErrorKind; code: unknown }> {
   const { code } = (await res.json().catch(() => ({}))) as { code?: unknown };
-  if (res.status === 502 && code === 'API_UNREACHABLE') return { kind: 'unreachable', code };
+  if (res.status === 502 && code === ('API_UNREACHABLE' satisfies BffErrorCode))
+    return { kind: 'unreachable', code };
   return { kind: KIND_BY_STATUS[res.status] ?? 'error', code };
 }
+
+const withCode = <K extends string>(kind: K, code: unknown): { kind: K; code?: HttpErrorCode } =>
+  kind === 'error' && isHttpErrorCode(code) ? { kind, code } : { kind };
 
 /**
  * Browser side: posts to the same-origin BFF route. `version` must be the one the form was loaded
@@ -59,7 +73,10 @@ export async function approveDocument(
   } catch {
     return { ok: false, kind: 'unreachable' };
   }
-  if (!res.ok) return { ok: false, kind: (await failureOf(res)).kind };
+  if (!res.ok) {
+    const { kind, code } = await failureOf(res);
+    return { ok: false, ...withCode(kind, code) };
+  }
   const parsed = resultSchema.safeParse(await res.json().catch(() => null));
   // The approval happened; only the count is unknown, and a wrong shape is still not a success to show.
   return parsed.success
@@ -82,6 +99,9 @@ export async function reopenDocument(id: string, version: number): Promise<Reope
   if (res.ok) return { ok: true };
   const { kind, code } = await failureOf(res);
   // Also a 409, but nothing changed: telling the person to look again would not help them.
-  if (code === 'REOPEN_LIMIT_REACHED') return { ok: false, kind: 'limit' };
-  return { ok: false, kind: kind === 'invalid' || kind === 'tooLarge' ? 'error' : kind };
+  if (code === ('REOPEN_LIMIT_REACHED' satisfies ApiErrorCode)) return { ok: false, kind: 'limit' };
+  return {
+    ok: false,
+    ...withCode(kind === 'invalid' || kind === 'tooLarge' ? 'error' : kind, code),
+  };
 }

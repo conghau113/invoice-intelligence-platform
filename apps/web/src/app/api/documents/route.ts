@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { parseListParams, toApiQuery } from '@/features/documents/list-params';
 import { apiBaseUrl, upstreamHeaders } from '@/lib/api';
+import { bffError } from '@/lib/bff-error';
 
 /** The browser asks with `limit` (the API's word); the parser reads the URL's `pageSize`. */
 function readApiParams(search: URLSearchParams): URLSearchParams {
@@ -18,7 +19,7 @@ function readApiParams(search: URLSearchParams): URLSearchParams {
  */
 export async function GET(req: NextRequest) {
   const headers = await upstreamHeaders(req.headers.get('traceparent'));
-  if (headers === null) return NextResponse.json({ code: 'UNAUTHENTICATED' }, { status: 401 });
+  if (headers === null) return bffError('UNAUTHENTICATED', 401);
 
   // `limit` is the API's name for what the URL calls `pageSize`; unknown parameters are gone.
   const query = toApiQuery(parseListParams(readApiParams(req.nextUrl.searchParams)));
@@ -27,7 +28,7 @@ export async function GET(req: NextRequest) {
   try {
     upstream = await fetch(`${apiBaseUrl()}/documents?${query}`, { headers, cache: 'no-store' });
   } catch {
-    return NextResponse.json({ code: 'API_UNREACHABLE' }, { status: 502 });
+    return bffError('API_UNREACHABLE', 502);
   }
   if (upstream.ok) return NextResponse.json(await upstream.json(), { status: 200 });
 
@@ -37,5 +38,5 @@ export async function GET(req: NextRequest) {
   if (upstream.status === 401 || upstream.status === 403) {
     return NextResponse.json({ code }, { status: upstream.status });
   }
-  return NextResponse.json({ code: 'API_ERROR' }, { status: 502 });
+  return bffError('API_ERROR', 502);
 }

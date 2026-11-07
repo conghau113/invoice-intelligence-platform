@@ -11,8 +11,8 @@ import type { DocumentDetail } from '../documents/detail/detail-client';
 import {
   approveDocument,
   reopenDocument,
-  type ApproveErrorKind,
-  type ReopenErrorKind,
+  type ApproveFailure,
+  type ReopenFailure,
 } from './approve-client';
 import { InvoiceForm } from './invoice-form';
 import type { ViewerEvidence } from './viewer/types';
@@ -66,6 +66,7 @@ export function ReviewScreen({
   onChanged: () => unknown;
 }>) {
   const t = useTranslations('Review');
+  const tApi = useTranslations('ApiError');
   const locale = useLocale();
   const latest = toShown(document, extraction);
   const [shown, setShown] = useState(latest);
@@ -74,9 +75,9 @@ export function ReviewScreen({
   const [submitting, setSubmitting] = useState(false);
   // Set synchronously: a second click before React re-renders must not send a second request.
   const inFlight = useRef(false);
-  const [approveError, setApproveError] = useState<ApproveErrorKind | null>(null);
+  const [approveError, setApproveError] = useState<ApproveFailure | null>(null);
   const [reopening, setReopening] = useState(false);
-  const [reopenError, setReopenError] = useState<ReopenErrorKind | null>(null);
+  const [reopenError, setReopenError] = useState<ReopenFailure | null>(null);
   /** This person just approved; holds how many fields they changed. */
   const [justApproved, setJustApproved] = useState<number | null>(null);
 
@@ -107,7 +108,7 @@ export function ReviewScreen({
     inFlight.current = false;
     setSubmitting(false);
     if (outcome.ok) setJustApproved(outcome.corrections);
-    else setApproveError(outcome.kind);
+    else setApproveError(outcome);
     // Success shows the approved invoice; a conflict shows what changed, without touching the form.
     if (outcome.ok || outcome.kind === 'conflict') void onChanged();
   }
@@ -119,7 +120,7 @@ export function ReviewScreen({
     setReopenError(null);
     try {
       const outcome = await reopenDocument(document.id, shown.version);
-      if (!outcome.ok) setReopenError(outcome.kind);
+      if (!outcome.ok) setReopenError(outcome);
       if (outcome.ok) setApproveError(null);
       // Both a success and a conflict: the page follows what the document is now. The button waits
       // for that, because clicking it again before the new version arrives could only be refused.
@@ -196,7 +197,7 @@ export function ReviewScreen({
             {/* Out here, not in the form: a conflict replaces the form with what is current. */}
             {reopenError !== null && (
               <p role="alert" data-testid="reopen-error" className="text-sm text-destructive">
-                {t(`reopenError.${reopenError}`)}
+                {reopenError.code ? tApi(reopenError.code) : t(`reopenError.${reopenError.kind}`)}
               </p>
             )}
           </div>
@@ -219,7 +220,13 @@ export function ReviewScreen({
               onEvidence={setEvidence}
               onValid={(invoice) => void approve(invoice)}
               submitting={submitting}
-              submitError={approveError === null ? null : t(`approveError.${approveError}`)}
+              submitError={
+                approveError === null
+                  ? null
+                  : approveError.code
+                    ? tApi(approveError.code)
+                    : t(`approveError.${approveError.kind}`)
+              }
             />
           </div>
         </div>

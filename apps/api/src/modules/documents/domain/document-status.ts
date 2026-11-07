@@ -1,3 +1,5 @@
+import type { ApiErrorCode } from 'contracts';
+
 export const DOCUMENT_STATUSES = [
   'uploaded',
   'queued',
@@ -27,7 +29,7 @@ const TRANSITIONS: Readonly<Record<DocumentStatus, readonly DocumentStatus[]>> =
 };
 
 /** Stable machine-readable reason; ProblemDetailsFilter maps the error to 409 for every route. */
-export const INVALID_TRANSITION_CODE = 'INVALID_DOCUMENT_TRANSITION';
+export const INVALID_TRANSITION_CODE = 'INVALID_DOCUMENT_TRANSITION' satisfies ApiErrorCode;
 
 export class InvalidDocumentTransitionError extends Error {
   readonly code = INVALID_TRANSITION_CODE;
@@ -42,7 +44,7 @@ export class InvalidDocumentTransitionError extends Error {
 }
 
 /** The caller reviewed another version than the current one (optimistic concurrency, API.md). */
-export const VERSION_CONFLICT_CODE = 'VERSION_CONFLICT';
+export const VERSION_CONFLICT_CODE = 'VERSION_CONFLICT' satisfies ApiErrorCode;
 
 export class DocumentVersionConflictError extends Error {
   readonly code = VERSION_CONFLICT_CODE;

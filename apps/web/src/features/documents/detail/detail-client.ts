@@ -1,4 +1,4 @@
-import { InvoiceSchema, RuleWarningSchema } from 'contracts';
+import { InvoiceSchema, RuleWarningSchema, type BffErrorCode } from 'contracts';
 import { z } from 'zod';
 import { DOCUMENT_STATUSES } from '@/components/common/status-badge';
 import { SOURCE_TYPES } from '../list-params';
@@ -51,7 +51,7 @@ const kindOf = (status: number, code: unknown): DetailErrorKind => {
   if (status === 401) return 'session';
   if (status === 403) return 'forbidden';
   if (status === 404) return 'notFound';
-  if (status === 502 && code === 'API_UNREACHABLE') return 'unreachable';
+  if (status === 502 && code === ('API_UNREACHABLE' satisfies BffErrorCode)) return 'unreachable';
   return 'error';
 };
 

@@ -1,3 +1,4 @@
+import type { ApiErrorCode } from 'contracts';
 import {
   ForbiddenException,
   Injectable,
@@ -34,7 +35,7 @@ export class PermissionsGuard implements CanActivate {
       // A programming error (route forgot to declare its policy), not the caller's fault.
       throw new ForbiddenException({
         message: 'Route has no declared permission',
-        code: 'FORBIDDEN_UNDECLARED',
+        code: 'FORBIDDEN_UNDECLARED' satisfies ApiErrorCode,
       });
     }
 
@@ -43,7 +44,7 @@ export class PermissionsGuard implements CanActivate {
     if (missing !== undefined) {
       throw new ForbiddenException({
         message: `Missing permission: ${missing}`,
-        code: 'FORBIDDEN_PERMISSION',
+        code: 'FORBIDDEN_PERMISSION' satisfies ApiErrorCode,
       });
     }
     return true;

@@ -42,6 +42,15 @@ describe('reopenDocument', () => {
     await expect(reopenDocument(ID, 1)).resolves.toEqual({ ok: false, kind });
   });
 
+  it("a reopen refused for a request problem says the server's reason, not a form error", async () => {
+    fetchMock.mockResolvedValue(Response.json({ code: 'IF_MATCH_REQUIRED' }, { status: 400 }));
+    await expect(reopenDocument(ID, 1)).resolves.toEqual({
+      ok: false,
+      kind: 'error',
+      code: 'IF_MATCH_REQUIRED',
+    });
+  });
+
   it('the limit on reopening is told apart from a conflict, though both are 409', async () => {
     fetchMock.mockResolvedValue(Response.json({ code: 'REOPEN_LIMIT_REACHED' }, { status: 409 }));
     await expect(reopenDocument(ID, 20)).resolves.toEqual({ ok: false, kind: 'limit' });
@@ -94,6 +103,27 @@ describe('approveDocument', () => {
     await expect(approveDocument(ID, 1, invoice)).resolves.toEqual({
       ok: false,
       kind: 'unreachable',
+    });
+  });
+
+  it("with no more specific message, an approval failure carries the server's listed code", async () => {
+    fetchMock.mockResolvedValueOnce(
+      Response.json({ code: 'EXTRACTION_DATA_INVALID' }, { status: 500 }),
+    );
+    await expect(approveDocument(ID, 1, invoice)).resolves.toEqual({
+      ok: false,
+      kind: 'error',
+      code: 'EXTRACTION_DATA_INVALID',
+    });
+  });
+
+  it('a code that is not on the list is dropped; a specific kind keeps its own message', async () => {
+    fetchMock.mockResolvedValueOnce(Response.json({ code: 'Nguyen Van A' }, { status: 500 }));
+    await expect(approveDocument(ID, 1, invoice)).resolves.toEqual({ ok: false, kind: 'error' });
+    fetchMock.mockResolvedValueOnce(Response.json({ code: 'VERSION_CONFLICT' }, { status: 409 }));
+    await expect(approveDocument(ID, 1, invoice)).resolves.toEqual({
+      ok: false,
+      kind: 'conflict',
     });
   });
 

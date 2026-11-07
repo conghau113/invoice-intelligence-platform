@@ -1,5 +1,6 @@
 'use client';
 
+import { isDocumentFailureCode } from 'contracts';
 import { useLocale, useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { PageLayout } from '@/components/common/page-layout';
@@ -24,48 +25,13 @@ export function DocumentDetailScreen({
   );
 }
 
-/** Codes with a translated message (`DocumentDetail.failure.<code>`); any other code gets the generic one. */
-export const FAILURE_CODES = [
-  'EXTRACTION_RETRIES_EXHAUSTED',
-  'EXTRACTION_STALLED',
-  'EXTRACTION_FAILED',
-  'EXTRACTION_SCHEMA_INVALID',
-  'EXTRACTION_PATH_NOT_IMPLEMENTED',
-  'AI_SERVICE_MISCONFIGURED',
-  'LLM_UNAVAILABLE',
-  'LLM_RATE_LIMITED',
-  'LLM_TIMEOUT_OR_NETWORK',
-  'LLM_BAD_RESPONSE',
-  'LLM_MISCONFIGURED',
-  'LLM_NOT_CONFIGURED',
-  'LLM_REQUEST_REJECTED',
-  'LLM_NO_CANDIDATE',
-  'PDF_INVALID',
-  'PDF_TOO_MANY_PAGES',
-  'PDF_TOO_LARGE',
-  'IMAGE_UNSUPPORTED',
-  'FILE_MISSING',
-  'FILE_TOO_LARGE',
-  'XML_MALFORMED',
-  'XML_FORBIDDEN_CONSTRUCT',
-  'XML_TOO_COMPLEX',
-  'XML_UNSUPPORTED_STRUCTURE',
-  'XML_MISSING_FIELD',
-  'XML_INVALID_VALUE',
-  'XML_UNSUPPORTED_CURRENCY',
-  'XML_UNSUPPORTED_VAT_RATE',
-] as const;
-type FailureCode = (typeof FAILURE_CODES)[number];
-const isFailureCode = (code: string | null): code is FailureCode =>
-  code !== null && (FAILURE_CODES as readonly string[]).includes(code);
-
 function FailureReason({ code }: Readonly<{ code: string | null }>) {
   const t = useTranslations('DocumentDetail');
   return (
     <StatePanel
       kind="error"
       title={t('failedTitle')}
-      description={isFailureCode(code) ? t(`failure.${code}`) : t('failure.unknown')}
+      description={isDocumentFailureCode(code) ? t(`failure.${code}`) : t('failure.unknown')}
       action={
         code !== null && (
           <code data-testid="failure-code" className="font-mono text-xs">

@@ -8,7 +8,6 @@ from typing import Any
 import pytest
 
 from app.services.xml_invoice import (
-    ERROR_CODES,
     MAX_XML_BYTES,
     XmlInvoiceError,
     leaf_paths,
@@ -126,22 +125,6 @@ def test_error_messages_never_echo_document_content() -> None:
     assert marker not in err.message
     err = parse_error(f"<{marker}>".encode())
     assert marker not in err.message
-
-
-def test_error_codes_are_the_set_the_web_ui_translates() -> None:
-    # Tripwire: the UI has one message per code (document-detail-screen.tsx FAILURE_CODES and
-    # DocumentDetail.failure in both message files). Changing this set means changing those too.
-    assert {
-        "FILE_TOO_LARGE",
-        "XML_MALFORMED",
-        "XML_TOO_COMPLEX",
-        "XML_FORBIDDEN_CONSTRUCT",
-        "XML_UNSUPPORTED_STRUCTURE",
-        "XML_MISSING_FIELD",
-        "XML_INVALID_VALUE",
-        "XML_UNSUPPORTED_CURRENCY",
-        "XML_UNSUPPORTED_VAT_RATE",
-    } == ERROR_CODES
 
 
 def test_an_unregistered_code_cannot_be_raised() -> None:

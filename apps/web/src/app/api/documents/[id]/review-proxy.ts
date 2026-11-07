@@ -2,8 +2,8 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { authEnv } from '@/auth/env';
 import { isSameOrigin } from '@/auth/logout';
 import { upstreamHeaders } from '@/lib/api';
-
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+import { bffError } from '@/lib/bff-error';
+import { isUuid } from '@/lib/uuid';
 
 /** Answers the review screen explains to the person; anything else is an API fault. */
 const PASSED_ON = new Set([400, 401, 403, 404, 409, 413, 422, 428]);
@@ -12,9 +12,9 @@ const PASSED_ON = new Set([400, 401, 403, 404, 409, 413, 422, 428]);
 export function refuseEarly(req: NextRequest, id: string): NextResponse | null {
   // Cookie auth + state change: refuse cross-site posts (the session cookie is SameSite=Lax).
   if (!isSameOrigin(req.headers.get('origin'), authEnv().NEXTAUTH_URL)) {
-    return NextResponse.json({ code: 'FORBIDDEN' }, { status: 403 });
+    return bffError('FORBIDDEN', 403);
   }
-  if (!UUID.test(id)) return NextResponse.json({ code: 'NOT_FOUND' }, { status: 404 });
+  if (!isUuid(id)) return bffError('NOT_FOUND', 404);
   return null;
 }
 
@@ -40,5 +40,5 @@ export async function answerFrom(upstream: Response): Promise<NextResponse> {
   if (PASSED_ON.has(upstream.status)) {
     return NextResponse.json({ code }, { status: upstream.status });
   }
-  return NextResponse.json({ code: 'API_ERROR' }, { status: 502 });
+  return bffError('API_ERROR', 502);
 }

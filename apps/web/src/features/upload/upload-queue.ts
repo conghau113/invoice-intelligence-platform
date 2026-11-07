@@ -1,5 +1,12 @@
 import type { DocumentStatus } from '@/components/common/status-badge';
-import { errorKeyFor, isRetryable, type UploadErrorKey, type UploadFailure } from './error-keys';
+import type { HttpErrorCode } from 'contracts';
+import {
+  detailCodeFor,
+  errorKeyFor,
+  isRetryable,
+  type UploadErrorKey,
+  type UploadFailure,
+} from './error-keys';
 import { validateFile } from './validate';
 
 /** At most this many requests in flight: more only competes for the same bandwidth and the API's connection pool. */
@@ -40,6 +47,8 @@ export interface UploadItem {
   /** 0-100, only ever goes up within one attempt. */
   progress: number;
   errorKey?: UploadErrorKey;
+  /** Shown instead of `errorKey` when that only says "something went wrong". */
+  errorCode?: HttpErrorCode;
   retryable: boolean;
   document?: UploadedDocument;
 }
@@ -113,7 +122,13 @@ export class UploadQueue {
     if (!item) return;
     const canRetry = item.state === 'cancelled' || (item.state === 'error' && item.retryable);
     if (!canRetry) return;
-    this.patch(id, { state: 'pending', progress: 0, errorKey: undefined, retryable: false });
+    this.patch(id, {
+      state: 'pending',
+      progress: 0,
+      errorKey: undefined,
+      errorCode: undefined,
+      retryable: false,
+    });
     this.pump();
   }
 
@@ -188,7 +203,12 @@ export class UploadQueue {
       this.patch(id, { state: 'cancelled', progress: 0 });
     } else {
       const errorKey = errorKeyFor(result.failure);
-      this.patch(id, { state: 'error', errorKey, retryable: isRetryable(errorKey) });
+      this.patch(id, {
+        state: 'error',
+        errorKey,
+        errorCode: detailCodeFor(errorKey, result.failure),
+        retryable: isRetryable(errorKey),
+      });
     }
     this.pump();
   }

@@ -12,6 +12,8 @@ from typing import Any, Protocol
 
 import httpx
 
+from app.error_codes import registered
+
 
 @dataclass(frozen=True)
 class ImagePart:
@@ -34,7 +36,7 @@ class LLMError(Exception):
 
     def __init__(self, code: str, status: int) -> None:
         super().__init__(code)
-        self.code = code
+        self.code = registered(code)
         self.status = status
 
 

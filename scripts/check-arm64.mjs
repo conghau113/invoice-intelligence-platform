@@ -1,7 +1,17 @@
 // Checks that every image in compose.yaml publishes a linux/arm64 manifest (Oracle ARM, M4).
 import { execFileSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 
-const run = (args) => execFileSync('docker', args, { encoding: 'utf8' });
+// Absolute, not looked up in PATH: a writable PATH entry could otherwise replace the program.
+// Ubuntu, WSL2 and the Oracle VM all install it here.
+const DOCKER = '/usr/bin/docker';
+if (!existsSync(DOCKER)) {
+  console.error(
+    `FAIL docker is not at ${DOCKER}: install it there or change DOCKER in this script`,
+  );
+  process.exit(1);
+}
+const run = (args) => execFileSync(DOCKER, args, { encoding: 'utf8' });
 const images = run(['compose', 'config', '--images']).split('\n').filter(Boolean);
 
 let failed = false;
