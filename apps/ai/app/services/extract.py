@@ -27,7 +27,8 @@ from app.schemas.generated import (
     Party,
     VatBreakdownItem,
 )
-from app.services.pdf_pages import PdfError, render_pdf_pages, sniff_image_mime
+from app.services.image_normalize import ImageError, normalize_image
+from app.services.pdf_pages import PdfError, render_pdf_pages
 from app.services.xml_invoice import XmlInvoiceError, parse_xml_invoice
 
 log = logging.getLogger("ai.extract")
@@ -211,9 +212,9 @@ def extract(
             raise ExtractError(422, "PDF_TOO_LARGE", "The rendered pages are too large to send")
         images = [ImagePart(data=p, mime="image/png") for p in pages]
     else:
-        mime = sniff_image_mime(data)
-        if mime is None:
-            raise ExtractError(422, "IMAGE_UNSUPPORTED", "Only PNG and JPEG images are supported")
-        images = [ImagePart(data=data, mime=mime)]
+        try:
+            images = [normalize_image(data)]
+        except ImageError as err:
+            raise ExtractError(422, err.code, "The image cannot be processed") from None
     # Built only now: a bad file is answered without needing (or spending) a provider.
     return extract_llm(images, get_provider())

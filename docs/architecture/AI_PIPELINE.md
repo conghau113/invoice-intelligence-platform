@@ -33,7 +33,7 @@ Business rules (shared TS code, also run in the worker): lines sum to subtotal; 
 ## 4. Extraction
 
 1. Worker reads the file through `StoragePort` and sends it as multipart `{file, sourceType}` over the internal network (service token + `traceparent`); the AI service enforces a size cap and timeout.
-2. PDF → page images (pypdfium2, ~150–200 DPI); images are normalized (EXIF rotation).
+2. PDF → page images (pypdfium2, 150 DPI). An uploaded picture is cleaned (`services/image_normalize.py`): metadata is removed by allow-list and an EXIF rotation is applied to the pixels, so the result does not depend on a provider reading EXIF. A turned JPEG leaves as a PNG, at most 2200 px on its long edge. A picture that is not turned keeps its pixels and stays the same size. A damaged file gets `IMAGE_INVALID` without calling a provider; the stored original is never changed.
 3. Provider call (Strategy pattern, ADR 0009): system instructions + JSON Schema as the response schema; **document content is passed only as image/data parts, never concatenated into the instructions**.
 4. Validate with pydantic (generated from JSON Schema). On failure: up to 2 retries including the validation error; then return error code `EXTRACTION_SCHEMA_INVALID`.
 5. Return `invoice`, `fieldMeta`, and `usage {model, inputTokens, outputTokens, latencyMs, costUsd}`; cost is computed from a versioned price table in config (prices change — update the table, never hard-code in logic).

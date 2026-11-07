@@ -9,6 +9,7 @@ AI_ERROR_CODES = frozenset(
     {
         "EXTRACTION_SCHEMA_INVALID",
         "FILE_TOO_LARGE",
+        "IMAGE_INVALID",
         "IMAGE_UNSUPPORTED",
         "LLM_BAD_RESPONSE",
         "LLM_MISCONFIGURED",
