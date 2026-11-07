@@ -201,6 +201,9 @@ importers:
       drizzle-orm:
         specifier: ^0.45.4
         version: 0.45.4(@types/pg@8.23.1)(pg@8.23.1)
+      express:
+        specifier: 5.2.1
+        version: 5.2.1(supports-color@8.1.1)
       ioredis:
         specifier: ^6.0.0
         version: 6.0.0(supports-color@8.1.1)

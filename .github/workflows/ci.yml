@@ -163,6 +163,31 @@ jobs:
           pnpm --filter api db:migrate && pnpm --filter api db:seed
       - name: Build api and web
         run: pnpm turbo run build --filter=api --filter=web
+      # The servers in the Playwright step start under its pnpm shim, whose NODE_PATH once hid a
+      # missing dependency (express, T3.6). Start the API the way an image will: plain node, no shim.
+      - name: API starts with plain node
+        timeout-minutes: 3 # also bounds the wait for a clean shutdown below
+        working-directory: apps/api
+        env:
+          NODE_ENV: production
+        run: |
+          export DATABASE_URL="postgres://invoice_app:${APP_DB_PASSWORD}@localhost:5433/invoice"
+          env -u NODE_PATH node dist/main.js > "$RUNNER_TEMP/api-start.log" 2>&1 &
+          api=$!
+          for _ in $(seq 1 30); do
+            # Alive first: an answer from another process on this port would prove nothing.
+            kill -0 "$api" 2>/dev/null || break
+            if curl -fsS http://localhost:3001/health/ready; then
+              kill "$api"
+              wait "$api" || true
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "The API did not become ready"
+          cat "$RUNNER_TEMP/api-start.log"
+          kill "$api" 2>/dev/null || true
+          exit 1
       - name: Install Chromium
         run: pnpm --filter web exec playwright install --with-deps chromium
       # The upload test follows a document through the queue: the worker takes the job and calls
