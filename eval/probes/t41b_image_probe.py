@@ -5,7 +5,7 @@ FRESH seed, never eval/datasets/v1: looking at errors on the frozen set is what 
 
     pnpm gen:invoices --n 100 --seed 4101
     cd apps/ai && PYTHONPATH=. AI_SERVICE_TOKEN=not-used-by-this-script uv run python \
-        ../../eval/probes/t41b_image_probe.py orientation --results /some/path/results.jsonl
+        ../../eval/probes/t41b_image_probe.py orientation
 
 Stages: `orientation` (does the provider apply EXIF?), `rotation` (reading sideways vs upright),
 `before` and `after` (every picture, raw bytes vs cleaned bytes), `report` (print the tables).
@@ -35,6 +35,7 @@ from app.services.pdf_pages import encode_png, sniff_image_mime
 
 REPO = Path(__file__).resolve().parents[2]
 DATASET = REPO / "tools" / "invoice-gen" / "out"
+RESULTS = Path(__file__).resolve().parent / "out" / "t41b-results.jsonl"  # git-ignored
 FROZEN_SEED = 42
 MIN_SECONDS_BETWEEN_CALLS = 6.0  # 10 a minute; the project's limit read in AI Studio is 15
 MAX_CALLS_TOTAL = 300  # the daily limit read in AI Studio is 500, shared with dev:stack
@@ -148,10 +149,10 @@ def pictures() -> list[dict[str, Any]]:
     return [d for d in manifest["documents"] if d["primary"].endswith((".png", ".jpg"))]
 
 
-def read_results(path: Path) -> list[dict[str, Any]]:
-    if not path.exists():
+def read_results() -> list[dict[str, Any]]:
+    if not RESULTS.exists():
         return []
-    lines = path.read_text(encoding="utf-8").splitlines()
+    lines = RESULTS.read_text(encoding="utf-8").splitlines()
     return [json.loads(line) for line in lines if line]
 
 
@@ -251,8 +252,9 @@ def items_for(stage: str) -> list[tuple[str, str, str, int, bytes]]:
     return items
 
 
-def run_stage(stage: str, results_path: Path) -> None:
-    done = read_results(results_path)
+def run_stage(stage: str) -> None:
+    RESULTS.parent.mkdir(exist_ok=True)
+    done = read_results()
     finished = {
         (r["stage"], r["doc"], r["arm"], r["repeat"])
         for r in done
@@ -291,7 +293,7 @@ def run_stage(stage: str, results_path: Path) -> None:
             "bytesSent": len(data),
             **outcome,
         }
-        with results_path.open("a", encoding="utf-8") as out:
+        with RESULTS.open("a", encoding="utf-8") as out:
             out.write(json.dumps(record) + "\n")
         print(doc_id, arm, repeat, outcome["status"], outcome.get("code", ""), flush=True)
         failed_in_a_row = 0 if outcome["status"] == "ok" else failed_in_a_row + 1
@@ -301,8 +303,8 @@ def run_stage(stage: str, results_path: Path) -> None:
     print(f"stage {stage} finished. calls={provider.calls}")
 
 
-def report(results_path: Path) -> None:
-    rows = read_results(results_path)
+def report() -> None:
+    rows = read_results()
     print(f"records={len(rows)} calls={sum(r['calls'] for r in rows)}")
     print("status:", dict(Counter((r["stage"], r["status"], r.get("code", "")) for r in rows)))
     ok = [r for r in rows if r["status"] == "ok"]
@@ -352,12 +354,11 @@ def report(results_path: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("stage", choices=["orientation", "rotation", "before", "after", "report"])
-    parser.add_argument("--results", type=Path, required=True)
     args = parser.parse_args()
     if args.stage == "report":
-        report(args.results)
+        report()
     else:
-        run_stage(args.stage, args.results)
+        run_stage(args.stage)
 
 
 if __name__ == "__main__":
