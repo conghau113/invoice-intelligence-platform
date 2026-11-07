@@ -2,8 +2,10 @@ import { randomBytes } from 'node:crypto';
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { runMigrations } from '../../src/db/migrate';
 import { seedDemoTenants } from '../../src/db/seed';
+import { startReachable } from './reachable-container';
 
 const IMAGE = 'pgvector/pgvector:pg17'; // same image as compose.yaml
+const POSTGRES_PORT = 5432;
 
 /**
  * Starts a throw-away Postgres, applies the real migrations and seed, and exports the two URLs the
@@ -12,10 +14,10 @@ const IMAGE = 'pgvector/pgvector:pg17'; // same image as compose.yaml
  * reach the test workers and teardown can reach the container through globalThis.
  */
 export default async function setup(): Promise<void> {
-  const container = await new PostgreSqlContainer(IMAGE)
-    .withUsername('invoice')
-    .withDatabase('invoice')
-    .start();
+  const container = await startReachable(
+    () => new PostgreSqlContainer(IMAGE).withUsername('invoice').withDatabase('invoice').start(),
+    POSTGRES_PORT,
+  );
   (globalThis as { __pgContainer?: StartedPostgreSqlContainer }).__pgContainer = container;
 
   const ownerUrl = container.getConnectionUri();

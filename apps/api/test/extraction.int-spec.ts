@@ -19,7 +19,7 @@ import { rm } from 'node:fs/promises';
 import path from 'node:path';
 import { Pool } from 'pg';
 import request from 'supertest';
-import { GenericContainer, Wait, type StartedTestContainer } from 'testcontainers';
+import type { StartedTestContainer } from 'testcontainers';
 import type { Env } from '../src/config/env.schema';
 import { ProblemDetailsFilter } from '../src/common/http/problem-details.filter';
 import * as schema from '../src/db/schema';
@@ -40,6 +40,8 @@ import { QueueAdminModule } from '../src/modules/queue/queue-admin.module';
 import { STORAGE_PORT } from '../src/modules/storage/application/storage.port';
 import { LocalFsStorage } from '../src/modules/storage/infra/local-fs.storage';
 import { useTestRoots } from '../src/modules/storage/testing/test-root';
+import { queueReady } from './support/queue-ready';
+import { startRedis } from './support/reachable-container';
 
 const ACME = '00000000-0000-4000-8000-0000000000a1';
 const GLOBEX = '00000000-0000-4000-8000-0000000000a2';
@@ -263,13 +265,11 @@ describe('extraction slice (upload -> worker -> AI service -> GET /documents/:id
     });
     await new Promise<void>((r) => ai.listen(0, '127.0.0.1', r));
 
-    redis = await new GenericContainer('redis:8')
-      .withExposedPorts(6379)
-      .withWaitStrategy(Wait.forLogMessage('Ready to accept connections'))
-      .start();
+    redis = await startRedis();
     const redisUrl = `redis://${redis.getHost()}:${redis.getMappedPort(6379)}`;
 
     live = await makeApp(redisUrl);
+    await queueReady(live);
     tenantDb = live.get(TenantDbService);
     // The worker side as src/worker.ts wires it, with the real handler and the real HTTP client.
     handler = new AiExtractionHandler(

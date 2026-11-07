@@ -14,6 +14,11 @@
       "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
       "outputs": ["coverage/**"]
     },
+    "ai#test": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "!**/*.md", "$TURBO_ROOT$/packages/contracts/fixtures/**"],
+      "outputs": ["coverage/**"]
+    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
