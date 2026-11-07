@@ -1,0 +1,36 @@
+{
+  "seller": {
+    "name": "Brooks, Tyler and Combs SAMPLE",
+    "taxCode": "5385737979",
+    "address": "27249 Johnson Way Lake Alexandria, CO 66151"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-268903419",
+  "series": "S26C",
+  "issueDate": "2026-03-19",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Domestic freight service P1465",
+      "quantity": 11,
+      "unit": "trip",
+      "unitPrice": 490000,
+      "vatRate": 5,
+      "amount": 5390000
+    }
+  ],
+  "subtotal": 5390000,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 5390000,
+      "amount": 269500
+    }
+  ],
+  "total": 5659500,
+  "fieldMeta": {}
+}

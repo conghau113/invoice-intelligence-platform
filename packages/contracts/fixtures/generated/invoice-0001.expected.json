@@ -1,0 +1,108 @@
+{
+  "seller": {
+    "name": "Trần và đối tác Tập Đoàn SAMPLE",
+    "taxCode": "9013904000",
+    "address": "557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng"
+  },
+  "buyer": {
+    "name": "Nguyễn Hữu John SAMPLE",
+    "taxCode": null,
+    "address": "39 đường số 61 Xã Bình Thuận Thái Nguyên"
+  },
+  "invoiceNo": "9555813",
+  "series": "C26TBB",
+  "issueDate": "2026-09-24",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Cà phê rang xay B2024",
+      "quantity": 17,
+      "unit": "kg",
+      "unitPrice": 729000,
+      "vatRate": 10,
+      "amount": 12393000
+    },
+    {
+      "description": "Ghế xoay văn phòng T1521",
+      "quantity": 18,
+      "unit": "cái",
+      "unitPrice": 572000,
+      "vatRate": 10,
+      "amount": 10296000
+    },
+    {
+      "description": "Thiết bị chuyển mạch H9034",
+      "quantity": 8,
+      "unit": "bộ",
+      "unitPrice": 728000,
+      "vatRate": 10,
+      "amount": 5824000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa D4068",
+      "quantity": 13,
+      "unit": "chuyến",
+      "unitPrice": 289500,
+      "vatRate": 10,
+      "amount": 3763500
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp N7060",
+      "quantity": 16.5,
+      "unit": "lần",
+      "unitPrice": 180000,
+      "vatRate": 10,
+      "amount": 2970000
+    },
+    {
+      "description": "Bút bi văn phòng E1507",
+      "quantity": 20,
+      "unit": "hộp",
+      "unitPrice": 631000,
+      "vatRate": 10,
+      "amount": 12620000
+    },
+    {
+      "description": "Cà phê rang xay B1402",
+      "quantity": 1,
+      "unit": "kg",
+      "unitPrice": 283500,
+      "vatRate": 10,
+      "amount": 283500
+    },
+    {
+      "description": "Bàn làm việc gỗ M5086",
+      "quantity": 19.5,
+      "unit": "cái",
+      "unitPrice": 21000,
+      "vatRate": 10,
+      "amount": 409500
+    },
+    {
+      "description": "Sơn nước nội thất K8075",
+      "quantity": 11.25,
+      "unit": "lít",
+      "unitPrice": 659000,
+      "vatRate": 10,
+      "amount": 7413750
+    },
+    {
+      "description": "Nước uống đóng chai E7756",
+      "quantity": 8.25,
+      "unit": "thùng",
+      "unitPrice": 28500,
+      "vatRate": 10,
+      "amount": 235125
+    }
+  ],
+  "subtotal": 56208375,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 56208375,
+      "amount": 5620838
+    }
+  ],
+  "total": 61829213,
+  "fieldMeta": {}
+}

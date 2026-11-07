@@ -1,0 +1,97 @@
+{
+  "seller": {
+    "name": "Hoàng và Nguyễn Công ty TNHH MTV SAMPLE",
+    "taxCode": "3507497709",
+    "address": "97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng"
+  },
+  "buyer": {
+    "name": "Hoàng Công ty TNHH SAMPLE",
+    "taxCode": "9624084463",
+    "address": "32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng"
+  },
+  "invoiceNo": "7168066",
+  "series": "C26TDD",
+  "issueDate": "2026-08-18",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Nước uống đóng chai A1529",
+      "quantity": 17,
+      "unit": "thùng",
+      "unitPrice": 9718,
+      "vatRate": 10,
+      "amount": 165206
+    },
+    {
+      "description": "Xi măng xây dựng M4962",
+      "quantity": 6,
+      "unit": "bao",
+      "unitPrice": 52300,
+      "vatRate": 8,
+      "amount": 313800
+    },
+    {
+      "description": "Bàn làm việc gỗ B2254",
+      "quantity": 13,
+      "unit": "cái",
+      "unitPrice": 85975,
+      "vatRate": 8,
+      "amount": 1117675
+    },
+    {
+      "description": "Nước uống đóng chai M7455",
+      "quantity": 10,
+      "unit": "thùng",
+      "unitPrice": 7655,
+      "vatRate": 10,
+      "amount": 76550
+    },
+    {
+      "description": "Bàn làm việc gỗ D5017",
+      "quantity": 2,
+      "unit": "cái",
+      "unitPrice": 36124,
+      "vatRate": 8,
+      "amount": 72248
+    },
+    {
+      "description": "Mực in laser đen T1905",
+      "quantity": 20,
+      "unit": "hộp",
+      "unitPrice": 23077,
+      "vatRate": 8,
+      "amount": 461540
+    },
+    {
+      "description": "Xi măng xây dựng T7802",
+      "quantity": 8.5,
+      "unit": "bao",
+      "unitPrice": 50197,
+      "vatRate": 8,
+      "amount": 426675
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán D9274",
+      "quantity": 1,
+      "unit": "tháng",
+      "unitPrice": 75446,
+      "vatRate": 10,
+      "amount": 75446
+    }
+  ],
+  "subtotal": 2709140,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 2391938,
+      "amount": 191355
+    },
+    {
+      "rate": 10,
+      "base": 317202,
+      "amount": 31720
+    }
+  ],
+  "total": 2932215,
+  "fieldMeta": {}
+}

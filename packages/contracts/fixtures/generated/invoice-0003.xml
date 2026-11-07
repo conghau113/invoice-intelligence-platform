@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26D</KHHDon>
+      <SHDon>INV-260403601</SHDon>
+      <NLap>2026-03-22</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Garcia-Riley SAMPLE</Ten>
+        <MST>5193714551-891</MST>
+        <DChi>45553 Alvarez Mountains Suite 958 Taraborough, MT 28187</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Sandra Marks SAMPLE</Ten>
+        <DChi>24309 Shawn Plaza North Stevenhaven, NY 19816</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Industrial cleaning service H9288</THHDVu>
+          <DVTinh>visit</DVTinh>
+          <SLuong>4</SLuong>
+          <DGia>482000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>1928000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Domestic freight service T1555</THHDVu>
+          <DVTinh>trip</DVTinh>
+          <SLuong>14.25</SLuong>
+          <DGia>404000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>5757000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Wooden office desk E2480</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>5</SLuong>
+          <DGia>856000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>4280000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Office ballpoint pens E4358</THHDVu>
+          <DVTinh>box</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>515500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>1031000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>12996000</TgTien>
+            <TThue>0</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>12996000</TgTCThue>
+        <TgTTTBSo>12996000</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

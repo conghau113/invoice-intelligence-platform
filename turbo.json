@@ -14,9 +14,19 @@
       "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
       "outputs": ["coverage/**"]
     },
+    "ai#lint": {
+      "inputs": ["$TURBO_DEFAULT$", "!**/*.md", "$TURBO_ROOT$/tools/invoice-gen/**/*.py"]
+    },
     "ai#test": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", "!**/*.md", "$TURBO_ROOT$/packages/contracts/fixtures/**"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!**/*.md",
+        "$TURBO_ROOT$/packages/contracts/fixtures/**",
+        "$TURBO_ROOT$/tools/invoice-gen/**/*.py",
+        "$TURBO_ROOT$/tools/invoice-gen/templates/**",
+        "$TURBO_ROOT$/tools/invoice-gen/fonts/**"
+      ],
       "outputs": ["coverage/**"]
     },
     "build": {

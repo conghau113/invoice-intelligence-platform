@@ -1,0 +1,74 @@
+{% extends "_base.html.j2" %}
+{% block css %}
+body { font: 12px/1.45 Arimo; }
+header { display: flex; justify-content: space-between; align-items: flex-end; background: #17375e; color: #fff; padding: 12px 14px; }
+header h1 { font-size: 19px; margin: 0; }
+header dl { margin: 0; display: grid; grid-template-columns: auto auto; gap: 1px 8px; font-size: 11.5px; }
+dd { margin: 0; }
+.parties { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.parties section { background: #eef2f7; padding: 9px 11px; }
+.parties h2 { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: #17375e; margin: 0 0 3px; }
+.items th { background: #17375e; color: #fff; padding: 5px 6px; text-align: left; }
+.items td { padding: 5px 6px; border-bottom: 1px solid #c8d2df; vertical-align: top; }
+.foot { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; margin-top: 12px; align-items: start; }
+.vat th { text-align: left; border-bottom: 1px solid #17375e; padding: 3px 5px; }
+.vat td { padding: 3px 5px; }
+.sum div { display: flex; justify-content: space-between; padding: 3px 0; }
+.sum .total { font-size: 15px; font-weight: 700; color: #17375e; border-top: 2px solid #17375e; margin-top: 3px; padding-top: 5px; }
+{% endblock %}
+{% block content %}
+<header>
+  <h1>Hóa đơn GTGT</h1>
+  <dl>
+    <dt>Ngày lập</dt><dd class="nb">{{ fmt.date_short(inv.issueDate) }}</dd>
+    <dt>Ký hiệu</dt><dd class="nb">{{ inv.series }}</dd>
+    <dt>Số hóa đơn</dt><dd class="nb">{{ inv.invoiceNo }}</dd>
+    <dt>Tiền tệ</dt><dd class="nb">{{ inv.currency }}</dd>
+  </dl>
+</header>
+<div class="parties">
+  <section>
+    <h2>Bên bán</h2>
+    <div><b>{{ inv.seller.name }}</b></div>
+    <div>MST: <span class="nb">{{ inv.seller.taxCode }}</span></div>
+    <div>{{ inv.seller.address }}</div>
+  </section>
+  <section>
+    <h2>Bên mua</h2>
+    <div><b>{{ inv.buyer.name }}</b></div>
+    <div>MST: <span class="nb">{{ inv.buyer.taxCode or "(cá nhân, không có)" }}</span></div>
+    <div>{{ inv.buyer.address }}</div>
+  </section>
+</div>
+<table class="items">
+  <thead>
+    <tr>
+      <th scope="col">#</th><th scope="col">Mô tả</th><th scope="col">Đơn vị</th><th scope="col" class="r">SL</th>
+      <th scope="col" class="r">Đơn giá</th><th scope="col" class="r">VAT</th><th scope="col" class="r">Thành tiền</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for line in inv.lines %}
+    <tr>
+      <td>{{ loop.index }}</td><td>{{ line.description }}</td><td>{{ line.unit }}</td>
+      <td class="r">{{ fmt.quantity(line.quantity) }}</td><td class="r nb">{{ fmt.money(line.unitPrice) }}</td>
+      <td class="r">{{ fmt.rate(line.vatRate) }}</td><td class="r nb">{{ fmt.money(line.amount) }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div class="foot">
+  <table class="vat">
+    <thead><tr><th scope="col">Thuế suất</th><th scope="col" class="r">Giá trị trước thuế</th><th scope="col" class="r">Thuế GTGT</th></tr></thead>
+    <tbody>
+      {% for item in inv.vatBreakdown %}
+      <tr><td>{{ fmt.rate(item.rate) }}</td><td class="r nb">{{ fmt.money(item.base) }}</td><td class="r nb">{{ fmt.money(item.amount) }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <section class="sum">
+    <div><span>Tạm tính</span><span class="nb">{{ fmt.money(inv.subtotal) }}</span></div>
+    <div class="total"><span>Tổng thanh toán</span><span class="nb">{{ fmt.money(inv.total) }} {{ inv.currency }}</span></div>
+  </section>
+</div>
+{% endblock %}
