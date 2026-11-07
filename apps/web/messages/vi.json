@@ -315,6 +315,7 @@
       "PDF_TOO_MANY_PAGES": "PDF có quá nhiều trang để xử lý.",
       "PDF_TOO_LARGE": "Các trang của PDF quá lớn để xử lý. Hãy giảm kích thước trang hoặc độ phân giải.",
       "IMAGE_UNSUPPORTED": "Định dạng ảnh chưa được hỗ trợ. Hãy dùng PNG hoặc JPEG.",
+      "IMAGE_INVALID": "Không đọc được tệp ảnh, có thể tệp đã hỏng hoặc bị cắt. Hãy thử tệp khác.",
       "XML_FORBIDDEN_CONSTRUCT": "XML chứa khai báo DTD hoặc entity, hệ thống không cho phép."
     },
     "errors": {

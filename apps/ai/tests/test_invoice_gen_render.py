@@ -5,6 +5,7 @@ out of a plain `pytest` on purpose, instead of skipping them when Playwright is 
 hide them forever.
 """
 
+import base64
 import hashlib
 import importlib
 import json
@@ -448,3 +449,72 @@ def test_near_white_text_reaches_what_the_model_is_sent(
 
     seen = render_pdf_pages(renderer.pdf(attacked))
     assert seen != render_pdf_pages(renderer.pdf(without))
+
+
+# What Chromium shows is the independent answer to "which way up": the matrices in
+# image_normalize.py and the table in test_image_normalize.py were written by the same hand and
+# could share a mistake.
+_SHOWN_DIFFERENCE = """async ([original, turned]) => {
+  const load = (url) => new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = url;
+  });
+  const [a, b] = await Promise.all([load(original), load(turned)]);
+  const pixels = (image) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 120;
+    canvas.height = 170;
+    const context = canvas.getContext('2d');
+    context.drawImage(image, 0, 0, 120, 170);
+    return context.getImageData(0, 0, 120, 170).data;
+  };
+  const [pa, pb] = [pixels(a), pixels(b)];
+  let total = 0;
+  for (let i = 0; i < pa.length; i += 4) {
+    for (let channel = 0; channel < 3; channel += 1) {
+      total += Math.abs(pa[i + channel] - pb[i + channel]);
+    }
+  }
+  return { same: a.naturalWidth === b.naturalWidth && a.naturalHeight === b.naturalHeight,
+           difference: total / (pa.length * 3 / 4) };
+}"""
+
+
+def _data_url(mime: str, data: bytes) -> str:
+    return f"data:{mime};base64,{base64.b64encode(data).decode()}"
+
+
+def _with_orientation(jpeg: bytes, orientation: int) -> bytes:
+    tiff = b"MM\x00*\x00\x00\x00\x08" + struct.pack(">HHHIHHI", 1, 0x0112, 3, 1, orientation, 0, 0)
+    body = b"Exif\x00\x00" + tiff
+    return jpeg[:2] + b"\xff\xe1" + struct.pack(">H", len(body) + 2) + body + jpeg[2:]
+
+
+def test_a_turned_picture_matches_what_a_browser_shows_for_every_orientation(renderer: Any) -> None:
+    from app.services.image_normalize import normalize_image
+
+    source = REPO / "eval" / "datasets" / "v1" / "documents" / "invoice-0006.jpg"
+    jpeg = source.read_bytes()
+    context = renderer._browser.new_context()
+    try:
+        page = context.new_page()
+        for orientation in range(1, 9):
+            original = _with_orientation(jpeg, orientation)
+            out = normalize_image(original)
+            shown = page.evaluate(
+                _SHOWN_DIFFERENCE,
+                [_data_url("image/jpeg", original), _data_url(out.mime, out.data)],
+            )
+            assert shown["same"], orientation
+            assert shown["difference"] < 3, orientation
+            # The control: this comparison does notice a picture that is not the right way up.
+            other = normalize_image(_with_orientation(jpeg, orientation % 8 + 1))
+            wrong = page.evaluate(
+                _SHOWN_DIFFERENCE,
+                [_data_url("image/jpeg", original), _data_url(other.mime, other.data)],
+            )
+            assert wrong["difference"] > 3, orientation
+    finally:
+        context.close()

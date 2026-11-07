@@ -15,7 +15,7 @@ import pypdfium2.raw as pdfium_c
 from app.error_codes import registered
 
 # pdfium is not thread-safe and sync endpoints run in a threadpool: one render at a time.
-_PDFIUM_LOCK = threading.Lock()
+PDFIUM_LOCK = threading.Lock()
 MAX_PAGES = 10
 RENDER_DPI = 150
 MAX_EDGE_PX = 2200  # bounds memory for a huge page size (a 200-inch poster at 150 DPI is 30000 px)
@@ -47,7 +47,7 @@ def encode_png(width: int, height: int, rgb: bytes, stride: int) -> bytes:
 
 
 def render_pdf_pages(data: bytes) -> list[bytes]:
-    with _PDFIUM_LOCK:
+    with PDFIUM_LOCK:
         return _render(data)
 
 

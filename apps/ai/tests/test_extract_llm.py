@@ -13,10 +13,11 @@ from app.providers.base import LLMError, LLMUnavailable
 from app.providers.fake import CANNED_LLM_OUTPUT, FakeProvider
 from app.services import extract as extract_module
 from app.services.extract import PROMPT_VERSION, SYSTEM_PROMPT, ExtractError, extract
+from app.services.pdf_pages import encode_png
 
 SAMPLE_PDF = Path(__file__).parent / "fixtures" / "pdf_invoices" / "invoice-00.pdf"
 VALID = json.dumps(CANNED_LLM_OUTPUT)
-PNG = b"\x89PNG\r\n\x1a\n" + b"0" * 20
+PNG = encode_png(1, 1, b"\x00\x00\x00", 3)
 PII = "TEN-BI-MAT-ABC"  # stands for document text the model might echo
 
 

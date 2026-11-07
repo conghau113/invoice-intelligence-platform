@@ -315,6 +315,7 @@
       "PDF_TOO_MANY_PAGES": "The PDF has too many pages to process.",
       "PDF_TOO_LARGE": "The PDF's pages are too large to process. Reduce the page size or resolution.",
       "IMAGE_UNSUPPORTED": "The image format is not supported. Use PNG or JPEG.",
+      "IMAGE_INVALID": "The image cannot be read. The file may be damaged or cut short. Try another file.",
       "XML_FORBIDDEN_CONSTRUCT": "The XML contains a DTD or entity declaration, which is not allowed."
     },
     "errors": {

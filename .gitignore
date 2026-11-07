@@ -29,3 +29,6 @@ apps/api/.test-data/
 
 # Local MCP server config (per developer, may point at local tools or hold tokens)
 .mcp.json
+
+# Results of hand-run model probes
+eval/probes/out/

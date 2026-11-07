@@ -11,8 +11,10 @@ import importlib
 import json
 import logging
 import os
+import struct
 import subprocess
 import sys
+import zlib
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
@@ -29,7 +31,7 @@ from app.providers.fake import FakeProvider
 from app.providers.gemini import GeminiProvider
 from app.schemas.generated import Invoice
 from app.services.extract import FIRST_USER_TEXT, SYSTEM_PROMPT, ExtractError, extract
-from app.services.pdf_pages import render_pdf_pages
+from app.services.pdf_pages import encode_png, render_pdf_pages
 
 REPO = Path(__file__).resolve().parents[3]
 FIXTURES = Path(__file__).parent / "fixtures" / "injection"
@@ -180,14 +182,18 @@ def test_text_hidden_in_a_pdf_never_reaches_the_model() -> None:
     assert render_pdf_pages(HIDDEN_PDF) == render_pdf_pages(CLEAN_PDF)
 
 
-def test_known_gap_an_uploaded_image_is_forwarded_with_its_metadata() -> None:
-    # Unlike a PDF, a photo goes to the provider byte for byte, so text in a PNG chunk or in EXIF
-    # travels with it. It stays a data part, not an instruction, but whether a provider reads it is
-    # out of our hands (SECURITY.md section 6). When images get cleaned, this test must change.
-    image = b"\x89PNG\r\n\x1a\n" + b"tEXt" + ATTACK.encode()
+def test_text_in_the_metadata_of_an_uploaded_image_never_reaches_the_model() -> None:
+    # An image is not re-rendered, so its metadata is removed instead (T4.1b). Text printed in the
+    # picture still arrives: only the model can read that, so these tests cannot speak for it.
+    png = encode_png(1, 1, b"\x00\x00\x00", 3)
+    text = b"tEXtComment\x00" + ATTACK.encode()
+    chunk = struct.pack(">I", len(text) - 4) + text + struct.pack(">I", zlib.crc32(text))
+    at_iend = len(png) - 12
+    image = png[:at_iend] + chunk + png[at_iend:] + ATTACK.encode()
+    assert image.count(ATTACK.encode()) == 2
     provider = FakeProvider([HONEST_OUTPUT])
     extract(image, "image", lambda: provider)
-    assert provider.calls[0]["images"][0].data == image
+    assert ATTACK.encode() not in provider.calls[0]["images"][0].data
 
 
 def test_absurdly_nested_json_is_a_schema_failure_not_a_crash() -> None:
