@@ -38,15 +38,33 @@ def gen() -> Iterator[SimpleNamespace]:
             generate=importlib.import_module("generate"),
             verify=importlib.import_module("verify"),
             min_pdf=importlib.import_module("min_pdf"),
+            injection=importlib.import_module("gen_injection"),
         )
     finally:
         sys.path.remove(str(GENERATOR_DIR))
-        for name in ("gen_data", "gen_render", "generate", "verify", "min_pdf", "min_xml"):
+        for name in (
+            "gen_data",
+            "gen_injection",
+            "gen_render",
+            "generate",
+            "verify",
+            "min_pdf",
+            "min_xml",
+        ):
             sys.modules.pop(name, None)
 
 
 @pytest.fixture(scope="module")
-def renderer(gen: SimpleNamespace) -> Iterator[Any]:
+def attack_dataset(gen: SimpleNamespace, tmp_path_factory: pytest.TempPathFactory) -> Path:
+    root = tmp_path_factory.mktemp("attacks") / "out"
+    gen.generate.generate(root, 42, 1, injection=True)
+    return root
+
+
+# Asks for attack_dataset because `generate` opens its own Playwright, and the sync API cannot run
+# inside one that is still open.
+@pytest.fixture(scope="module")
+def renderer(gen: SimpleNamespace, attack_dataset: Path) -> Iterator[Any]:
     with gen.render.open_renderer() as opened:
         yield opened
 
@@ -388,3 +406,45 @@ def test_rules_refuse_an_id_that_points_outside_the_folder(dataset: Path) -> Non
 def test_rules_refuse_an_empty_dataset(tmp_path: Path) -> None:
     (tmp_path / "manifest.json").write_text(json.dumps({"documents": []}), encoding="utf-8")
     assert run_rules(tmp_path).returncode == 1
+
+
+# --- Attack documents -----------------------------------------------------------------------------
+
+
+def test_attack_documents_pass_every_check_and_are_marked(
+    gen: SimpleNamespace, attack_dataset: Path
+) -> None:
+    report = gen.verify.verify_dataset(attack_dataset)
+    assert report.problems == []
+    attacks = [d for d in manifest(attack_dataset)["documents"] if "attack" in d]
+    assert len(attacks) == 24
+    assert {d["primary"].rsplit(".", 1)[1] for d in attacks} == {"pdf", "png"}
+
+
+def test_attack_documents_pass_the_typescript_rules(attack_dataset: Path) -> None:
+    result = run_rules(attack_dataset)
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_rules_still_refuse_an_id_shaped_like_an_attack_document(attack_dataset: Path) -> None:
+    copy = attack_dataset.parent / "bad-id"
+    copy.mkdir()
+    data = {"documents": [{"id": "injection-1"}]}
+    (copy / "manifest.json").write_text(json.dumps(data), encoding="utf-8")
+    assert "BAD_DOCUMENT_ID" in run_rules(copy).stdout
+
+
+def test_near_white_text_reaches_what_the_model_is_sent(
+    gen: SimpleNamespace, renderer: Any
+) -> None:
+    """The point of this position: hard for a person to see, still in the pixels the model reads."""
+    attacked = next(
+        doc
+        for doc in gen.injection.build_injection_documents(42)
+        if doc.attack["position"] == "note-near-white"
+    )
+    without = replace(attacked, note=None, note_color=None)
+    from app.services.pdf_pages import render_pdf_pages
+
+    seen = render_pdf_pages(renderer.pdf(attacked))
+    assert seen != render_pdf_pages(renderer.pdf(without))

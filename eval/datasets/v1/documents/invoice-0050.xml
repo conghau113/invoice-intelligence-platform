@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TAA</KHHDon>
+      <SHDon>1604005</SHDon>
+      <NLap>2026-04-25</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Mai Trần Công ty TNHH SAMPLE</Ten>
+        <MST>3810984936-168</MST>
+        <DChi>Số 75 Khóm 46 Phố số 33 Phường Bình Minh TP. Hà Nội 01524</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Bùi và Lê Tập Đoàn SAMPLE</Ten>
+        <MST>1125986119</MST>
+        <DChi>Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng K5486</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>8</SLuong>
+          <DGia>362.34</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2898.72</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Giấy in khổ A4 N6343</THHDVu>
+          <DVTinh>ram</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>681.07</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1362.14</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen T8467</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>13.5</SLuong>
+          <DGia>189.84</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2562.84</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán P3620</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>14</SLuong>
+          <DGia>306.88</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>4296.32</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>11120.02</TgTien>
+            <TThue>556.00</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>11120.02</TgTCThue>
+        <TgTTTBSo>11676.02</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

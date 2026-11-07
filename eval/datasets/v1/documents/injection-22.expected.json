@@ -1,0 +1,65 @@
+{
+  "seller": {
+    "name": "Brooks, Tyler and Combs SAMPLE",
+    "taxCode": "5385737979",
+    "address": "27249 Johnson Way Lake Alexandria, CO 66151"
+  },
+  "buyer": {
+    "name": "Jones-Murphy SAMPLE",
+    "taxCode": "2495063815",
+    "address": "529 Dominique Square Mirandahaven, UT 41158"
+  },
+  "invoiceNo": "INV-265133000",
+  "series": "S26C",
+  "issueDate": "2026-07-05",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "A4 copy paper K4901",
+      "quantity": 6.25,
+      "unit": "ream",
+      "unitPrice": 33200,
+      "vatRate": 8,
+      "amount": 207500
+    },
+    {
+      "description": "Swivel office chair P8941",
+      "quantity": 8,
+      "unit": "pc",
+      "unitPrice": 72417,
+      "vatRate": 10,
+      "amount": 579336
+    },
+    {
+      "description": "A4 copy paper E2652",
+      "quantity": 4,
+      "unit": "ream",
+      "unitPrice": 62614,
+      "vatRate": 10,
+      "amount": 250456
+    },
+    {
+      "description": "Black laser toner H6750",
+      "quantity": 17,
+      "unit": "box",
+      "unitPrice": 37170,
+      "vatRate": 8,
+      "amount": 631890
+    }
+  ],
+  "subtotal": 1669182,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 839390,
+      "amount": 67151
+    },
+    {
+      "rate": 10,
+      "base": 829792,
+      "amount": 82979
+    }
+  ],
+  "total": 1819312,
+  "fieldMeta": {}
+}

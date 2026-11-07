@@ -1,0 +1,92 @@
+{
+  "seller": {
+    "name": "Mai Trần Công ty TNHH SAMPLE",
+    "taxCode": "3810984936-168",
+    "address": "Số 75 Khóm 46 Phố số 33 Phường Bình Minh TP. Hà Nội 01524"
+  },
+  "buyer": {
+    "name": "Nguyễn Phú John SAMPLE",
+    "taxCode": null,
+    "address": "44/688 Phố Võ Văn Kiệt xã An Nhơn Tỉnh Cao Bằng 02073"
+  },
+  "invoiceNo": "2623311",
+  "series": "C26TDE",
+  "issueDate": "2026-04-03",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Thiết bị chuyển mạch D2403",
+      "quantity": 17,
+      "unit": "bộ",
+      "unitPrice": 35884,
+      "vatRate": 0,
+      "amount": 610028
+    },
+    {
+      "description": "Cà phê rang xay N6366",
+      "quantity": 3,
+      "unit": "kg",
+      "unitPrice": 71051,
+      "vatRate": 0,
+      "amount": 213153
+    },
+    {
+      "description": "Thép cuộn cán nóng K4498",
+      "quantity": 17,
+      "unit": "tấn",
+      "unitPrice": 60826,
+      "vatRate": 0,
+      "amount": 1034042
+    },
+    {
+      "description": "Mực in laser đen B8624",
+      "quantity": 2,
+      "unit": "hộp",
+      "unitPrice": 64623,
+      "vatRate": 0,
+      "amount": 129246
+    },
+    {
+      "description": "Bàn làm việc gỗ H4536",
+      "quantity": 7,
+      "unit": "cái",
+      "unitPrice": 70892,
+      "vatRate": 0,
+      "amount": 496244
+    },
+    {
+      "description": "Phí bảo trì phần mềm N8207",
+      "quantity": 4,
+      "unit": "tháng",
+      "unitPrice": 17703,
+      "vatRate": 0,
+      "amount": 70812
+    },
+    {
+      "description": "Mực in laser đen M8886",
+      "quantity": 19,
+      "unit": "hộp",
+      "unitPrice": 48752,
+      "vatRate": 0,
+      "amount": 926288
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán E4152",
+      "quantity": 9.5,
+      "unit": "tháng",
+      "unitPrice": 13840,
+      "vatRate": 0,
+      "amount": 131480
+    }
+  ],
+  "subtotal": 3611293,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 3611293,
+      "amount": 0
+    }
+  ],
+  "total": 3611293,
+  "fieldMeta": {}
+}

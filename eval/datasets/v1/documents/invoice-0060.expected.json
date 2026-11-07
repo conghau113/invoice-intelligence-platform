@@ -1,0 +1,36 @@
+{
+  "seller": {
+    "name": "Garcia-Riley SAMPLE",
+    "taxCode": "5193714551-891",
+    "address": "45553 Alvarez Mountains Suite 958 Taraborough, MT 28187"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-268011348",
+  "series": "S26B",
+  "issueDate": "2026-07-11",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "A4 copy paper P3766",
+      "quantity": 5,
+      "unit": "ream",
+      "unitPrice": 50500,
+      "vatRate": 5,
+      "amount": 252500
+    }
+  ],
+  "subtotal": 252500,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 252500,
+      "amount": 12625
+    }
+  ],
+  "total": 265125,
+  "fieldMeta": {}
+}

@@ -1,0 +1,449 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TBB</KHHDon>
+      <SHDon>9952206</SHDon>
+      <NLap>2026-04-10</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Bùi Phạm Công ty TNHH MTV SAMPLE</Ten>
+        <MST>5819736628</MST>
+        <DChi>Số 13/845 Khóm 70 Đường Hoàng Văn Thụ Phường Hòa Bình Tuyên Quang 01422</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Phạm Bùi Công ty TNHH SAMPLE</Ten>
+        <MST>6904000855</MST>
+        <DChi>2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng R6744</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>10</SLuong>
+          <DGia>439.88</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>4398.80</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa A7298</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>19.25</SLuong>
+          <DGia>882.30</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>16984.28</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng D8924</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>13</SLuong>
+          <DGia>588.21</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>7646.73</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai H5255</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>7.5</SLuong>
+          <DGia>343.60</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2577.00</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán R3629</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>12.25</SLuong>
+          <DGia>176.52</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2162.37</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay M5917</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>4</SLuong>
+          <DGia>776.07</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>3104.28</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất E8625</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>11</SLuong>
+          <DGia>24.79</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>272.69</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng R1967</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>515.78</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1547.34</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch T9739</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>12</SLuong>
+          <DGia>354.17</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>4250.04</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa H3978</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>4</SLuong>
+          <DGia>14.45</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>57.80</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vệ sinh công nghiệp K5982</THHDVu>
+          <DVTinh>lần</DVTinh>
+          <SLuong>6</SLuong>
+          <DGia>599.27</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>3595.62</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai A5870</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>6.25</SLuong>
+          <DGia>411.78</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2573.63</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch K3374</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>15</SLuong>
+          <DGia>406.13</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>6091.95</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất P4932</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>19</SLuong>
+          <DGia>223.13</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>4239.47</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vệ sinh công nghiệp P9873</THHDVu>
+          <DVTinh>lần</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>493.53</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>987.06</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán P9598</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>19</SLuong>
+          <DGia>311.07</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>5910.33</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dây cáp mạng E4436</THHDVu>
+          <DVTinh>mét</DVTinh>
+          <SLuong>8.5</SLuong>
+          <DGia>800.19</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>6801.62</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng A4836</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>2.5</SLuong>
+          <DGia>685.90</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1714.75</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng R5955</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>12</SLuong>
+          <DGia>452.44</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>5429.28</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng M7442</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>214.33</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>428.66</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm P9227</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>13</SLuong>
+          <DGia>703.11</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>9140.43</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vệ sinh công nghiệp K8951</THHDVu>
+          <DVTinh>lần</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>855.35</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>14540.95</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng P8615</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>8.5</SLuong>
+          <DGia>140.32</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>1192.72</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán D5047</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>12</SLuong>
+          <DGia>508.40</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>6100.80</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng H4389</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>14</SLuong>
+          <DGia>297.62</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>4166.68</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa R8218</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>17.5</SLuong>
+          <DGia>179.28</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>3137.40</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai T1800</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>436.66</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>7423.22</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vệ sinh công nghiệp T4182</THHDVu>
+          <DVTinh>lần</DVTinh>
+          <SLuong>7.5</SLuong>
+          <DGia>727.07</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>5453.03</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Ghế xoay văn phòng P9669</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>8.25</SLuong>
+          <DGia>434.72</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>3586.44</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen H3991</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>6</SLuong>
+          <DGia>418.19</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2509.14</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Giấy in khổ A4 E2872</THHDVu>
+          <DVTinh>ram</DVTinh>
+          <SLuong>5</SLuong>
+          <DGia>862.01</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>4310.05</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng E1024</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>8.25</SLuong>
+          <DGia>746.18</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>6155.99</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng D5487</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>13</SLuong>
+          <DGia>634.04</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>8242.52</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa R8091</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>19</SLuong>
+          <DGia>105.65</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2007.35</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Giấy in khổ A4 R6766</THHDVu>
+          <DVTinh>ram</DVTinh>
+          <SLuong>14</SLuong>
+          <DGia>705.26</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>9873.64</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng R1244</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>5.5</SLuong>
+          <DGia>455.43</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2504.87</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vệ sinh công nghiệp E6355</THHDVu>
+          <DVTinh>lần</DVTinh>
+          <SLuong>13</SLuong>
+          <DGia>483.15</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>6280.95</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dây cáp mạng P6710</THHDVu>
+          <DVTinh>mét</DVTinh>
+          <SLuong>11.25</SLuong>
+          <DGia>534.52</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>6013.35</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm N7030</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>7</SLuong>
+          <DGia>793.95</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>5557.65</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay P9931</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>20</SLuong>
+          <DGia>624.93</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>12498.60</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng A6531</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>8</SLuong>
+          <DGia>469.59</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>3756.72</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch H3002</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>16</SLuong>
+          <DGia>380.44</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>6087.04</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất B8304</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>7</SLuong>
+          <DGia>516.39</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>3614.73</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán D4063</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>7</SLuong>
+          <DGia>567.80</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>3974.60</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng T9961</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>6.5</SLuong>
+          <DGia>310.52</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2018.38</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch R4027</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>9</SLuong>
+          <DGia>260.99</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2348.91</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vệ sinh công nghiệp K4445</THHDVu>
+          <DVTinh>lần</DVTinh>
+          <SLuong>5</SLuong>
+          <DGia>301.02</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>1505.10</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen N9008</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>8.5</SLuong>
+          <DGia>286.84</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2438.14</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng K8181</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>288.96</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>4912.32</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng H5678</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>14</SLuong>
+          <DGia>104.03</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1456.42</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa D9942</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>7</SLuong>
+          <DGia>372.28</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2605.96</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>98582.70</TgTien>
+            <TThue>4929.14</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>137605.10</TgTien>
+            <TThue>11008.41</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>236187.80</TgTCThue>
+        <TgTTTBSo>252125.35</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

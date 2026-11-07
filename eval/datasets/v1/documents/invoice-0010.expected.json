@@ -1,0 +1,57 @@
+{
+  "seller": {
+    "name": "Hoàng và Nguyễn Công ty TNHH MTV SAMPLE",
+    "taxCode": "3507497709",
+    "address": "97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng"
+  },
+  "buyer": {
+    "name": "Hoàng Công ty TNHH SAMPLE",
+    "taxCode": "9624084463",
+    "address": "32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng"
+  },
+  "invoiceNo": "6252287",
+  "series": "C26TCE",
+  "issueDate": "2026-03-28",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Ghế xoay văn phòng T1206",
+      "quantity": 4.5,
+      "unit": "cái",
+      "unitPrice": 798500,
+      "vatRate": 10,
+      "amount": 3593250
+    },
+    {
+      "description": "Xi măng xây dựng E2360",
+      "quantity": 11,
+      "unit": "bao",
+      "unitPrice": 836000,
+      "vatRate": 0,
+      "amount": 9196000
+    },
+    {
+      "description": "Mực in laser đen A2795",
+      "quantity": 8,
+      "unit": "hộp",
+      "unitPrice": 35000,
+      "vatRate": 10,
+      "amount": 280000
+    }
+  ],
+  "subtotal": 13069250,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 9196000,
+      "amount": 0
+    },
+    {
+      "rate": 10,
+      "base": 3873250,
+      "amount": 387325
+    }
+  ],
+  "total": 13456575,
+  "fieldMeta": {}
+}

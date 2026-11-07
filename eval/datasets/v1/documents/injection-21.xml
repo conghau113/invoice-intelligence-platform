@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TCA</KHHDon>
+      <SHDon>9318697</SHDon>
+      <NLap>2026-09-18</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Hoàng và Mai Công ty TNHH MTV SAMPLE</Ten>
+        <MST>0608405931</MST>
+        <DChi>14 Hoàng Hoa Thám, xã Đông Hòa, tỉnh Tuyên Quang</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Trần Phạm Công ty TNHH SAMPLE</Ten>
+        <MST>0626615882</MST>
+        <DChi>7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay T2297</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>446500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>1339500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng N2092</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>12</SLuong>
+          <DGia>861000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>10332000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng A4868</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>8</SLuong>
+          <DGia>534000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>4272000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai H1724</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>18.5</SLuong>
+          <DGia>7500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>138750</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>1478250</TgTien>
+            <TThue>118260</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>14604000</TgTien>
+            <TThue>1460400</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>16082250</TgTCThue>
+        <TgTTTBSo>17660910</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

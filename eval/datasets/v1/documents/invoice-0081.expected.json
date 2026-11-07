@@ -1,0 +1,76 @@
+{
+  "seller": {
+    "name": "Phạm Công ty Hợp danh SAMPLE",
+    "taxCode": "5325048491",
+    "address": "Số 4 Ngõ 57 Giải Phóng, Phường Hòa Bình, Tỉnh Khánh Hòa"
+  },
+  "buyer": {
+    "name": "Bùi và Lê Tập Đoàn SAMPLE",
+    "taxCode": "1125986119",
+    "address": "Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi"
+  },
+  "invoiceNo": "0679407",
+  "series": "C26TBC",
+  "issueDate": "2026-06-14",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Xi măng xây dựng T1399",
+      "quantity": 19.25,
+      "unit": "bao",
+      "unitPrice": 780000,
+      "vatRate": 5,
+      "amount": 15015000
+    },
+    {
+      "description": "Bàn làm việc gỗ B4609",
+      "quantity": 3,
+      "unit": "cái",
+      "unitPrice": 378000,
+      "vatRate": 5,
+      "amount": 1134000
+    },
+    {
+      "description": "Thiết bị chuyển mạch P4948",
+      "quantity": 17,
+      "unit": "bộ",
+      "unitPrice": 884500,
+      "vatRate": 5,
+      "amount": 15036500
+    },
+    {
+      "description": "Thiết bị chuyển mạch A1046",
+      "quantity": 18.5,
+      "unit": "bộ",
+      "unitPrice": 660000,
+      "vatRate": 5,
+      "amount": 12210000
+    },
+    {
+      "description": "Dây cáp mạng R2337",
+      "quantity": 8,
+      "unit": "mét",
+      "unitPrice": 411000,
+      "vatRate": 5,
+      "amount": 3288000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa C4370",
+      "quantity": 1.5,
+      "unit": "chuyến",
+      "unitPrice": 843500,
+      "vatRate": 5,
+      "amount": 1265250
+    }
+  ],
+  "subtotal": 47948750,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 47948750,
+      "amount": 2397438
+    }
+  ],
+  "total": 50346188,
+  "fieldMeta": {}
+}

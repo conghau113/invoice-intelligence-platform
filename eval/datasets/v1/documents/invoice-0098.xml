@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TDD</KHHDon>
+      <SHDon>7329561</SHDon>
+      <NLap>2026-09-06</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Nguyễn và Đặng Công ty Hợp danh SAMPLE</Ten>
+        <MST>5964976311</MST>
+        <DChi>2/20/516 phố 28 phường Đông Hòa Thành phố Hồ Chí Minh 92729</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE</Ten>
+        <MST>0618511992</MST>
+        <DChi>69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch B1813</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>13.5</SLuong>
+          <DGia>139000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1876500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vệ sinh công nghiệp B5305</THHDVu>
+          <DVTinh>lần</DVTinh>
+          <SLuong>4</SLuong>
+          <DGia>815500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>3262000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng M4396</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>10</SLuong>
+          <DGia>572500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>5725000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng D8342</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>13</SLuong>
+          <DGia>701000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>9113000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất B3175</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>18</SLuong>
+          <DGia>184500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>3321000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm P4621</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>486500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1459500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán D8081</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>15.5</SLuong>
+          <DGia>536000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>8308000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ H7866</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>333500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>5669500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ A5245</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>9.5</SLuong>
+          <DGia>716000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>6802000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa T1778</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>13</SLuong>
+          <DGia>494000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>6422000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>51958500</TgTien>
+            <TThue>2597925</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>51958500</TgTCThue>
+        <TgTTTBSo>54556425</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

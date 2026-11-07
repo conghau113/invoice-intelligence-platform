@@ -1,0 +1,68 @@
+{
+  "seller": {
+    "name": "Mai Trần Công ty TNHH SAMPLE",
+    "taxCode": "3810984936-168",
+    "address": "Số 75 Khóm 46 Phố số 33 Phường Bình Minh TP. Hà Nội 01524"
+  },
+  "buyer": {
+    "name": "Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE",
+    "taxCode": "0618511992",
+    "address": "69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng"
+  },
+  "invoiceNo": "5865999",
+  "series": "C26TCA",
+  "issueDate": "2026-08-08",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Cà phê rang xay K7170",
+      "quantity": 16,
+      "unit": "kg",
+      "unitPrice": 616500,
+      "vatRate": 8,
+      "amount": 9864000
+    },
+    {
+      "description": "Giấy in khổ A4 A4655",
+      "quantity": 14,
+      "unit": "ram",
+      "unitPrice": 169500,
+      "vatRate": 8,
+      "amount": 2373000
+    },
+    {
+      "description": "Ghế xoay văn phòng P5943",
+      "quantity": 13.25,
+      "unit": "cái",
+      "unitPrice": 608500,
+      "vatRate": 8,
+      "amount": 8062625
+    },
+    {
+      "description": "Sơn nước nội thất T5103",
+      "quantity": 4.5,
+      "unit": "lít",
+      "unitPrice": 208000,
+      "vatRate": 8,
+      "amount": 936000
+    },
+    {
+      "description": "Giấy in khổ A4 P5368",
+      "quantity": 15,
+      "unit": "ram",
+      "unitPrice": 879000,
+      "vatRate": 8,
+      "amount": 13185000
+    }
+  ],
+  "subtotal": 34420625,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 34420625,
+      "amount": 2753650
+    }
+  ],
+  "total": 37174275,
+  "fieldMeta": {}
+}

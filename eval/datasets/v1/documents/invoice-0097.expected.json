@@ -1,0 +1,68 @@
+{
+  "seller": {
+    "name": "Garcia-Riley SAMPLE",
+    "taxCode": "5193714551-891",
+    "address": "45553 Alvarez Mountains Suite 958 Taraborough, MT 28187"
+  },
+  "buyer": {
+    "name": "Evans, Higgins and English SAMPLE",
+    "taxCode": "9499051941",
+    "address": "236 Deanna Lock Ellischester, VI 27552"
+  },
+  "invoiceNo": "INV-253611759",
+  "series": "S25E",
+  "issueDate": "2025-12-23",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Ground coffee M9880",
+      "quantity": 9,
+      "unit": "kg",
+      "unitPrice": 89097,
+      "vatRate": 8,
+      "amount": 801873
+    },
+    {
+      "description": "A4 copy paper R3884",
+      "quantity": 7.5,
+      "unit": "ream",
+      "unitPrice": 69058,
+      "vatRate": 8,
+      "amount": 517935
+    },
+    {
+      "description": "Replacement air filter T5752",
+      "quantity": 15,
+      "unit": "pc",
+      "unitPrice": 21678,
+      "vatRate": 8,
+      "amount": 325170
+    },
+    {
+      "description": "Steel mounting bracket B2163",
+      "quantity": 9,
+      "unit": "pc",
+      "unitPrice": 30355,
+      "vatRate": 8,
+      "amount": 273195
+    },
+    {
+      "description": "Network cable T4120",
+      "quantity": 7,
+      "unit": "meter",
+      "unitPrice": 49421,
+      "vatRate": 8,
+      "amount": 345947
+    }
+  ],
+  "subtotal": 2264120,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 2264120,
+      "amount": 181130
+    }
+  ],
+  "total": 2445250,
+  "fieldMeta": {}
+}

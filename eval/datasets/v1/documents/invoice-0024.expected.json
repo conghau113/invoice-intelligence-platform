@@ -1,0 +1,52 @@
+{
+  "seller": {
+    "name": "Dennis and Sons SAMPLE",
+    "taxCode": "9585736384",
+    "address": "3194 Matthew Well Suite 879 East Beth, RI 14099"
+  },
+  "buyer": {
+    "name": "Jones-Murphy SAMPLE",
+    "taxCode": "2495063815",
+    "address": "529 Dominique Square Mirandahaven, UT 41158"
+  },
+  "invoiceNo": "INV-262210469",
+  "series": "S26B",
+  "issueDate": "2026-01-04",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Wooden office desk B5425",
+      "quantity": 3,
+      "unit": "pc",
+      "unitPrice": 12210,
+      "vatRate": 5,
+      "amount": 36630
+    },
+    {
+      "description": "Network switch D2019",
+      "quantity": 4,
+      "unit": "set",
+      "unitPrice": 11809,
+      "vatRate": 5,
+      "amount": 47236
+    },
+    {
+      "description": "Software maintenance fee T5711",
+      "quantity": 8,
+      "unit": "month",
+      "unitPrice": 31244,
+      "vatRate": 5,
+      "amount": 249952
+    }
+  ],
+  "subtotal": 333818,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 333818,
+      "amount": 16691
+    }
+  ],
+  "total": 350509,
+  "fieldMeta": {}
+}

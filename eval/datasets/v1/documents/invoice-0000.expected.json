@@ -1,0 +1,73 @@
+{
+  "seller": {
+    "name": "Nguyễn và Đặng Công ty Hợp danh SAMPLE",
+    "taxCode": "5964976311",
+    "address": "2/20/516 phố 28 phường Đông Hòa Thành phố Hồ Chí Minh 92729"
+  },
+  "buyer": {
+    "name": "Bùi và Lê Tập Đoàn SAMPLE",
+    "taxCode": "1125986119",
+    "address": "Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi"
+  },
+  "invoiceNo": "3873568",
+  "series": "C26TCA",
+  "issueDate": "2026-09-03",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Bút bi văn phòng M4647",
+      "quantity": 9,
+      "unit": "hộp",
+      "unitPrice": 4585,
+      "vatRate": 8,
+      "amount": 41265
+    },
+    {
+      "description": "Bút bi văn phòng A9379",
+      "quantity": 8,
+      "unit": "hộp",
+      "unitPrice": 44383,
+      "vatRate": 8,
+      "amount": 355064
+    },
+    {
+      "description": "Giấy in khổ A4 K2671",
+      "quantity": 8,
+      "unit": "ram",
+      "unitPrice": 20636,
+      "vatRate": 10,
+      "amount": 165088
+    },
+    {
+      "description": "Ghế xoay văn phòng A9733",
+      "quantity": 16,
+      "unit": "cái",
+      "unitPrice": 75279,
+      "vatRate": 10,
+      "amount": 1204464
+    },
+    {
+      "description": "Nước uống đóng chai B6905",
+      "quantity": 20,
+      "unit": "thùng",
+      "unitPrice": 26054,
+      "vatRate": 8,
+      "amount": 521080
+    }
+  ],
+  "subtotal": 2286961,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 917409,
+      "amount": 73393
+    },
+    {
+      "rate": 10,
+      "base": 1369552,
+      "amount": 136955
+    }
+  ],
+  "total": 2497309,
+  "fieldMeta": {}
+}

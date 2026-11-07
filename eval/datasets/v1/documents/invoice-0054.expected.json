@@ -1,0 +1,316 @@
+{
+  "seller": {
+    "name": "Trần và đối tác Tập Đoàn SAMPLE",
+    "taxCode": "9013904000",
+    "address": "557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng"
+  },
+  "buyer": {
+    "name": "Phạm Bùi Công ty TNHH SAMPLE",
+    "taxCode": "6904000855",
+    "address": "2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ"
+  },
+  "invoiceNo": "5435973",
+  "series": "C26TEA",
+  "issueDate": "2026-07-25",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Giấy in khổ A4 T5343",
+      "quantity": 9,
+      "unit": "ram",
+      "unitPrice": 547500,
+      "vatRate": 10,
+      "amount": 4927500
+    },
+    {
+      "description": "Dây cáp mạng R5777",
+      "quantity": 6.25,
+      "unit": "mét",
+      "unitPrice": 555500,
+      "vatRate": 10,
+      "amount": 3471875
+    },
+    {
+      "description": "Nước uống đóng chai D5086",
+      "quantity": 19,
+      "unit": "thùng",
+      "unitPrice": 319500,
+      "vatRate": 10,
+      "amount": 6070500
+    },
+    {
+      "description": "Thiết bị chuyển mạch A8529",
+      "quantity": 14.25,
+      "unit": "bộ",
+      "unitPrice": 647500,
+      "vatRate": 10,
+      "amount": 9226875
+    },
+    {
+      "description": "Thép cuộn cán nóng C1186",
+      "quantity": 20.5,
+      "unit": "tấn",
+      "unitPrice": 367500,
+      "vatRate": 10,
+      "amount": 7533750
+    },
+    {
+      "description": "Bàn làm việc gỗ M3862",
+      "quantity": 8.25,
+      "unit": "cái",
+      "unitPrice": 831500,
+      "vatRate": 10,
+      "amount": 6859875
+    },
+    {
+      "description": "Dây cáp mạng P4051",
+      "quantity": 15,
+      "unit": "mét",
+      "unitPrice": 497500,
+      "vatRate": 10,
+      "amount": 7462500
+    },
+    {
+      "description": "Nước uống đóng chai A3167",
+      "quantity": 4.5,
+      "unit": "thùng",
+      "unitPrice": 671000,
+      "vatRate": 10,
+      "amount": 3019500
+    },
+    {
+      "description": "Nước uống đóng chai H2355",
+      "quantity": 6.25,
+      "unit": "thùng",
+      "unitPrice": 125000,
+      "vatRate": 10,
+      "amount": 781250
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán K1776",
+      "quantity": 7.5,
+      "unit": "tháng",
+      "unitPrice": 738000,
+      "vatRate": 10,
+      "amount": 5535000
+    },
+    {
+      "description": "Thép cuộn cán nóng N6598",
+      "quantity": 7.25,
+      "unit": "tấn",
+      "unitPrice": 81500,
+      "vatRate": 10,
+      "amount": 590875
+    },
+    {
+      "description": "Sơn nước nội thất M9142",
+      "quantity": 3,
+      "unit": "lít",
+      "unitPrice": 36000,
+      "vatRate": 10,
+      "amount": 108000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa D6913",
+      "quantity": 19,
+      "unit": "chuyến",
+      "unitPrice": 13000,
+      "vatRate": 10,
+      "amount": 247000
+    },
+    {
+      "description": "Phí bảo trì phần mềm M6019",
+      "quantity": 9,
+      "unit": "tháng",
+      "unitPrice": 441000,
+      "vatRate": 10,
+      "amount": 3969000
+    },
+    {
+      "description": "Sơn nước nội thất E1034",
+      "quantity": 1,
+      "unit": "lít",
+      "unitPrice": 29500,
+      "vatRate": 10,
+      "amount": 29500
+    },
+    {
+      "description": "Xi măng xây dựng M9591",
+      "quantity": 20.5,
+      "unit": "bao",
+      "unitPrice": 700000,
+      "vatRate": 10,
+      "amount": 14350000
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp A7180",
+      "quantity": 3,
+      "unit": "lần",
+      "unitPrice": 19000,
+      "vatRate": 10,
+      "amount": 57000
+    },
+    {
+      "description": "Thiết bị chuyển mạch H8871",
+      "quantity": 18,
+      "unit": "bộ",
+      "unitPrice": 859000,
+      "vatRate": 10,
+      "amount": 15462000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa B1398",
+      "quantity": 13,
+      "unit": "chuyến",
+      "unitPrice": 400500,
+      "vatRate": 10,
+      "amount": 5206500
+    },
+    {
+      "description": "Phí bảo trì phần mềm D1410",
+      "quantity": 11.25,
+      "unit": "tháng",
+      "unitPrice": 481500,
+      "vatRate": 10,
+      "amount": 5416875
+    },
+    {
+      "description": "Dây cáp mạng T5938",
+      "quantity": 19,
+      "unit": "mét",
+      "unitPrice": 169000,
+      "vatRate": 10,
+      "amount": 3211000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa M1107",
+      "quantity": 3,
+      "unit": "chuyến",
+      "unitPrice": 348000,
+      "vatRate": 10,
+      "amount": 1044000
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán E6784",
+      "quantity": 7.25,
+      "unit": "tháng",
+      "unitPrice": 254500,
+      "vatRate": 10,
+      "amount": 1845125
+    },
+    {
+      "description": "Nước uống đóng chai H4816",
+      "quantity": 13.5,
+      "unit": "thùng",
+      "unitPrice": 219000,
+      "vatRate": 10,
+      "amount": 2956500
+    },
+    {
+      "description": "Bàn làm việc gỗ A6088",
+      "quantity": 11,
+      "unit": "cái",
+      "unitPrice": 122500,
+      "vatRate": 10,
+      "amount": 1347500
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa T4041",
+      "quantity": 19,
+      "unit": "chuyến",
+      "unitPrice": 697000,
+      "vatRate": 10,
+      "amount": 13243000
+    },
+    {
+      "description": "Thép cuộn cán nóng B8496",
+      "quantity": 6.5,
+      "unit": "tấn",
+      "unitPrice": 133000,
+      "vatRate": 10,
+      "amount": 864500
+    },
+    {
+      "description": "Phí bảo trì phần mềm H3793",
+      "quantity": 18,
+      "unit": "tháng",
+      "unitPrice": 213500,
+      "vatRate": 10,
+      "amount": 3843000
+    },
+    {
+      "description": "Dây cáp mạng K9153",
+      "quantity": 17,
+      "unit": "mét",
+      "unitPrice": 846500,
+      "vatRate": 10,
+      "amount": 14390500
+    },
+    {
+      "description": "Phí bảo trì phần mềm A9547",
+      "quantity": 7.5,
+      "unit": "tháng",
+      "unitPrice": 358000,
+      "vatRate": 10,
+      "amount": 2685000
+    },
+    {
+      "description": "Thiết bị chuyển mạch A2444",
+      "quantity": 3.25,
+      "unit": "bộ",
+      "unitPrice": 543500,
+      "vatRate": 10,
+      "amount": 1766375
+    },
+    {
+      "description": "Bút bi văn phòng R7505",
+      "quantity": 3,
+      "unit": "hộp",
+      "unitPrice": 720000,
+      "vatRate": 10,
+      "amount": 2160000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa C6409",
+      "quantity": 6,
+      "unit": "chuyến",
+      "unitPrice": 138500,
+      "vatRate": 10,
+      "amount": 831000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa M3416",
+      "quantity": 4,
+      "unit": "chuyến",
+      "unitPrice": 278500,
+      "vatRate": 10,
+      "amount": 1114000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa B9138",
+      "quantity": 20,
+      "unit": "chuyến",
+      "unitPrice": 608500,
+      "vatRate": 10,
+      "amount": 12170000
+    },
+    {
+      "description": "Phí bảo trì phần mềm N2009",
+      "quantity": 5,
+      "unit": "tháng",
+      "unitPrice": 124500,
+      "vatRate": 10,
+      "amount": 622500
+    }
+  ],
+  "subtotal": 164419375,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 164419375,
+      "amount": 16441938
+    }
+  ],
+  "total": 180861313,
+  "fieldMeta": {}
+}

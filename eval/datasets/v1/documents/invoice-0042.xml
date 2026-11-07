@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C25TAA</KHHDon>
+      <SHDon>7287974</SHDon>
+      <NLap>2025-10-27</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Trần và đối tác Tập Đoàn SAMPLE</Ten>
+        <MST>9013904000</MST>
+        <DChi>557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Hoàng Công ty TNHH SAMPLE</Ten>
+        <MST>9624084463</MST>
+        <DChi>32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Dây cáp mạng N3806</THHDVu>
+          <DVTinh>mét</DVTinh>
+          <SLuong>19.25</SLuong>
+          <DGia>367000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>7064750</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>7064750</TgTien>
+            <TThue>0</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>7064750</TgTCThue>
+        <TgTTTBSo>7064750</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

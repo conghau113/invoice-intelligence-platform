@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Phạm Công ty Hợp danh SAMPLE",
+    "taxCode": "5325048491",
+    "address": "Số 4 Ngõ 57 Giải Phóng, Phường Hòa Bình, Tỉnh Khánh Hòa"
+  },
+  "buyer": {
+    "name": "Hoàng Công ty TNHH SAMPLE",
+    "taxCode": "9624084463",
+    "address": "32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng"
+  },
+  "invoiceNo": "8889780",
+  "series": "C26TDD",
+  "issueDate": "2026-05-26",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Phí bảo trì phần mềm K2664",
+      "quantity": 16,
+      "unit": "tháng",
+      "unitPrice": 479500,
+      "vatRate": 8,
+      "amount": 7672000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa H1299",
+      "quantity": 10.25,
+      "unit": "chuyến",
+      "unitPrice": 515500,
+      "vatRate": 8,
+      "amount": 5283875
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán C2034",
+      "quantity": 3.25,
+      "unit": "tháng",
+      "unitPrice": 868500,
+      "vatRate": 8,
+      "amount": 2822625
+    },
+    {
+      "description": "Cà phê rang xay M9945",
+      "quantity": 9.25,
+      "unit": "kg",
+      "unitPrice": 181000,
+      "vatRate": 8,
+      "amount": 1674250
+    }
+  ],
+  "subtotal": 17452750,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 17452750,
+      "amount": 1396220
+    }
+  ],
+  "total": 18848970,
+  "fieldMeta": {}
+}

@@ -1,0 +1,116 @@
+{
+  "seller": {
+    "name": "Hoàng và Nguyễn Công ty TNHH MTV SAMPLE",
+    "taxCode": "3507497709",
+    "address": "97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng"
+  },
+  "buyer": {
+    "name": "Trần Phạm Công ty TNHH SAMPLE",
+    "taxCode": "0626615882",
+    "address": "7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai"
+  },
+  "invoiceNo": "5041998",
+  "series": "C26TAB",
+  "issueDate": "2026-01-01",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Giấy in khổ A4 C3911",
+      "quantity": 5,
+      "unit": "ram",
+      "unitPrice": 33500,
+      "vatRate": 0,
+      "amount": 167500
+    },
+    {
+      "description": "Thiết bị chuyển mạch M3608",
+      "quantity": 7.25,
+      "unit": "bộ",
+      "unitPrice": 786500,
+      "vatRate": 0,
+      "amount": 5702125
+    },
+    {
+      "description": "Dây cáp mạng C6725",
+      "quantity": 4,
+      "unit": "mét",
+      "unitPrice": 41000,
+      "vatRate": 0,
+      "amount": 164000
+    },
+    {
+      "description": "Thiết bị chuyển mạch R8121",
+      "quantity": 8,
+      "unit": "bộ",
+      "unitPrice": 219000,
+      "vatRate": 0,
+      "amount": 1752000
+    },
+    {
+      "description": "Thiết bị chuyển mạch C3551",
+      "quantity": 13.25,
+      "unit": "bộ",
+      "unitPrice": 348500,
+      "vatRate": 0,
+      "amount": 4617625
+    },
+    {
+      "description": "Nước uống đóng chai A6797",
+      "quantity": 6.25,
+      "unit": "thùng",
+      "unitPrice": 621500,
+      "vatRate": 0,
+      "amount": 3884375
+    },
+    {
+      "description": "Dây cáp mạng N4556",
+      "quantity": 2.5,
+      "unit": "mét",
+      "unitPrice": 152500,
+      "vatRate": 0,
+      "amount": 381250
+    },
+    {
+      "description": "Thiết bị chuyển mạch D7419",
+      "quantity": 1.25,
+      "unit": "bộ",
+      "unitPrice": 237500,
+      "vatRate": 0,
+      "amount": 296875
+    },
+    {
+      "description": "Dây cáp mạng B4628",
+      "quantity": 12,
+      "unit": "mét",
+      "unitPrice": 870500,
+      "vatRate": 0,
+      "amount": 10446000
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán C3002",
+      "quantity": 9,
+      "unit": "tháng",
+      "unitPrice": 614000,
+      "vatRate": 0,
+      "amount": 5526000
+    },
+    {
+      "description": "Bút bi văn phòng T1200",
+      "quantity": 10,
+      "unit": "hộp",
+      "unitPrice": 861500,
+      "vatRate": 0,
+      "amount": 8615000
+    }
+  ],
+  "subtotal": 41552750,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 41552750,
+      "amount": 0
+    }
+  ],
+  "total": 41552750,
+  "fieldMeta": {}
+}

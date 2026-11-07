@@ -1,0 +1,44 @@
+{
+  "seller": {
+    "name": "Mai Trần Công ty TNHH SAMPLE",
+    "taxCode": "3810984936-168",
+    "address": "Số 75 Khóm 46 Phố số 33 Phường Bình Minh TP. Hà Nội 01524"
+  },
+  "buyer": {
+    "name": "Phạm Bùi Công ty TNHH SAMPLE",
+    "taxCode": "6904000855",
+    "address": "2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ"
+  },
+  "invoiceNo": "9422119",
+  "series": "C26TDE",
+  "issueDate": "2026-07-25",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Cà phê rang xay B8072",
+      "quantity": 9,
+      "unit": "kg",
+      "unitPrice": 679500,
+      "vatRate": 0,
+      "amount": 6115500
+    },
+    {
+      "description": "Ghế xoay văn phòng C7924",
+      "quantity": 12,
+      "unit": "cái",
+      "unitPrice": 490000,
+      "vatRate": 0,
+      "amount": 5880000
+    }
+  ],
+  "subtotal": 11995500,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 11995500,
+      "amount": 0
+    }
+  ],
+  "total": 11995500,
+  "fieldMeta": {}
+}

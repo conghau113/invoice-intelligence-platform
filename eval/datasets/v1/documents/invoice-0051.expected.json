@@ -1,0 +1,76 @@
+{
+  "seller": {
+    "name": "Bridges Ltd SAMPLE",
+    "taxCode": "5155733271",
+    "address": "426 Smith Creek Suite 505 Lake Brentstad, CO 90639"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-266486727",
+  "series": "S26E",
+  "issueDate": "2026-09-09",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Accounting advisory service H1361",
+      "quantity": 20.25,
+      "unit": "month",
+      "unitPrice": 60682,
+      "vatRate": 5,
+      "amount": 1228811
+    },
+    {
+      "description": "Interior wall paint M9495",
+      "quantity": 15.25,
+      "unit": "liter",
+      "unitPrice": 56032,
+      "vatRate": 5,
+      "amount": 854488
+    },
+    {
+      "description": "Ground coffee H1718",
+      "quantity": 8,
+      "unit": "kg",
+      "unitPrice": 62347,
+      "vatRate": 5,
+      "amount": 498776
+    },
+    {
+      "description": "Accounting advisory service A8283",
+      "quantity": 15.5,
+      "unit": "month",
+      "unitPrice": 82710,
+      "vatRate": 5,
+      "amount": 1282005
+    },
+    {
+      "description": "Swivel office chair A5240",
+      "quantity": 16,
+      "unit": "pc",
+      "unitPrice": 71491,
+      "vatRate": 5,
+      "amount": 1143856
+    },
+    {
+      "description": "Accounting advisory service C2365",
+      "quantity": 11.25,
+      "unit": "month",
+      "unitPrice": 75947,
+      "vatRate": 5,
+      "amount": 854404
+    }
+  ],
+  "subtotal": 5862340,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 5862340,
+      "amount": 293117
+    }
+  ],
+  "total": 6155457,
+  "fieldMeta": {}
+}

@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26A</KHHDon>
+      <SHDon>INV-265148670</SHDon>
+      <NLap>2026-04-24</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Brooks, Tyler and Combs SAMPLE</Ten>
+        <MST>5385737979</MST>
+        <DChi>27249 Johnson Way Lake Alexandria, CO 66151</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Breanna Bryant SAMPLE</Ten>
+        <DChi>454 Julian Ridge Suite 194 Johnsonborough, GA 88709</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Bottled drinking water P1142</THHDVu>
+          <DVTinh>case</DVTinh>
+          <SLuong>20</SLuong>
+          <DGia>646.04</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>12920.80</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Black laser toner H5119</THHDVu>
+          <DVTinh>box</DVTinh>
+          <SLuong>8</SLuong>
+          <DGia>181.83</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>1454.64</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Accounting advisory service N4691</THHDVu>
+          <DVTinh>month</DVTinh>
+          <SLuong>10.25</SLuong>
+          <DGia>674.24</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>6910.96</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bottled drinking water H9911</THHDVu>
+          <DVTinh>case</DVTinh>
+          <SLuong>16</SLuong>
+          <DGia>354.40</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>5670.40</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Domestic freight service R3069</THHDVu>
+          <DVTinh>trip</DVTinh>
+          <SLuong>10.5</SLuong>
+          <DGia>248.38</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>2607.99</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Office ballpoint pens T4995</THHDVu>
+          <DVTinh>box</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>343.57</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>687.14</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Accounting advisory service M7137</THHDVu>
+          <DVTinh>month</DVTinh>
+          <SLuong>12.25</SLuong>
+          <DGia>42.15</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>516.34</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Network switch T7340</THHDVu>
+          <DVTinh>set</DVTinh>
+          <SLuong>16</SLuong>
+          <DGia>614.88</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>9838.08</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>14552.34</TgTien>
+            <TThue>0.00</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>26054.01</TgTien>
+            <TThue>2605.40</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>40606.35</TgTCThue>
+        <TgTTTBSo>43211.75</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

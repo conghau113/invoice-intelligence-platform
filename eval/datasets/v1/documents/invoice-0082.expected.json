@@ -1,0 +1,68 @@
+{
+  "seller": {
+    "name": "Mai Trần Công ty TNHH SAMPLE",
+    "taxCode": "3810984936-168",
+    "address": "Số 75 Khóm 46 Phố số 33 Phường Bình Minh TP. Hà Nội 01524"
+  },
+  "buyer": {
+    "name": "Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE",
+    "taxCode": "0618511992",
+    "address": "69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng"
+  },
+  "invoiceNo": "6500022",
+  "series": "C26TBD",
+  "issueDate": "2026-01-28",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Bút bi văn phòng D4331",
+      "quantity": 1,
+      "unit": "hộp",
+      "unitPrice": 687500,
+      "vatRate": 10,
+      "amount": 687500
+    },
+    {
+      "description": "Bút bi văn phòng H9500",
+      "quantity": 7.5,
+      "unit": "hộp",
+      "unitPrice": 715000,
+      "vatRate": 10,
+      "amount": 5362500
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa T7364",
+      "quantity": 19,
+      "unit": "chuyến",
+      "unitPrice": 341000,
+      "vatRate": 10,
+      "amount": 6479000
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp D6054",
+      "quantity": 4.5,
+      "unit": "lần",
+      "unitPrice": 120500,
+      "vatRate": 10,
+      "amount": 542250
+    },
+    {
+      "description": "Thiết bị chuyển mạch B3542",
+      "quantity": 4.25,
+      "unit": "bộ",
+      "unitPrice": 613500,
+      "vatRate": 10,
+      "amount": 2607375
+    }
+  ],
+  "subtotal": 15678625,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 15678625,
+      "amount": 1567863
+    }
+  ],
+  "total": 17246488,
+  "fieldMeta": {}
+}

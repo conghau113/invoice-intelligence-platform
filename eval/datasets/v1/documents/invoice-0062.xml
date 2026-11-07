@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TAB</KHHDon>
+      <SHDon>3850620</SHDon>
+      <NLap>2026-06-01</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Hoàng và Mai Công ty TNHH MTV SAMPLE</Ten>
+        <MST>0608405931</MST>
+        <DChi>14 Hoàng Hoa Thám, xã Đông Hòa, tỉnh Tuyên Quang</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Hoàng Công ty TNHH SAMPLE</Ten>
+        <MST>9624084463</MST>
+        <DChi>32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm M8525</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>4</SLuong>
+          <DGia>251500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1006000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai B8567</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>8.5</SLuong>
+          <DGia>220000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1870000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay C4872</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>20.25</SLuong>
+          <DGia>130500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2642625</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>5518625</TgTien>
+            <TThue>275931</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>5518625</TgTCThue>
+        <TgTTTBSo>5794556</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

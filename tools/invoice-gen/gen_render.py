@@ -124,6 +124,8 @@ def render_html(doc: Document) -> str:
         doc_id=doc.id,
         watermark=WATERMARK,
         fonts_css=_FONTS_CSS,
+        note=doc.note,
+        note_color=doc.note_color,
     )
 
 

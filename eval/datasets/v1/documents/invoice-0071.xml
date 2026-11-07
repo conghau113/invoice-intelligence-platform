@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TCB</KHHDon>
+      <SHDon>8788553</SHDon>
+      <NLap>2026-01-22</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Nguyễn và Đặng Công ty Hợp danh SAMPLE</Ten>
+        <MST>5964976311</MST>
+        <DChi>2/20/516 phố 28 phường Đông Hòa Thành phố Hồ Chí Minh 92729</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE</Ten>
+        <MST>0618511992</MST>
+        <DChi>69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất H9458</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>20.25</SLuong>
+          <DGia>772000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>15633000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng T6696</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>1.25</SLuong>
+          <DGia>240500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>300625</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán D6704</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>20</SLuong>
+          <DGia>659000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>13180000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng P8363</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>1</SLuong>
+          <DGia>464500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>464500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng D8621</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>19</SLuong>
+          <DGia>342000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>6498000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>36076125</TgTien>
+            <TThue>0</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>36076125</TgTCThue>
+        <TgTTTBSo>36076125</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

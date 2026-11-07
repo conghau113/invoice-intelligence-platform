@@ -1,0 +1,44 @@
+{
+  "seller": {
+    "name": "Nguyễn Công ty Hợp danh SAMPLE",
+    "taxCode": "6801611429-434",
+    "address": "9 Đường Trần Bình Trọng xã An Hải Thanh Hóa 95532"
+  },
+  "buyer": {
+    "name": "Bùi và Lê Tập Đoàn SAMPLE",
+    "taxCode": "1125986119",
+    "address": "Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi"
+  },
+  "invoiceNo": "2639413",
+  "series": "C26TCC",
+  "issueDate": "2026-07-05",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Dịch vụ vận chuyển nội địa T7327",
+      "quantity": 6.5,
+      "unit": "chuyến",
+      "unitPrice": 121000,
+      "vatRate": 8,
+      "amount": 786500
+    },
+    {
+      "description": "Thép cuộn cán nóng T4666",
+      "quantity": 19,
+      "unit": "tấn",
+      "unitPrice": 406000,
+      "vatRate": 8,
+      "amount": 7714000
+    }
+  ],
+  "subtotal": 8500500,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 8500500,
+      "amount": 680040
+    }
+  ],
+  "total": 9180540,
+  "fieldMeta": {}
+}

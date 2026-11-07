@@ -1,0 +1,68 @@
+{
+  "seller": {
+    "name": "Nguyễn Công ty Hợp danh SAMPLE",
+    "taxCode": "6801611429-434",
+    "address": "9 Đường Trần Bình Trọng xã An Hải Thanh Hóa 95532"
+  },
+  "buyer": {
+    "name": "Hoàng Công ty TNHH SAMPLE",
+    "taxCode": "9624084463",
+    "address": "32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng"
+  },
+  "invoiceNo": "4000821",
+  "series": "C25TEB",
+  "issueDate": "2025-11-07",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Nước uống đóng chai T3157",
+      "quantity": 16.5,
+      "unit": "thùng",
+      "unitPrice": 336000,
+      "vatRate": 8,
+      "amount": 5544000
+    },
+    {
+      "description": "Thiết bị chuyển mạch P1754",
+      "quantity": 7.25,
+      "unit": "bộ",
+      "unitPrice": 291500,
+      "vatRate": 8,
+      "amount": 2113375
+    },
+    {
+      "description": "Nước uống đóng chai E1925",
+      "quantity": 3,
+      "unit": "thùng",
+      "unitPrice": 823000,
+      "vatRate": 8,
+      "amount": 2469000
+    },
+    {
+      "description": "Xi măng xây dựng R3843",
+      "quantity": 9.5,
+      "unit": "bao",
+      "unitPrice": 821500,
+      "vatRate": 8,
+      "amount": 7804250
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa E8230",
+      "quantity": 1,
+      "unit": "chuyến",
+      "unitPrice": 45500,
+      "vatRate": 8,
+      "amount": 45500
+    }
+  ],
+  "subtotal": 17976125,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 17976125,
+      "amount": 1438090
+    }
+  ],
+  "total": 19414215,
+  "fieldMeta": {}
+}

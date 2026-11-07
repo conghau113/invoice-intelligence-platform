@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 from gen_data import Document, build_document
+from gen_injection import build_injection_documents
 from gen_render import Renderer, ground_truth_bytes, open_renderer, xml_bytes
 
 OUT_DIR = Path(__file__).resolve().parent / "out"
@@ -63,7 +64,7 @@ def _render_files(doc: Document, renderer: Renderer) -> tuple[dict[str, bytes], 
 
 
 def manifest_entry(doc: Document, files: dict[str, bytes], primary: str, pages: int) -> dict:
-    return {
+    entry = {
         "id": doc.id,
         "difficulty": doc.difficulty,
         "variant": doc.variant.name,
@@ -75,18 +76,27 @@ def manifest_entry(doc: Document, files: dict[str, bytes], primary: str, pages: 
         "primary": primary,
         "files": {name: sha256(content) for name, content in sorted(files.items())},
     }
+    if doc.attack is not None:
+        entry["attack"] = doc.attack
+    return entry
 
 
-def generate(out_dir: Path, seed: int, count: int) -> dict[str, Any]:
+def generate(out_dir: Path, seed: int, count: int, injection: bool = False) -> dict[str, Any]:
     """Replaces the dataset in out_dir and returns the manifest. Other files are not touched."""
     out_dir.mkdir(parents=True, exist_ok=True)
     # A smaller --n must not leave old documents behind. Only our own names: never a whole folder.
-    for path in [*out_dir.glob("invoice-*"), out_dir / "manifest.json"]:
+    for path in [
+        *out_dir.glob("invoice-*"),
+        *out_dir.glob("injection-*"),
+        out_dir / "manifest.json",
+    ]:
         path.unlink(missing_ok=True)
     entries = []
+    documents = [build_document(seed, index) for index in range(count)]
+    if injection:
+        documents += build_injection_documents(seed)
     with open_renderer() as renderer:
-        for index in range(count):
-            doc = build_document(seed, index)
+        for doc in documents:
             files, primary, pages = _render_files(doc, renderer)
             for name, content in files.items():
                 (out_dir / name).write_bytes(content)
@@ -101,6 +111,11 @@ def main() -> None:
     parser.add_argument("--n", type=int, default=100)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument(
+        "--injection",
+        action="store_true",
+        help="also write the attack documents of gen_injection.py (not counted in --n)",
+    )
+    parser.add_argument(
         "--write-golden",
         action="store_true",
         help=f"rewrite {GOLDEN_COUNT} data samples in packages/contracts/fixtures/generated",
@@ -114,7 +129,7 @@ def main() -> None:
         return
     if not 1 <= args.n <= MAX_DOCUMENTS or args.seed < 0:
         parser.error(f"--n must be 1..{MAX_DOCUMENTS} and --seed must not be negative")
-    manifest = generate(OUT_DIR, args.seed, args.n)
+    manifest = generate(OUT_DIR, args.seed, args.n, args.injection)
     size = sum(path.stat().st_size for path in OUT_DIR.iterdir())
     digest = sha256((OUT_DIR / "manifest.json").read_bytes())
     print(f"documents={len(manifest['documents'])} bytes={size} manifest_sha256={digest}")

@@ -1,0 +1,92 @@
+{
+  "seller": {
+    "name": "Phạm Công ty Hợp danh SAMPLE",
+    "taxCode": "5325048491",
+    "address": "Số 4 Ngõ 57 Giải Phóng, Phường Hòa Bình, Tỉnh Khánh Hòa"
+  },
+  "buyer": {
+    "name": "Dương Tấn Jane SAMPLE",
+    "taxCode": null,
+    "address": "Số 8/61/788 Phố số 2 phường Đông Hòa tỉnh Tây Ninh"
+  },
+  "invoiceNo": "1279798",
+  "series": "C26TBE",
+  "issueDate": "2026-05-09",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Thép cuộn cán nóng P1741",
+      "quantity": 10,
+      "unit": "tấn",
+      "unitPrice": 135000,
+      "vatRate": 10,
+      "amount": 1350000
+    },
+    {
+      "description": "Bút bi văn phòng K9217",
+      "quantity": 13,
+      "unit": "hộp",
+      "unitPrice": 149500,
+      "vatRate": 10,
+      "amount": 1943500
+    },
+    {
+      "description": "Cà phê rang xay M2156",
+      "quantity": 11,
+      "unit": "kg",
+      "unitPrice": 360000,
+      "vatRate": 10,
+      "amount": 3960000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa P5707",
+      "quantity": 3,
+      "unit": "chuyến",
+      "unitPrice": 8000,
+      "vatRate": 10,
+      "amount": 24000
+    },
+    {
+      "description": "Bút bi văn phòng N8228",
+      "quantity": 9.25,
+      "unit": "hộp",
+      "unitPrice": 799000,
+      "vatRate": 10,
+      "amount": 7390750
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán M4044",
+      "quantity": 13.25,
+      "unit": "tháng",
+      "unitPrice": 650500,
+      "vatRate": 10,
+      "amount": 8619125
+    },
+    {
+      "description": "Mực in laser đen A5992",
+      "quantity": 5,
+      "unit": "hộp",
+      "unitPrice": 157000,
+      "vatRate": 10,
+      "amount": 785000
+    },
+    {
+      "description": "Xi măng xây dựng N7941",
+      "quantity": 13,
+      "unit": "bao",
+      "unitPrice": 640500,
+      "vatRate": 10,
+      "amount": 8326500
+    }
+  ],
+  "subtotal": 32398875,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 32398875,
+      "amount": 3239888
+    }
+  ],
+  "total": 35638763,
+  "fieldMeta": {}
+}

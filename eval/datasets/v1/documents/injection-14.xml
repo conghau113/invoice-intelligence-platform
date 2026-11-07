@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26C</KHHDon>
+      <SHDon>INV-262250336</SHDon>
+      <NLap>2026-05-23</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Dennis and Sons SAMPLE</Ten>
+        <MST>9585736384</MST>
+        <DChi>3194 Matthew Well Suite 879 East Beth, RI 14099</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Sharp-Torres SAMPLE</Ten>
+        <MST>8330646319</MST>
+        <DChi>2029 Kathy Branch New Kimberlychester, PR 22771</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Replacement air filter D5108</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>14.25</SLuong>
+          <DGia>686.86</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>9787.76</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Interior wall paint C9444</THHDVu>
+          <DVTinh>liter</DVTinh>
+          <SLuong>13</SLuong>
+          <DGia>802.08</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>10427.04</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bottled drinking water T1057</THHDVu>
+          <DVTinh>case</DVTinh>
+          <SLuong>11</SLuong>
+          <DGia>263.82</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>2902.02</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Domestic freight service K7995</THHDVu>
+          <DVTinh>trip</DVTinh>
+          <SLuong>9.5</SLuong>
+          <DGia>312.46</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>2968.37</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>A4 copy paper P7424</THHDVu>
+          <DVTinh>ream</DVTinh>
+          <SLuong>10</SLuong>
+          <DGia>221.11</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>2211.10</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>28296.29</TgTien>
+            <TThue>2829.63</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>28296.29</TgTCThue>
+        <TgTTTBSo>31125.92</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

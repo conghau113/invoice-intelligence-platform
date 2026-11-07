@@ -1,0 +1,57 @@
+{
+  "seller": {
+    "name": "Trần và đối tác Tập Đoàn SAMPLE",
+    "taxCode": "9013904000",
+    "address": "557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng"
+  },
+  "buyer": {
+    "name": "Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE",
+    "taxCode": "0618511992",
+    "address": "69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng"
+  },
+  "invoiceNo": "6621934",
+  "series": "C26TED",
+  "issueDate": "2026-06-14",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Nước uống đóng chai K1764",
+      "quantity": 5,
+      "unit": "thùng",
+      "unitPrice": 374500,
+      "vatRate": 8,
+      "amount": 1872500
+    },
+    {
+      "description": "Cà phê rang xay M1671",
+      "quantity": 16.25,
+      "unit": "kg",
+      "unitPrice": 777500,
+      "vatRate": 10,
+      "amount": 12634375
+    },
+    {
+      "description": "Bàn làm việc gỗ R5953",
+      "quantity": 1,
+      "unit": "cái",
+      "unitPrice": 243500,
+      "vatRate": 8,
+      "amount": 243500
+    }
+  ],
+  "subtotal": 14750375,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 2116000,
+      "amount": 169280
+    },
+    {
+      "rate": 10,
+      "base": 12634375,
+      "amount": 1263438
+    }
+  ],
+  "total": 16183093,
+  "fieldMeta": {}
+}

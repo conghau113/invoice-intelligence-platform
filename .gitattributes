@@ -3,3 +3,7 @@
 *.png binary
 *.jpg binary
 *.pdf binary
+# The frozen eval dataset is checked by hash: git must not change a byte. Only the generated files
+# stay collapsed in a diff, so the README and the manifest are still read.
+eval/datasets/** -text
+eval/datasets/*/documents/** linguist-generated=true

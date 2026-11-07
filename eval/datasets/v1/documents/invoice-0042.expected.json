@@ -1,0 +1,36 @@
+{
+  "seller": {
+    "name": "Trần và đối tác Tập Đoàn SAMPLE",
+    "taxCode": "9013904000",
+    "address": "557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng"
+  },
+  "buyer": {
+    "name": "Hoàng Công ty TNHH SAMPLE",
+    "taxCode": "9624084463",
+    "address": "32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng"
+  },
+  "invoiceNo": "7287974",
+  "series": "C25TAA",
+  "issueDate": "2025-10-27",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Dây cáp mạng N3806",
+      "quantity": 19.25,
+      "unit": "mét",
+      "unitPrice": 367000,
+      "vatRate": 0,
+      "amount": 7064750
+    }
+  ],
+  "subtotal": 7064750,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 7064750,
+      "amount": 0
+    }
+  ],
+  "total": 7064750,
+  "fieldMeta": {}
+}

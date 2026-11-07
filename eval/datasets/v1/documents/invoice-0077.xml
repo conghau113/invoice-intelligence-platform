@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C25TED</KHHDon>
+      <SHDon>5195877</SHDon>
+      <NLap>2025-12-06</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Nguyễn Công ty Hợp danh SAMPLE</Ten>
+        <MST>6801611429-434</MST>
+        <DChi>9 Đường Trần Bình Trọng xã An Hải Thanh Hóa 95532</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Phạm Bùi Công ty TNHH SAMPLE</Ten>
+        <MST>6904000855</MST>
+        <DChi>2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen N4843</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>13</SLuong>
+          <DGia>828500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>10770500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vệ sinh công nghiệp A1393</THHDVu>
+          <DVTinh>lần</DVTinh>
+          <SLuong>6.5</SLuong>
+          <DGia>631500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>4104750</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>14875250</TgTien>
+            <TThue>1487525</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>14875250</TgTCThue>
+        <TgTTTBSo>16362775</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

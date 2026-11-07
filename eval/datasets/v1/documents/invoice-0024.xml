@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26B</KHHDon>
+      <SHDon>INV-262210469</SHDon>
+      <NLap>2026-01-04</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Dennis and Sons SAMPLE</Ten>
+        <MST>9585736384</MST>
+        <DChi>3194 Matthew Well Suite 879 East Beth, RI 14099</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Jones-Murphy SAMPLE</Ten>
+        <MST>2495063815</MST>
+        <DChi>529 Dominique Square Mirandahaven, UT 41158</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Wooden office desk B5425</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>122.10</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>366.30</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Network switch D2019</THHDVu>
+          <DVTinh>set</DVTinh>
+          <SLuong>4</SLuong>
+          <DGia>118.09</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>472.36</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Software maintenance fee T5711</THHDVu>
+          <DVTinh>month</DVTinh>
+          <SLuong>8</SLuong>
+          <DGia>312.44</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2499.52</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>3338.18</TgTien>
+            <TThue>166.91</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>3338.18</TgTCThue>
+        <TgTTTBSo>3505.09</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

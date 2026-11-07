@@ -1,0 +1,76 @@
+{
+  "seller": {
+    "name": "Bridges Ltd SAMPLE",
+    "taxCode": "5155733271",
+    "address": "426 Smith Creek Suite 505 Lake Brentstad, CO 90639"
+  },
+  "buyer": {
+    "name": "James Cooper SAMPLE",
+    "taxCode": null,
+    "address": "0029 Nicholas Crest North Jamesstad, WY 62438"
+  },
+  "invoiceNo": "INV-251102514",
+  "series": "S25A",
+  "issueDate": "2025-12-29",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Black laser toner K5117",
+      "quantity": 8,
+      "unit": "box",
+      "unitPrice": 47697,
+      "vatRate": 8,
+      "amount": 381576
+    },
+    {
+      "description": "Steel mounting bracket R1833",
+      "quantity": 1.25,
+      "unit": "pc",
+      "unitPrice": 75416,
+      "vatRate": 8,
+      "amount": 94270
+    },
+    {
+      "description": "Replacement air filter R7388",
+      "quantity": 14.5,
+      "unit": "pc",
+      "unitPrice": 64101,
+      "vatRate": 8,
+      "amount": 929465
+    },
+    {
+      "description": "Network switch A7774",
+      "quantity": 11,
+      "unit": "set",
+      "unitPrice": 41865,
+      "vatRate": 8,
+      "amount": 460515
+    },
+    {
+      "description": "Accounting advisory service B8016",
+      "quantity": 19.25,
+      "unit": "month",
+      "unitPrice": 56528,
+      "vatRate": 8,
+      "amount": 1088164
+    },
+    {
+      "description": "Network cable K8072",
+      "quantity": 2,
+      "unit": "meter",
+      "unitPrice": 44756,
+      "vatRate": 8,
+      "amount": 89512
+    }
+  ],
+  "subtotal": 3043502,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 3043502,
+      "amount": 243480
+    }
+  ],
+  "total": 3286982,
+  "fieldMeta": {}
+}

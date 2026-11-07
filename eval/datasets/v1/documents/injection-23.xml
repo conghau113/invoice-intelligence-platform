@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C25TCC</KHHDon>
+      <SHDon>9673831</SHDon>
+      <NLap>2025-11-19</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Hoàng và Nguyễn Công ty TNHH MTV SAMPLE</Ten>
+        <MST>3507497709</MST>
+        <DChi>97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE</Ten>
+        <MST>0618511992</MST>
+        <DChi>69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng N3440</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>11</SLuong>
+          <DGia>84.71</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>931.81</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch B5298</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>10</SLuong>
+          <DGia>485.86</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>4858.60</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng R7881</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>6.25</SLuong>
+          <DGia>242.23</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>1513.94</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vệ sinh công nghiệp D5204</THHDVu>
+          <DVTinh>lần</DVTinh>
+          <SLuong>11</SLuong>
+          <DGia>162.30</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>1785.30</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay T1404</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>17.25</SLuong>
+          <DGia>798.77</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>13778.78</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>22868.43</TgTien>
+            <TThue>0.00</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>22868.43</TgTCThue>
+        <TgTTTBSo>22868.43</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

@@ -1,0 +1,52 @@
+{
+  "seller": {
+    "name": "Phạm Công ty Hợp danh SAMPLE",
+    "taxCode": "5325048491",
+    "address": "Số 4 Ngõ 57 Giải Phóng, Phường Hòa Bình, Tỉnh Khánh Hòa"
+  },
+  "buyer": {
+    "name": "Trần Phạm Công ty TNHH SAMPLE",
+    "taxCode": "0626615882",
+    "address": "7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai"
+  },
+  "invoiceNo": "9187472",
+  "series": "C25TCD",
+  "issueDate": "2025-11-16",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Dịch vụ vận chuyển nội địa C3880",
+      "quantity": 20,
+      "unit": "chuyến",
+      "unitPrice": 84009,
+      "vatRate": 8,
+      "amount": 1680180
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán E4484",
+      "quantity": 11.5,
+      "unit": "tháng",
+      "unitPrice": 20300,
+      "vatRate": 8,
+      "amount": 233450
+    },
+    {
+      "description": "Nước uống đóng chai R2500",
+      "quantity": 16.5,
+      "unit": "thùng",
+      "unitPrice": 74223,
+      "vatRate": 8,
+      "amount": 1224680
+    }
+  ],
+  "subtotal": 3138310,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 3138310,
+      "amount": 251065
+    }
+  ],
+  "total": 3389375,
+  "fieldMeta": {}
+}

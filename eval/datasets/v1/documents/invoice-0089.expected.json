@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Dennis and Sons SAMPLE",
+    "taxCode": "9585736384",
+    "address": "3194 Matthew Well Suite 879 East Beth, RI 14099"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-267437954",
+  "series": "S26B",
+  "issueDate": "2026-07-11",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Swivel office chair P7036",
+      "quantity": 1.25,
+      "unit": "pc",
+      "unitPrice": 12275,
+      "vatRate": 10,
+      "amount": 15344
+    },
+    {
+      "description": "Network cable C2081",
+      "quantity": 14,
+      "unit": "meter",
+      "unitPrice": 72368,
+      "vatRate": 10,
+      "amount": 1013152
+    },
+    {
+      "description": "Industrial cleaning service N7243",
+      "quantity": 4.25,
+      "unit": "visit",
+      "unitPrice": 47255,
+      "vatRate": 10,
+      "amount": 200834
+    },
+    {
+      "description": "Interior wall paint D5039",
+      "quantity": 10.5,
+      "unit": "liter",
+      "unitPrice": 37236,
+      "vatRate": 10,
+      "amount": 390978
+    }
+  ],
+  "subtotal": 1620308,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 1620308,
+      "amount": 162031
+    }
+  ],
+  "total": 1782339,
+  "fieldMeta": {}
+}

@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TCC</KHHDon>
+      <SHDon>8927998</SHDon>
+      <NLap>2026-02-21</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Nguyễn Công ty Hợp danh SAMPLE</Ten>
+        <MST>6801611429-434</MST>
+        <DChi>9 Đường Trần Bình Trọng xã An Hải Thanh Hóa 95532</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE</Ten>
+        <MST>0618511992</MST>
+        <DChi>69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vệ sinh công nghiệp K1018</THHDVu>
+          <DVTinh>lần</DVTinh>
+          <SLuong>14.25</SLuong>
+          <DGia>184500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>2629125</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm K2894</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>16.25</SLuong>
+          <DGia>537000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>8726250</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch N3965</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>33500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>569500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa N7071</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>7</SLuong>
+          <DGia>339500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>2376500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai M7814</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>4</SLuong>
+          <DGia>307500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>1230000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>15531375</TgTien>
+            <TThue>0</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>15531375</TgTCThue>
+        <TgTTTBSo>15531375</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

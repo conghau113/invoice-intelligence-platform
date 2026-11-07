@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26E</KHHDon>
+      <SHDon>INV-269160452</SHDon>
+      <NLap>2026-09-26</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Brooks, Tyler and Combs SAMPLE</Ten>
+        <MST>5385737979</MST>
+        <DChi>27249 Johnson Way Lake Alexandria, CO 66151</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Jones-Murphy SAMPLE</Ten>
+        <MST>2495063815</MST>
+        <DChi>529 Dominique Square Mirandahaven, UT 41158</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Steel mounting bracket T3844</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>596.40</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>10138.80</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Industrial cleaning service N8173</THHDVu>
+          <DVTinh>visit</DVTinh>
+          <SLuong>11</SLuong>
+          <DGia>877.81</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>9655.91</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Software maintenance fee A8446</THHDVu>
+          <DVTinh>month</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>478.96</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>1436.88</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Network cable B4373</THHDVu>
+          <DVTinh>meter</DVTinh>
+          <SLuong>8</SLuong>
+          <DGia>175.16</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>1401.28</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>11575.68</TgTien>
+            <TThue>926.05</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>11057.19</TgTien>
+            <TThue>1105.72</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>22632.87</TgTCThue>
+        <TgTTTBSo>24664.64</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

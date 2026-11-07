@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TBE</KHHDon>
+      <SHDon>2079482</SHDon>
+      <NLap>2026-04-23</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Mai Trần Công ty TNHH SAMPLE</Ten>
+        <MST>3810984936-168</MST>
+        <DChi>Số 75 Khóm 46 Phố số 33 Phường Bình Minh TP. Hà Nội 01524</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Hoàng Công ty TNHH SAMPLE</Ten>
+        <MST>9624084463</MST>
+        <DChi>32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán K5217</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>6.5</SLuong>
+          <DGia>262500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1706250</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ C4697</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>5</SLuong>
+          <DGia>784500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>3922500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ K1479</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>4.5</SLuong>
+          <DGia>680500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>3062250</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai H1784</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>6.25</SLuong>
+          <DGia>840000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>5250000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>13941000</TgTien>
+            <TThue>697050</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>13941000</TgTCThue>
+        <TgTTTBSo>14638050</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

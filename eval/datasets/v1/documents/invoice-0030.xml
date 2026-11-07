@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C25TEB</KHHDon>
+      <SHDon>4000821</SHDon>
+      <NLap>2025-11-07</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Nguyễn Công ty Hợp danh SAMPLE</Ten>
+        <MST>6801611429-434</MST>
+        <DChi>9 Đường Trần Bình Trọng xã An Hải Thanh Hóa 95532</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Hoàng Công ty TNHH SAMPLE</Ten>
+        <MST>9624084463</MST>
+        <DChi>32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai T3157</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>16.5</SLuong>
+          <DGia>336000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>5544000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch P1754</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>7.25</SLuong>
+          <DGia>291500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2113375</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai E1925</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>823000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2469000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng R3843</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>9.5</SLuong>
+          <DGia>821500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>7804250</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa E8230</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>1</SLuong>
+          <DGia>45500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>45500</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>17976125</TgTien>
+            <TThue>1438090</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>17976125</TgTCThue>
+        <TgTTTBSo>19414215</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

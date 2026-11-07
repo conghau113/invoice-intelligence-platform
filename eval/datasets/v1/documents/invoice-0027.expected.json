@@ -1,0 +1,52 @@
+{
+  "seller": {
+    "name": "Garcia-Riley SAMPLE",
+    "taxCode": "5193714551-891",
+    "address": "45553 Alvarez Mountains Suite 958 Taraborough, MT 28187"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-269537674",
+  "series": "S26A",
+  "issueDate": "2026-01-03",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Steel mounting bracket A8143",
+      "quantity": 19,
+      "unit": "pc",
+      "unitPrice": 518500,
+      "vatRate": 0,
+      "amount": 9851500
+    },
+    {
+      "description": "Office ballpoint pens C7576",
+      "quantity": 19,
+      "unit": "box",
+      "unitPrice": 866500,
+      "vatRate": 0,
+      "amount": 16463500
+    },
+    {
+      "description": "Swivel office chair H1004",
+      "quantity": 7,
+      "unit": "pc",
+      "unitPrice": 182000,
+      "vatRate": 0,
+      "amount": 1274000
+    }
+  ],
+  "subtotal": 27589000,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 27589000,
+      "amount": 0
+    }
+  ],
+  "total": 27589000,
+  "fieldMeta": {}
+}

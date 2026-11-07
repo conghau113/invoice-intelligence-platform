@@ -1,0 +1,92 @@
+{
+  "seller": {
+    "name": "Phạm Công ty Hợp danh SAMPLE",
+    "taxCode": "5325048491",
+    "address": "Số 4 Ngõ 57 Giải Phóng, Phường Hòa Bình, Tỉnh Khánh Hòa"
+  },
+  "buyer": {
+    "name": "Trần Phạm Công ty TNHH SAMPLE",
+    "taxCode": "0626615882",
+    "address": "7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai"
+  },
+  "invoiceNo": "2956100",
+  "series": "C26TCC",
+  "issueDate": "2026-03-18",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Dịch vụ tư vấn kế toán E7986",
+      "quantity": 6,
+      "unit": "tháng",
+      "unitPrice": 383000,
+      "vatRate": 8,
+      "amount": 2298000
+    },
+    {
+      "description": "Phí bảo trì phần mềm K8657",
+      "quantity": 12,
+      "unit": "tháng",
+      "unitPrice": 295000,
+      "vatRate": 8,
+      "amount": 3540000
+    },
+    {
+      "description": "Bàn làm việc gỗ K9206",
+      "quantity": 7.5,
+      "unit": "cái",
+      "unitPrice": 669000,
+      "vatRate": 8,
+      "amount": 5017500
+    },
+    {
+      "description": "Bút bi văn phòng C3770",
+      "quantity": 12.5,
+      "unit": "hộp",
+      "unitPrice": 811000,
+      "vatRate": 8,
+      "amount": 10137500
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán R6501",
+      "quantity": 17,
+      "unit": "tháng",
+      "unitPrice": 255500,
+      "vatRate": 8,
+      "amount": 4343500
+    },
+    {
+      "description": "Thiết bị chuyển mạch T4423",
+      "quantity": 6,
+      "unit": "bộ",
+      "unitPrice": 814000,
+      "vatRate": 8,
+      "amount": 4884000
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán B4897",
+      "quantity": 6,
+      "unit": "tháng",
+      "unitPrice": 403000,
+      "vatRate": 8,
+      "amount": 2418000
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán D5880",
+      "quantity": 10,
+      "unit": "tháng",
+      "unitPrice": 275000,
+      "vatRate": 8,
+      "amount": 2750000
+    }
+  ],
+  "subtotal": 35388500,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 35388500,
+      "amount": 2831080
+    }
+  ],
+  "total": 38219580,
+  "fieldMeta": {}
+}

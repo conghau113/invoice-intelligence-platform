@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TDE</KHHDon>
+      <SHDon>2623311</SHDon>
+      <NLap>2026-04-03</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Mai Trần Công ty TNHH SAMPLE</Ten>
+        <MST>3810984936-168</MST>
+        <DChi>Số 75 Khóm 46 Phố số 33 Phường Bình Minh TP. Hà Nội 01524</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Nguyễn Phú John SAMPLE</Ten>
+        <DChi>44/688 Phố Võ Văn Kiệt xã An Nhơn Tỉnh Cao Bằng 02073</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch D2403</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>358.84</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>6100.28</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay N6366</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>710.51</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>2131.53</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng K4498</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>608.26</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>10340.42</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen B8624</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>646.23</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>1292.46</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ H4536</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>7</SLuong>
+          <DGia>708.92</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>4962.44</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm N8207</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>4</SLuong>
+          <DGia>177.03</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>708.12</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen M8886</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>19</SLuong>
+          <DGia>487.52</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>9262.88</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán E4152</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>9.5</SLuong>
+          <DGia>138.40</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>1314.80</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>36112.93</TgTien>
+            <TThue>0.00</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>36112.93</TgTCThue>
+        <TgTTTBSo>36112.93</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

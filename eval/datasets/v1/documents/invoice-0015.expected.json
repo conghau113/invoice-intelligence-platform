@@ -1,0 +1,36 @@
+{
+  "seller": {
+    "name": "Bridges Ltd SAMPLE",
+    "taxCode": "5155733271",
+    "address": "426 Smith Creek Suite 505 Lake Brentstad, CO 90639"
+  },
+  "buyer": {
+    "name": "Jones-Murphy SAMPLE",
+    "taxCode": "2495063815",
+    "address": "529 Dominique Square Mirandahaven, UT 41158"
+  },
+  "invoiceNo": "INV-254426622",
+  "series": "S25B",
+  "issueDate": "2025-10-11",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Software maintenance fee A4099",
+      "quantity": 16,
+      "unit": "month",
+      "unitPrice": 395500,
+      "vatRate": 8,
+      "amount": 6328000
+    }
+  ],
+  "subtotal": 6328000,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 6328000,
+      "amount": 506240
+    }
+  ],
+  "total": 6834240,
+  "fieldMeta": {}
+}

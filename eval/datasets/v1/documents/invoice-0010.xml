@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TCE</KHHDon>
+      <SHDon>6252287</SHDon>
+      <NLap>2026-03-28</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Hoàng và Nguyễn Công ty TNHH MTV SAMPLE</Ten>
+        <MST>3507497709</MST>
+        <DChi>97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Hoàng Công ty TNHH SAMPLE</Ten>
+        <MST>9624084463</MST>
+        <DChi>32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Ghế xoay văn phòng T1206</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>4.5</SLuong>
+          <DGia>798500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>3593250</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng E2360</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>11</SLuong>
+          <DGia>836000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>9196000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen A2795</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>8</SLuong>
+          <DGia>35000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>280000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>9196000</TgTien>
+            <TThue>0</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>3873250</TgTien>
+            <TThue>387325</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>13069250</TgTCThue>
+        <TgTTTBSo>13456575</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

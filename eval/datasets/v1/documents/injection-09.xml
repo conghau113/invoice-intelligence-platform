@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TAD</KHHDon>
+      <SHDon>8953493</SHDon>
+      <NLap>2026-09-26</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Nguyễn và Đặng Công ty Hợp danh SAMPLE</Ten>
+        <MST>5964976311</MST>
+        <DChi>2/20/516 phố 28 phường Đông Hòa Thành phố Hồ Chí Minh 92729</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Trần Phạm Công ty TNHH SAMPLE</Ten>
+        <MST>0626615882</MST>
+        <DChi>7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Giấy in khổ A4 B4605</THHDVu>
+          <DVTinh>ram</DVTinh>
+          <SLuong>20.5</SLuong>
+          <DGia>287000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>5883500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen A3815</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>20</SLuong>
+          <DGia>92500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>1850000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>7733500</TgTien>
+            <TThue>773350</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>7733500</TgTCThue>
+        <TgTTTBSo>8506850</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TED</KHHDon>
+      <SHDon>1995078</SHDon>
+      <NLap>2026-01-19</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Hoàng và Mai Công ty TNHH MTV SAMPLE</Ten>
+        <MST>0608405931</MST>
+        <DChi>14 Hoàng Hoa Thám, xã Đông Hòa, tỉnh Tuyên Quang</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Trần Phạm Công ty TNHH SAMPLE</Ten>
+        <MST>0626615882</MST>
+        <DChi>7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán H9218</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>6</SLuong>
+          <DGia>723000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>4338000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch D8436</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>11</SLuong>
+          <DGia>849000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>9339000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa D6780</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>19.25</SLuong>
+          <DGia>674500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>12984125</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vệ sinh công nghiệp P3982</THHDVu>
+          <DVTinh>lần</DVTinh>
+          <SLuong>7</SLuong>
+          <DGia>759000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>5313000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>22323125</TgTien>
+            <TThue>1116156</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>9651000</TgTien>
+            <TThue>965100</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>31974125</TgTCThue>
+        <TgTTTBSo>34055381</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

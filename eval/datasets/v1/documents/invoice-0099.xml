@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TDD</KHHDon>
+      <SHDon>8889780</SHDon>
+      <NLap>2026-05-26</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Phạm Công ty Hợp danh SAMPLE</Ten>
+        <MST>5325048491</MST>
+        <DChi>Số 4 Ngõ 57 Giải Phóng, Phường Hòa Bình, Tỉnh Khánh Hòa</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Hoàng Công ty TNHH SAMPLE</Ten>
+        <MST>9624084463</MST>
+        <DChi>32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm K2664</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>16</SLuong>
+          <DGia>479500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>7672000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa H1299</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>10.25</SLuong>
+          <DGia>515500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>5283875</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán C2034</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>3.25</SLuong>
+          <DGia>868500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2822625</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay M9945</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>9.25</SLuong>
+          <DGia>181000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>1674250</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>17452750</TgTien>
+            <TThue>1396220</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>17452750</TgTCThue>
+        <TgTTTBSo>18848970</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

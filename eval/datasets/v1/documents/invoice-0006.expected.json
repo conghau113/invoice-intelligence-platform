@@ -1,0 +1,76 @@
+{
+  "seller": {
+    "name": "Hoàng và Mai Công ty TNHH MTV SAMPLE",
+    "taxCode": "0608405931",
+    "address": "14 Hoàng Hoa Thám, xã Đông Hòa, tỉnh Tuyên Quang"
+  },
+  "buyer": {
+    "name": "Dương Thị Jane SAMPLE",
+    "taxCode": null,
+    "address": "5/74 phố 62 Xã Hòa Thành TP. Cần Thơ"
+  },
+  "invoiceNo": "7987881",
+  "series": "C26TDB",
+  "issueDate": "2026-03-07",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Dây cáp mạng H9756",
+      "quantity": 15.25,
+      "unit": "mét",
+      "unitPrice": 672000,
+      "vatRate": 10,
+      "amount": 10248000
+    },
+    {
+      "description": "Mực in laser đen D1898",
+      "quantity": 9,
+      "unit": "hộp",
+      "unitPrice": 201000,
+      "vatRate": 10,
+      "amount": 1809000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa M8705",
+      "quantity": 3,
+      "unit": "chuyến",
+      "unitPrice": 613500,
+      "vatRate": 10,
+      "amount": 1840500
+    },
+    {
+      "description": "Thép cuộn cán nóng M2705",
+      "quantity": 7,
+      "unit": "tấn",
+      "unitPrice": 151000,
+      "vatRate": 10,
+      "amount": 1057000
+    },
+    {
+      "description": "Dây cáp mạng K2775",
+      "quantity": 18,
+      "unit": "mét",
+      "unitPrice": 226000,
+      "vatRate": 10,
+      "amount": 4068000
+    },
+    {
+      "description": "Thép cuộn cán nóng H4990",
+      "quantity": 13.25,
+      "unit": "tấn",
+      "unitPrice": 139000,
+      "vatRate": 10,
+      "amount": 1841750
+    }
+  ],
+  "subtotal": 20864250,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 20864250,
+      "amount": 2086425
+    }
+  ],
+  "total": 22950675,
+  "fieldMeta": {}
+}

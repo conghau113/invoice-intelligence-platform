@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26E</KHHDon>
+      <SHDon>INV-261187842</SHDon>
+      <NLap>2026-08-22</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Dennis and Sons SAMPLE</Ten>
+        <MST>9585736384</MST>
+        <DChi>3194 Matthew Well Suite 879 East Beth, RI 14099</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Evans, Higgins and English SAMPLE</Ten>
+        <MST>9499051941</MST>
+        <DChi>236 Deanna Lock Ellischester, VI 27552</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Industrial cleaning service D8816</THHDVu>
+          <DVTinh>visit</DVTinh>
+          <SLuong>19.5</SLuong>
+          <DGia>385.92</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>7525.44</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Software maintenance fee A6720</THHDVu>
+          <DVTinh>month</DVTinh>
+          <SLuong>6.25</SLuong>
+          <DGia>867.64</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>5422.75</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>12948.19</TgTien>
+            <TThue>0.00</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>12948.19</TgTCThue>
+        <TgTTTBSo>12948.19</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

@@ -1,0 +1,92 @@
+{
+  "seller": {
+    "name": "Bùi Phạm Công ty TNHH MTV SAMPLE",
+    "taxCode": "5819736628",
+    "address": "Số 13/845 Khóm 70 Đường Hoàng Văn Thụ Phường Hòa Bình Tuyên Quang 01422"
+  },
+  "buyer": {
+    "name": "Bùi và Lê Tập Đoàn SAMPLE",
+    "taxCode": "1125986119",
+    "address": "Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi"
+  },
+  "invoiceNo": "3773559",
+  "series": "C25TCE",
+  "issueDate": "2025-11-10",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Dịch vụ tư vấn kế toán K5090",
+      "quantity": 15,
+      "unit": "tháng",
+      "unitPrice": 381500,
+      "vatRate": 8,
+      "amount": 5722500
+    },
+    {
+      "description": "Xi măng xây dựng D3151",
+      "quantity": 8,
+      "unit": "bao",
+      "unitPrice": 230500,
+      "vatRate": 8,
+      "amount": 1844000
+    },
+    {
+      "description": "Thiết bị chuyển mạch N9140",
+      "quantity": 4,
+      "unit": "bộ",
+      "unitPrice": 182000,
+      "vatRate": 8,
+      "amount": 728000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa K4613",
+      "quantity": 9,
+      "unit": "chuyến",
+      "unitPrice": 122500,
+      "vatRate": 8,
+      "amount": 1102500
+    },
+    {
+      "description": "Dây cáp mạng A6014",
+      "quantity": 13.25,
+      "unit": "mét",
+      "unitPrice": 403000,
+      "vatRate": 8,
+      "amount": 5339750
+    },
+    {
+      "description": "Mực in laser đen R1039",
+      "quantity": 12,
+      "unit": "hộp",
+      "unitPrice": 471500,
+      "vatRate": 8,
+      "amount": 5658000
+    },
+    {
+      "description": "Nước uống đóng chai P5546",
+      "quantity": 11,
+      "unit": "thùng",
+      "unitPrice": 562000,
+      "vatRate": 8,
+      "amount": 6182000
+    },
+    {
+      "description": "Thép cuộn cán nóng M7804",
+      "quantity": 2,
+      "unit": "tấn",
+      "unitPrice": 174500,
+      "vatRate": 8,
+      "amount": 349000
+    }
+  ],
+  "subtotal": 26925750,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 26925750,
+      "amount": 2154060
+    }
+  ],
+  "total": 29079810,
+  "fieldMeta": {}
+}

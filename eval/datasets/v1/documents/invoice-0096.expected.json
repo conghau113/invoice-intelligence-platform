@@ -1,0 +1,65 @@
+{
+  "seller": {
+    "name": "Brooks, Tyler and Combs SAMPLE",
+    "taxCode": "5385737979",
+    "address": "27249 Johnson Way Lake Alexandria, CO 66151"
+  },
+  "buyer": {
+    "name": "Jones-Murphy SAMPLE",
+    "taxCode": "2495063815",
+    "address": "529 Dominique Square Mirandahaven, UT 41158"
+  },
+  "invoiceNo": "INV-269160452",
+  "series": "S26E",
+  "issueDate": "2026-09-26",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Steel mounting bracket T3844",
+      "quantity": 17,
+      "unit": "pc",
+      "unitPrice": 59640,
+      "vatRate": 8,
+      "amount": 1013880
+    },
+    {
+      "description": "Industrial cleaning service N8173",
+      "quantity": 11,
+      "unit": "visit",
+      "unitPrice": 87781,
+      "vatRate": 10,
+      "amount": 965591
+    },
+    {
+      "description": "Software maintenance fee A8446",
+      "quantity": 3,
+      "unit": "month",
+      "unitPrice": 47896,
+      "vatRate": 8,
+      "amount": 143688
+    },
+    {
+      "description": "Network cable B4373",
+      "quantity": 8,
+      "unit": "meter",
+      "unitPrice": 17516,
+      "vatRate": 10,
+      "amount": 140128
+    }
+  ],
+  "subtotal": 2263287,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 1157568,
+      "amount": 92605
+    },
+    {
+      "rate": 10,
+      "base": 1105719,
+      "amount": 110572
+    }
+  ],
+  "total": 2466464,
+  "fieldMeta": {}
+}

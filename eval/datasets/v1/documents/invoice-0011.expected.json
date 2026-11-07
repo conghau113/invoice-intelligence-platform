@@ -1,0 +1,68 @@
+{
+  "seller": {
+    "name": "Garcia-Riley SAMPLE",
+    "taxCode": "5193714551-891",
+    "address": "45553 Alvarez Mountains Suite 958 Taraborough, MT 28187"
+  },
+  "buyer": {
+    "name": "Jones-Murphy SAMPLE",
+    "taxCode": "2495063815",
+    "address": "529 Dominique Square Mirandahaven, UT 41158"
+  },
+  "invoiceNo": "INV-264471088",
+  "series": "S26C",
+  "issueDate": "2026-09-06",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Wooden office desk C6618",
+      "quantity": 17,
+      "unit": "pc",
+      "unitPrice": 79434,
+      "vatRate": 10,
+      "amount": 1350378
+    },
+    {
+      "description": "Replacement air filter B4262",
+      "quantity": 5,
+      "unit": "pc",
+      "unitPrice": 54711,
+      "vatRate": 10,
+      "amount": 273555
+    },
+    {
+      "description": "Steel mounting bracket T8286",
+      "quantity": 19,
+      "unit": "pc",
+      "unitPrice": 62452,
+      "vatRate": 10,
+      "amount": 1186588
+    },
+    {
+      "description": "Office ballpoint pens C9879",
+      "quantity": 10.5,
+      "unit": "box",
+      "unitPrice": 78412,
+      "vatRate": 10,
+      "amount": 823326
+    },
+    {
+      "description": "Black laser toner C3054",
+      "quantity": 16.25,
+      "unit": "box",
+      "unitPrice": 55812,
+      "vatRate": 10,
+      "amount": 906945
+    }
+  ],
+  "subtotal": 4540792,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 4540792,
+      "amount": 454079
+    }
+  ],
+  "total": 4994871,
+  "fieldMeta": {}
+}

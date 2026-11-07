@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TBB</KHHDon>
+      <SHDon>9555813</SHDon>
+      <NLap>2026-09-24</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Trần và đối tác Tập Đoàn SAMPLE</Ten>
+        <MST>9013904000</MST>
+        <DChi>557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Nguyễn Hữu John SAMPLE</Ten>
+        <DChi>39 đường số 61 Xã Bình Thuận Thái Nguyên</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay B2024</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>729000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>12393000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Ghế xoay văn phòng T1521</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>18</SLuong>
+          <DGia>572000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>10296000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch H9034</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>8</SLuong>
+          <DGia>728000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>5824000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa D4068</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>13</SLuong>
+          <DGia>289500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>3763500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vệ sinh công nghiệp N7060</THHDVu>
+          <DVTinh>lần</DVTinh>
+          <SLuong>16.5</SLuong>
+          <DGia>180000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>2970000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng E1507</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>20</SLuong>
+          <DGia>631000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>12620000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay B1402</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>1</SLuong>
+          <DGia>283500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>283500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ M5086</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>19.5</SLuong>
+          <DGia>21000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>409500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất K8075</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>11.25</SLuong>
+          <DGia>659000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>7413750</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai E7756</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>8.25</SLuong>
+          <DGia>28500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>235125</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>56208375</TgTien>
+            <TThue>5620838</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>56208375</TgTCThue>
+        <TgTTTBSo>61829213</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

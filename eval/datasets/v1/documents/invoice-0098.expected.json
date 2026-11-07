@@ -1,0 +1,108 @@
+{
+  "seller": {
+    "name": "Nguyễn và Đặng Công ty Hợp danh SAMPLE",
+    "taxCode": "5964976311",
+    "address": "2/20/516 phố 28 phường Đông Hòa Thành phố Hồ Chí Minh 92729"
+  },
+  "buyer": {
+    "name": "Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE",
+    "taxCode": "0618511992",
+    "address": "69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng"
+  },
+  "invoiceNo": "7329561",
+  "series": "C26TDD",
+  "issueDate": "2026-09-06",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Thiết bị chuyển mạch B1813",
+      "quantity": 13.5,
+      "unit": "bộ",
+      "unitPrice": 139000,
+      "vatRate": 5,
+      "amount": 1876500
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp B5305",
+      "quantity": 4,
+      "unit": "lần",
+      "unitPrice": 815500,
+      "vatRate": 5,
+      "amount": 3262000
+    },
+    {
+      "description": "Xi măng xây dựng M4396",
+      "quantity": 10,
+      "unit": "bao",
+      "unitPrice": 572500,
+      "vatRate": 5,
+      "amount": 5725000
+    },
+    {
+      "description": "Xi măng xây dựng D8342",
+      "quantity": 13,
+      "unit": "bao",
+      "unitPrice": 701000,
+      "vatRate": 5,
+      "amount": 9113000
+    },
+    {
+      "description": "Sơn nước nội thất B3175",
+      "quantity": 18,
+      "unit": "lít",
+      "unitPrice": 184500,
+      "vatRate": 5,
+      "amount": 3321000
+    },
+    {
+      "description": "Phí bảo trì phần mềm P4621",
+      "quantity": 3,
+      "unit": "tháng",
+      "unitPrice": 486500,
+      "vatRate": 5,
+      "amount": 1459500
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán D8081",
+      "quantity": 15.5,
+      "unit": "tháng",
+      "unitPrice": 536000,
+      "vatRate": 5,
+      "amount": 8308000
+    },
+    {
+      "description": "Bàn làm việc gỗ H7866",
+      "quantity": 17,
+      "unit": "cái",
+      "unitPrice": 333500,
+      "vatRate": 5,
+      "amount": 5669500
+    },
+    {
+      "description": "Bàn làm việc gỗ A5245",
+      "quantity": 9.5,
+      "unit": "cái",
+      "unitPrice": 716000,
+      "vatRate": 5,
+      "amount": 6802000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa T1778",
+      "quantity": 13,
+      "unit": "chuyến",
+      "unitPrice": 494000,
+      "vatRate": 5,
+      "amount": 6422000
+    }
+  ],
+  "subtotal": 51958500,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 51958500,
+      "amount": 2597925
+    }
+  ],
+  "total": 54556425,
+  "fieldMeta": {}
+}

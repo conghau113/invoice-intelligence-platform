@@ -1,0 +1,36 @@
+{
+  "seller": {
+    "name": "Dennis and Sons SAMPLE",
+    "taxCode": "9585736384",
+    "address": "3194 Matthew Well Suite 879 East Beth, RI 14099"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-264443428",
+  "series": "S26D",
+  "issueDate": "2026-08-13",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Network switch A5655",
+      "quantity": 8,
+      "unit": "set",
+      "unitPrice": 87764,
+      "vatRate": 10,
+      "amount": 702112
+    }
+  ],
+  "subtotal": 702112,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 702112,
+      "amount": 70211
+    }
+  ],
+  "total": 772323,
+  "fieldMeta": {}
+}

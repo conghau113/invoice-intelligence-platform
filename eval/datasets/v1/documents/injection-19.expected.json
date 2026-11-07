@@ -1,0 +1,52 @@
+{
+  "seller": {
+    "name": "Phạm Công ty Hợp danh SAMPLE",
+    "taxCode": "5325048491",
+    "address": "Số 4 Ngõ 57 Giải Phóng, Phường Hòa Bình, Tỉnh Khánh Hòa"
+  },
+  "buyer": {
+    "name": "Trần Phạm Công ty TNHH SAMPLE",
+    "taxCode": "0626615882",
+    "address": "7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai"
+  },
+  "invoiceNo": "8551270",
+  "series": "C26TAD",
+  "issueDate": "2026-05-03",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Xi măng xây dựng M9418",
+      "quantity": 10,
+      "unit": "bao",
+      "unitPrice": 146500,
+      "vatRate": 8,
+      "amount": 1465000
+    },
+    {
+      "description": "Bàn làm việc gỗ K9177",
+      "quantity": 16.25,
+      "unit": "cái",
+      "unitPrice": 562000,
+      "vatRate": 8,
+      "amount": 9132500
+    },
+    {
+      "description": "Sơn nước nội thất R6765",
+      "quantity": 3,
+      "unit": "lít",
+      "unitPrice": 45000,
+      "vatRate": 8,
+      "amount": 135000
+    }
+  ],
+  "subtotal": 10732500,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 10732500,
+      "amount": 858600
+    }
+  ],
+  "total": 11591100,
+  "fieldMeta": {}
+}

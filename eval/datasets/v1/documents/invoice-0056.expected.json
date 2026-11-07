@@ -1,0 +1,44 @@
+{
+  "seller": {
+    "name": "Dennis and Sons SAMPLE",
+    "taxCode": "9585736384",
+    "address": "3194 Matthew Well Suite 879 East Beth, RI 14099"
+  },
+  "buyer": {
+    "name": "Evans, Higgins and English SAMPLE",
+    "taxCode": "9499051941",
+    "address": "236 Deanna Lock Ellischester, VI 27552"
+  },
+  "invoiceNo": "INV-261187842",
+  "series": "S26E",
+  "issueDate": "2026-08-22",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Industrial cleaning service D8816",
+      "quantity": 19.5,
+      "unit": "visit",
+      "unitPrice": 38592,
+      "vatRate": 0,
+      "amount": 752544
+    },
+    {
+      "description": "Software maintenance fee A6720",
+      "quantity": 6.25,
+      "unit": "month",
+      "unitPrice": 86764,
+      "vatRate": 0,
+      "amount": 542275
+    }
+  ],
+  "subtotal": 1294819,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 1294819,
+      "amount": 0
+    }
+  ],
+  "total": 1294819,
+  "fieldMeta": {}
+}

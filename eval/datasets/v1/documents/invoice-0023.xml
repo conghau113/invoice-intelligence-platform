@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TCC</KHHDon>
+      <SHDon>2956100</SHDon>
+      <NLap>2026-03-18</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Phạm Công ty Hợp danh SAMPLE</Ten>
+        <MST>5325048491</MST>
+        <DChi>Số 4 Ngõ 57 Giải Phóng, Phường Hòa Bình, Tỉnh Khánh Hòa</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Trần Phạm Công ty TNHH SAMPLE</Ten>
+        <MST>0626615882</MST>
+        <DChi>7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán E7986</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>6</SLuong>
+          <DGia>383000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2298000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm K8657</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>12</SLuong>
+          <DGia>295000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>3540000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ K9206</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>7.5</SLuong>
+          <DGia>669000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>5017500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng C3770</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>12.5</SLuong>
+          <DGia>811000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>10137500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán R6501</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>255500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>4343500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thiết bị chuyển mạch T4423</THHDVu>
+          <DVTinh>bộ</DVTinh>
+          <SLuong>6</SLuong>
+          <DGia>814000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>4884000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán B4897</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>6</SLuong>
+          <DGia>403000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2418000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán D5880</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>10</SLuong>
+          <DGia>275000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>2750000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>35388500</TgTien>
+            <TThue>2831080</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>35388500</TgTCThue>
+        <TgTTTBSo>38219580</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

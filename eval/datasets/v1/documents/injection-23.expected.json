@@ -1,0 +1,68 @@
+{
+  "seller": {
+    "name": "Hoàng và Nguyễn Công ty TNHH MTV SAMPLE",
+    "taxCode": "3507497709",
+    "address": "97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng"
+  },
+  "buyer": {
+    "name": "Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE",
+    "taxCode": "0618511992",
+    "address": "69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng"
+  },
+  "invoiceNo": "9673831",
+  "series": "C25TCC",
+  "issueDate": "2025-11-19",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Bút bi văn phòng N3440",
+      "quantity": 11,
+      "unit": "hộp",
+      "unitPrice": 8471,
+      "vatRate": 0,
+      "amount": 93181
+    },
+    {
+      "description": "Thiết bị chuyển mạch B5298",
+      "quantity": 10,
+      "unit": "bộ",
+      "unitPrice": 48586,
+      "vatRate": 0,
+      "amount": 485860
+    },
+    {
+      "description": "Xi măng xây dựng R7881",
+      "quantity": 6.25,
+      "unit": "bao",
+      "unitPrice": 24223,
+      "vatRate": 0,
+      "amount": 151394
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp D5204",
+      "quantity": 11,
+      "unit": "lần",
+      "unitPrice": 16230,
+      "vatRate": 0,
+      "amount": 178530
+    },
+    {
+      "description": "Cà phê rang xay T1404",
+      "quantity": 17.25,
+      "unit": "kg",
+      "unitPrice": 79877,
+      "vatRate": 0,
+      "amount": 1377878
+    }
+  ],
+  "subtotal": 2286843,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 2286843,
+      "amount": 0
+    }
+  ],
+  "total": 2286843,
+  "fieldMeta": {}
+}

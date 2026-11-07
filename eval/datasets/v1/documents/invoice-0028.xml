@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26C</KHHDon>
+      <SHDon>INV-261643430</SHDon>
+      <NLap>2026-02-19</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Bridges Ltd SAMPLE</Ten>
+        <MST>5155733271</MST>
+        <DChi>426 Smith Creek Suite 505 Lake Brentstad, CO 90639</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Sharp-Torres SAMPLE</Ten>
+        <MST>8330646319</MST>
+        <DChi>2029 Kathy Branch New Kimberlychester, PR 22771</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Interior wall paint C5604</THHDVu>
+          <DVTinh>liter</DVTinh>
+          <SLuong>20</SLuong>
+          <DGia>11.42</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>228.40</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Network cable H4453</THHDVu>
+          <DVTinh>meter</DVTinh>
+          <SLuong>7.5</SLuong>
+          <DGia>74.08</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>555.60</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Steel mounting bracket N1602</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>832.89</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1665.78</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bottled drinking water A7183</THHDVu>
+          <DVTinh>case</DVTinh>
+          <SLuong>12</SLuong>
+          <DGia>775.69</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>9308.28</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Ground coffee E1294</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>605.54</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1816.62</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>A4 copy paper E4378</THHDVu>
+          <DVTinh>ream</DVTinh>
+          <SLuong>9</SLuong>
+          <DGia>142.10</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1278.90</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>14853.58</TgTien>
+            <TThue>742.68</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>14853.58</TgTCThue>
+        <TgTTTBSo>15596.26</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TED</KHHDon>
+      <SHDon>6621934</SHDon>
+      <NLap>2026-06-14</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Trần và đối tác Tập Đoàn SAMPLE</Ten>
+        <MST>9013904000</MST>
+        <DChi>557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE</Ten>
+        <MST>0618511992</MST>
+        <DChi>69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai K1764</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>5</SLuong>
+          <DGia>374500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>1872500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay M1671</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>16.25</SLuong>
+          <DGia>777500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>12634375</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ R5953</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>1</SLuong>
+          <DGia>243500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>243500</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>2116000</TgTien>
+            <TThue>169280</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>12634375</TgTien>
+            <TThue>1263438</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>14750375</TgTCThue>
+        <TgTTTBSo>16183093</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

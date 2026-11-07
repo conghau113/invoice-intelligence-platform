@@ -1,0 +1,52 @@
+{
+  "seller": {
+    "name": "Hoàng và Mai Công ty TNHH MTV SAMPLE",
+    "taxCode": "0608405931",
+    "address": "14 Hoàng Hoa Thám, xã Đông Hòa, tỉnh Tuyên Quang"
+  },
+  "buyer": {
+    "name": "Hoàng Công ty TNHH SAMPLE",
+    "taxCode": "9624084463",
+    "address": "32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng"
+  },
+  "invoiceNo": "3850620",
+  "series": "C26TAB",
+  "issueDate": "2026-06-01",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Phí bảo trì phần mềm M8525",
+      "quantity": 4,
+      "unit": "tháng",
+      "unitPrice": 251500,
+      "vatRate": 5,
+      "amount": 1006000
+    },
+    {
+      "description": "Nước uống đóng chai B8567",
+      "quantity": 8.5,
+      "unit": "thùng",
+      "unitPrice": 220000,
+      "vatRate": 5,
+      "amount": 1870000
+    },
+    {
+      "description": "Cà phê rang xay C4872",
+      "quantity": 20.25,
+      "unit": "kg",
+      "unitPrice": 130500,
+      "vatRate": 5,
+      "amount": 2642625
+    }
+  ],
+  "subtotal": 5518625,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 5518625,
+      "amount": 275931
+    }
+  ],
+  "total": 5794556,
+  "fieldMeta": {}
+}

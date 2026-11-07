@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26D</KHHDon>
+      <SHDon>INV-264443428</SHDon>
+      <NLap>2026-08-13</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Dennis and Sons SAMPLE</Ten>
+        <MST>9585736384</MST>
+        <DChi>3194 Matthew Well Suite 879 East Beth, RI 14099</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Sharp-Torres SAMPLE</Ten>
+        <MST>8330646319</MST>
+        <DChi>2029 Kathy Branch New Kimberlychester, PR 22771</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Network switch A5655</THHDVu>
+          <DVTinh>set</DVTinh>
+          <SLuong>8</SLuong>
+          <DGia>877.64</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>7021.12</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>7021.12</TgTien>
+            <TThue>702.11</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>7021.12</TgTCThue>
+        <TgTTTBSo>7723.23</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

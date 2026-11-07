@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26D</KHHDon>
+      <SHDon>INV-269846202</SHDon>
+      <NLap>2026-07-23</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Brooks, Tyler and Combs SAMPLE</Ten>
+        <MST>5385737979</MST>
+        <DChi>27249 Johnson Way Lake Alexandria, CO 66151</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Jones-Murphy SAMPLE</Ten>
+        <MST>2495063815</MST>
+        <DChi>529 Dominique Square Mirandahaven, UT 41158</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Network switch E6146</THHDVu>
+          <DVTinh>set</DVTinh>
+          <SLuong>9.5</SLuong>
+          <DGia>89.16</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>847.02</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Black laser toner C4436</THHDVu>
+          <DVTinh>box</DVTinh>
+          <SLuong>5</SLuong>
+          <DGia>850.13</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>4250.65</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>5097.67</TgTien>
+            <TThue>509.77</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>5097.67</TgTCThue>
+        <TgTTTBSo>5607.44</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

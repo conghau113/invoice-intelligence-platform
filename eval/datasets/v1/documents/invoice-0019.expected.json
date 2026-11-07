@@ -1,0 +1,73 @@
+{
+  "seller": {
+    "name": "Nguyễn và Đặng Công ty Hợp danh SAMPLE",
+    "taxCode": "5964976311",
+    "address": "2/20/516 phố 28 phường Đông Hòa Thành phố Hồ Chí Minh 92729"
+  },
+  "buyer": {
+    "name": "Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE",
+    "taxCode": "0618511992",
+    "address": "69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng"
+  },
+  "invoiceNo": "3882632",
+  "series": "C26TCA",
+  "issueDate": "2026-06-28",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Thép cuộn cán nóng A6702",
+      "quantity": 15,
+      "unit": "tấn",
+      "unitPrice": 378000,
+      "vatRate": 0,
+      "amount": 5670000
+    },
+    {
+      "description": "Xi măng xây dựng P1958",
+      "quantity": 10.5,
+      "unit": "bao",
+      "unitPrice": 55000,
+      "vatRate": 10,
+      "amount": 577500
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp E3888",
+      "quantity": 13.25,
+      "unit": "lần",
+      "unitPrice": 875000,
+      "vatRate": 10,
+      "amount": 11593750
+    },
+    {
+      "description": "Cà phê rang xay B3150",
+      "quantity": 18,
+      "unit": "kg",
+      "unitPrice": 299500,
+      "vatRate": 0,
+      "amount": 5391000
+    },
+    {
+      "description": "Ghế xoay văn phòng K5570",
+      "quantity": 14,
+      "unit": "cái",
+      "unitPrice": 78000,
+      "vatRate": 10,
+      "amount": 1092000
+    }
+  ],
+  "subtotal": 24324250,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 11061000,
+      "amount": 0
+    },
+    {
+      "rate": 10,
+      "base": 13263250,
+      "amount": 1326325
+    }
+  ],
+  "total": 25650575,
+  "fieldMeta": {}
+}

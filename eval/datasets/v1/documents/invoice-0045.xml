@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TDD</KHHDon>
+      <SHDon>8929865</SHDon>
+      <NLap>2026-09-16</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Nguyễn và Đặng Công ty Hợp danh SAMPLE</Ten>
+        <MST>5964976311</MST>
+        <DChi>2/20/516 phố 28 phường Đông Hòa Thành phố Hồ Chí Minh 92729</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Hoàng Quang Jane SAMPLE</Ten>
+        <DChi>771 Hẻm 98 Kinh Dương Vương xã Tân An Tỉnh Đắk Lắk 43199</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay A4317</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>16</SLuong>
+          <DGia>527000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>8432000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vệ sinh công nghiệp A5415</THHDVu>
+          <DVTinh>lần</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>29000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>493000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng T1392</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>11.25</SLuong>
+          <DGia>510500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>5743125</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen C1127</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>6</SLuong>
+          <DGia>129000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>774000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>15442125</TgTien>
+            <TThue>1235370</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>15442125</TgTCThue>
+        <TgTTTBSo>16677495</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

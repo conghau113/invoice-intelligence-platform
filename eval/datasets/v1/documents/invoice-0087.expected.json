@@ -1,0 +1,68 @@
+{
+  "seller": {
+    "name": "Hoàng và Mai Công ty TNHH MTV SAMPLE",
+    "taxCode": "0608405931",
+    "address": "14 Hoàng Hoa Thám, xã Đông Hòa, tỉnh Tuyên Quang"
+  },
+  "buyer": {
+    "name": "Trần Phạm Công ty TNHH SAMPLE",
+    "taxCode": "0626615882",
+    "address": "7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai"
+  },
+  "invoiceNo": "0957393",
+  "series": "C26TBC",
+  "issueDate": "2026-04-07",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Phí bảo trì phần mềm D1100",
+      "quantity": 5.25,
+      "unit": "tháng",
+      "unitPrice": 332500,
+      "vatRate": 10,
+      "amount": 1745625
+    },
+    {
+      "description": "Nước uống đóng chai T4815",
+      "quantity": 9,
+      "unit": "thùng",
+      "unitPrice": 499500,
+      "vatRate": 10,
+      "amount": 4495500
+    },
+    {
+      "description": "Giấy in khổ A4 P2454",
+      "quantity": 13,
+      "unit": "ram",
+      "unitPrice": 86000,
+      "vatRate": 10,
+      "amount": 1118000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa C6512",
+      "quantity": 17.5,
+      "unit": "chuyến",
+      "unitPrice": 790000,
+      "vatRate": 10,
+      "amount": 13825000
+    },
+    {
+      "description": "Phí bảo trì phần mềm K1404",
+      "quantity": 11,
+      "unit": "tháng",
+      "unitPrice": 52000,
+      "vatRate": 10,
+      "amount": 572000
+    }
+  ],
+  "subtotal": 21756125,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 21756125,
+      "amount": 2175613
+    }
+  ],
+  "total": 23931738,
+  "fieldMeta": {}
+}

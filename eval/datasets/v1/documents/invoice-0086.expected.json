@@ -1,0 +1,49 @@
+{
+  "seller": {
+    "name": "Hoàng và Mai Công ty TNHH MTV SAMPLE",
+    "taxCode": "0608405931",
+    "address": "14 Hoàng Hoa Thám, xã Đông Hòa, tỉnh Tuyên Quang"
+  },
+  "buyer": {
+    "name": "Trần Phạm Công ty TNHH SAMPLE",
+    "taxCode": "0626615882",
+    "address": "7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai"
+  },
+  "invoiceNo": "9139119",
+  "series": "C26TBC",
+  "issueDate": "2026-06-23",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Dây cáp mạng M3329",
+      "quantity": 15.25,
+      "unit": "mét",
+      "unitPrice": 467500,
+      "vatRate": 0,
+      "amount": 7129375
+    },
+    {
+      "description": "Giấy in khổ A4 M7148",
+      "quantity": 3.5,
+      "unit": "ram",
+      "unitPrice": 212000,
+      "vatRate": 10,
+      "amount": 742000
+    }
+  ],
+  "subtotal": 7871375,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 7129375,
+      "amount": 0
+    },
+    {
+      "rate": 10,
+      "base": 742000,
+      "amount": 74200
+    }
+  ],
+  "total": 7945575,
+  "fieldMeta": {}
+}

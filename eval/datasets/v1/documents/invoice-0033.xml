@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TCA</KHHDon>
+      <SHDon>6940268</SHDon>
+      <NLap>2026-09-27</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Bùi Phạm Công ty TNHH MTV SAMPLE</Ten>
+        <MST>5819736628</MST>
+        <DChi>Số 13/845 Khóm 70 Đường Hoàng Văn Thụ Phường Hòa Bình Tuyên Quang 01422</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE</Ten>
+        <MST>0618511992</MST>
+        <DChi>69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng H5910</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>9</SLuong>
+          <DGia>866500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>7798500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm E8850</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>20.5</SLuong>
+          <DGia>417500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>8558750</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng A6340</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>1</SLuong>
+          <DGia>422000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>422000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai E4915</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>6.25</SLuong>
+          <DGia>561000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>3506250</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>20285500</TgTien>
+            <TThue>1014275</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>20285500</TgTCThue>
+        <TgTTTBSo>21299775</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

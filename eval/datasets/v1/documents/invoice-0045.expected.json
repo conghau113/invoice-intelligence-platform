@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Nguyễn và Đặng Công ty Hợp danh SAMPLE",
+    "taxCode": "5964976311",
+    "address": "2/20/516 phố 28 phường Đông Hòa Thành phố Hồ Chí Minh 92729"
+  },
+  "buyer": {
+    "name": "Hoàng Quang Jane SAMPLE",
+    "taxCode": null,
+    "address": "771 Hẻm 98 Kinh Dương Vương xã Tân An Tỉnh Đắk Lắk 43199"
+  },
+  "invoiceNo": "8929865",
+  "series": "C26TDD",
+  "issueDate": "2026-09-16",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Cà phê rang xay A4317",
+      "quantity": 16,
+      "unit": "kg",
+      "unitPrice": 527000,
+      "vatRate": 8,
+      "amount": 8432000
+    },
+    {
+      "description": "Dịch vụ vệ sinh công nghiệp A5415",
+      "quantity": 17,
+      "unit": "lần",
+      "unitPrice": 29000,
+      "vatRate": 8,
+      "amount": 493000
+    },
+    {
+      "description": "Bút bi văn phòng T1392",
+      "quantity": 11.25,
+      "unit": "hộp",
+      "unitPrice": 510500,
+      "vatRate": 8,
+      "amount": 5743125
+    },
+    {
+      "description": "Mực in laser đen C1127",
+      "quantity": 6,
+      "unit": "hộp",
+      "unitPrice": 129000,
+      "vatRate": 8,
+      "amount": 774000
+    }
+  ],
+  "subtotal": 15442125,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 15442125,
+      "amount": 1235370
+    }
+  ],
+  "total": 16677495,
+  "fieldMeta": {}
+}

@@ -50,10 +50,10 @@ Prompt versions live in `apps/ai/app/prompts/<name>/v<N>.md`; the version is sto
 ## 6. Evaluation
 
 ### Extraction (M4)
-- Dataset: 100 synthetic invoices from `tools/invoice-gen` (fixed seed), each with ground-truth JSON, XML and a rendered PDF/image; difficulty buckets easy/medium/hard (rotation, noise, low DPI, multi-page, many lines). 20-document smoke subset for CI.
+- Dataset: 100 synthetic invoices from `tools/invoice-gen` (fixed seed), each with ground-truth JSON, XML and a rendered PDF/image; difficulty buckets easy/medium/hard (rotation, noise, low DPI, multi-page, many lines). 20-document smoke subset for CI. Frozen by hash in `eval/datasets/v1`, with 24 attack documents and one regression case scored apart from accuracy.
 - Synthetic data is legally safe by construction: tax codes with invalid check digits, Faker names suffixed `SAMPLE`, and a `SAMPLE – SYNTHETIC DATA` watermark on every rendered page.
 - Metrics: per-field accuracy after normalization; line-item F1 (lines matched by content similarity); document exact match; cost per document; p50/p95 latency.
-- Comparison: at least two configurations (two models or two prompt versions). Thresholds are set from the first measured baseline and recorded in an ADR — not guessed up front.
+- Comparison: at least two configurations (two models or two prompt versions). Thresholds are set from the first measured baseline and recorded in ADR 0020 — not guessed up front.
 - Honesty rule: synthetic data is cleaner than real scans; reports state this limitation. The human correction rate from production use (T4.6) is the online counterpart.
 
 ### RAG (M5)

@@ -1,0 +1,36 @@
+{
+  "seller": {
+    "name": "Trần và đối tác Tập Đoàn SAMPLE",
+    "taxCode": "9013904000",
+    "address": "557 Ngõ 23 đường Trần Quốc Toản, Phường Hoàng Mai, TP. Hải Phòng"
+  },
+  "buyer": {
+    "name": "Bùi và Lê Tập Đoàn SAMPLE",
+    "taxCode": "1125986119",
+    "address": "Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi"
+  },
+  "invoiceNo": "2480165",
+  "series": "C26TEA",
+  "issueDate": "2026-03-06",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Thép cuộn cán nóng H7327",
+      "quantity": 3,
+      "unit": "tấn",
+      "unitPrice": 697500,
+      "vatRate": 0,
+      "amount": 2092500
+    }
+  ],
+  "subtotal": 2092500,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 2092500,
+      "amount": 0
+    }
+  ],
+  "total": 2092500,
+  "fieldMeta": {}
+}

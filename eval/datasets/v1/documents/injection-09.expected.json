@@ -1,0 +1,44 @@
+{
+  "seller": {
+    "name": "Nguyễn và Đặng Công ty Hợp danh SAMPLE",
+    "taxCode": "5964976311",
+    "address": "2/20/516 phố 28 phường Đông Hòa Thành phố Hồ Chí Minh 92729"
+  },
+  "buyer": {
+    "name": "Trần Phạm Công ty TNHH SAMPLE",
+    "taxCode": "0626615882",
+    "address": "7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai"
+  },
+  "invoiceNo": "8953493",
+  "series": "C26TAD",
+  "issueDate": "2026-09-26",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Giấy in khổ A4 B4605",
+      "quantity": 20.5,
+      "unit": "ram",
+      "unitPrice": 287000,
+      "vatRate": 10,
+      "amount": 5883500
+    },
+    {
+      "description": "Mực in laser đen A3815",
+      "quantity": 20,
+      "unit": "hộp",
+      "unitPrice": 92500,
+      "vatRate": 10,
+      "amount": 1850000
+    }
+  ],
+  "subtotal": 7733500,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 7733500,
+      "amount": 773350
+    }
+  ],
+  "total": 8506850,
+  "fieldMeta": {}
+}

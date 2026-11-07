@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TCB</KHHDon>
+      <SHDon>0248264</SHDon>
+      <NLap>2026-08-22</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Bùi Phạm Công ty TNHH MTV SAMPLE</Ten>
+        <MST>5819736628</MST>
+        <DChi>Số 13/845 Khóm 70 Đường Hoàng Văn Thụ Phường Hòa Bình Tuyên Quang 01422</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Phạm Bùi Công ty TNHH SAMPLE</Ten>
+        <MST>6904000855</MST>
+        <DChi>2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai N8546</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>621000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>10557000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa H7360</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>5.25</SLuong>
+          <DGia>394500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2071125</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa H8081</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>1.25</SLuong>
+          <DGia>370500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>463125</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm D9950</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>10</SLuong>
+          <DGia>586500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>5865000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ D3107</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>6</SLuong>
+          <DGia>268500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1611000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm R2801</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>7.5</SLuong>
+          <DGia>151500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>1136250</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>21703500</TgTien>
+            <TThue>1085175</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>21703500</TgTCThue>
+        <TgTTTBSo>22788675</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

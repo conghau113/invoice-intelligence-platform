@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TDD</KHHDon>
+      <SHDon>0727052</SHDon>
+      <NLap>2026-07-03</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Nguyễn và Đặng Công ty Hợp danh SAMPLE</Ten>
+        <MST>5964976311</MST>
+        <DChi>2/20/516 phố 28 phường Đông Hòa Thành phố Hồ Chí Minh 92729</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Phạm Bùi Công ty TNHH SAMPLE</Ten>
+        <MST>6904000855</MST>
+        <DChi>2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng M2596</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>14</SLuong>
+          <DGia>25500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>357000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai T6483</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>19</SLuong>
+          <DGia>900000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>17100000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán D4814</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>14</SLuong>
+          <DGia>740500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>10367000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng E3430</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>19</SLuong>
+          <DGia>41500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>788500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Phí bảo trì phần mềm P2078</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>18</SLuong>
+          <DGia>20000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>360000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>10727000</TgTien>
+            <TThue>0</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>18245500</TgTien>
+            <TThue>912275</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>28972500</TgTCThue>
+        <TgTTTBSo>29884775</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

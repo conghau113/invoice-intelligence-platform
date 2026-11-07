@@ -1,0 +1,108 @@
+{
+  "seller": {
+    "name": "Hoàng và Mai Công ty TNHH MTV SAMPLE",
+    "taxCode": "0608405931",
+    "address": "14 Hoàng Hoa Thám, xã Đông Hòa, tỉnh Tuyên Quang"
+  },
+  "buyer": {
+    "name": "Trần Phạm Công ty TNHH SAMPLE",
+    "taxCode": "0626615882",
+    "address": "7 phố 2 Tháng 9, Phường Đông Hòa, Đồng Nai"
+  },
+  "invoiceNo": "9741739",
+  "series": "C26TCC",
+  "issueDate": "2026-01-06",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Sơn nước nội thất T9339",
+      "quantity": 9,
+      "unit": "lít",
+      "unitPrice": 140500,
+      "vatRate": 10,
+      "amount": 1264500
+    },
+    {
+      "description": "Giấy in khổ A4 M7116",
+      "quantity": 10,
+      "unit": "ram",
+      "unitPrice": 263000,
+      "vatRate": 10,
+      "amount": 2630000
+    },
+    {
+      "description": "Sơn nước nội thất M4906",
+      "quantity": 18,
+      "unit": "lít",
+      "unitPrice": 615000,
+      "vatRate": 10,
+      "amount": 11070000
+    },
+    {
+      "description": "Ghế xoay văn phòng P2498",
+      "quantity": 6,
+      "unit": "cái",
+      "unitPrice": 120000,
+      "vatRate": 10,
+      "amount": 720000
+    },
+    {
+      "description": "Phí bảo trì phần mềm R7721",
+      "quantity": 6,
+      "unit": "tháng",
+      "unitPrice": 475500,
+      "vatRate": 10,
+      "amount": 2853000
+    },
+    {
+      "description": "Bút bi văn phòng T9114",
+      "quantity": 3.25,
+      "unit": "hộp",
+      "unitPrice": 568000,
+      "vatRate": 10,
+      "amount": 1846000
+    },
+    {
+      "description": "Phí bảo trì phần mềm K5880",
+      "quantity": 20.5,
+      "unit": "tháng",
+      "unitPrice": 296000,
+      "vatRate": 10,
+      "amount": 6068000
+    },
+    {
+      "description": "Bàn làm việc gỗ C8291",
+      "quantity": 5.5,
+      "unit": "cái",
+      "unitPrice": 805000,
+      "vatRate": 10,
+      "amount": 4427500
+    },
+    {
+      "description": "Thiết bị chuyển mạch E8372",
+      "quantity": 1.5,
+      "unit": "bộ",
+      "unitPrice": 633000,
+      "vatRate": 10,
+      "amount": 949500
+    },
+    {
+      "description": "Mực in laser đen T1074",
+      "quantity": 13.25,
+      "unit": "hộp",
+      "unitPrice": 710500,
+      "vatRate": 10,
+      "amount": 9414125
+    }
+  ],
+  "subtotal": 41242625,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 41242625,
+      "amount": 4124263
+    }
+  ],
+  "total": 45366888,
+  "fieldMeta": {}
+}

@@ -1,0 +1,76 @@
+{
+  "seller": {
+    "name": "Bridges Ltd SAMPLE",
+    "taxCode": "5155733271",
+    "address": "426 Smith Creek Suite 505 Lake Brentstad, CO 90639"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-261643430",
+  "series": "S26C",
+  "issueDate": "2026-02-19",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Interior wall paint C5604",
+      "quantity": 20,
+      "unit": "liter",
+      "unitPrice": 1142,
+      "vatRate": 5,
+      "amount": 22840
+    },
+    {
+      "description": "Network cable H4453",
+      "quantity": 7.5,
+      "unit": "meter",
+      "unitPrice": 7408,
+      "vatRate": 5,
+      "amount": 55560
+    },
+    {
+      "description": "Steel mounting bracket N1602",
+      "quantity": 2,
+      "unit": "pc",
+      "unitPrice": 83289,
+      "vatRate": 5,
+      "amount": 166578
+    },
+    {
+      "description": "Bottled drinking water A7183",
+      "quantity": 12,
+      "unit": "case",
+      "unitPrice": 77569,
+      "vatRate": 5,
+      "amount": 930828
+    },
+    {
+      "description": "Ground coffee E1294",
+      "quantity": 3,
+      "unit": "kg",
+      "unitPrice": 60554,
+      "vatRate": 5,
+      "amount": 181662
+    },
+    {
+      "description": "A4 copy paper E4378",
+      "quantity": 9,
+      "unit": "ream",
+      "unitPrice": 14210,
+      "vatRate": 5,
+      "amount": 127890
+    }
+  ],
+  "subtotal": 1485358,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 1485358,
+      "amount": 74268
+    }
+  ],
+  "total": 1559626,
+  "fieldMeta": {}
+}

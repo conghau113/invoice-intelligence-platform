@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TDB</KHHDon>
+      <SHDon>5896175</SHDon>
+      <NLap>2026-09-23</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Hoàng và Nguyễn Công ty TNHH MTV SAMPLE</Ten>
+        <MST>3507497709</MST>
+        <DChi>97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Bùi và Lê Tập Đoàn SAMPLE</Ten>
+        <MST>1125986119</MST>
+        <DChi>Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Ghế xoay văn phòng B6535</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>12</SLuong>
+          <DGia>65500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>786000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Sơn nước nội thất H2015</THHDVu>
+          <DVTinh>lít</DVTinh>
+          <SLuong>11</SLuong>
+          <DGia>210000</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>2310000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dây cáp mạng N5397</THHDVu>
+          <DVTinh>mét</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>277500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>555000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ A8221</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>5</SLuong>
+          <DGia>718500</DGia>
+          <TSuat>5%</TSuat>
+          <ThTien>3592500</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>5%</TSuat>
+            <TgTien>7243500</TgTien>
+            <TThue>362175</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>7243500</TgTCThue>
+        <TgTTTBSo>7605675</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

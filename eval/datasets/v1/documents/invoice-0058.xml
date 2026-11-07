@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TBD</KHHDon>
+      <SHDon>1941517</SHDon>
+      <NLap>2026-04-13</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Bùi Phạm Công ty TNHH MTV SAMPLE</Ten>
+        <MST>5819736628</MST>
+        <DChi>Số 13/845 Khóm 70 Đường Hoàng Văn Thụ Phường Hòa Bình Tuyên Quang 01422</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Phạm Bùi Công ty TNHH SAMPLE</Ten>
+        <MST>6904000855</MST>
+        <DChi>2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Bút bi văn phòng M9012</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>1</SLuong>
+          <DGia>390000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>390000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng N6085</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>16</SLuong>
+          <DGia>82000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>1312000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán N1388</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>846000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>2538000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Giấy in khổ A4 C8533</THHDVu>
+          <DVTinh>ram</DVTinh>
+          <SLuong>14</SLuong>
+          <DGia>691000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>9674000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>13914000</TgTien>
+            <TThue>0</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>13914000</TgTCThue>
+        <TgTTTBSo>13914000</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

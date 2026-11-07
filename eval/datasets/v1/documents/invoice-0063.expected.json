@@ -1,0 +1,44 @@
+{
+  "seller": {
+    "name": "Nguyễn Công ty Hợp danh SAMPLE",
+    "taxCode": "6801611429-434",
+    "address": "9 Đường Trần Bình Trọng xã An Hải Thanh Hóa 95532"
+  },
+  "buyer": {
+    "name": "Trần Phú Jane SAMPLE",
+    "taxCode": null,
+    "address": "Số 4/93/645 Phố Trần Não, xã Hoàng Mai, Quảng Trị"
+  },
+  "invoiceNo": "9042027",
+  "series": "C26TDA",
+  "issueDate": "2026-01-11",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Thiết bị chuyển mạch N1018",
+      "quantity": 4.25,
+      "unit": "bộ",
+      "unitPrice": 550500,
+      "vatRate": 8,
+      "amount": 2339625
+    },
+    {
+      "description": "Nước uống đóng chai C4723",
+      "quantity": 13.25,
+      "unit": "thùng",
+      "unitPrice": 598500,
+      "vatRate": 8,
+      "amount": 7930125
+    }
+  ],
+  "subtotal": 10269750,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 10269750,
+      "amount": 821580
+    }
+  ],
+  "total": 11091330,
+  "fieldMeta": {}
+}

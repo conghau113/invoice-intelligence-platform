@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Garcia-Riley SAMPLE",
+    "taxCode": "5193714551-891",
+    "address": "45553 Alvarez Mountains Suite 958 Taraborough, MT 28187"
+  },
+  "buyer": {
+    "name": "Mark Wilson SAMPLE",
+    "taxCode": null,
+    "address": "089 Carly Extension Apt. 743 Kellyborough, PW 14865"
+  },
+  "invoiceNo": "INV-264188654",
+  "series": "S26B",
+  "issueDate": "2026-01-31",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Black laser toner H8928",
+      "quantity": 9.5,
+      "unit": "box",
+      "unitPrice": 333500,
+      "vatRate": 0,
+      "amount": 3168250
+    },
+    {
+      "description": "Accounting advisory service D5356",
+      "quantity": 20,
+      "unit": "month",
+      "unitPrice": 289500,
+      "vatRate": 0,
+      "amount": 5790000
+    },
+    {
+      "description": "Swivel office chair A5435",
+      "quantity": 17,
+      "unit": "pc",
+      "unitPrice": 697500,
+      "vatRate": 0,
+      "amount": 11857500
+    },
+    {
+      "description": "Ground coffee A2549",
+      "quantity": 16,
+      "unit": "kg",
+      "unitPrice": 42500,
+      "vatRate": 0,
+      "amount": 680000
+    }
+  ],
+  "subtotal": 21495750,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 21495750,
+      "amount": 0
+    }
+  ],
+  "total": 21495750,
+  "fieldMeta": {}
+}

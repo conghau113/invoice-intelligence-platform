@@ -1,0 +1,113 @@
+{
+  "seller": {
+    "name": "Nguyễn Công ty Hợp danh SAMPLE",
+    "taxCode": "6801611429-434",
+    "address": "9 Đường Trần Bình Trọng xã An Hải Thanh Hóa 95532"
+  },
+  "buyer": {
+    "name": "Phạm Bùi Công ty TNHH SAMPLE",
+    "taxCode": "6904000855",
+    "address": "2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ"
+  },
+  "invoiceNo": "5337648",
+  "series": "C26TBC",
+  "issueDate": "2026-03-13",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Bàn làm việc gỗ R6528",
+      "quantity": 16,
+      "unit": "cái",
+      "unitPrice": 81555,
+      "vatRate": 8,
+      "amount": 1304880
+    },
+    {
+      "description": "Sơn nước nội thất P1990",
+      "quantity": 1,
+      "unit": "lít",
+      "unitPrice": 66702,
+      "vatRate": 8,
+      "amount": 66702
+    },
+    {
+      "description": "Sơn nước nội thất R3344",
+      "quantity": 2,
+      "unit": "lít",
+      "unitPrice": 58635,
+      "vatRate": 10,
+      "amount": 117270
+    },
+    {
+      "description": "Ghế xoay văn phòng M2490",
+      "quantity": 15,
+      "unit": "cái",
+      "unitPrice": 81492,
+      "vatRate": 8,
+      "amount": 1222380
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán M3449",
+      "quantity": 12.25,
+      "unit": "tháng",
+      "unitPrice": 30560,
+      "vatRate": 10,
+      "amount": 374360
+    },
+    {
+      "description": "Bàn làm việc gỗ B6247",
+      "quantity": 6.5,
+      "unit": "cái",
+      "unitPrice": 83474,
+      "vatRate": 8,
+      "amount": 542581
+    },
+    {
+      "description": "Nước uống đóng chai M6471",
+      "quantity": 19,
+      "unit": "thùng",
+      "unitPrice": 13729,
+      "vatRate": 8,
+      "amount": 260851
+    },
+    {
+      "description": "Cà phê rang xay R5550",
+      "quantity": 1.25,
+      "unit": "kg",
+      "unitPrice": 2826,
+      "vatRate": 10,
+      "amount": 3533
+    },
+    {
+      "description": "Nước uống đóng chai B5614",
+      "quantity": 20,
+      "unit": "thùng",
+      "unitPrice": 51528,
+      "vatRate": 8,
+      "amount": 1030560
+    },
+    {
+      "description": "Bàn làm việc gỗ P3929",
+      "quantity": 17.5,
+      "unit": "cái",
+      "unitPrice": 8842,
+      "vatRate": 8,
+      "amount": 154735
+    }
+  ],
+  "subtotal": 5077852,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 4582689,
+      "amount": 366615
+    },
+    {
+      "rate": 10,
+      "base": 495163,
+      "amount": 49516
+    }
+  ],
+  "total": 5493983,
+  "fieldMeta": {}
+}

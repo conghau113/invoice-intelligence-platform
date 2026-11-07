@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Mai Trần Công ty TNHH SAMPLE",
+    "taxCode": "3810984936-168",
+    "address": "Số 75 Khóm 46 Phố số 33 Phường Bình Minh TP. Hà Nội 01524"
+  },
+  "buyer": {
+    "name": "Bùi và Lê Tập Đoàn SAMPLE",
+    "taxCode": "1125986119",
+    "address": "Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi"
+  },
+  "invoiceNo": "1604005",
+  "series": "C26TAA",
+  "issueDate": "2026-04-25",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Thép cuộn cán nóng K5486",
+      "quantity": 8,
+      "unit": "tấn",
+      "unitPrice": 36234,
+      "vatRate": 5,
+      "amount": 289872
+    },
+    {
+      "description": "Giấy in khổ A4 N6343",
+      "quantity": 2,
+      "unit": "ram",
+      "unitPrice": 68107,
+      "vatRate": 5,
+      "amount": 136214
+    },
+    {
+      "description": "Mực in laser đen T8467",
+      "quantity": 13.5,
+      "unit": "hộp",
+      "unitPrice": 18984,
+      "vatRate": 5,
+      "amount": 256284
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán P3620",
+      "quantity": 14,
+      "unit": "tháng",
+      "unitPrice": 30688,
+      "vatRate": 5,
+      "amount": 429632
+    }
+  ],
+  "subtotal": 1112002,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 1112002,
+      "amount": 55600
+    }
+  ],
+  "total": 1167602,
+  "fieldMeta": {}
+}

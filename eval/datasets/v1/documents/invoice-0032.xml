@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26D</KHHDon>
+      <SHDon>INV-261555239</SHDon>
+      <NLap>2026-02-14</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Dennis and Sons SAMPLE</Ten>
+        <MST>9585736384</MST>
+        <DChi>3194 Matthew Well Suite 879 East Beth, RI 14099</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Sharp-Torres SAMPLE</Ten>
+        <MST>8330646319</MST>
+        <DChi>2029 Kathy Branch New Kimberlychester, PR 22771</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Swivel office chair D1667</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>6</SLuong>
+          <DGia>487.92</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>2927.52</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Steel mounting bracket C6756</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>8</SLuong>
+          <DGia>708.57</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>5668.56</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Domestic freight service R1821</THHDVu>
+          <DVTinh>trip</DVTinh>
+          <SLuong>4.25</SLuong>
+          <DGia>327.50</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>1391.88</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Software maintenance fee H2220</THHDVu>
+          <DVTinh>month</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>141.75</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>425.25</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Black laser toner A7198</THHDVu>
+          <DVTinh>box</DVTinh>
+          <SLuong>15.5</SLuong>
+          <DGia>647.04</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>10029.12</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>20442.33</TgTien>
+            <TThue>0.00</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>20442.33</TgTCThue>
+        <TgTTTBSo>20442.33</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

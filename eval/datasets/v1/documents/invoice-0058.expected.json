@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Bùi Phạm Công ty TNHH MTV SAMPLE",
+    "taxCode": "5819736628",
+    "address": "Số 13/845 Khóm 70 Đường Hoàng Văn Thụ Phường Hòa Bình Tuyên Quang 01422"
+  },
+  "buyer": {
+    "name": "Phạm Bùi Công ty TNHH SAMPLE",
+    "taxCode": "6904000855",
+    "address": "2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ"
+  },
+  "invoiceNo": "1941517",
+  "series": "C26TBD",
+  "issueDate": "2026-04-13",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Bút bi văn phòng M9012",
+      "quantity": 1,
+      "unit": "hộp",
+      "unitPrice": 390000,
+      "vatRate": 0,
+      "amount": 390000
+    },
+    {
+      "description": "Thép cuộn cán nóng N6085",
+      "quantity": 16,
+      "unit": "tấn",
+      "unitPrice": 82000,
+      "vatRate": 0,
+      "amount": 1312000
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán N1388",
+      "quantity": 3,
+      "unit": "tháng",
+      "unitPrice": 846000,
+      "vatRate": 0,
+      "amount": 2538000
+    },
+    {
+      "description": "Giấy in khổ A4 C8533",
+      "quantity": 14,
+      "unit": "ram",
+      "unitPrice": 691000,
+      "vatRate": 0,
+      "amount": 9674000
+    }
+  ],
+  "subtotal": 13914000,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 13914000,
+      "amount": 0
+    }
+  ],
+  "total": 13914000,
+  "fieldMeta": {}
+}

@@ -1,0 +1,76 @@
+{
+  "seller": {
+    "name": "Bùi Phạm Công ty TNHH MTV SAMPLE",
+    "taxCode": "5819736628",
+    "address": "Số 13/845 Khóm 70 Đường Hoàng Văn Thụ Phường Hòa Bình Tuyên Quang 01422"
+  },
+  "buyer": {
+    "name": "Phạm Bùi Công ty TNHH SAMPLE",
+    "taxCode": "6904000855",
+    "address": "2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ"
+  },
+  "invoiceNo": "0248264",
+  "series": "C26TCB",
+  "issueDate": "2026-08-22",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Nước uống đóng chai N8546",
+      "quantity": 17,
+      "unit": "thùng",
+      "unitPrice": 621000,
+      "vatRate": 5,
+      "amount": 10557000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa H7360",
+      "quantity": 5.25,
+      "unit": "chuyến",
+      "unitPrice": 394500,
+      "vatRate": 5,
+      "amount": 2071125
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa H8081",
+      "quantity": 1.25,
+      "unit": "chuyến",
+      "unitPrice": 370500,
+      "vatRate": 5,
+      "amount": 463125
+    },
+    {
+      "description": "Phí bảo trì phần mềm D9950",
+      "quantity": 10,
+      "unit": "tháng",
+      "unitPrice": 586500,
+      "vatRate": 5,
+      "amount": 5865000
+    },
+    {
+      "description": "Bàn làm việc gỗ D3107",
+      "quantity": 6,
+      "unit": "cái",
+      "unitPrice": 268500,
+      "vatRate": 5,
+      "amount": 1611000
+    },
+    {
+      "description": "Phí bảo trì phần mềm R2801",
+      "quantity": 7.5,
+      "unit": "tháng",
+      "unitPrice": 151500,
+      "vatRate": 5,
+      "amount": 1136250
+    }
+  ],
+  "subtotal": 21703500,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 21703500,
+      "amount": 1085175
+    }
+  ],
+  "total": 22788675,
+  "fieldMeta": {}
+}

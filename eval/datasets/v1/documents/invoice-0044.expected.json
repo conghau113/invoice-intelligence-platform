@@ -1,0 +1,68 @@
+{
+  "seller": {
+    "name": "Brooks, Tyler and Combs SAMPLE",
+    "taxCode": "5385737979",
+    "address": "27249 Johnson Way Lake Alexandria, CO 66151"
+  },
+  "buyer": {
+    "name": "Jones-Murphy SAMPLE",
+    "taxCode": "2495063815",
+    "address": "529 Dominique Square Mirandahaven, UT 41158"
+  },
+  "invoiceNo": "INV-265250648",
+  "series": "S26B",
+  "issueDate": "2026-04-28",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Ground coffee D7681",
+      "quantity": 2,
+      "unit": "kg",
+      "unitPrice": 26082,
+      "vatRate": 10,
+      "amount": 52164
+    },
+    {
+      "description": "Interior wall paint D1260",
+      "quantity": 9.5,
+      "unit": "liter",
+      "unitPrice": 32159,
+      "vatRate": 10,
+      "amount": 305511
+    },
+    {
+      "description": "Domestic freight service H2698",
+      "quantity": 19,
+      "unit": "trip",
+      "unitPrice": 38241,
+      "vatRate": 10,
+      "amount": 726579
+    },
+    {
+      "description": "Steel mounting bracket T9469",
+      "quantity": 2,
+      "unit": "pc",
+      "unitPrice": 33582,
+      "vatRate": 10,
+      "amount": 67164
+    },
+    {
+      "description": "Industrial cleaning service H4874",
+      "quantity": 14,
+      "unit": "visit",
+      "unitPrice": 20403,
+      "vatRate": 10,
+      "amount": 285642
+    }
+  ],
+  "subtotal": 1437060,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 1437060,
+      "amount": 143706
+    }
+  ],
+  "total": 1580766,
+  "fieldMeta": {}
+}

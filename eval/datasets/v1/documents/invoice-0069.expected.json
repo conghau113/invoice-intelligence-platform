@@ -1,0 +1,52 @@
+{
+  "seller": {
+    "name": "Garcia-Riley SAMPLE",
+    "taxCode": "5193714551-891",
+    "address": "45553 Alvarez Mountains Suite 958 Taraborough, MT 28187"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-266065265",
+  "series": "S26E",
+  "issueDate": "2026-09-02",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Ground coffee M9585",
+      "quantity": 19.5,
+      "unit": "kg",
+      "unitPrice": 684,
+      "vatRate": 0,
+      "amount": 13338
+    },
+    {
+      "description": "Replacement air filter D2079",
+      "quantity": 17,
+      "unit": "pc",
+      "unitPrice": 59446,
+      "vatRate": 0,
+      "amount": 1010582
+    },
+    {
+      "description": "Replacement air filter N1364",
+      "quantity": 8,
+      "unit": "pc",
+      "unitPrice": 83209,
+      "vatRate": 0,
+      "amount": 665672
+    }
+  ],
+  "subtotal": 1689592,
+  "vatBreakdown": [
+    {
+      "rate": 0,
+      "base": 1689592,
+      "amount": 0
+    }
+  ],
+  "total": 1689592,
+  "fieldMeta": {}
+}

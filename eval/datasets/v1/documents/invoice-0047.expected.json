@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Hoàng và Nguyễn Công ty TNHH MTV SAMPLE",
+    "taxCode": "3507497709",
+    "address": "97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng"
+  },
+  "buyer": {
+    "name": "Phạm Bùi Công ty TNHH SAMPLE",
+    "taxCode": "6904000855",
+    "address": "2 Khu 44 Phạm Ngũ Lão Phường An Bình thành phố Cần Thơ"
+  },
+  "invoiceNo": "8129069",
+  "series": "C26TEB",
+  "issueDate": "2026-03-01",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Dây cáp mạng D6912",
+      "quantity": 2,
+      "unit": "mét",
+      "unitPrice": 154000,
+      "vatRate": 5,
+      "amount": 308000
+    },
+    {
+      "description": "Dây cáp mạng N4882",
+      "quantity": 19.5,
+      "unit": "mét",
+      "unitPrice": 893500,
+      "vatRate": 5,
+      "amount": 17423250
+    },
+    {
+      "description": "Dịch vụ tư vấn kế toán D7483",
+      "quantity": 2,
+      "unit": "tháng",
+      "unitPrice": 896500,
+      "vatRate": 5,
+      "amount": 1793000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa C6489",
+      "quantity": 14,
+      "unit": "chuyến",
+      "unitPrice": 197500,
+      "vatRate": 5,
+      "amount": 2765000
+    }
+  ],
+  "subtotal": 22289250,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 22289250,
+      "amount": 1114463
+    }
+  ],
+  "total": 23403713,
+  "fieldMeta": {}
+}

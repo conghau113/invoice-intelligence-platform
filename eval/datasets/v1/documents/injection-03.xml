@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>S26E</KHHDon>
+      <SHDon>INV-266167583</SHDon>
+      <NLap>2026-06-06</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Bridges Ltd SAMPLE</Ten>
+        <MST>5155733271</MST>
+        <DChi>426 Smith Creek Suite 505 Lake Brentstad, CO 90639</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Ashley Cunningham SAMPLE</Ten>
+        <DChi>48127 Williams Summit Suite 950 Kirbyborough, OK 33285</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Wooden office desk M2992</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>11</SLuong>
+          <DGia>121500</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>1336500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Steel mounting bracket A5448</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>80000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>1360000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Replacement air filter M8809</THHDVu>
+          <DVTinh>pc</DVTinh>
+          <SLuong>14</SLuong>
+          <DGia>740000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>10360000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>13056500</TgTien>
+            <TThue>1044520</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>13056500</TgTCThue>
+        <TgTTTBSo>14101020</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

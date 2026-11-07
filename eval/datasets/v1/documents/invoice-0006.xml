@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TDB</KHHDon>
+      <SHDon>7987881</SHDon>
+      <NLap>2026-03-07</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Hoàng và Mai Công ty TNHH MTV SAMPLE</Ten>
+        <MST>0608405931</MST>
+        <DChi>14 Hoàng Hoa Thám, xã Đông Hòa, tỉnh Tuyên Quang</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Dương Thị Jane SAMPLE</Ten>
+        <DChi>5/74 phố 62 Xã Hòa Thành TP. Cần Thơ</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Dây cáp mạng H9756</THHDVu>
+          <DVTinh>mét</DVTinh>
+          <SLuong>15.25</SLuong>
+          <DGia>672000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>10248000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen D1898</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>9</SLuong>
+          <DGia>201000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>1809000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa M8705</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>3</SLuong>
+          <DGia>613500</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>1840500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng M2705</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>7</SLuong>
+          <DGia>151000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>1057000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dây cáp mạng K2775</THHDVu>
+          <DVTinh>mét</DVTinh>
+          <SLuong>18</SLuong>
+          <DGia>226000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>4068000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng H4990</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>13.25</SLuong>
+          <DGia>139000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>1841750</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>20864250</TgTien>
+            <TThue>2086425</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>20864250</TgTCThue>
+        <TgTTTBSo>22950675</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TCA</KHHDon>
+      <SHDon>3882632</SHDon>
+      <NLap>2026-06-28</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Nguyễn và Đặng Công ty Hợp danh SAMPLE</Ten>
+        <MST>5964976311</MST>
+        <DChi>2/20/516 phố 28 phường Đông Hòa Thành phố Hồ Chí Minh 92729</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE</Ten>
+        <MST>0618511992</MST>
+        <DChi>69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng A6702</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>15</SLuong>
+          <DGia>378000</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>5670000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng P1958</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>10.5</SLuong>
+          <DGia>55000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>577500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vệ sinh công nghiệp E3888</THHDVu>
+          <DVTinh>lần</DVTinh>
+          <SLuong>13.25</SLuong>
+          <DGia>875000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>11593750</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Cà phê rang xay B3150</THHDVu>
+          <DVTinh>kg</DVTinh>
+          <SLuong>18</SLuong>
+          <DGia>299500</DGia>
+          <TSuat>0%</TSuat>
+          <ThTien>5391000</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Ghế xoay văn phòng K5570</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>14</SLuong>
+          <DGia>78000</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>1092000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>0%</TSuat>
+            <TgTien>11061000</TgTien>
+            <TThue>0</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>13263250</TgTien>
+            <TThue>1326325</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>24324250</TgTCThue>
+        <TgTTTBSo>25650575</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

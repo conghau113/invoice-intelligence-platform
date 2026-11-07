@@ -1,0 +1,60 @@
+{
+  "seller": {
+    "name": "Hoàng và Mai Công ty TNHH MTV SAMPLE",
+    "taxCode": "0608405931",
+    "address": "14 Hoàng Hoa Thám, xã Đông Hòa, tỉnh Tuyên Quang"
+  },
+  "buyer": {
+    "name": "Nguyễn và Phạm Doanh nghiệp tư nhân SAMPLE",
+    "taxCode": "0618511992",
+    "address": "69/360 Khóm 31 Đường số 61 phường Tân Phú Đông TP. Hải Phòng"
+  },
+  "invoiceNo": "9939801",
+  "series": "C25TCA",
+  "issueDate": "2025-10-10",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Phí bảo trì phần mềm D4904",
+      "quantity": 8,
+      "unit": "tháng",
+      "unitPrice": 324000,
+      "vatRate": 5,
+      "amount": 2592000
+    },
+    {
+      "description": "Dây cáp mạng A9196",
+      "quantity": 11,
+      "unit": "mét",
+      "unitPrice": 591500,
+      "vatRate": 5,
+      "amount": 6506500
+    },
+    {
+      "description": "Sơn nước nội thất C6177",
+      "quantity": 2.25,
+      "unit": "lít",
+      "unitPrice": 635500,
+      "vatRate": 5,
+      "amount": 1429875
+    },
+    {
+      "description": "Xi măng xây dựng H7222",
+      "quantity": 8.5,
+      "unit": "bao",
+      "unitPrice": 486500,
+      "vatRate": 5,
+      "amount": 4135250
+    }
+  ],
+  "subtotal": 14663625,
+  "vatBreakdown": [
+    {
+      "rate": 5,
+      "base": 14663625,
+      "amount": 733181
+    }
+  ],
+  "total": 15396806,
+  "fieldMeta": {}
+}

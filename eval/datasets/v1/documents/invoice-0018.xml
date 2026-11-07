@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TCC</KHHDon>
+      <SHDon>2639413</SHDon>
+      <NLap>2026-07-05</NLap>
+      <DVTTe>VND</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Nguyễn Công ty Hợp danh SAMPLE</Ten>
+        <MST>6801611429-434</MST>
+        <DChi>9 Đường Trần Bình Trọng xã An Hải Thanh Hóa 95532</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Bùi và Lê Tập Đoàn SAMPLE</Ten>
+        <MST>1125986119</MST>
+        <DChi>Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ vận chuyển nội địa T7327</THHDVu>
+          <DVTinh>chuyến</DVTinh>
+          <SLuong>6.5</SLuong>
+          <DGia>121000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>786500</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Thép cuộn cán nóng T4666</THHDVu>
+          <DVTinh>tấn</DVTinh>
+          <SLuong>19</SLuong>
+          <DGia>406000</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>7714000</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>8500500</TgTien>
+            <TThue>680040</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>8500500</TgTCThue>
+        <TgTTTBSo>9180540</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

@@ -1,0 +1,44 @@
+{
+  "seller": {
+    "name": "Dennis and Sons SAMPLE",
+    "taxCode": "9585736384",
+    "address": "3194 Matthew Well Suite 879 East Beth, RI 14099"
+  },
+  "buyer": {
+    "name": "Jones-Murphy SAMPLE",
+    "taxCode": "2495063815",
+    "address": "529 Dominique Square Mirandahaven, UT 41158"
+  },
+  "invoiceNo": "INV-256911422",
+  "series": "S25B",
+  "issueDate": "2025-12-30",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Office ballpoint pens E8310",
+      "quantity": 9.25,
+      "unit": "box",
+      "unitPrice": 36246,
+      "vatRate": 10,
+      "amount": 335276
+    },
+    {
+      "description": "Swivel office chair M7614",
+      "quantity": 20,
+      "unit": "pc",
+      "unitPrice": 81425,
+      "vatRate": 10,
+      "amount": 1628500
+    }
+  ],
+  "subtotal": 1963776,
+  "vatBreakdown": [
+    {
+      "rate": 10,
+      "base": 1963776,
+      "amount": 196378
+    }
+  ],
+  "total": 2160154,
+  "fieldMeta": {}
+}
