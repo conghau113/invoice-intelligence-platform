@@ -27,10 +27,21 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+# Browser tests need the `invoice-gen` group and Chromium: run them with `pnpm test:invoice-gen`.
+addopts = "-m 'not browser'"
+markers = ["browser: renders with a real Chromium (run by `pnpm test:invoice-gen`, not by CI)"]
 
 [dependency-groups]
 dev = [
     "datamodel-code-generator>=0.30",
+    # Exact pins: other versions can change the generated data (tools/invoice-gen).
+    "faker==40.44.0",
+    "jinja2==3.1.6",
     "pytest>=9.1.1",
     "ruff>=0.17.0",
+]
+# Only for rendering synthetic invoices. Not a default group, so neither CI's Python job nor the
+# image installs it. Keep the same version as @playwright/test in apps/web: same Chromium build.
+invoice-gen = [
+    "playwright==1.64.1",
 ]

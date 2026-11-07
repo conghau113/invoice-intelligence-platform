@@ -1,4 +1,4 @@
-"""Minimal synthetic invoice PDFs for T3.1 (T4.1 replaces this with the full generator).
+"""Minimal synthetic invoice PDFs of T3.1; its fixtures stay. New data: generate.py (T4.1).
 
 Renders the ground-truth JSON that min_xml.py already wrote, so the answer is known and the same
 invoices exist as XML and PDF. Standard library only. Base-14 Helvetica has no Vietnamese letters,
@@ -38,13 +38,19 @@ def lines_for(inv: dict) -> list[tuple[int, str]]:
         (11, f"Don vi ban: {inv['seller']['name']}"),
         (11, f"MST: {inv['seller']['taxCode']}    Dia chi: {inv['seller']['address']}"),
         (11, f"Don vi mua: {inv['buyer']['name']}"),
-        (11, f"MST: {inv['buyer']['taxCode'] or '(khong co)'}    Dia chi: {inv['buyer']['address']}"),
+        (
+            11,
+            f"MST: {inv['buyer']['taxCode'] or '(khong co)'}    Dia chi: {inv['buyer']['address']}",
+        ),
         (11, "STT  Ten hang    DVT   SL    Don gia    Thue%   Thanh tien"),
     ]
     for i, ln in enumerate(inv["lines"], 1):
         rows.append(
-            (11, f"{i}  {ln['description']}  {ln['unit']}  {ln['quantity']}  "
-                 f"{money(ln['unitPrice'], cur)}  {ln['vatRate']}%  {money(ln['amount'], cur)}")
+            (
+                11,
+                f"{i}  {ln['description']}  {ln['unit']}  {ln['quantity']}  "
+                f"{money(ln['unitPrice'], cur)}  {ln['vatRate']}%  {money(ln['amount'], cur)}",
+            )
         )
     rows.append((11, f"Cong tien hang: {money(inv['subtotal'], cur)}"))
     for v in inv["vatBreakdown"]:
@@ -54,7 +60,7 @@ def lines_for(inv: dict) -> list[tuple[int, str]]:
 
 
 def build_pdf(inv: dict, hidden: str | None = None) -> bytes:
-    """`hidden` (test fixtures only): text a viewer does not paint, placed where PDFs can hide it."""
+    """`hidden` (test fixtures only): text a viewer does not paint, where PDFs can hide it."""
     y = 790
     ops = []
     for size, text in lines_for(inv):

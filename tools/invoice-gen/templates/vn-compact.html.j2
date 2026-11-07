@@ -1,0 +1,66 @@
+{% extends "_base.html.j2" %}
+{% block css %}
+body { font: 11px/1.35 Arimo; }
+.top { display: grid; grid-template-columns: 1fr auto; gap: 14px; border: 1.5px solid #333; padding: 7px 9px; }
+.top h1 { font-size: 15px; margin: 0 0 3px; }
+.box { border-left: 1px solid #333; padding-left: 12px; }
+.rows { border: 1.5px solid #333; border-top: 0; padding: 6px 9px; }
+.rows div { display: grid; grid-template-columns: 92px 1fr; }
+.rows .head { display: block; font-weight: 700; margin-bottom: 1px; }
+.totals { width: 100%; margin-top: 6px; border: 1.5px solid #333; }
+.totals td, .totals th { padding: 2px 6px; border-bottom: 1px dotted #666; }
+.items { margin-top: 6px; }
+.items th { border: 1px solid #333; background: #e7e7e7; padding: 2px 4px; }
+.items td { border: 1px solid #999; padding: 2px 4px; vertical-align: top; }
+.strong td, .strong th { font-weight: 700; font-size: 12.5px; border-bottom: 0; }
+{% endblock %}
+{% block content %}
+<section class="top">
+  <div>
+    <h1>HÓA ĐƠN BÁN HÀNG – GTGT</h1>
+    <div>Ngày phát hành: <span class="nb">{{ fmt.date_short(inv.issueDate) }}</span></div>
+    <div>Loại tiền: {{ inv.currency }}</div>
+  </div>
+  <div class="box">
+    <div>Mẫu/Ký hiệu: <b class="nb">{{ inv.series }}</b></div>
+    <div>Số: <b class="nb">{{ inv.invoiceNo }}</b></div>
+  </div>
+</section>
+<section class="rows">
+  <div class="head">{{ inv.seller.name }}</div>
+  <div><span>MST bán</span><span class="nb">{{ inv.seller.taxCode }}</span></div>
+  <div><span>Địa chỉ</span><span>{{ inv.seller.address }}</span></div>
+</section>
+<section class="rows">
+  <div class="head">{{ inv.buyer.name }}</div>
+  <div><span>MST mua</span><span class="nb">{{ inv.buyer.taxCode or "không có" }}</span></div>
+  <div><span>Địa chỉ</span><span>{{ inv.buyer.address }}</span></div>
+</section>
+<!-- Totals first: some suppliers print them above the lines, models must not rely on the order. -->
+<table class="totals">
+  <tbody>
+    <tr><th scope="row" style="text-align:left">Cộng tiền hàng</th><td class="r nb" colspan="2">{{ fmt.money(inv.subtotal) }}</td></tr>
+    {% for item in inv.vatBreakdown %}
+    <tr><th scope="row" style="text-align:left">Thuế GTGT {{ fmt.rate(item.rate) }}</th><td class="r nb">trên {{ fmt.money(item.base) }}</td><td class="r nb">{{ fmt.money(item.amount) }}</td></tr>
+    {% endfor %}
+    <tr class="strong"><th scope="row" style="text-align:left">Tổng tiền thanh toán</th><td class="r nb" colspan="2">{{ fmt.money(inv.total) }} {{ inv.currency }}</td></tr>
+  </tbody>
+</table>
+<table class="items">
+  <thead>
+    <tr>
+      <th scope="col">TT</th><th scope="col">Hàng hóa, dịch vụ</th><th scope="col">ĐVT</th><th scope="col">SL</th>
+      <th scope="col">Đơn giá</th><th scope="col">TS</th><th scope="col">Thành tiền</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for line in inv.lines %}
+    <tr>
+      <td class="c">{{ loop.index }}</td><td>{{ line.description }}</td><td class="c">{{ line.unit }}</td>
+      <td class="r">{{ fmt.quantity(line.quantity) }}</td><td class="r nb">{{ fmt.money(line.unitPrice) }}</td>
+      <td class="c">{{ fmt.rate(line.vatRate) }}</td><td class="r nb">{{ fmt.money(line.amount) }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

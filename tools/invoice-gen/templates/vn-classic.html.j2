@@ -1,0 +1,64 @@
+{% extends "_base.html.j2" %}
+{% block css %}
+body { font: 12.5px/1.45 Tinos; }
+h1 { font-size: 22px; text-align: center; margin: 0 0 2px; }
+.date { text-align: center; font-style: normal; margin-bottom: 4px; }
+.serial { text-align: right; margin: 0; }
+.party { border-top: 1px solid #000; padding: 7px 0; margin: 0; }
+.party div { margin-bottom: 1px; }
+.items th, .items td { border: 1px solid #000; padding: 3px 5px; vertical-align: top; }
+.items { margin-top: 4px; }
+.vat { margin-top: 10px; width: 62%; margin-left: auto; }
+.vat th, .vat td { border: 1px solid #000; padding: 3px 5px; }
+.sum { margin-top: 8px; font-size: 13.5px; }
+.sum div { display: flex; justify-content: space-between; padding: 2px 0; }
+.sum .total { font-weight: 700; border-top: 1px solid #000; }
+.sign { display: flex; justify-content: space-around; margin-top: 18px; text-align: center; }
+{% endblock %}
+{% block content %}
+<p class="serial">Ký hiệu: <b class="nb">{{ inv.series }}</b> &nbsp; Số: <b class="nb">{{ inv.invoiceNo }}</b></p>
+<h1>HÓA ĐƠN GIÁ TRỊ GIA TĂNG</h1>
+<p class="date">{{ fmt.date_long(inv.issueDate) }}</p>
+<section class="party">
+  <div>Đơn vị bán hàng: <b>{{ inv.seller.name }}</b></div>
+  <div>Mã số thuế: <span class="nb">{{ inv.seller.taxCode }}</span></div>
+  <div>Địa chỉ: {{ inv.seller.address }}</div>
+</section>
+<section class="party">
+  <div>Người mua hàng: <b>{{ inv.buyer.name }}</b></div>
+  <div>Mã số thuế: <span class="nb">{{ inv.buyer.taxCode or "—" }}</span></div>
+  <div>Địa chỉ: {{ inv.buyer.address }}</div>
+  <div>Đồng tiền thanh toán: {{ inv.currency }}</div>
+</section>
+<table class="items">
+  <thead>
+    <tr>
+      <th scope="col">STT</th><th scope="col">Tên hàng hóa, dịch vụ</th><th scope="col">ĐVT</th>
+      <th scope="col">Số lượng</th><th scope="col">Đơn giá</th><th scope="col">Thuế suất</th>
+      <th scope="col">Thành tiền</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for line in inv.lines %}
+    <tr>
+      <td class="c">{{ loop.index }}</td><td>{{ line.description }}</td><td class="c">{{ line.unit }}</td>
+      <td class="r">{{ fmt.quantity(line.quantity) }}</td><td class="r nb">{{ fmt.money(line.unitPrice) }}</td>
+      <td class="c">{{ fmt.rate(line.vatRate) }}</td><td class="r nb">{{ fmt.money(line.amount) }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<table class="vat">
+  <thead><tr><th scope="col">Thuế suất</th><th scope="col">Tiền chịu thuế</th><th scope="col">Tiền thuế</th></tr></thead>
+  <tbody>
+    {% for item in inv.vatBreakdown %}
+    <tr><td class="c">{{ fmt.rate(item.rate) }}</td><td class="r nb">{{ fmt.money(item.base) }}</td><td class="r nb">{{ fmt.money(item.amount) }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+<section class="sum">
+  <div><span>Cộng tiền hàng:</span><span class="nb">{{ fmt.money(inv.subtotal) }}</span></div>
+  <div class="total"><span>Tổng cộng tiền thanh toán:</span><span class="nb">{{ fmt.money(inv.total) }} {{ inv.currency }}</span></div>
+</section>
+<section class="sign"><div><b>Người mua hàng</b></div><div><b>Người bán hàng</b></div></section>
+{% endblock %}

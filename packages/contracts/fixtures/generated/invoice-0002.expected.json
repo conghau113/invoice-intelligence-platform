@@ -1,0 +1,68 @@
+{
+  "seller": {
+    "name": "Hoàng và Mai Công ty TNHH MTV SAMPLE",
+    "taxCode": "0608405931",
+    "address": "14 Hoàng Hoa Thám, xã Đông Hòa, tỉnh Tuyên Quang"
+  },
+  "buyer": {
+    "name": "Bùi và Lê Tập Đoàn SAMPLE",
+    "taxCode": "1125986119",
+    "address": "Số 5/45/958 Khóm 78 Trần Bình Trọng xã Tuy Phước Đông Tỉnh Quảng Ngãi"
+  },
+  "invoiceNo": "5931122",
+  "series": "C25TAB",
+  "issueDate": "2025-11-20",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Phí bảo trì phần mềm B1164",
+      "quantity": 5,
+      "unit": "tháng",
+      "unitPrice": 722000,
+      "vatRate": 8,
+      "amount": 3610000
+    },
+    {
+      "description": "Dịch vụ vận chuyển nội địa N3081",
+      "quantity": 8,
+      "unit": "chuyến",
+      "unitPrice": 362500,
+      "vatRate": 8,
+      "amount": 2900000
+    },
+    {
+      "description": "Xi măng xây dựng A5119",
+      "quantity": 10,
+      "unit": "bao",
+      "unitPrice": 166500,
+      "vatRate": 8,
+      "amount": 1665000
+    },
+    {
+      "description": "Giấy in khổ A4 A6128",
+      "quantity": 9,
+      "unit": "ram",
+      "unitPrice": 233000,
+      "vatRate": 8,
+      "amount": 2097000
+    },
+    {
+      "description": "Giấy in khổ A4 D9503",
+      "quantity": 17.5,
+      "unit": "ram",
+      "unitPrice": 422500,
+      "vatRate": 8,
+      "amount": 7393750
+    }
+  ],
+  "subtotal": 17665750,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 17665750,
+      "amount": 1413260
+    }
+  ],
+  "total": 19079010,
+  "fieldMeta": {}
+}

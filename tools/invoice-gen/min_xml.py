@@ -1,4 +1,4 @@
-"""Minimal synthetic e-invoice generator for T2.8 (T4.1 replaces it with the full generator).
+"""Minimal synthetic e-invoice generator of T2.8; its fixtures stay. New data: generate.py (T4.1).
 
 Builds the ground-truth Invoice first, then renders the XML from it, so the parser under test is
 checked against an answer it did not produce. Standard library only, fixed seed => same output.
@@ -44,8 +44,14 @@ def make_invoice(rng: random.Random, index: int) -> dict:
         unit_price = rng.randint(1, 900) * (100 if currency == "USD" else 1000)
         amount = int(Decimal(str(quantity)) * unit_price)
         lines.append(
-            {"description": name, "quantity": quantity, "unit": unit,
-             "unitPrice": unit_price, "vatRate": rate, "amount": amount}
+            {
+                "description": name,
+                "quantity": quantity,
+                "unit": unit,
+                "unitPrice": unit_price,
+                "vatRate": rate,
+                "amount": amount,
+            }
         )
     breakdown = []
     for rate in sorted({line["vatRate"] for line in lines}):
@@ -53,11 +59,16 @@ def make_invoice(rng: random.Random, index: int) -> dict:
         breakdown.append({"rate": rate, "base": base, "amount": base * rate // 100})
     subtotal = sum(line["amount"] for line in lines)
     return {
-        "seller": {"name": f"Công ty SAMPLE Bán {index}", "taxCode": tax_code(rng, index % 3 == 0),
-                   "address": f"{index + 1} Đường Mẫu, Hà Nội"},
-        "buyer": {"name": f"Công ty SAMPLE Mua {index}",
-                  "taxCode": None if index % 5 == 4 else tax_code(rng, False),
-                  "address": f"{index + 20} Đường Mẫu, TP.HCM"},
+        "seller": {
+            "name": f"Công ty SAMPLE Bán {index}",
+            "taxCode": tax_code(rng, index % 3 == 0),
+            "address": f"{index + 1} Đường Mẫu, Hà Nội",
+        },
+        "buyer": {
+            "name": f"Công ty SAMPLE Mua {index}",
+            "taxCode": None if index % 5 == 4 else tax_code(rng, False),
+            "address": f"{index + 20} Đường Mẫu, TP.HCM",
+        },
         "invoiceNo": f"{rng.randint(1, 9999999):07d}",
         "series": "C26TAA",
         "issueDate": f"2026-{rng.randint(1, 9):02d}-{rng.randint(1, 28):02d}",

@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<HDon>
+  <DLHDon>
+    <TTChung>
+      <KHHDon>C26TDD</KHHDon>
+      <SHDon>7168066</SHDon>
+      <NLap>2026-08-18</NLap>
+      <DVTTe>USD</DVTTe>
+    </TTChung>
+    <NDHDon>
+      <NBan>
+        <Ten>Hoàng và Nguyễn Công ty TNHH MTV SAMPLE</Ten>
+        <MST>3507497709</MST>
+        <DChi>97/775 Khóm 55 Điện Biên Phủ phường Dương Minh Châu tỉnh Cao Bằng</DChi>
+      </NBan>
+      <NMua>
+        <Ten>Hoàng Công ty TNHH SAMPLE</Ten>
+        <MST>9624084463</MST>
+        <DChi>32 Nam Kỳ Khởi Nghĩa xã Long Bình TP. Đà Nẵng</DChi>
+      </NMua>
+      <DSHHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai A1529</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>17</SLuong>
+          <DGia>97.18</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>1652.06</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng M4962</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>6</SLuong>
+          <DGia>523.00</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>3138.00</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ B2254</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>13</SLuong>
+          <DGia>859.75</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>11176.75</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Nước uống đóng chai M7455</THHDVu>
+          <DVTinh>thùng</DVTinh>
+          <SLuong>10</SLuong>
+          <DGia>76.55</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>765.50</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Bàn làm việc gỗ D5017</THHDVu>
+          <DVTinh>cái</DVTinh>
+          <SLuong>2</SLuong>
+          <DGia>361.24</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>722.48</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Mực in laser đen T1905</THHDVu>
+          <DVTinh>hộp</DVTinh>
+          <SLuong>20</SLuong>
+          <DGia>230.77</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>4615.40</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Xi măng xây dựng T7802</THHDVu>
+          <DVTinh>bao</DVTinh>
+          <SLuong>8.5</SLuong>
+          <DGia>501.97</DGia>
+          <TSuat>8%</TSuat>
+          <ThTien>4266.75</ThTien>
+        </HHDVu>
+        <HHDVu>
+          <THHDVu>Dịch vụ tư vấn kế toán D9274</THHDVu>
+          <DVTinh>tháng</DVTinh>
+          <SLuong>1</SLuong>
+          <DGia>754.46</DGia>
+          <TSuat>10%</TSuat>
+          <ThTien>754.46</ThTien>
+        </HHDVu>
+      </DSHHDVu>
+      <TToan>
+        <THTTLTSuat>
+          <LTSuat>
+            <TSuat>8%</TSuat>
+            <TgTien>23919.38</TgTien>
+            <TThue>1913.55</TThue>
+          </LTSuat>
+          <LTSuat>
+            <TSuat>10%</TSuat>
+            <TgTien>3172.02</TgTien>
+            <TThue>317.20</TThue>
+          </LTSuat>
+        </THTTLTSuat>
+        <TgTCThue>27091.40</TgTCThue>
+        <TgTTTBSo>29322.15</TgTTTBSo>
+      </TToan>
+    </NDHDon>
+  </DLHDon>
+</HDon>

@@ -1,0 +1,460 @@
+{
+  "seller": {
+    "name": "Brooks, Tyler and Combs SAMPLE",
+    "taxCode": "5385737979",
+    "address": "27249 Johnson Way Lake Alexandria, CO 66151"
+  },
+  "buyer": {
+    "name": "Jones-Murphy SAMPLE",
+    "taxCode": "2495063815",
+    "address": "529 Dominique Square Mirandahaven, UT 41158"
+  },
+  "invoiceNo": "INV-264288024",
+  "series": "S26E",
+  "issueDate": "2026-05-22",
+  "currency": "VND",
+  "lines": [
+    {
+      "description": "Office ballpoint pens K9169",
+      "quantity": 2.25,
+      "unit": "box",
+      "unitPrice": 570000,
+      "vatRate": 8,
+      "amount": 1282500
+    },
+    {
+      "description": "Replacement air filter C7392",
+      "quantity": 18.25,
+      "unit": "pc",
+      "unitPrice": 117500,
+      "vatRate": 8,
+      "amount": 2144375
+    },
+    {
+      "description": "Office ballpoint pens K4959",
+      "quantity": 8,
+      "unit": "box",
+      "unitPrice": 204500,
+      "vatRate": 8,
+      "amount": 1636000
+    },
+    {
+      "description": "Network switch A6464",
+      "quantity": 4.25,
+      "unit": "set",
+      "unitPrice": 326500,
+      "vatRate": 8,
+      "amount": 1387625
+    },
+    {
+      "description": "Network cable C6095",
+      "quantity": 5.5,
+      "unit": "meter",
+      "unitPrice": 674000,
+      "vatRate": 8,
+      "amount": 3707000
+    },
+    {
+      "description": "Industrial cleaning service H6640",
+      "quantity": 9.25,
+      "unit": "visit",
+      "unitPrice": 617000,
+      "vatRate": 8,
+      "amount": 5707250
+    },
+    {
+      "description": "Swivel office chair P9250",
+      "quantity": 20.5,
+      "unit": "pc",
+      "unitPrice": 592000,
+      "vatRate": 8,
+      "amount": 12136000
+    },
+    {
+      "description": "Wooden office desk E1288",
+      "quantity": 5,
+      "unit": "pc",
+      "unitPrice": 397500,
+      "vatRate": 8,
+      "amount": 1987500
+    },
+    {
+      "description": "Wooden office desk R3520",
+      "quantity": 5.5,
+      "unit": "pc",
+      "unitPrice": 660500,
+      "vatRate": 8,
+      "amount": 3632750
+    },
+    {
+      "description": "Network switch R7830",
+      "quantity": 8.25,
+      "unit": "set",
+      "unitPrice": 64000,
+      "vatRate": 8,
+      "amount": 528000
+    },
+    {
+      "description": "Ground coffee D6055",
+      "quantity": 3,
+      "unit": "kg",
+      "unitPrice": 445000,
+      "vatRate": 8,
+      "amount": 1335000
+    },
+    {
+      "description": "Replacement air filter C8798",
+      "quantity": 17.5,
+      "unit": "pc",
+      "unitPrice": 587000,
+      "vatRate": 8,
+      "amount": 10272500
+    },
+    {
+      "description": "Industrial cleaning service M8750",
+      "quantity": 9,
+      "unit": "visit",
+      "unitPrice": 201500,
+      "vatRate": 8,
+      "amount": 1813500
+    },
+    {
+      "description": "Network switch H2433",
+      "quantity": 6,
+      "unit": "set",
+      "unitPrice": 492000,
+      "vatRate": 8,
+      "amount": 2952000
+    },
+    {
+      "description": "Network cable H6976",
+      "quantity": 7,
+      "unit": "meter",
+      "unitPrice": 491000,
+      "vatRate": 8,
+      "amount": 3437000
+    },
+    {
+      "description": "Software maintenance fee A9774",
+      "quantity": 12,
+      "unit": "month",
+      "unitPrice": 714000,
+      "vatRate": 8,
+      "amount": 8568000
+    },
+    {
+      "description": "Office ballpoint pens H3236",
+      "quantity": 5.25,
+      "unit": "box",
+      "unitPrice": 87000,
+      "vatRate": 8,
+      "amount": 456750
+    },
+    {
+      "description": "Industrial cleaning service B6711",
+      "quantity": 12,
+      "unit": "visit",
+      "unitPrice": 793500,
+      "vatRate": 8,
+      "amount": 9522000
+    },
+    {
+      "description": "Network switch N3488",
+      "quantity": 7,
+      "unit": "set",
+      "unitPrice": 616000,
+      "vatRate": 8,
+      "amount": 4312000
+    },
+    {
+      "description": "Interior wall paint B7038",
+      "quantity": 14,
+      "unit": "liter",
+      "unitPrice": 631500,
+      "vatRate": 8,
+      "amount": 8841000
+    },
+    {
+      "description": "Industrial cleaning service D1277",
+      "quantity": 9,
+      "unit": "visit",
+      "unitPrice": 365500,
+      "vatRate": 8,
+      "amount": 3289500
+    },
+    {
+      "description": "A4 copy paper N5416",
+      "quantity": 6,
+      "unit": "ream",
+      "unitPrice": 633500,
+      "vatRate": 8,
+      "amount": 3801000
+    },
+    {
+      "description": "Swivel office chair K7123",
+      "quantity": 13.25,
+      "unit": "pc",
+      "unitPrice": 706000,
+      "vatRate": 8,
+      "amount": 9354500
+    },
+    {
+      "description": "Black laser toner R5061",
+      "quantity": 19.25,
+      "unit": "box",
+      "unitPrice": 646500,
+      "vatRate": 8,
+      "amount": 12445125
+    },
+    {
+      "description": "Interior wall paint C5404",
+      "quantity": 16.25,
+      "unit": "liter",
+      "unitPrice": 505000,
+      "vatRate": 8,
+      "amount": 8206250
+    },
+    {
+      "description": "Domestic freight service N7929",
+      "quantity": 10,
+      "unit": "trip",
+      "unitPrice": 67000,
+      "vatRate": 8,
+      "amount": 670000
+    },
+    {
+      "description": "Office ballpoint pens R4574",
+      "quantity": 11.5,
+      "unit": "box",
+      "unitPrice": 466000,
+      "vatRate": 8,
+      "amount": 5359000
+    },
+    {
+      "description": "Software maintenance fee E1704",
+      "quantity": 20,
+      "unit": "month",
+      "unitPrice": 354000,
+      "vatRate": 8,
+      "amount": 7080000
+    },
+    {
+      "description": "Black laser toner C8642",
+      "quantity": 14,
+      "unit": "box",
+      "unitPrice": 402000,
+      "vatRate": 8,
+      "amount": 5628000
+    },
+    {
+      "description": "Wooden office desk B8680",
+      "quantity": 13,
+      "unit": "pc",
+      "unitPrice": 328000,
+      "vatRate": 8,
+      "amount": 4264000
+    },
+    {
+      "description": "Replacement air filter H8691",
+      "quantity": 8,
+      "unit": "pc",
+      "unitPrice": 797500,
+      "vatRate": 8,
+      "amount": 6380000
+    },
+    {
+      "description": "Interior wall paint H1262",
+      "quantity": 16.25,
+      "unit": "liter",
+      "unitPrice": 201000,
+      "vatRate": 8,
+      "amount": 3266250
+    },
+    {
+      "description": "Domestic freight service D2183",
+      "quantity": 18,
+      "unit": "trip",
+      "unitPrice": 574000,
+      "vatRate": 8,
+      "amount": 10332000
+    },
+    {
+      "description": "Domestic freight service N6641",
+      "quantity": 7,
+      "unit": "trip",
+      "unitPrice": 228000,
+      "vatRate": 8,
+      "amount": 1596000
+    },
+    {
+      "description": "A4 copy paper A7826",
+      "quantity": 15,
+      "unit": "ream",
+      "unitPrice": 58000,
+      "vatRate": 8,
+      "amount": 870000
+    },
+    {
+      "description": "Swivel office chair D9806",
+      "quantity": 12,
+      "unit": "pc",
+      "unitPrice": 569000,
+      "vatRate": 8,
+      "amount": 6828000
+    },
+    {
+      "description": "Industrial cleaning service D2903",
+      "quantity": 17,
+      "unit": "visit",
+      "unitPrice": 816500,
+      "vatRate": 8,
+      "amount": 13880500
+    },
+    {
+      "description": "Steel mounting bracket E8888",
+      "quantity": 3.5,
+      "unit": "pc",
+      "unitPrice": 710000,
+      "vatRate": 8,
+      "amount": 2485000
+    },
+    {
+      "description": "Replacement air filter M8739",
+      "quantity": 6.25,
+      "unit": "pc",
+      "unitPrice": 89500,
+      "vatRate": 8,
+      "amount": 559375
+    },
+    {
+      "description": "Ground coffee T3561",
+      "quantity": 16,
+      "unit": "kg",
+      "unitPrice": 562500,
+      "vatRate": 8,
+      "amount": 9000000
+    },
+    {
+      "description": "Steel mounting bracket E3997",
+      "quantity": 20.5,
+      "unit": "pc",
+      "unitPrice": 739500,
+      "vatRate": 8,
+      "amount": 15159750
+    },
+    {
+      "description": "Interior wall paint D5091",
+      "quantity": 6,
+      "unit": "liter",
+      "unitPrice": 420000,
+      "vatRate": 8,
+      "amount": 2520000
+    },
+    {
+      "description": "Interior wall paint M8995",
+      "quantity": 8.5,
+      "unit": "liter",
+      "unitPrice": 709000,
+      "vatRate": 8,
+      "amount": 6026500
+    },
+    {
+      "description": "Steel mounting bracket K8484",
+      "quantity": 18.25,
+      "unit": "pc",
+      "unitPrice": 444500,
+      "vatRate": 8,
+      "amount": 8112125
+    },
+    {
+      "description": "Ground coffee C3300",
+      "quantity": 16,
+      "unit": "kg",
+      "unitPrice": 472000,
+      "vatRate": 8,
+      "amount": 7552000
+    },
+    {
+      "description": "Network switch C9163",
+      "quantity": 6,
+      "unit": "set",
+      "unitPrice": 221000,
+      "vatRate": 8,
+      "amount": 1326000
+    },
+    {
+      "description": "Domestic freight service B1891",
+      "quantity": 6.5,
+      "unit": "trip",
+      "unitPrice": 561000,
+      "vatRate": 8,
+      "amount": 3646500
+    },
+    {
+      "description": "Interior wall paint C8243",
+      "quantity": 13,
+      "unit": "liter",
+      "unitPrice": 817500,
+      "vatRate": 8,
+      "amount": 10627500
+    },
+    {
+      "description": "Interior wall paint P9153",
+      "quantity": 20,
+      "unit": "liter",
+      "unitPrice": 721000,
+      "vatRate": 8,
+      "amount": 14420000
+    },
+    {
+      "description": "Bottled drinking water K1907",
+      "quantity": 12,
+      "unit": "case",
+      "unitPrice": 444500,
+      "vatRate": 8,
+      "amount": 5334000
+    },
+    {
+      "description": "Accounting advisory service R3387",
+      "quantity": 1,
+      "unit": "month",
+      "unitPrice": 186500,
+      "vatRate": 8,
+      "amount": 186500
+    },
+    {
+      "description": "Bottled drinking water E4114",
+      "quantity": 3.25,
+      "unit": "case",
+      "unitPrice": 449500,
+      "vatRate": 8,
+      "amount": 1460875
+    },
+    {
+      "description": "Swivel office chair H5789",
+      "quantity": 13.5,
+      "unit": "pc",
+      "unitPrice": 898500,
+      "vatRate": 8,
+      "amount": 12129750
+    },
+    {
+      "description": "Ground coffee A9861",
+      "quantity": 18.25,
+      "unit": "kg",
+      "unitPrice": 224500,
+      "vatRate": 8,
+      "amount": 4097125
+    }
+  ],
+  "subtotal": 293551875,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 293551875,
+      "amount": 23484150
+    }
+  ],
+  "total": 317036025,
+  "fieldMeta": {}
+}

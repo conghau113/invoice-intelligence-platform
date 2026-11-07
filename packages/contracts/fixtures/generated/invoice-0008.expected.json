@@ -1,0 +1,156 @@
+{
+  "seller": {
+    "name": "Brooks, Tyler and Combs SAMPLE",
+    "taxCode": "5385737979",
+    "address": "27249 Johnson Way Lake Alexandria, CO 66151"
+  },
+  "buyer": {
+    "name": "Sharp-Torres SAMPLE",
+    "taxCode": "8330646319",
+    "address": "2029 Kathy Branch New Kimberlychester, PR 22771"
+  },
+  "invoiceNo": "INV-268487296",
+  "series": "S26E",
+  "issueDate": "2026-01-15",
+  "currency": "USD",
+  "lines": [
+    {
+      "description": "Black laser toner A3093",
+      "quantity": 5,
+      "unit": "box",
+      "unitPrice": 66884,
+      "vatRate": 8,
+      "amount": 334420
+    },
+    {
+      "description": "Black laser toner A4597",
+      "quantity": 5.5,
+      "unit": "box",
+      "unitPrice": 22465,
+      "vatRate": 8,
+      "amount": 123558
+    },
+    {
+      "description": "Domestic freight service E8028",
+      "quantity": 18,
+      "unit": "trip",
+      "unitPrice": 18647,
+      "vatRate": 8,
+      "amount": 335646
+    },
+    {
+      "description": "Accounting advisory service A3137",
+      "quantity": 5.5,
+      "unit": "month",
+      "unitPrice": 62032,
+      "vatRate": 8,
+      "amount": 341176
+    },
+    {
+      "description": "Steel mounting bracket E2597",
+      "quantity": 6.25,
+      "unit": "pc",
+      "unitPrice": 19952,
+      "vatRate": 8,
+      "amount": 124700
+    },
+    {
+      "description": "Domestic freight service N5902",
+      "quantity": 5.25,
+      "unit": "trip",
+      "unitPrice": 76565,
+      "vatRate": 8,
+      "amount": 401966
+    },
+    {
+      "description": "Software maintenance fee E2628",
+      "quantity": 13,
+      "unit": "month",
+      "unitPrice": 42762,
+      "vatRate": 8,
+      "amount": 555906
+    },
+    {
+      "description": "Office ballpoint pens H3233",
+      "quantity": 6.25,
+      "unit": "box",
+      "unitPrice": 2156,
+      "vatRate": 8,
+      "amount": 13475
+    },
+    {
+      "description": "Industrial cleaning service N6832",
+      "quantity": 7,
+      "unit": "visit",
+      "unitPrice": 33011,
+      "vatRate": 8,
+      "amount": 231077
+    },
+    {
+      "description": "Swivel office chair M7290",
+      "quantity": 20.5,
+      "unit": "pc",
+      "unitPrice": 806,
+      "vatRate": 8,
+      "amount": 16523
+    },
+    {
+      "description": "Network switch K9971",
+      "quantity": 5,
+      "unit": "set",
+      "unitPrice": 77813,
+      "vatRate": 8,
+      "amount": 389065
+    },
+    {
+      "description": "A4 copy paper P7048",
+      "quantity": 16,
+      "unit": "ream",
+      "unitPrice": 82867,
+      "vatRate": 8,
+      "amount": 1325872
+    },
+    {
+      "description": "Office ballpoint pens R4317",
+      "quantity": 13,
+      "unit": "box",
+      "unitPrice": 61934,
+      "vatRate": 8,
+      "amount": 805142
+    },
+    {
+      "description": "Network cable P1356",
+      "quantity": 8,
+      "unit": "meter",
+      "unitPrice": 57842,
+      "vatRate": 8,
+      "amount": 462736
+    },
+    {
+      "description": "Interior wall paint E8326",
+      "quantity": 3,
+      "unit": "liter",
+      "unitPrice": 36921,
+      "vatRate": 8,
+      "amount": 110763
+    },
+    {
+      "description": "Ground coffee M5854",
+      "quantity": 11,
+      "unit": "kg",
+      "unitPrice": 52754,
+      "vatRate": 8,
+      "amount": 580294
+    }
+  ],
+  "subtotal": 6152319,
+  "vatBreakdown": [
+    {
+      "rate": 8,
+      "base": 6152319,
+      "amount": 492186
+    }
+  ],
+  "total": 6644505,
+  "fieldMeta": {}
+}

@@ -17,6 +17,9 @@ data/*
 !data/.gitkeep
 dist-scripts/
 
+# Synthetic invoices (pnpm gen:invoices); T4.2 picks what is kept
+tools/invoice-gen/out/
+
 # Playwright
 playwright-report/
 test-results/

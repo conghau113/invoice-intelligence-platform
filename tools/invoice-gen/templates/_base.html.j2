@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="{{ lang }}">
+  <head>
+    <meta charset="utf-8" />
+    <title>SAMPLE synthetic invoice {{ doc_id }}</title>
+    <style>
+      {{ fonts_css|safe }}
+      @page { size: A4; margin: 12mm; }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; color: #1b1b1b; }
+      /* A collapsed border sticks out half its width: without this PDF pages clip the right edge. */
+      .sheet { padding: 0 1px; }
+      table { width: 100%; border-collapse: collapse; }
+      thead { display: table-header-group; }
+      tr { break-inside: avoid; }
+      th { font-weight: 700; }
+      .nb { white-space: nowrap; }
+      .r { text-align: right; }
+      .c { text-align: center; }
+      /* position: fixed repeats on every printed page, which is what docs/LEGAL.md asks for. */
+      .wm {
+        position: fixed; top: 48%; left: 50%; z-index: 10;
+        transform: translate(-50%, -50%) rotate(-32deg);
+        font: 700 42px Arimo; color: #777; opacity: 0.3; white-space: nowrap; pointer-events: none;
+      }
+      {% block css %}{% endblock %}
+    </style>
+  </head>
+  <body>
+    <main class="sheet">{% block content %}{% endblock %}</main>
+    <div class="wm">{{ watermark }}</div>
+  </body>
+</html>
