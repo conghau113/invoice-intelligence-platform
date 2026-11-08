@@ -32,3 +32,5 @@ apps/api/.test-data/
 
 # Results of hand-run model probes
 eval/probes/out/
+# Eval runs (T4.3): hold the values the model read; only eval/reports is committed
+eval/runs/

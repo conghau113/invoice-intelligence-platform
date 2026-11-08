@@ -41,7 +41,7 @@ Option 2.
 
 | Number | From | Value |
 |---|---|---|
-| Noise per critical field | T4.3 | not measured yet |
+| Noise per critical field | T4.3 | 0 points on all 8 critical fields and line F1: `smoke`, 3 runs of `gemini-3.1-flash-lite` with `invoice_extraction/v1`, 2026-11-08 (`eval/reports/v1-gemini-3.1-flash-lite-invoice_extraction-v1.md`). Every run gave the same right/wrong answer on every critical field (0 flips per document in the report); the one-document margin (5 points on `smoke`, 1 on `core`) is therefore what sets floor and tolerance. Three runs of one model on one day: re-measure when the model or prompt changes |
 | Floor per critical field, line F1 | T4.4 | not measured yet |
 | Smoke baseline | T4.5 | not measured yet |
 

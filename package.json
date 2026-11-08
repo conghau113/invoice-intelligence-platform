@@ -36,6 +36,8 @@
     "check:fast": "turbo run lint typecheck test",
     "gen:invoices": "uv run --frozen --project apps/ai --group invoice-gen python tools/invoice-gen/generate.py",
     "gen:invoices:freeze": "uv run --frozen --project apps/ai --group invoice-gen python tools/invoice-gen/freeze_dataset.py",
+    "eval:run": "cd apps/ai && PYTHONPATH=.:../../eval uv run --frozen python -m runner run",
+    "eval:report": "cd apps/ai && PYTHONPATH=.:../../eval uv run --frozen python -m runner report",
     "gen:invoices:verify": "pnpm --filter contracts build && uv run --frozen --project apps/ai --group invoice-gen python tools/invoice-gen/verify.py && cd tools/invoice-gen/out && node ../check-rules.mjs",
     "test:invoice-gen": "pnpm --filter contracts build && uv run --frozen --project apps/ai --group invoice-gen pytest apps/ai/tests/test_invoice_gen_render.py -o addopts= -m browser --rootdir apps/ai -c apps/ai/pyproject.toml",
     "check:full": "pnpm check:fast && turbo run build && pnpm test:int && pnpm check && pnpm test:scripts && pnpm test:invoice-gen && pnpm check:secrets"

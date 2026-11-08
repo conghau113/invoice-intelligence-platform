@@ -7,9 +7,9 @@
 | NFR-01 | Tenant isolation | 0 cross-tenant reads/writes in tests (DB, API, RAG) | Integration + e2e tests in CI | T1.8, T5.7 | |
 | NFR-02 | API latency (reads) | p95 < 300 ms at 20 concurrent users on the local stack | k6 | T6.6 | |
 | NFR-03 | Upload acknowledgment | p95 < 500 ms (excludes processing) | k6 | T6.6 | |
-| NFR-04 | Extraction latency | p95 < 30 s per single-page document (provider dependent) | eval runner | T4.3 | |
+| NFR-04 | Extraction latency | p95 < 30 s per single-page document (provider dependent) | eval runner | T4.3 | p95 8.1 s, p50 4.4 s (n=57 single-page; `smoke` ×3, `gemini-3.1-flash-lite`, free tier, 2026-11-08) |
 | NFR-05 | Extraction accuracy | Threshold set from first baseline and recorded in ADR 0020 | eval runner | T4.2–T4.4 | |
-| NFR-06 | Cost | Cost per document reported (computed at list price even when using the free tier); actual LLM spend = 0 | eval + metrics | T4.3, T7.3 | |
+| NFR-06 | Cost | Cost per document reported (computed at list price even when using the free tier); actual LLM spend = 0 | eval + metrics | T4.3, T7.3 | $0.00285 per document at list price (`smoke` ×3, `gemini-3.1-flash-lite`, prices 2026-11-02); spend 0 (free tier) |
 | NFR-07 | RAG quality | Retrieval hit@5 and citation precision reported; every answer cites or abstains | RAG eval | T5.6 | |
 | NFR-08 | Resilience | No lost or duplicated jobs when AI service, worker or Redis restarts | failure drill | T6.7 | |
 | NFR-09 | Rate limiting | Excess requests get 429 + Retry-After; provider 429 never fails a job before retries are exhausted | k6 + fake provider | T6.1, T6.2 | |

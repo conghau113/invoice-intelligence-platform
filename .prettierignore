@@ -14,3 +14,5 @@ scripts/__fixtures__
 apps/api/drizzle/meta
 dist-scripts
 eval/datasets
+# Written by pnpm eval:report
+eval/reports
