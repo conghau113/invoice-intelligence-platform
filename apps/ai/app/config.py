@@ -20,7 +20,8 @@ class Settings(BaseSettings):
 
     # LLM path (PDF/image). Only synthetic data may ever reach a provider (ADR 0009, docs/LEGAL.md).
     llm_provider: Literal["gemini", "openai_compat", "fake"] = "gemini"
-    llm_model: str = "gemini-3.1-flash-lite"  # 2.5-flash is closed to new keys (404)
+    # Primary chosen on the eval set (ADR 0009, T4.4); the LLM_MODEL variable overrides it.
+    llm_model: str = "gemini-3.5-flash-lite"
     # One provider call must end before the API worker aborts at 60 s (T3.2) and inside the 55 s
     # budget of services/extract.py, or an abandoned call is retried and billed twice.
     llm_timeout_s: float = Field(default=45.0, gt=0, le=55)

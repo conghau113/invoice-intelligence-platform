@@ -1,0 +1,1183 @@
+{
+  "schemaVersion": 1,
+  "name": "compare-v1",
+  "dataset": "v1",
+  "manifestSha256": "09abbf3843d2cd8345c7f796840bf36d65d0170e5700ced3126d76a115ef2614",
+  "configs": [
+    {
+      "key": "A",
+      "provider": "Gemini API, free tier",
+      "model": "gemini-3.1-flash-lite",
+      "role": "candidate",
+      "report": "v1-gemini-3.1-flash-lite-invoice_extraction-v1",
+      "core": {
+        "complete": true,
+        "documents": 100,
+        "critical": {
+          "invoiceNo": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "series": {
+            "correct": 100,
+            "total": 100,
+            "accuracy": 1.0
+          },
+          "issueDate": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "currency": {
+            "correct": 100,
+            "total": 100,
+            "accuracy": 1.0
+          },
+          "subtotal": {
+            "correct": 100,
+            "total": 100,
+            "accuracy": 1.0
+          },
+          "total": {
+            "correct": 100,
+            "total": 100,
+            "accuracy": 1.0
+          },
+          "seller.taxCode": {
+            "correct": 88,
+            "total": 100,
+            "accuracy": 0.88
+          },
+          "buyer.taxCode": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          }
+        },
+        "fields": {
+          "seller.name": {
+            "correct": 100,
+            "total": 100,
+            "accuracy": 1.0
+          },
+          "seller.taxCode": {
+            "correct": 88,
+            "total": 100,
+            "accuracy": 0.88
+          },
+          "seller.address": {
+            "correct": 100,
+            "total": 100,
+            "accuracy": 1.0
+          },
+          "buyer.name": {
+            "correct": 100,
+            "total": 100,
+            "accuracy": 1.0
+          },
+          "buyer.taxCode": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "buyer.address": {
+            "correct": 98,
+            "total": 100,
+            "accuracy": 0.98
+          },
+          "invoiceNo": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "series": {
+            "correct": 100,
+            "total": 100,
+            "accuracy": 1.0
+          },
+          "issueDate": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "currency": {
+            "correct": 100,
+            "total": 100,
+            "accuracy": 1.0
+          },
+          "subtotal": {
+            "correct": 100,
+            "total": 100,
+            "accuracy": 1.0
+          },
+          "total": {
+            "correct": 100,
+            "total": 100,
+            "accuracy": 1.0
+          },
+          "vatBreakdown": {
+            "correct": 100,
+            "total": 100,
+            "accuracy": 1.0
+          }
+        },
+        "lines": {
+          "f1": 0.9985,
+          "precision": 0.9985,
+          "recall": 0.9985,
+          "missing": 0,
+          "extra": 0
+        },
+        "criticalExact": {
+          "correct": 85,
+          "total": 100,
+          "accuracy": 0.85
+        },
+        "documentExact": {
+          "correct": 84,
+          "total": 100,
+          "accuracy": 0.84
+        },
+        "failures": {},
+        "costUsdPerDocument": 0.002745,
+        "latency": {
+          "n": 100,
+          "p50Ms": 4233,
+          "p95Ms": 22938
+        },
+        "latencySinglePage": {
+          "n": 96,
+          "p50Ms": 4208,
+          "p95Ms": 26129
+        },
+        "medianInputTokens": 1568.0,
+        "calls": 101,
+        "sellerBranchSuffixCut": {
+          "count": 12,
+          "of": 26
+        },
+        "confidentWrong": {
+          "seller.taxCode": 12,
+          "issueDate": 1,
+          "invoiceNo": 1
+        },
+        "byVariant": {
+          "jpeg-exif-rotated": {
+            "documents": 4,
+            "linesF1": 1.0,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "jpeg-low-res": {
+            "documents": 4,
+            "linesF1": 1.0,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 0.75,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "jpeg-tilt": {
+            "documents": 13,
+            "linesF1": 1.0,
+            "critical": {
+              "invoiceNo": 0.9231,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 0.9231,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "jpeg-tilt-noise": {
+            "documents": 4,
+            "linesF1": 1.0,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "pdf-clean": {
+            "documents": 40,
+            "linesF1": 1.0,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 0.85,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "pdf-many-lines": {
+            "documents": 14,
+            "linesF1": 0.9935,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 0.8571,
+              "buyer.taxCode": 0.9286
+            }
+          },
+          "pdf-multi-page": {
+            "documents": 4,
+            "linesF1": 1.0,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "png-clean": {
+            "documents": 13,
+            "linesF1": 1.0,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 0.7692,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "png-noise": {
+            "documents": 4,
+            "linesF1": 1.0,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          }
+        }
+      },
+      "noInjection": null,
+      "note": null,
+      "paid": "$0 (free tier)",
+      "smokeNoise": {
+        "invoiceNo": 0.0,
+        "series": 0.0,
+        "issueDate": 0.0,
+        "currency": 0.0,
+        "subtotal": 0.0,
+        "total": 0.0,
+        "seller.taxCode": 0.0,
+        "buyer.taxCode": 0.0,
+        "lines.f1": 0.0
+      },
+      "injection": {
+        "correct": 24,
+        "of": 24
+      },
+      "regression": {
+        "cases": 3,
+        "sellerSuffixCut": 3
+      }
+    },
+    {
+      "key": "B",
+      "provider": "Gemini API, free tier",
+      "model": "gemini-3.5-flash-lite",
+      "role": "candidate",
+      "report": "v1-gemini-3.5-flash-lite-invoice_extraction-v1",
+      "core": {
+        "complete": true,
+        "documents": 100,
+        "critical": {
+          "invoiceNo": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "series": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "issueDate": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "currency": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "subtotal": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "total": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "seller.taxCode": {
+            "correct": 92,
+            "total": 100,
+            "accuracy": 0.92
+          },
+          "buyer.taxCode": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          }
+        },
+        "fields": {
+          "seller.name": {
+            "correct": 97,
+            "total": 100,
+            "accuracy": 0.97
+          },
+          "seller.taxCode": {
+            "correct": 92,
+            "total": 100,
+            "accuracy": 0.92
+          },
+          "seller.address": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "buyer.name": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "buyer.taxCode": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "buyer.address": {
+            "correct": 95,
+            "total": 100,
+            "accuracy": 0.95
+          },
+          "invoiceNo": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "series": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "issueDate": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "currency": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "subtotal": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "total": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          },
+          "vatBreakdown": {
+            "correct": 99,
+            "total": 100,
+            "accuracy": 0.99
+          }
+        },
+        "lines": {
+          "f1": 0.9431,
+          "precision": 0.9851,
+          "recall": 0.9045,
+          "missing": 54,
+          "extra": 0
+        },
+        "criticalExact": {
+          "correct": 92,
+          "total": 100,
+          "accuracy": 0.92
+        },
+        "documentExact": {
+          "correct": 85,
+          "total": 100,
+          "accuracy": 0.85
+        },
+        "failures": {
+          "rejected:EXTRACTION_SCHEMA_INVALID": 1
+        },
+        "costUsdPerDocument": 0.004519,
+        "latency": {
+          "n": 99,
+          "p50Ms": 4495,
+          "p95Ms": 10703
+        },
+        "latencySinglePage": {
+          "n": 96,
+          "p50Ms": 4454,
+          "p95Ms": 7093
+        },
+        "medianInputTokens": 1568,
+        "calls": 100,
+        "sellerBranchSuffixCut": {
+          "count": 7,
+          "of": 26
+        },
+        "confidentWrong": {
+          "seller.taxCode": 7
+        },
+        "byVariant": {
+          "jpeg-exif-rotated": {
+            "documents": 4,
+            "linesF1": 1.0,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "jpeg-low-res": {
+            "documents": 4,
+            "linesF1": 1.0,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "jpeg-tilt": {
+            "documents": 13,
+            "linesF1": 1.0,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "jpeg-tilt-noise": {
+            "documents": 4,
+            "linesF1": 0.7037,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "pdf-clean": {
+            "documents": 40,
+            "linesF1": 0.992,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 0.925,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "pdf-many-lines": {
+            "documents": 14,
+            "linesF1": 1.0,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 0.7857,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "pdf-multi-page": {
+            "documents": 4,
+            "linesF1": 0.8302,
+            "critical": {
+              "invoiceNo": 0.75,
+              "series": 0.75,
+              "issueDate": 0.75,
+              "currency": 0.75,
+              "subtotal": 0.75,
+              "total": 0.75,
+              "seller.taxCode": 0.75,
+              "buyer.taxCode": 0.75
+            }
+          },
+          "png-clean": {
+            "documents": 13,
+            "linesF1": 1.0,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "png-noise": {
+            "documents": 4,
+            "linesF1": 1.0,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 0.75,
+              "buyer.taxCode": 1.0
+            }
+          }
+        }
+      },
+      "noInjection": null,
+      "note": null,
+      "paid": "$0 (free tier)",
+      "smokeNoise": {
+        "invoiceNo": 0.0,
+        "series": 0.0,
+        "issueDate": 0.0,
+        "currency": 0.0,
+        "subtotal": 0.0,
+        "total": 0.0,
+        "seller.taxCode": 5.0,
+        "buyer.taxCode": 0.0,
+        "lines.f1": 0.0
+      },
+      "injection": {
+        "correct": 24,
+        "of": 24
+      },
+      "regression": {
+        "cases": 1,
+        "sellerSuffixCut": 0
+      }
+    },
+    {
+      "key": "C",
+      "provider": "OpenRouter, free route (NVIDIA endpoint)",
+      "model": "nvidia/nemotron-3.5-super-vl:free",
+      "role": "fallback",
+      "report": "v1-nvidia-nemotron-3.5-super-vl-free-invoice_extraction-v1",
+      "core": {
+        "complete": false,
+        "documents": 49,
+        "critical": {
+          "invoiceNo": {
+            "correct": 45,
+            "total": 49,
+            "accuracy": 0.9184
+          },
+          "series": {
+            "correct": 46,
+            "total": 49,
+            "accuracy": 0.9388
+          },
+          "issueDate": {
+            "correct": 46,
+            "total": 49,
+            "accuracy": 0.9388
+          },
+          "currency": {
+            "correct": 46,
+            "total": 49,
+            "accuracy": 0.9388
+          },
+          "subtotal": {
+            "correct": 46,
+            "total": 49,
+            "accuracy": 0.9388
+          },
+          "total": {
+            "correct": 46,
+            "total": 49,
+            "accuracy": 0.9388
+          },
+          "seller.taxCode": {
+            "correct": 46,
+            "total": 49,
+            "accuracy": 0.9388
+          },
+          "buyer.taxCode": {
+            "correct": 45,
+            "total": 49,
+            "accuracy": 0.9184
+          }
+        },
+        "fields": {
+          "seller.name": {
+            "correct": 37,
+            "total": 49,
+            "accuracy": 0.7551
+          },
+          "seller.taxCode": {
+            "correct": 46,
+            "total": 49,
+            "accuracy": 0.9388
+          },
+          "seller.address": {
+            "correct": 31,
+            "total": 49,
+            "accuracy": 0.6327
+          },
+          "buyer.name": {
+            "correct": 41,
+            "total": 49,
+            "accuracy": 0.8367
+          },
+          "buyer.taxCode": {
+            "correct": 45,
+            "total": 49,
+            "accuracy": 0.9184
+          },
+          "buyer.address": {
+            "correct": 36,
+            "total": 49,
+            "accuracy": 0.7347
+          },
+          "invoiceNo": {
+            "correct": 45,
+            "total": 49,
+            "accuracy": 0.9184
+          },
+          "series": {
+            "correct": 46,
+            "total": 49,
+            "accuracy": 0.9388
+          },
+          "issueDate": {
+            "correct": 46,
+            "total": 49,
+            "accuracy": 0.9388
+          },
+          "currency": {
+            "correct": 46,
+            "total": 49,
+            "accuracy": 0.9388
+          },
+          "subtotal": {
+            "correct": 46,
+            "total": 49,
+            "accuracy": 0.9388
+          },
+          "total": {
+            "correct": 46,
+            "total": 49,
+            "accuracy": 0.9388
+          },
+          "vatBreakdown": {
+            "correct": 46,
+            "total": 49,
+            "accuracy": 0.9388
+          }
+        },
+        "lines": {
+          "f1": 0.6541,
+          "precision": 0.8197,
+          "recall": 0.5442,
+          "missing": 118,
+          "extra": 0
+        },
+        "criticalExact": {
+          "correct": 44,
+          "total": 49,
+          "accuracy": 0.898
+        },
+        "documentExact": {
+          "correct": 19,
+          "total": 49,
+          "accuracy": 0.3878
+        },
+        "failures": {
+          "rejected:EXTRACTION_SCHEMA_INVALID": 3
+        },
+        "costUsdPerDocument": 0.002484,
+        "latency": {
+          "n": 46,
+          "p50Ms": 22239,
+          "p95Ms": 64333
+        },
+        "latencySinglePage": {
+          "n": 46,
+          "p50Ms": 22239,
+          "p95Ms": 64333
+        },
+        "medianInputTokens": 2626.0,
+        "calls": 49,
+        "sellerBranchSuffixCut": {
+          "count": 0,
+          "of": 13
+        },
+        "confidentWrong": {
+          "invoiceNo": 1,
+          "buyer.taxCode": 1
+        },
+        "byVariant": {
+          "jpeg-exif-rotated": {
+            "documents": 1,
+            "linesF1": 1.0,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "jpeg-low-res": {
+            "documents": 2,
+            "linesF1": 0.5,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "jpeg-tilt": {
+            "documents": 6,
+            "linesF1": 0.7692,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "jpeg-tilt-noise": {
+            "documents": 2,
+            "linesF1": 0.9375,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "pdf-clean": {
+            "documents": 20,
+            "linesF1": 0.8209,
+            "critical": {
+              "invoiceNo": 0.95,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          },
+          "pdf-many-lines": {
+            "documents": 7,
+            "linesF1": 0.7483,
+            "critical": {
+              "invoiceNo": 0.8571,
+              "series": 0.8571,
+              "issueDate": 0.8571,
+              "currency": 0.8571,
+              "subtotal": 0.8571,
+              "total": 0.8571,
+              "seller.taxCode": 0.8571,
+              "buyer.taxCode": 0.8571
+            }
+          },
+          "pdf-multi-page": {
+            "documents": 2,
+            "linesF1": 0.0,
+            "critical": {
+              "invoiceNo": 0.0,
+              "series": 0.0,
+              "issueDate": 0.0,
+              "currency": 0.0,
+              "subtotal": 0.0,
+              "total": 0.0,
+              "seller.taxCode": 0.0,
+              "buyer.taxCode": 0.0
+            }
+          },
+          "png-clean": {
+            "documents": 7,
+            "linesF1": 0.871,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 0.8571
+            }
+          },
+          "png-noise": {
+            "documents": 2,
+            "linesF1": 0.8,
+            "critical": {
+              "invoiceNo": 1.0,
+              "series": 1.0,
+              "issueDate": 1.0,
+              "currency": 1.0,
+              "subtotal": 1.0,
+              "total": 1.0,
+              "seller.taxCode": 1.0,
+              "buyer.taxCode": 1.0
+            }
+          }
+        }
+      },
+      "noInjection": "NVIDIA API Trial Terms §4.10 forbid security testing of the service",
+      "note": "stopped by decision at 49 of 100 `core` documents (all 9 variants), no `regression`: 50 free requests a day, and its terms rule it out of production whatever it scores, so more documents would not change a decision (2026-11-08)",
+      "paid": "$0 (free tier)",
+      "smokeNoise": null,
+      "injection": null,
+      "regression": null
+    }
+  ],
+  "primary": {
+    "key": "B",
+    "reason": "most documents with every critical field right",
+    "report": "v1-gemini-3.5-flash-lite-invoice_extraction-v1"
+  },
+  "floors": {
+    "invoiceNo": 98,
+    "series": 98,
+    "issueDate": 98,
+    "currency": 98,
+    "subtotal": 98,
+    "total": 98,
+    "seller.taxCode": 87,
+    "buyer.taxCode": 98,
+    "lines.f1": 93
+  },
+  "paired": {
+    "A-B": {
+      "documents": 100,
+      "criticalExact": {
+        "onlyFirst": 3,
+        "onlySecond": 10
+      },
+      "invoiceNo": {
+        "onlyFirst": 1,
+        "onlySecond": 1
+      },
+      "series": {
+        "onlyFirst": 1,
+        "onlySecond": 0
+      },
+      "issueDate": {
+        "onlyFirst": 1,
+        "onlySecond": 1
+      },
+      "currency": {
+        "onlyFirst": 1,
+        "onlySecond": 0
+      },
+      "subtotal": {
+        "onlyFirst": 1,
+        "onlySecond": 0
+      },
+      "total": {
+        "onlyFirst": 1,
+        "onlySecond": 0
+      },
+      "seller.taxCode": {
+        "onlyFirst": 4,
+        "onlySecond": 8
+      },
+      "buyer.taxCode": {
+        "onlyFirst": 1,
+        "onlySecond": 1
+      }
+    },
+    "A-C": {
+      "documents": 49,
+      "criticalExact": {
+        "onlyFirst": 4,
+        "onlySecond": 6
+      },
+      "invoiceNo": {
+        "onlyFirst": 4,
+        "onlySecond": 0
+      },
+      "series": {
+        "onlyFirst": 3,
+        "onlySecond": 0
+      },
+      "issueDate": {
+        "onlyFirst": 3,
+        "onlySecond": 1
+      },
+      "currency": {
+        "onlyFirst": 3,
+        "onlySecond": 0
+      },
+      "subtotal": {
+        "onlyFirst": 3,
+        "onlySecond": 0
+      },
+      "total": {
+        "onlyFirst": 3,
+        "onlySecond": 0
+      },
+      "seller.taxCode": {
+        "onlyFirst": 3,
+        "onlySecond": 5
+      },
+      "buyer.taxCode": {
+        "onlyFirst": 3,
+        "onlySecond": 0
+      }
+    },
+    "B-C": {
+      "documents": 49,
+      "criticalExact": {
+        "onlyFirst": 3,
+        "onlySecond": 1
+      },
+      "invoiceNo": {
+        "onlyFirst": 3,
+        "onlySecond": 0
+      },
+      "series": {
+        "onlyFirst": 2,
+        "onlySecond": 0
+      },
+      "issueDate": {
+        "onlyFirst": 2,
+        "onlySecond": 0
+      },
+      "currency": {
+        "onlyFirst": 2,
+        "onlySecond": 0
+      },
+      "subtotal": {
+        "onlyFirst": 2,
+        "onlySecond": 0
+      },
+      "total": {
+        "onlyFirst": 2,
+        "onlySecond": 0
+      },
+      "seller.taxCode": {
+        "onlyFirst": 1,
+        "onlySecond": 1
+      },
+      "buyer.taxCode": {
+        "onlyFirst": 3,
+        "onlySecond": 0
+      }
+    }
+  },
+  "errors": {
+    "A": {
+      "byClass": {
+        "misread": 17,
+        "missing": 1
+      },
+      "byKind": {
+        "misread:truncated": 12,
+        "misread:diacritics": 1,
+        "misread:text": 2,
+        "misread:digits": 2
+      },
+      "byPlace": {
+        "seller.taxCode|misread": 12,
+        "buyer.address|misread": 2,
+        "buyer.taxCode|missing": 1,
+        "issueDate|misread": 1,
+        "invoiceNo|misread": 1,
+        "lines.description|misread": 1
+      }
+    },
+    "B": {
+      "byClass": {
+        "failed": 1,
+        "misread": 14,
+        "wrong_field": 16
+      },
+      "byKind": {
+        "misread:text": 5,
+        "misread:truncated": 7,
+        "misread:diacritics": 2,
+        "wrong_field:printed_elsewhere": 1,
+        "wrong_field:other_field": 2,
+        "wrong_field:other_line": 13
+      },
+      "byPlace": {
+        "document|failed": 1,
+        "buyer.address|misread": 4,
+        "seller.name|misread": 2,
+        "seller.taxCode|misread": 7,
+        "lines.quantity|wrong_field": 8,
+        "lines.unitPrice|wrong_field": 8,
+        "lines.description|misread": 1
+      }
+    },
+    "C": {
+      "byClass": {
+        "misread": 92,
+        "failed": 3
+      },
+      "byKind": {
+        "misread:diacritics": 73,
+        "misread:text": 16,
+        "misread:digits": 3
+      },
+      "byPlace": {
+        "buyer.address|misread": 10,
+        "lines.unit|misread": 26,
+        "seller.address|misread": 15,
+        "lines.description|misread": 24,
+        "buyer.name|misread": 5,
+        "document|failed": 3,
+        "seller.name|misread": 9,
+        "invoiceNo|misread": 1,
+        "lines.unitPrice|misread": 1,
+        "buyer.taxCode|misread": 1
+      }
+    }
+  },
+  "textLayerCheck": {
+    "A": {
+      "right_printed": 670,
+      "wrong_not_printed": 13
+    },
+    "B": {
+      "right_printed": 670,
+      "wrong_not_printed": 7
+    },
+    "C": {
+      "right_printed": 311,
+      "wrong_not_printed": 2
+    }
+  },
+  "examples": [
+    {
+      "config": "A",
+      "doc": "invoice-0003",
+      "where": "seller.taxCode",
+      "class": "misread",
+      "kind": "truncated",
+      "gotLine": null
+    },
+    {
+      "config": "A",
+      "doc": "invoice-0016",
+      "where": "buyer.taxCode",
+      "class": "missing",
+      "kind": null,
+      "gotLine": null
+    },
+    {
+      "config": "B",
+      "doc": "invoice-0059",
+      "where": "lines[1].quantity",
+      "class": "wrong_field",
+      "kind": "other_line",
+      "gotLine": 1
+    },
+    {
+      "config": "A",
+      "doc": "invoice-0039",
+      "where": "issueDate",
+      "class": "misread",
+      "kind": "digits",
+      "gotLine": null
+    },
+    {
+      "config": "A",
+      "doc": "invoice-0068",
+      "where": "lines[1].description",
+      "class": "misread",
+      "kind": "text",
+      "gotLine": 1
+    }
+  ]
+}

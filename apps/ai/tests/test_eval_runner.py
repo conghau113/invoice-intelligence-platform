@@ -235,6 +235,15 @@ def test_the_cli_takes_no_path_and_the_file_name_is_checked() -> None:
         slug("v1", "../escape")
 
 
+@pytest.mark.parametrize("bad", ["../x", "a//b", "a/b/c", "a:b:c", "/abs", "a/../b", "A/b"])
+def test_an_owner_and_a_variant_are_allowed_in_a_model_id_but_nothing_else(bad: str) -> None:
+    """OpenRouter ids carry both (T4.4); every other slash or colon is still refused."""
+    name = slug("v1", "nvidia/nemotron-3.5-super-vl:free")
+    assert name == "v1-nvidia-nemotron-3.5-super-vl-free-invoice_extraction-v1"
+    with pytest.raises(SystemExit):
+        slug("v1", bad)
+
+
 def test_a_provider_refusal_is_not_recorded_as_a_final_wrong_document(
     small: Dataset, tmp_path: Path
 ) -> None:

@@ -1,6 +1,6 @@
 # ADR 0020: Eval thresholds: set from the first measured baseline, by a fixed method
 
-- Status: Proposed — T4.3 and T4.4 supply the numbers, T4.4 sets it to Accepted
+- Status: Accepted (2026-11-08, T4.4)
 - Date: 2026-11-07
 - Related tasks: T4.2, T4.3, T4.4, T4.5
 
@@ -42,16 +42,18 @@ Option 2.
 | Number | From | Value |
 |---|---|---|
 | Noise per critical field | T4.3 | 0 points on all 8 critical fields and line F1: `smoke`, 3 runs of `gemini-3.1-flash-lite` with `invoice_extraction/v1`, 2026-11-08 (`eval/reports/v1-gemini-3.1-flash-lite-invoice_extraction-v1.md`). Every run gave the same right/wrong answer on every critical field (0 flips per document in the report); the one-document margin (5 points on `smoke`, 1 on `core`) is therefore what sets floor and tolerance. Three runs of one model on one day: re-measure when the model or prompt changes |
-| Floor per critical field, line F1 | T4.4 | not measured yet |
+| Primary configuration | T4.4 | `gemini-3.5-flash-lite` with `invoice_extraction/v1`, chosen by the rule in `eval/runner/compare.py` (`choose_primary`), fixed before the `core` runs: 92 of 100 documents with all 8 critical fields right, against 85 for `gemini-3.1-flash-lite` (`eval/reports/compare-v1.md`) |
+| Noise of the primary | T4.4 | `smoke`, 3 runs, 2026-11-08: 0 points on 7 critical fields and line F1; **5 points on `seller.taxCode`** (one document right in one run, wrong in another) |
+| Floor per critical field, line F1 | T4.4 | On `core`, first full run of the primary, 2026-11-08. `invoiceNo`, `series`, `issueDate`, `currency`, `subtotal`, `total`, `buyer.taxCode`: measured 99%, floor **98%**. `seller.taxCode`: measured 92%, noise 5, floor **87%**. Line F1: measured 0.943, floor **93**. The line F1 is low because one 54-line, two-page invoice (`invoice-0004`) was rejected: its answer reached the 8,192-token output cap (8,175 tokens), so the JSON was cut, and no second attempt fitted the 55 s budget. One noisy photo also had its rows read out of step: it is a floor, not a level to be satisfied with (see the report's analysis) |
 | Smoke baseline | T4.5 | not measured yet |
 
 ## Consequences
 - + Nothing here is guessed, and the rule for each number is fixed before the number exists
 - + A red T4.5 run means more than one document's worth of change
-- − Until T4.4 there is no accepted threshold, and the README cannot quote one
+- − The floor of `seller.taxCode` (87%) is low because the model cuts branch suffixes from tax codes; the floor records it, the report says it is not good enough
 - − On `smoke`, drops smaller than 5 points pass; only the full `core` run sees them, and it costs more of the free-tier quota
 - − A floor based on what was measured can settle for a weak model; the report has to judge the level on its own
 - − Three runs give a rough estimate of the noise, limited by free-tier quota
 
 ## Revisit when
-T4.4 fills in the numbers (set this to Accepted); noise turns out larger than 5 points on `smoke`, so the gate needs a larger set or more repeats; the prompt or model changes on purpose, which needs a new baseline; or real invoices become available.
+Noise turns out larger than 5 points on `smoke`, so the gate needs a larger set or more repeats; the prompt or model changes on purpose, which needs a new baseline; or real invoices become available.

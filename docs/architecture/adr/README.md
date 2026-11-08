@@ -12,7 +12,7 @@ Format: lightweight MADR. One decision per file. Create new ones with `/adr`. Ne
 | [0006](0006-web-auth-bff.md) | Web authentication via BFF (Auth.js on the Next.js server) | Accepted |
 | [0007](0007-i18n-next-intl.md) | Internationalization with next-intl and locale-prefixed routes | Accepted |
 | [0008](0008-queue-bullmq.md) | Background processing with BullMQ on Redis | Accepted |
-| [0009](0009-llm-provider-gemini.md) | LLM provider: Gemini free tier behind a provider interface, plus one official-API fallback | Proposed — confirm with M4 numbers |
+| [0009](0009-llm-provider-gemini.md) | LLM provider: Gemini free tier behind a provider interface, plus one official-API fallback | Accepted |
 | [0010](0010-hosting-oracle-always-free.md) | Hosting: local development, public demo on Oracle Cloud Always Free (ARM) | Accepted — owner approved card verification on 2026-10-12 |
 | [0011](0011-pgvector.md) | Vector search with pgvector inside PostgreSQL | Accepted |
 | [0012](0012-rate-limiting.md) | Rate limiting with token buckets in Redis | Accepted |
@@ -23,4 +23,4 @@ Format: lightweight MADR. One decision per file. Create new ones with `/adr`. Ne
 | [0017](0017-storage-local-fs.md) | File storage: StoragePort with a local filesystem adapter (MinIO rejected) | Accepted |
 | [0018](0018-public-demo-read-only.md) | Public demo is read-only and makes no live LLM calls | Accepted |
 | [0019](0019-list-pagination-offset-with-total.md) | List pagination: page/limit with a total for lists people read, cursors for append-only streams | Accepted |
-| [0020](0020-eval-thresholds.md) | Eval thresholds: set from the first measured baseline, by a fixed method | Proposed — numbers from T4.3 and T4.4 |
+| [0020](0020-eval-thresholds.md) | Eval thresholds: set from the first measured baseline, by a fixed method | Accepted |

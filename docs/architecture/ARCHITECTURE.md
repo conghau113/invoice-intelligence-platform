@@ -182,7 +182,7 @@ Only `DocumentStateMachine` may change `documents.status`. Every transition writ
 | Worker killed mid-job | Job becomes stalled and is retried; processing is idempotent by (document, version) | T6.7 |
 | Duplicate upload | Same (tenant, sha256) returns the existing document | T2.3 |
 | Two reviewers approve at once | Optimistic concurrency → second gets 409 | T3.5 |
-| Free-tier quota exhausted | Jobs wait (limiter) then fail with a clear code; fallback provider can be switched by configuration | T6.2, T4.4 |
+| Free-tier quota exhausted | Jobs wait (limiter) then fail with a clear code. No free provider qualifies as a production fallback yet (ADR 0009); the OpenAI-compatible adapter lets one be switched on by configuration later | T6.2, T4.4 |
 | Demo VM reclaimed / no capacity | Rebuild from runbook (< 1 h) using latest backup; otherwise video demo | T7.5 |
 
 ## 10. Quality attributes
