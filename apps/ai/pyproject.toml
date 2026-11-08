@@ -26,7 +26,7 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["."]
+pythonpath = [".", "../../eval"]  # ../../eval: the eval runner (T4.3)
 # Browser tests need the `invoice-gen` group and Chromium: run them with `pnpm test:invoice-gen`.
 addopts = "-m 'not browser'"
 markers = ["browser: renders with a real Chromium (run by `pnpm test:invoice-gen`, not by CI)"]

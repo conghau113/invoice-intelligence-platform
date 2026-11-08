@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "uv run uvicorn app.main:app --reload --port 8000",
-    "lint": "uv run ruff check . ../../tools/invoice-gen && uv run ruff format --check . ../../tools/invoice-gen",
+    "lint": "uv run ruff check . ../../tools/invoice-gen ../../eval && uv run ruff format --check . ../../tools/invoice-gen ../../eval",
     "typecheck": "echo 'no typecheck for apps/ai yet'",
     "test": "uv run pytest"
   }

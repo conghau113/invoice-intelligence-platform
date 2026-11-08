@@ -51,9 +51,9 @@ jobs:
           cache-dependency-glob: apps/ai/uv.lock
       - run: uv sync --frozen --no-build
       - name: Lint
-        run: uv run --frozen --no-build ruff check . ../../tools/invoice-gen
+        run: uv run --frozen --no-build ruff check . ../../tools/invoice-gen ../../eval
       - name: Format
-        run: uv run --frozen --no-build ruff format --check . ../../tools/invoice-gen
+        run: uv run --frozen --no-build ruff format --check . ../../tools/invoice-gen ../../eval
       - name: Test
         run: uv run --frozen --no-build pytest
 
