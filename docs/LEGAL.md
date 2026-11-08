@@ -12,7 +12,9 @@
 
 ## 2. LLM provider terms (as checked on 2026-10-12)
 - **Gemini API, Unpaid Services:** Google uses submitted content and responses to provide, improve and develop its products; human reviewers may read API inputs and outputs; users are told not to submit sensitive, confidential or personal information. Users must be 18+. Apps made available to users in the EEA, Switzerland or the UK must use Paid Services. → We send synthetic data only, and the public demo makes no LLM calls (ADR 0018).
-- **Fallback provider:** used only through its official API under its own terms, verified before use (T4.4, ADR 0009).
+- **Fallback provider (checked 2026-11-08, T4.4, ADR 0009):** used only through its official API under its own terms, verified before use.
+  - **Groq** (Free plan): Services Agreement §4.2, *"Groq is not permitted to use Inputs or Outputs for training"*; inference may be stored up to 30 days unless Zero Data Retention is on (it is on for our organization). Users must be 18+ and the service is *"not for consumer use"*. Not usable for extraction: the Free plan's output limit is below one invoice.
+  - **OpenRouter → NVIDIA free endpoint** (`nvidia/nemotron-3.5-super-vl:free`): NVIDIA logs use *"to improve NVIDIA products and services"* and asks for no confidential or personal data; the NVIDIA API Trial Terms allow *"limited trial purposes only and without use of the API Service or Generated Content in production"* (§1.2) and forbid security testing of the service (§4.10). → Used to measure on the synthetic set only, never in production, and the prompt-injection split is not sent to it. OpenRouter account: no credits, key spending limit 0, only "free endpoints that train" allowed.
 - **Not used:** tools that route API traffic through personal Claude/ChatGPT/Copilot subscription logins. Anthropic's documentation (updated 2026-02-19) does not permit using Free, Pro or Max plan credentials to route requests for third-party tools.
 
 ## 3. Third-party licenses
