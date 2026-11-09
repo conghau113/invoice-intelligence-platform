@@ -3,7 +3,7 @@ import json
 import httpx
 import pytest
 
-from app.providers.base import ImagePart, LLMError
+from app.providers.base import MAX_OUTPUT_TOKENS, ImagePart, LLMError
 from app.providers.gemini import GeminiProvider
 from app.providers.openai_compat import OpenAICompatProvider
 from app.providers.pricing import estimate_cost_usd
@@ -172,7 +172,8 @@ def test_output_size_is_capped_so_a_looping_model_cannot_run_up_the_quota() -> N
         return ok_gemini(request)
 
     call(gemini(httpx.MockTransport(handler)))
-    assert seen[0]["generationConfig"]["maxOutputTokens"] == 8192
+    assert MAX_OUTPUT_TOKENS == 12288
+    assert seen[0]["generationConfig"]["maxOutputTokens"] == MAX_OUTPUT_TOKENS
 
     sent: list[dict] = []
 
@@ -194,4 +195,77 @@ def test_output_size_is_capped_so_a_looping_model_cannot_run_up_the_quota() -> N
         transport=httpx.MockTransport(compat),
     )
     call(provider)
-    assert sent[0]["max_tokens"] == 8192
+    assert sent[0]["max_tokens"] == MAX_OUTPUT_TOKENS
+
+
+@pytest.mark.parametrize(("reason", "cut"), [("MAX_TOKENS", True), ("STOP", False), (None, False)])
+def test_gemini_says_when_the_answer_stopped_at_the_cap(reason: str | None, cut: bool) -> None:
+    candidate: dict = {"content": {"parts": [{"text": '{"a":'}]}}
+    if reason is not None:
+        candidate["finishReason"] = reason
+    body = {
+        "candidates": [candidate],
+        "usageMetadata": {"promptTokenCount": 10, "candidatesTokenCount": MAX_OUTPUT_TOKENS},
+    }
+    result = call(gemini(httpx.MockTransport(lambda r: httpx.Response(200, json=body))))
+    assert result.truncated is cut
+
+
+@pytest.mark.parametrize(("reason", "cut"), [("length", True), ("stop", False), (None, False)])
+def test_openai_compat_says_when_the_answer_stopped_at_the_cap(
+    reason: str | None, cut: bool
+) -> None:
+    choice: dict = {"message": {"content": '{"a":'}}
+    if reason is not None:
+        choice["finish_reason"] = reason
+    body = {"choices": [choice], "usage": {"prompt_tokens": 1, "completion_tokens": 1}}
+    provider = OpenAICompatProvider(
+        base_url="https://llm.example/v1",
+        api_key=SENTINEL,
+        model="m",
+        timeout_s=5,
+        transport=httpx.MockTransport(lambda r: httpx.Response(200, json=body)),
+    )
+    assert call(provider).truncated is cut
+
+
+def test_gemini_cut_while_thinking_is_a_cut_answer_not_a_bad_response() -> None:
+    # Thinking counts against the cap; when it takes all of it the candidate has no parts. A
+    # LLM_BAD_RESPONSE (503) would be retried by the worker, paying for the same cut answer again.
+    body = {
+        "candidates": [{"finishReason": "MAX_TOKENS", "content": {"role": "model"}}],
+        "usageMetadata": {"promptTokenCount": 10, "thoughtsTokenCount": MAX_OUTPUT_TOKENS},
+    }
+    result = call(gemini(httpx.MockTransport(lambda r: httpx.Response(200, json=body))))
+    assert result.truncated
+    assert result.text == ""
+    assert result.output_tokens == MAX_OUTPUT_TOKENS  # billed even though nothing came back
+
+
+def test_gemini_without_parts_and_not_cut_is_still_a_bad_response() -> None:
+    body = {
+        "candidates": [{"finishReason": "STOP", "content": {"role": "model"}}],
+        "usageMetadata": {"promptTokenCount": 10},
+    }
+    provider = gemini(httpx.MockTransport(lambda r: httpx.Response(200, json=body)))
+    with pytest.raises(LLMError) as err:
+        call(provider)
+    assert (err.value.code, err.value.status) == ("LLM_BAD_RESPONSE", 503)
+
+
+def test_openai_compat_null_content_cut_at_the_cap_is_an_empty_cut_answer() -> None:
+    # Reasoning models answer `content: null` when reasoning used the whole cap.
+    body = {
+        "choices": [{"message": {"content": None}, "finish_reason": "length"}],
+        "usage": {"prompt_tokens": 1, "completion_tokens": MAX_OUTPUT_TOKENS},
+    }
+    provider = OpenAICompatProvider(
+        base_url="https://llm.example/v1",
+        api_key=SENTINEL,
+        model="m",
+        timeout_s=5,
+        transport=httpx.MockTransport(lambda r: httpx.Response(200, json=body)),
+    )
+    result = call(provider)
+    assert result.truncated
+    assert result.text == ""

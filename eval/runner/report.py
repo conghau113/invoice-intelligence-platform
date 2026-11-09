@@ -17,6 +17,8 @@ from runner.run import check_same_config
 from runner.scoring import VAT_FIELD, score_attack, score_document
 
 ACCURACY_SPLITS = ("smoke", "core")
+# Runs written before T4.5b carry no `maxOutputTokens`: every one of them used 8,192.
+CAP_BEFORE_T45B = 8192
 FINAL = ("ok", "rejected")
 LINE_F1 = "lines.f1"
 LIMITS = [
@@ -315,6 +317,9 @@ def build(records: list[dict[str, Any]], dataset: Dataset) -> dict[str, Any]:
     first = records[0]
     keys = ("dataset", "manifestSha256", "model", "promptVersion", "promptSha256")
     check_same_config(records, {k: first[k] for k in keys})
+    caps = {r.get("maxOutputTokens", CAP_BEFORE_T45B) for r in records}
+    if len(caps) > 1:
+        raise SystemExit("maxOutputTokens differs between runs in the file: archive the old runs")
     rows_by_split: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for r in latest(records).values():
         rows_by_split[r["split"]].append(r)
@@ -332,7 +337,7 @@ def build(records: list[dict[str, Any]], dataset: Dataset) -> dict[str, Any]:
     dates = sorted(r["at"][:10] for r in records)
     return {
         "schemaVersion": 1,
-        "config": {k: first[k] for k in keys},
+        "config": {k: first[k] for k in keys} | {"maxOutputTokens": caps.pop()},
         "criticalFields": list(CRITICAL_FIELDS),
         "fields": [*HEADER_FIELDS, VAT_FIELD],
         "runDates": [dates[0], dates[-1]],
@@ -491,7 +496,8 @@ def to_markdown(report: dict[str, Any]) -> str:
         f"# Extraction eval: `{c['model']}`, `{c['promptVersion']}`",
         "",
         f"Dataset `{c['dataset']}` (manifest `{c['manifestSha256'][:12]}`), prompt "
-        f"`{c['promptSha256'][:12]}`, runs {report['runDates'][0]} to {report['runDates'][1]}. "
+        f"`{c['promptSha256'][:12]}`, output cap {c['maxOutputTokens']} tokens, "
+        f"runs {report['runDates'][0]} to {report['runDates'][1]}. "
         "Written by `pnpm eval:report` from `eval/runs/`; do not edit by hand.",
         "",
         "**Limits**",

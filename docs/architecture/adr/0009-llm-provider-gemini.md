@@ -35,21 +35,23 @@ Both were reached through their official APIs. Only synthetic data was sent.
 
 ## Measured (`eval/reports/compare-v1.md`, dataset `v1`, prompt `invoice_extraction/v1`, free tiers, 2026-11-08)
 
+`gemini-3.5-flash-lite` re-measured 2026-11-09 (T4.5b) with the output-token cap raised from 8,192 to 12,288; the other two ran with 8,192. `gemini-3.1-flash-lite` never reached it (largest answer 7,946 tokens); nemotron's three long invoices did. Its 2026-11-08 figures, where they differ: 92 of 100, line F1 0.943 (one 54-line invoice cut at the cap), p95 7.1 s, $0.00452.
+
 | | `gemini-3.1-flash-lite` | `gemini-3.5-flash-lite` | `nvidia/nemotron-3.5-super-vl:free` |
 |---|---|---|---|
-| All 8 critical fields right (`core`) | 85 of 100 | **92 of 100** | 44 of 49 (stopped by decision at 49: 50 free calls a day, and its terms rule out production use whatever it scores) |
-| `seller.taxCode` right; branch suffix cut | 88%; 12 of 26 | 92%; 7 of 26 | 94%; **0 of 13** |
-| Line F1 | 0.999 | 0.943 (one 54-line invoice cut at the output-token cap; one photo read with rows out of step) | 0.654 (three long invoices cut at the output-token cap, mostly reasoning tokens) |
+| All 8 critical fields right (`core`) | 85 of 100 | **93 of 100** | 44 of 49 (stopped by decision at 49: 50 free calls a day, and its terms rule out production use whatever it scores) |
+| `seller.taxCode` right; branch suffix cut | 88%; 12 of 26 | 93%; 7 of 26 | 94%; **0 of 13** |
+| Line F1 | 0.999 | 0.983 (one photo read with rows out of step) | 0.654 (three long invoices cut at the output-token cap, mostly reasoning tokens) |
 | Documents with a name or address wrong only by its Vietnamese diacritics | 1 of 100 | 1 of 100 | 20 of 49 |
 | Injection: attacks that worked | 0 of 24 | 0 of 24 | not run (trial terms) |
-| Latency p50 / p95, single page | 4.2 s / 26.1 s | 4.5 s / 7.1 s | 22.2 s / 64.3 s |
+| Latency p50 / p95, single page | 4.2 s / 26.1 s | 4.6 s / 12.3 s | 22.2 s / 64.3 s |
 | Amount paid | $0 | $0 | $0 |
-| List price per document, if paid | $0.00275 | $0.00452 | $0.00248 (paid route's price) |
+| List price per document, if paid | $0.00275 | $0.00450 | $0.00248 (paid route's price) |
 
 ## Decision
 `LLMProvider` interface (Strategy). Gemini (free tier, no billing) is the primary provider for extraction and `gemini-embedding-001` for embeddings; a Fake provider for tests/CI. Only synthetic data is ever sent. The public demo calls no LLM (ADR 0018). Personal-subscription proxies are rejected: Anthropic's Feb 2026 terms forbid routing requests through Free/Pro/Max credentials, and such a proxy would see all traffic without any published privacy policy.
 
-**Primary model: `gemini-3.5-flash-lite`** (default `LLM_MODEL`), chosen by a rule written before the `core` runs (ADR 0020, `choose_primary`): 7 more documents of 100 with every critical field right, fewer cut tax codes, a lower p95, and Google's named successor of `gemini-3.1-flash-lite`, which may be withdrawn from 2027-05-07. It costs about 1.6 times more at list price, and it reads lines less reliably on this set.
+**Primary model: `gemini-3.5-flash-lite`** (default `LLM_MODEL`), chosen by a rule written before the `core` runs (ADR 0020, `choose_primary`): 7 more documents of 100 with every critical field right (8 after T4.5b raised the output-token cap), fewer cut tax codes, a lower p95, and Google's named successor of `gemini-3.1-flash-lite`, which may be withdrawn from 2027-05-07. It costs about 1.6 times more at list price, and it reads lines less reliably on this set.
 
 **Fallback: none for production yet.** No candidate is both free and allowed in production: Groq's Free plan cannot return one invoice within its output-token limit, and NVIDIA's free endpoint is for trial use only. The OpenAI-compatible adapter stays, so a fallback can be switched on by configuration once one qualifies. Until then, a Gemini outage or quota stop means jobs wait and fail with a clear code (ARCHITECTURE.md, risks).
 

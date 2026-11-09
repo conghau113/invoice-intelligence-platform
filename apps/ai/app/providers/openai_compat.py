@@ -5,9 +5,13 @@ from typing import Any
 
 import httpx
 
-from app.providers.base import ImagePart, LLMResult, LLMUnavailable, post_json
-
-MAX_OUTPUT_TOKENS = 8192
+from app.providers.base import (
+    MAX_OUTPUT_TOKENS,
+    ImagePart,
+    LLMResult,
+    LLMUnavailable,
+    post_json,
+)
 
 
 class OpenAICompatProvider:
@@ -61,11 +65,16 @@ class OpenAICompatProvider:
             self._client, self._url, {"authorization": f"Bearer {self._api_key}"}, body
         )
         try:
+            choice = data["choices"][0]
+            content = choice["message"]["content"]
             return LLMResult(
-                text=data["choices"][0]["message"]["content"],
+                # null when a reasoning model spends the whole cap thinking: an empty answer that
+                # extract rejects, instead of a None that json.loads would turn into a 500
+                text=content if isinstance(content, str) else "",
                 model=self.model,
                 input_tokens=int(data["usage"]["prompt_tokens"]),
                 output_tokens=int(data["usage"]["completion_tokens"]),
+                truncated=choice.get("finish_reason") == "length",
             )
         except (KeyError, IndexError, TypeError, ValueError):
             raise LLMUnavailable("LLM_BAD_RESPONSE") from None

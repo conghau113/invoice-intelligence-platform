@@ -6,6 +6,7 @@ from typing import Any
 import httpx
 
 from app.providers.base import (
+    MAX_OUTPUT_TOKENS,
     ImagePart,
     LLMRejected,
     LLMResult,
@@ -13,7 +14,6 @@ from app.providers.base import (
     post_json,
 )
 
-MAX_OUTPUT_TOKENS = 8192  # an invoice is ~1k tokens; a looping model must not run to the cap x3
 BASE_URL = "https://generativelanguage.googleapis.com/v1beta"
 
 
@@ -65,7 +65,13 @@ class GeminiProvider:
         )
         try:
             candidate = data["candidates"][0]
-            text = "".join(p.get("text", "") for p in candidate["content"]["parts"])
+            truncated = candidate.get("finishReason") == "MAX_TOKENS"
+            # Thinking counts against the cap: when it uses all of it, the candidate has no parts.
+            # That is a cut answer (422 in extract, not retried), not a bad response (503, retried).
+            parts = (candidate.get("content") or {}).get("parts")
+            if parts is None and not truncated:
+                raise KeyError("parts")
+            text = "".join(p.get("text", "") for p in parts or [])
             usage = data["usageMetadata"]
             output = int(usage.get("candidatesTokenCount", 0)) + int(
                 usage.get("thoughtsTokenCount", 0)
@@ -75,6 +81,7 @@ class GeminiProvider:
                 model=self.model,
                 input_tokens=int(usage["promptTokenCount"]),
                 output_tokens=output,
+                truncated=truncated,
             )
         except (KeyError, IndexError, TypeError, ValueError):
             # No candidate usually means the prompt was blocked; the same input is blocked again.

@@ -1,6 +1,6 @@
 # Extraction eval: `nvidia/nemotron-3.5-super-vl:free`, `invoice_extraction/v1`
 
-Dataset `v1` (manifest `09abbf3843d2`), prompt `7ce11be8099f`, runs 2026-11-08 to 2026-11-08. Written by `pnpm eval:report` from `eval/runs/`; do not edit by hand.
+Dataset `v1` (manifest `09abbf3843d2`), prompt `7ce11be8099f`, output cap 8192 tokens, runs 2026-11-08 to 2026-11-08. Written by `pnpm eval:report` from `eval/runs/`; do not edit by hand.
 
 **Limits**
 

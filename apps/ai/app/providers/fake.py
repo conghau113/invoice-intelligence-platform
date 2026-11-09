@@ -47,7 +47,7 @@ class FakeProvider:
     timeout_s = 0.0
 
     def __init__(
-        self, script: list[str | LLMError] | None = None, model: str = "fake-model"
+        self, script: list[str | LLMResult | LLMError] | None = None, model: str = "fake-model"
     ) -> None:
         self.model = model
         self._script = list(script) if script else [json.dumps(CANNED_LLM_OUTPUT)]
@@ -67,4 +67,6 @@ class FakeProvider:
         step = self._script.pop(0) if len(self._script) > 1 else self._script[0]
         if isinstance(step, LLMError):
             raise step
+        if isinstance(step, LLMResult):  # a scripted cut answer: tokens and `truncated` as given
+            return step
         return LLMResult(text=step, model=self.model, input_tokens=1000, output_tokens=200)

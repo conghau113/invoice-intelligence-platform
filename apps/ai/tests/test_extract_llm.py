@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 from app.config import Settings
 from app.main import app
 from app.providers import build_provider
-from app.providers.base import LLMError, LLMUnavailable
+from app.providers.base import MAX_OUTPUT_TOKENS, LLMError, LLMResult, LLMUnavailable
 from app.providers.fake import CANNED_LLM_OUTPUT, FakeProvider
 from app.services import extract as extract_module
 from app.services.extract import PROMPT_VERSION, SYSTEM_PROMPT, ExtractError, extract
@@ -69,6 +69,63 @@ def test_gives_up_after_two_retries_with_a_code() -> None:
         run(provider)
     assert err.value.code == "EXTRACTION_SCHEMA_INVALID" and err.value.status == 422
     assert len(provider.calls) == 3  # first try + 2 retries, not more
+
+
+def cut_answer() -> LLMResult:
+    """What a long invoice gave at the old cap (invoice-0004, T4.4): JSON stopped mid-value."""
+    return LLMResult(
+        text=VALID[: len(VALID) // 2],
+        model="fake-model",
+        input_tokens=2660,
+        output_tokens=MAX_OUTPUT_TOKENS,
+        truncated=True,
+    )
+
+
+def test_an_answer_cut_at_the_token_cap_fails_at_once_without_a_retry(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    # A retry would send the same pages and be cut again: billed for nothing (T4.5b).
+    provider = FakeProvider([cut_answer(), VALID])
+    with caplog.at_level(logging.DEBUG), pytest.raises(ExtractError) as err:
+        run(provider)
+    assert (err.value.code, err.value.status) == ("EXTRACTION_SCHEMA_INVALID", 422)
+    assert len(provider.calls) == 1
+    assert "cut at the token cap" in caplog.text
+    assert "after 1 attempts" in caplog.text
+    assert VALID[:40] not in caplog.text  # the cut answer itself is never logged
+
+
+def test_an_unfinished_answer_that_is_not_cut_is_still_retried() -> None:
+    not_cut = LLMResult(
+        text=VALID[: len(VALID) // 2], model="fake-model", input_tokens=1, output_tokens=1
+    )
+    assert run(FakeProvider([not_cut, VALID]))["invoice"].total == 1100000
+
+
+def test_an_empty_cut_answer_fails_at_once_with_the_schema_code() -> None:
+    # What a provider returns when thinking used the whole cap (no text at all).
+    empty = LLMResult(text="", model="m", input_tokens=1, output_tokens=1, truncated=True)
+    provider = FakeProvider([empty, VALID])
+    with pytest.raises(ExtractError) as err:
+        run(provider)
+    assert err.value.code == "EXTRACTION_SCHEMA_INVALID"
+    assert len(provider.calls) == 1
+
+
+def test_a_retry_that_is_cut_stops_the_retries() -> None:
+    provider = FakeProvider([bad_invoice(total="x"), cut_answer(), VALID])
+    with pytest.raises(ExtractError) as err:
+        run(provider)
+    assert err.value.code == "EXTRACTION_SCHEMA_INVALID"
+    assert len(provider.calls) == 2  # the third attempt would be cut again
+
+
+def test_a_valid_answer_flagged_as_cut_is_still_accepted() -> None:
+    # Only an answer that fails validation is treated as cut: valid JSON that matches the schema is
+    # complete whatever the provider says about its stop reason.
+    flagged = LLMResult(text=VALID, model="m", input_tokens=1, output_tokens=1, truncated=True)
+    assert run(FakeProvider([flagged]))["invoice"].total == 1100000
 
 
 def test_non_json_answer_counts_as_schema_failure() -> None:
