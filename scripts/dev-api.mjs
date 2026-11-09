@@ -10,6 +10,8 @@ export const DEV_DEFAULTS = {
   OIDC_ISSUER_URL: 'http://localhost:8080/realms/invoice',
   // <repo>/data is git-ignored; the API requires an absolute path.
   DATA_DIR: fileURLToPath(new URL('../data', import.meta.url)),
+  // The committed eval reports behind /insights (T4.6); absolute, like DATA_DIR.
+  EVAL_REPORTS_DIR: fileURLToPath(new URL('../eval/reports', import.meta.url)),
   // Redis of `pnpm infra:up` (compose.yaml, host port 6380, no password).
   REDIS_URL: 'redis://localhost:6380',
   // The AI service of `pnpm --filter ai dev` (port 8000). The token is a throw-away development

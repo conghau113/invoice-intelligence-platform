@@ -30,3 +30,23 @@ export function formatDate(
   if (Number.isNaN(date.getTime())) throw new RangeError('invalid ISO 8601 date');
   return new Intl.DateTimeFormat(tag(locale), { ...options, timeZone: TIME_ZONE }).format(date);
 }
+
+/** A share between 0 and 1 as a percentage, at most one decimal (0.935 -> 93.5%). */
+export function formatPercent(ratio: number, locale: string): string {
+  return new Intl.NumberFormat(tag(locale), { style: 'percent', maximumFractionDigits: 1 }).format(
+    ratio,
+  );
+}
+
+/**
+ * A measured USD estimate such as the cost of one model call (0.0045). Not invoice money, which
+ * is integer minor units (formatMoney): a fraction of a cent is the point here, so 4 decimals.
+ */
+export function formatUsdEstimate(usd: number, locale: string): string {
+  return new Intl.NumberFormat(tag(locale), {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4,
+  }).format(usd);
+}

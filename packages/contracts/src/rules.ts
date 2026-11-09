@@ -130,28 +130,41 @@ export function checkInvoice(invoice: Invoice, today: string): RuleWarning[] {
   return out;
 }
 
+/** Invoice-level field paths, in form order (`fieldMeta`, rule warnings and corrections use them). */
+export const HEADER_FIELD_PATHS = [
+  'seller.name',
+  'seller.taxCode',
+  'seller.address',
+  'buyer.name',
+  'buyer.taxCode',
+  'buyer.address',
+  'invoiceNo',
+  'series',
+  'issueDate',
+  'currency',
+  'subtotal',
+  'total',
+] as const;
+/** Columns of one line (`lines.<i>.<column>`). */
+export const LINE_COLUMNS = [
+  'description',
+  'quantity',
+  'unit',
+  'unitPrice',
+  'vatRate',
+  'amount',
+] as const;
+/** Columns of one VAT row (`vatBreakdown.<i>.<column>`). */
+export const VAT_COLUMNS = ['rate', 'base', 'amount'] as const;
+
 /** Every addressable field path of this invoice (lines and VAT rows expanded). */
 export function invoiceFieldPaths(invoice: Invoice): string[] {
-  const paths = [
-    'seller.name',
-    'seller.taxCode',
-    'seller.address',
-    'buyer.name',
-    'buyer.taxCode',
-    'buyer.address',
-    'invoiceNo',
-    'series',
-    'issueDate',
-    'currency',
-    'subtotal',
-    'total',
-  ];
+  const paths: string[] = [...HEADER_FIELD_PATHS];
   invoice.lines.forEach((_, i) => {
-    for (const f of ['description', 'quantity', 'unit', 'unitPrice', 'vatRate', 'amount'])
-      paths.push(`lines.${i}.${f}`);
+    for (const f of LINE_COLUMNS) paths.push(`lines.${i}.${f}`);
   });
   invoice.vatBreakdown.forEach((_, i) => {
-    for (const f of ['rate', 'base', 'amount']) paths.push(`vatBreakdown.${i}.${f}`);
+    for (const f of VAT_COLUMNS) paths.push(`vatBreakdown.${i}.${f}`);
   });
   return paths;
 }
