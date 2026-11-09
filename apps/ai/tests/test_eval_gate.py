@@ -23,7 +23,9 @@ COMMITTED = gate.read_baseline()
 REPORT = gate.REPO / COMMITTED["source"]
 
 
-def split_with(correct: dict[str, int] | None = None, f1: float = 1.0) -> dict[str, Any]:
+def split_with(
+    correct: dict[str, int] | None = None, f1: float = 1.0, micro: float = 1.0
+) -> dict[str, Any]:
     """A `smoke` split of one run of 20 documents: every field right unless `correct` says not."""
     counts = {f: 20 for f in CRITICAL_FIELDS} | (correct or {})
     return {
@@ -34,7 +36,7 @@ def split_with(correct: dict[str, int] | None = None, f1: float = 1.0) -> dict[s
                 f: {"correct": n, "total": 20, "accuracy": round(n / 20, 4)}
                 for f, n in counts.items()
             },
-            "lines": {"f1": f1},
+            "lines": {"f1": micro, "macroF1": f1},
         },
         "failures": {},
         "wrong": [],
@@ -76,6 +78,15 @@ def test_an_incomplete_or_single_run_report_cannot_be_a_baseline() -> None:
         gate.build_baseline(stopped, "x")
 
 
+def test_the_line_noise_is_measured_on_macro_f1() -> None:
+    built = json.loads(REPORT.read_text(encoding="utf-8"))
+    repeats = built["splits"]["smoke"]["perRepeat"]
+    for value, repeat in zip((1.0, 0.9, 0.95), repeats, strict=True):
+        repeat["lines"]["macroF1"] = value
+    baseline = gate.build_baseline(built, "x")
+    assert baseline["metrics"]["lines.macroF1"]["noisePoints"] == 10.0
+
+
 # ------------------------------------------------------------- tolerance (ADR 0020)
 
 
@@ -108,6 +119,12 @@ def test_a_larger_noise_widens_the_tolerance() -> None:
 def test_line_f1_is_gated_too() -> None:
     assert verdict(split_with(f1=0.95)) == gate.PASS
     assert verdict(split_with(f1=0.9499)) == gate.DROPPED
+
+
+def test_one_failed_long_invoice_is_one_document_not_a_third_of_the_lines() -> None:
+    # Eval run 42595431218: invoice-0004 (54 of 161 lines) was cut at the output-token cap.
+    # Micro F1 fell to 0.798, macro F1 to 0.95: one document, within the tolerance.
+    assert verdict(split_with({"invoiceNo": 19}, f1=0.95, micro=0.798)) == gate.PASS
 
 
 def test_a_better_run_passes() -> None:

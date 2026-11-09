@@ -64,7 +64,7 @@
       "accuracy": 1.0,
       "noisePoints": 0.0
     },
-    "lines.f1": {
+    "lines.macroF1": {
       "value": 1.0,
       "noisePoints": 0.0
     }

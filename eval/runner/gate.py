@@ -3,8 +3,10 @@
 ADR 0020: fail when a critical field or line F1 drops by more than the larger of the measured
 noise and one document. On 20 documents one document is 5 points. Rates compare as exact
 fractions: 0.95 - 0.9 in floating point is not 0.05, and a gate must not turn on a rounding error.
-Line F1 arrives rounded to 4 decimals on both sides (report.py), so it is exact to about 1e-4:
-far below one document (0.05) on `smoke`.
+Lines are gated by macro F1: every document counts once, so one document is 5 points like the
+fields. Micro F1 (every line counts once) weighs a 54-line invoice as a third of `smoke`: one failed
+long invoice moved it by 20 points (Eval run 42595431218) while no reading got worse. The report
+still shows both. F1 arrives rounded to 4 decimals (report.py): exact to about 1e-4, far below 0.05.
 
 The baseline is a file of its own (`eval/baselines/smoke.json`), written by `pnpm eval:baseline`
 from a committed report. It is not the report itself: `pnpm eval:report` rewrites a report from the
@@ -31,7 +33,7 @@ from runner.run import PROMPT_SHA256, RETRY_WAIT_S, Extract, read_records, run_s
 
 SPLIT = "smoke"
 BASELINE_PATH = REPO / "eval" / "baselines" / f"{SPLIT}.json"
-LINE_F1 = report.LINE_F1
+LINE_METRIC = "lines.macroF1"
 PASS, DROPPED, NOT_JUDGED = 0, 1, 2
 # What turns a model answer into the scored invoice. Their hashes say whether the gate measured the
 # same pipeline as the baseline; a change to any of them also starts the workflow (eval.yml).
@@ -79,9 +81,11 @@ def build_baseline(built: dict[str, Any], source: str) -> dict[str, Any]:
         }
         for f in CRITICAL_FIELDS
     }
-    metrics[LINE_F1] = {
-        "value": split[OVERALL]["lines"]["f1"],
-        NOISE: split["noise"][LINE_F1],
+    macro = [r["lines"]["macroF1"] for r in split["perRepeat"]]
+    metrics[LINE_METRIC] = {
+        "value": split[OVERALL]["lines"]["macroF1"],
+        # report.noise() measures micro F1; the gated metric gets its own, by the same rule.
+        NOISE: round((max(macro) - min(macro)) * 100, 1),
     }
     return {
         "schemaVersion": 1,
@@ -116,9 +120,9 @@ def judge(
     one_document = Fraction(1, baseline["documents"])
     rows = []
     for name, base in baseline["metrics"].items():
-        if name == LINE_F1:
+        if name == LINE_METRIC:
             before = Fraction(str(base["value"]))
-            now = Fraction(str(split[OVERALL]["lines"]["f1"]))
+            now = Fraction(str(split[OVERALL]["lines"]["macroF1"]))
         else:
             cell = split[OVERALL]["fields"][name]
             before = Fraction(base[CORRECT], base[TOTAL])
