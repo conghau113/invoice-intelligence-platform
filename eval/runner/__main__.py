@@ -82,12 +82,13 @@ GATE_DIR = RUNS_DIR / "gate"  # git-ignored like every run: it holds the values 
 
 
 def _gate(args: argparse.Namespace, config: Settings, dataset: Dataset) -> int:
+    results = GATE_DIR / f"{slug(dataset.name, config.llm_model)}.jsonl"  # checks the model id
     provider = build_provider(config)
     print(f"gate split={gate.SPLIT} model={provider.model}", flush=True)
     code, summary = gate.run_gate(
         dataset,
         provider,
-        GATE_DIR / f"{slug(dataset.name, config.llm_model)}.jsonl",
+        results,
         gate.read_baseline(),
         rpm=args.rpm,
         max_calls=args.max_calls,

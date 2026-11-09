@@ -1,16 +1,20 @@
 """T4.5: the regression gate on `smoke` (ADR 0020). Fake provider only; no real model is called."""
 
 import copy
+import fnmatch
 import json
 from pathlib import Path
 from typing import Any
 
 import pytest
+import yaml  # MIT; installed through datamodel-code-generator (dev). Missing => ImportError
+from runner import __main__ as cli
 from runner import gate, report
 from runner.dataset import Dataset, load
 from runner.matching import CRITICAL_FIELDS
 from runner.run import read_records
 
+from app.config import Settings
 from app.providers.base import LLMError, LLMUnavailable
 from app.providers.fake import FakeProvider
 from tests.test_eval_runner import FAST, PDF_DOC, PNG_DOC, make_dataset, model_answer, run
@@ -198,3 +202,107 @@ def test_a_provider_that_stays_down_is_not_judged(small: Dataset, tmp_path: Path
     code, text = run_small(small, [LLMUnavailable()], tmp_path / "gate.jsonl", base)
     assert code == gate.NOT_JUDGED
     assert "NOT JUDGED" in text
+
+
+def test_a_quota_stop_before_the_first_answer_is_not_judged(small: Dataset, tmp_path: Path) -> None:
+    base = small_baseline(small, tmp_path)
+    code, text = run_small(small, [LLMUnavailable("LLM_RATE_LIMITED")], tmp_path / "g.jsonl", base)
+    assert code == gate.NOT_JUDGED
+    assert "NOT JUDGED" in text
+
+
+def test_a_call_cap_reached_halfway_is_not_judged(small: Dataset, tmp_path: Path) -> None:
+    base = small_baseline(small, tmp_path)
+    good = [model_answer(small.expected(i)) for i in small.splits["smoke"]]
+    code, _text = gate.run_gate(
+        small,
+        FakeProvider(script=good, model="gemini-3.5-flash-lite"),
+        tmp_path / "g.jsonl",
+        base,
+        rpm=FAST,
+        max_calls=1,  # one document answered, the second never asked
+        retry_wait_s=0,
+        say=lambda _line: None,
+    )
+    assert code == gate.NOT_JUDGED
+
+
+def test_a_baseline_from_another_dataset_is_not_judged_end_to_end(
+    small: Dataset, tmp_path: Path
+) -> None:
+    base = small_baseline(small, tmp_path)
+    base["config"]["manifestSha256"] = "0" * 64
+    good = [model_answer(small.expected(i)) for i in small.splits["smoke"]]
+    code, text = run_small(small, good, tmp_path / "g.jsonl", base)
+    assert code == gate.NOT_JUDGED
+    assert "| Metric |" not in text  # nothing compared
+
+
+def test_the_summary_warns_about_another_model_and_changed_pipeline_files() -> None:
+    other = copy.deepcopy(COMMITTED)
+    other["pipeline"]["apps/ai/app/services/extract.py"] = "0" * 64
+    now = COMMITTED["config"] | {"model": "gemini-3.1-flash-lite"}
+    code, rows = gate.judge(split_with(), now, other)
+    text = gate.to_markdown(code, rows, now, other, split_with())
+    assert "Model differs from the baseline" in text
+    assert "changed since the baseline: apps/ai/app/services/extract.py" in text
+    same = gate.to_markdown(code, rows, COMMITTED["config"], COMMITTED, split_with())
+    assert "Model differs" not in same
+    assert "changed since the baseline: none" in same
+
+
+@pytest.mark.parametrize(("script_of", "expected"), [("good", 0), ("bad", 1), ("down", 2)])
+def test_the_cli_exit_code_is_the_verdict(
+    small: Dataset,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    script_of: str,
+    expected: int,
+) -> None:
+    base = small_baseline(small, tmp_path)
+    scripts: dict[str, list[str | LLMError]] = {
+        "good": [model_answer(small.expected(i)) for i in small.splits["smoke"]],
+        "bad": [wrong_series(small.expected(i)) for i in small.splits["smoke"]],
+        "down": [LLMUnavailable("LLM_RATE_LIMITED")],
+    }
+    fake = FakeProvider(script=scripts[script_of], model="gemini-3.5-flash-lite")
+    monkeypatch.setattr(
+        cli,
+        "settings",
+        lambda: Settings(
+            ai_service_token="t" * 16, llm_provider="gemini", llm_model="gemini-3.5-flash-lite"
+        ),
+    )
+    monkeypatch.setattr(cli, "build_provider", lambda _config: fake)
+    monkeypatch.setattr(cli, "load", lambda: small)
+    monkeypatch.setattr(cli, "GATE_DIR", tmp_path / "gate")
+    monkeypatch.setattr(gate, "read_baseline", lambda: base)
+    assert cli.main(["gate", "--rpm", "30"]) == expected
+    assert (tmp_path / "gate" / "summary.md").is_file()
+
+
+def test_an_unsafe_model_id_is_refused_before_it_is_printed(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr(
+        cli,
+        "settings",
+        lambda: Settings(
+            ai_service_token="t" * 16, llm_provider="gemini", llm_model="x\n::error::forged"
+        ),
+    )
+    with pytest.raises(SystemExit):
+        cli.main(["gate"])
+    assert "forged" not in capsys.readouterr().out
+
+
+def test_the_workflow_starts_on_every_pipeline_file() -> None:
+    """eval.yml `paths` and PIPELINE_FILES are kept in step by hand: a pipeline file the workflow
+    does not watch would change scores without starting the gate."""
+    workflow = yaml.safe_load((gate.REPO / ".github/workflows/eval.yml").read_text("utf-8"))
+    # PyYAML reads the key `on` as the boolean True (YAML 1.1).
+    patterns = workflow[True]["pull_request"]["paths"]
+    for name in gate.PIPELINE_FILES:
+        assert any(fnmatch.fnmatch(name, p) for p in patterns), name
+    for watched in ("eval/baselines/smoke.json", "eval/runner/gate.py", "apps/ai/app/config.py"):
+        assert any(fnmatch.fnmatch(watched, p) for p in patterns), watched

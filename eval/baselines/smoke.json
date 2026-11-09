@@ -77,6 +77,8 @@
     "apps/ai/app/providers/__init__.py": "f960a49267ad45772b66bb795c836624da9db355da1b86b83004cf334325bac3",
     "apps/ai/app/providers/base.py": "36810ea643652384e5bcbec5f920262b00af6f2c9758e90f1cced797c1088732",
     "apps/ai/app/providers/gemini.py": "7fb0f714e8bf27152dc25b65590919846d5994b6e33c92b6739f825bec78eccd",
-    "apps/ai/app/providers/openai_compat.py": "4030480d36fb3c6e76788901d80d5ef6d26782c3283cebe16533f449049f4acc"
+    "apps/ai/app/providers/openai_compat.py": "4030480d36fb3c6e76788901d80d5ef6d26782c3283cebe16533f449049f4acc",
+    "apps/ai/app/schemas/generated.py": "57776af7a86616bd3b980f5f997316fbe2673fd7e76f038047f93834d29ae74e",
+    "apps/ai/app/error_codes.py": "94867079773e6ec162ca2f6787114af6817a6442a2fb642ad95f47fbad9ac3cc"
   }
 }

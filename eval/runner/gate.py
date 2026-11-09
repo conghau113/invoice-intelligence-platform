@@ -3,6 +3,8 @@
 ADR 0020: fail when a critical field or line F1 drops by more than the larger of the measured
 noise and one document. On 20 documents one document is 5 points. Rates compare as exact
 fractions: 0.95 - 0.9 in floating point is not 0.05, and a gate must not turn on a rounding error.
+Line F1 arrives rounded to 4 decimals on both sides (report.py), so it is exact to about 1e-4:
+far below one document (0.05) on `smoke`.
 
 The baseline is a file of its own (`eval/baselines/smoke.json`), written by `pnpm eval:baseline`
 from a committed report. It is not the report itself: `pnpm eval:report` rewrites a report from the
@@ -42,7 +44,16 @@ PIPELINE_FILES = (
     "apps/ai/app/providers/base.py",
     "apps/ai/app/providers/gemini.py",
     "apps/ai/app/providers/openai_compat.py",
+    # The model answer is validated against this schema: a stricter one rejects more documents.
+    # It is generated from packages/contracts, and CI's schema-drift job keeps the two in step.
+    "apps/ai/app/schemas/generated.py",
+    "apps/ai/app/error_codes.py",
 )
+# Keys of the report and the baseline, each used in several places (SonarCloud S1192).
+OVERALL = "overall"
+NOISE = "noisePoints"
+CORRECT = "correct"
+TOTAL = "total"
 
 
 class GateError(Exception):
@@ -58,19 +69,19 @@ def build_baseline(built: dict[str, Any], source: str) -> dict[str, Any]:
     split = built["splits"].get(SPLIT)
     if split is None or not split["complete"] or split["noise"] is None:
         raise GateError(f"the report needs a complete `{SPLIT}` run with at least 2 repeats")
-    fields = split["overall"]["fields"]
+    fields = split[OVERALL]["fields"]
     metrics: dict[str, dict[str, Any]] = {
         f: {
-            "correct": fields[f]["correct"],
-            "total": fields[f]["total"],
+            CORRECT: fields[f][CORRECT],
+            TOTAL: fields[f][TOTAL],
             "accuracy": fields[f]["accuracy"],
-            "noisePoints": split["noise"][f],
+            NOISE: split["noise"][f],
         }
         for f in CRITICAL_FIELDS
     }
     metrics[LINE_F1] = {
-        "value": split["overall"]["lines"]["f1"],
-        "noisePoints": split["noise"][LINE_F1],
+        "value": split[OVERALL]["lines"]["f1"],
+        NOISE: split["noise"][LINE_F1],
     }
     return {
         "schemaVersion": 1,
@@ -107,12 +118,12 @@ def judge(
     for name, base in baseline["metrics"].items():
         if name == LINE_F1:
             before = Fraction(str(base["value"]))
-            now = Fraction(str(split["overall"]["lines"]["f1"]))
+            now = Fraction(str(split[OVERALL]["lines"]["f1"]))
         else:
-            cell = split["overall"]["fields"][name]
-            before = Fraction(base["correct"], base["total"])
-            now = Fraction(cell["correct"], cell["total"])
-        tolerance = max(Fraction(str(base["noisePoints"])) / 100, one_document)
+            cell = split[OVERALL]["fields"][name]
+            before = Fraction(base[CORRECT], base[TOTAL])
+            now = Fraction(cell[CORRECT], cell[TOTAL])
+        tolerance = max(Fraction(str(base[NOISE])) / 100, one_document)
         rows.append(
             {
                 "metric": name,
@@ -155,8 +166,16 @@ def to_markdown(
         f" {baseline['documents']} documents x {baseline['repeats']} repeats, "
         f"{baseline['runDates'][0]}",
         f"- Pipeline files changed since the baseline: {', '.join(changed) or 'none'}",
-        "",
     ]
+    if config["model"] != b["model"]:
+        # Not a failure: comparing a new model with the old baseline is what the gate is for. But if
+        # the default model changed on purpose, its own baseline belongs in the same PR.
+        out.append(
+            "- **Model differs from the baseline.** If the new model is meant to stay, measure it "
+            "(`pnpm eval:run smoke --repeats 3`, `pnpm eval:report`) and commit "
+            "`pnpm eval:baseline` in this PR."
+        )
+    out.append("")
     if rows:
         out += [
             "| Metric | Baseline | Now | Change (points) | Tolerance | Result |",

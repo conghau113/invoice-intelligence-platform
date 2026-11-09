@@ -22,6 +22,8 @@ on:
       - apps/ai/app/services/extract.py
       - apps/ai/app/services/pdf_pages.py
       - apps/ai/app/services/image_normalize.py
+      - apps/ai/app/schemas/** # the model answer is validated against it (from packages/contracts)
+      - apps/ai/app/error_codes.py
       - apps/ai/pyproject.toml
       - apps/ai/uv.lock
       - eval/runner/**
@@ -35,7 +37,9 @@ permissions:
   contents: read
 
 # One eval at a time: two runs side by side would share one free-tier quota and slow each other.
-# Never cancelled, so a started run always reaches a verdict.
+# A started run is never cancelled, so it always reaches a verdict. GitHub keeps only one waiting
+# run per group: an older waiting run is cancelled (shown as cancelled, never green) when a newer
+# one queues. If this check is ever made required, remember the paths filter skips it on most PRs.
 concurrency:
   group: eval
   cancel-in-progress: false
@@ -65,11 +69,11 @@ jobs:
             exit 1
           fi
       # Same as `pnpm eval:gate`. The model input goes through an environment variable, never into
-      # the script text, and runner/names.py checks it against a pattern before any use.
+      # the script text, and runner/names.py checks it against a pattern before it is printed or
+      # used. Provider and model otherwise come from apps/ai/app/config.py, as in production.
       - name: Run smoke and compare with the baseline
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          LLM_PROVIDER: gemini
           MODEL_INPUT: ${{ inputs.model }}
           PYTHONPATH: .:../../eval
         run: |
