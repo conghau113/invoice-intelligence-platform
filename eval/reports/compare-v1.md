@@ -179,7 +179,7 @@ their runs at 8,192 (A never reached it, C did on three documents).
 
 ### Which model, and why
 
-`gemini-3.5-flash-lite` (B) is the primary by the rule fixed before the runs: 92 of 100 documents
+`gemini-3.5-flash-lite` (B) is the primary by the rule fixed before the runs: 93 of 100 documents
 with all 8 critical fields right (92 before the cap was raised), against 85 for
 `gemini-3.1-flash-lite` (A). Paired, B is right where A is wrong on 10 documents and the reverse on
 2, so the difference is not one or two lucky documents. B also cuts fewer branch suffixes from the

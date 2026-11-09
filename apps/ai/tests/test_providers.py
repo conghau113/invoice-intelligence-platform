@@ -172,7 +172,8 @@ def test_output_size_is_capped_so_a_looping_model_cannot_run_up_the_quota() -> N
         return ok_gemini(request)
 
     call(gemini(httpx.MockTransport(handler)))
-    assert seen[0]["generationConfig"]["maxOutputTokens"] == MAX_OUTPUT_TOKENS == 12288
+    assert MAX_OUTPUT_TOKENS == 12288
+    assert seen[0]["generationConfig"]["maxOutputTokens"] == MAX_OUTPUT_TOKENS
 
     sent: list[dict] = []
 
@@ -226,3 +227,44 @@ def test_openai_compat_says_when_the_answer_stopped_at_the_cap(
         transport=httpx.MockTransport(lambda r: httpx.Response(200, json=body)),
     )
     assert call(provider).truncated is cut
+
+
+def test_gemini_cut_while_thinking_is_a_cut_answer_not_a_bad_response() -> None:
+    # Thinking counts against the cap; when it takes all of it the candidate has no parts. A
+    # LLM_BAD_RESPONSE (503) would be retried by the worker, paying for the same cut answer again.
+    body = {
+        "candidates": [{"finishReason": "MAX_TOKENS", "content": {"role": "model"}}],
+        "usageMetadata": {"promptTokenCount": 10, "thoughtsTokenCount": MAX_OUTPUT_TOKENS},
+    }
+    result = call(gemini(httpx.MockTransport(lambda r: httpx.Response(200, json=body))))
+    assert result.truncated
+    assert result.text == ""
+    assert result.output_tokens == MAX_OUTPUT_TOKENS  # billed even though nothing came back
+
+
+def test_gemini_without_parts_and_not_cut_is_still_a_bad_response() -> None:
+    body = {
+        "candidates": [{"finishReason": "STOP", "content": {"role": "model"}}],
+        "usageMetadata": {"promptTokenCount": 10},
+    }
+    with pytest.raises(LLMError) as err:
+        call(gemini(httpx.MockTransport(lambda r: httpx.Response(200, json=body))))
+    assert (err.value.code, err.value.status) == ("LLM_BAD_RESPONSE", 503)
+
+
+def test_openai_compat_null_content_cut_at_the_cap_is_an_empty_cut_answer() -> None:
+    # Reasoning models answer `content: null` when reasoning used the whole cap.
+    body = {
+        "choices": [{"message": {"content": None}, "finish_reason": "length"}],
+        "usage": {"prompt_tokens": 1, "completion_tokens": MAX_OUTPUT_TOKENS},
+    }
+    provider = OpenAICompatProvider(
+        base_url="https://llm.example/v1",
+        api_key=SENTINEL,
+        model="m",
+        timeout_s=5,
+        transport=httpx.MockTransport(lambda r: httpx.Response(200, json=body)),
+    )
+    result = call(provider)
+    assert result.truncated
+    assert result.text == ""

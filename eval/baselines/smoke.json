@@ -76,9 +76,9 @@
     "apps/ai/app/services/pdf_pages.py": "5092bccb4a8c1c6d98ce7835111ad70fdac8650510f838a813d4fdb4378b6a83",
     "apps/ai/app/services/image_normalize.py": "f9dc15af40e83801fcae2dde72289489764dbe2711245d7f77825a9c8a4a07e6",
     "apps/ai/app/providers/__init__.py": "f960a49267ad45772b66bb795c836624da9db355da1b86b83004cf334325bac3",
-    "apps/ai/app/providers/base.py": "e8df1d3471e71bb8b1ac63235f4ed3ff121f45767edb1c6dd409212294294ce6",
-    "apps/ai/app/providers/gemini.py": "1d2d158c6ab7ddbc7452a5c0c54d62a8b09f8f255cc1197ecb9da55fc0b1f802",
-    "apps/ai/app/providers/openai_compat.py": "f21d98636ad36288d4ce7440486c72ed8f0968ee68d7e2882ea9b1573ce81041",
+    "apps/ai/app/providers/base.py": "02f65fce4f1d2ff1e72347ff7f8b08233d2e99f52feafe0ba5567d9b22932b7f",
+    "apps/ai/app/providers/gemini.py": "b29718df6d13c983b050a7d3ce6d3131c0e3df388712016d56ef5c0b9410cd88",
+    "apps/ai/app/providers/openai_compat.py": "62485e8451d6d494bf03ca136306238dd5f23dbaaac313f496ea47aa7218091a",
     "apps/ai/app/schemas/generated.py": "57776af7a86616bd3b980f5f997316fbe2673fd7e76f038047f93834d29ae74e",
     "apps/ai/app/error_codes.py": "94867079773e6ec162ca2f6787114af6817a6442a2fb642ad95f47fbad9ac3cc"
   }

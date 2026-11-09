@@ -16,10 +16,12 @@ from app.error_codes import registered
 
 # Largest answer a provider may write, thinking tokens included (Gemini counts them; T4.5b).
 # Set from time, not from the model (gemini-3.5-flash-lite allows 65,536): it must arrive inside
-# `llm_timeout_s` (45 s) at the slowest speed measured on `core`/`smoke`, 2.2 s + 3.2 ms per output
-# token: 2.2 + 12,288 x 3.2 ms = 41.5 s. A larger cap turns a long answer into a timeout, which the
-# worker retries (and pays for) as temporary; a cut answer is final. One line with its `fieldMeta`
-# entry is ~133 tokens, so about 86 lines fit (8,192 fitted ~54: invoice-0004 was cut, T4.4).
+# `llm_timeout_s` (45 s) at the worst single speed observed on `core`/`smoke` (3.2 ms per output
+# token; the fit over 195 calls is 1.8) plus the fitted 2.2 s start: 2.2 + 12,288 x 3.2 ms =
+# 41.5 s, a margin of only 3.5 s; a slower day can still time out the longest answers. A larger
+# cap would turn more long answers into timeouts, which the worker retries (and pays for) as
+# temporary; a cut answer is final. One line with its `fieldMeta` entry is ~133 tokens, so about
+# 86 lines fit (8,192 fitted ~54: invoice-0004 was cut, T4.4).
 MAX_OUTPUT_TOKENS = 12288
 
 

@@ -211,7 +211,8 @@ def test_an_answer_cut_at_the_token_cap_is_told_apart_from_a_misreading(
     record = read_records(results)[0]
     assert (record["status"], record["code"]) == ("rejected", "EXTRACTION_SCHEMA_INVALID")
     assert record["reason"] == "OUTPUT_TOKEN_CAP"
-    assert record["calls"] == 1 and record["outputTokens"] == MAX_OUTPUT_TOKENS
+    assert record["calls"] == 1
+    assert record["outputTokens"] == MAX_OUTPUT_TOKENS
     assert record["maxOutputTokens"] == MAX_OUTPUT_TOKENS
     built = report.build(read_records(results), small)
     assert built["splits"]["smoke"]["failures"] == {"rejected:OUTPUT_TOKEN_CAP": 1}
@@ -228,8 +229,9 @@ def test_runs_of_another_output_cap_are_not_resumed_into_the_same_file(
     for line in lines:
         del line["maxOutputTokens"]
     results.write_text("\n".join(json.dumps(line) for line in lines) + "\n")
+    provider = FakeProvider(script=answers(small))
     with pytest.raises(SystemExit):
-        run(small, FakeProvider(script=answers(small)), results)
+        run(small, provider, results)
     assert report.build(lines, small)["config"]["maxOutputTokens"] == 8192  # old runs: old cap
     mixed = [lines[0], {**lines[1], "maxOutputTokens": MAX_OUTPUT_TOKENS}]  # 8192 and 12288
     with pytest.raises(SystemExit):

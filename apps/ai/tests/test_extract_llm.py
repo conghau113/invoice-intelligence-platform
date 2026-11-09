@@ -91,7 +91,8 @@ def test_an_answer_cut_at_the_token_cap_fails_at_once_without_a_retry(
         run(provider)
     assert (err.value.code, err.value.status) == ("EXTRACTION_SCHEMA_INVALID", 422)
     assert len(provider.calls) == 1
-    assert "cut at the token cap" in caplog.text and "after 1 attempts" in caplog.text
+    assert "cut at the token cap" in caplog.text
+    assert "after 1 attempts" in caplog.text
     assert VALID[:40] not in caplog.text  # the cut answer itself is never logged
 
 
@@ -100,6 +101,31 @@ def test_an_unfinished_answer_that_is_not_cut_is_still_retried() -> None:
         text=VALID[: len(VALID) // 2], model="fake-model", input_tokens=1, output_tokens=1
     )
     assert run(FakeProvider([not_cut, VALID]))["invoice"].total == 1100000
+
+
+def test_an_empty_cut_answer_fails_at_once_with_the_schema_code() -> None:
+    # What a provider returns when thinking used the whole cap (no text at all).
+    empty = LLMResult(text="", model="m", input_tokens=1, output_tokens=1, truncated=True)
+    provider = FakeProvider([empty, VALID])
+    with pytest.raises(ExtractError) as err:
+        run(provider)
+    assert err.value.code == "EXTRACTION_SCHEMA_INVALID"
+    assert len(provider.calls) == 1
+
+
+def test_a_retry_that_is_cut_stops_the_retries() -> None:
+    provider = FakeProvider([bad_invoice(total="x"), cut_answer(), VALID])
+    with pytest.raises(ExtractError) as err:
+        run(provider)
+    assert err.value.code == "EXTRACTION_SCHEMA_INVALID"
+    assert len(provider.calls) == 2  # the third attempt would be cut again
+
+
+def test_a_valid_answer_flagged_as_cut_is_still_accepted() -> None:
+    # Only an answer that fails validation is treated as cut: valid JSON that matches the schema is
+    # complete whatever the provider says about its stop reason.
+    flagged = LLMResult(text=VALID, model="m", input_tokens=1, output_tokens=1, truncated=True)
+    assert run(FakeProvider([flagged]))["invoice"].total == 1100000
 
 
 def test_non_json_answer_counts_as_schema_failure() -> None:
