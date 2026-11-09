@@ -449,5 +449,88 @@
       "limit": "Hoá đơn này đã được mở lại quá nhiều lần nên không mở lại được nữa. Bản đã duyệt vẫn giữ nguyên.",
       "error": "Không mở lại được. Hãy thử lại."
     }
+  },
+  "Insights": {
+    "title": "Số liệu AI",
+    "description": "AI đọc hoá đơn tốt tới đâu: người duyệt trong tổ chức này đã sửa những gì (online), đặt cạnh điểm trên bộ dữ liệu kiểm thử (offline).",
+    "kpi": {
+      "label": "Số liệu chính",
+      "approved": "Hoá đơn PDF và ảnh đã duyệt",
+      "uncorrected": "Duyệt mà không phải sửa gì",
+      "costOnline": "Chi phí mỗi tài liệu (tổ chức này)",
+      "costOffline": "Chi phí mỗi tài liệu (bộ kiểm thử)",
+      "costNone": "Chưa có dữ liệu",
+      "costNote": "Ước tính theo giá niêm yết. Free tier thực trả $0."
+    },
+    "online": {
+      "title": "Tỉ lệ người dùng sửa theo field",
+      "description": "Tỉ lệ hoá đơn đã duyệt có field bị người duyệt sửa. Chỉ tính phiên bản đang được duyệt: hoá đơn bị mở lại sẽ được tính lại khi duyệt xong.",
+      "chartLabel": "Tỉ lệ sửa theo field",
+      "value": "{rate} ({documents}/{total})",
+      "xmlExcluded": "{count, plural, =0 {Chưa có hoá đơn XML nào được duyệt.} other {Không tính # hoá đơn XML đã duyệt, vì XML được đọc bằng parser chứ không qua AI.}}",
+      "emptyTitle": "Chưa có hoá đơn PDF hay ảnh nào được duyệt",
+      "emptyHint": "Tỉ lệ sửa sẽ hiện khi người duyệt duyệt một hoá đơn do AI đọc."
+    },
+    "offline": {
+      "title": "Độ chính xác trên bộ kiểm thử",
+      "description": "Model {model}, prompt {prompt}, bộ dữ liệu {dataset}: {documents} hoá đơn tổng hợp, đo ngày {dates}.",
+      "chartLabel": "Độ chính xác theo field trên bộ kiểm thử",
+      "linesF1": "Dòng hàng (F1)",
+      "criticalExact": "Đúng mọi field quan trọng",
+      "documentExact": "Đúng toàn bộ hoá đơn",
+      "latency": "Thời gian mỗi tài liệu",
+      "latencyValue": "trung vị {p50} s, phân vị 95 là {p95} s",
+      "missingTitle": "Chưa có báo cáo đánh giá",
+      "missingHint": "Máy chủ chưa được cấu hình báo cáo đánh giá. Tỉ lệ sửa ở trên vẫn đúng."
+    },
+    "limits": {
+      "title": "Đọc số liệu thế nào cho đúng",
+      "synthetic": "Bộ kiểm thử là hoá đơn tổng hợp, sạch hơn ảnh chụp thật, nên điểm ở đây là mức trần. Tỉ lệ sửa thì đo trên công việc thật.",
+      "positional": "Dòng hàng được so theo vị trí: xoá một dòng ở giữa thì các dòng sau đều bị coi là đã sửa. Vì vậy một cột của dòng hàng đếm số hoá đơn có ít nhất một ô bị sửa, không đếm từng ô.",
+      "cost": "Chi phí tính theo giá niêm yết của nhà cung cấp; free tier không bị tính tiền. Trung bình bỏ qua tài liệu chưa ghi chi phí.",
+      "latency": "Thời gian mỗi tài liệu đo trên free tier, gọi lần lượt từng lần, và thay đổi theo ngày."
+    },
+    "error": {
+      "session": {
+        "title": "Phiên đăng nhập đã hết hạn",
+        "hint": "Đăng nhập lại để xem số liệu."
+      },
+      "forbidden": {
+        "title": "Bạn không xem được số liệu này",
+        "hint": "Vai trò của bạn trong tổ chức này không có quyền xem thống kê."
+      },
+      "unreachable": {
+        "title": "Không kết nối được máy chủ",
+        "hint": "Dịch vụ API không phản hồi. Hãy thử lại sau ít phút."
+      },
+      "error": {
+        "title": "Không tải được số liệu",
+        "hint": "Đã có lỗi khi tải. Hãy thử lại."
+      }
+    },
+    "field": {
+      "sellerName": "Tên người bán",
+      "sellerTaxCode": "MST người bán",
+      "sellerAddress": "Địa chỉ người bán",
+      "buyerName": "Tên người mua",
+      "buyerTaxCode": "MST người mua",
+      "buyerAddress": "Địa chỉ người mua",
+      "invoiceNo": "Số hoá đơn",
+      "series": "Ký hiệu",
+      "issueDate": "Ngày lập",
+      "currency": "Tiền tệ",
+      "subtotal": "Cộng tiền hàng",
+      "total": "Tổng thanh toán",
+      "linesDescription": "Dòng: tên hàng",
+      "linesQuantity": "Dòng: số lượng",
+      "linesUnit": "Dòng: đơn vị",
+      "linesUnitPrice": "Dòng: đơn giá",
+      "linesVatRate": "Dòng: thuế suất",
+      "linesAmount": "Dòng: thành tiền",
+      "vatBreakdownRate": "Dòng thuế: thuế suất",
+      "vatBreakdownBase": "Dòng thuế: tiền chịu thuế",
+      "vatBreakdownAmount": "Dòng thuế: tiền thuế",
+      "vatBreakdown": "Bảng thuế GTGT"
+    }
   }
 }

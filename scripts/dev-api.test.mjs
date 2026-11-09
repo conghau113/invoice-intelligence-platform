@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { DEV_DEFAULTS, devApiEnv, devScript, pnpmCommand } from './dev-api.mjs';
 
@@ -11,6 +12,10 @@ test('dev-api: fills in the variables the API needs, building the database URL f
   assert.equal(env.DATABASE_URL, 'postgres://invoice_app:p%40ss%2Fword@localhost:5433/invoice');
   assert.equal(env.PATH, '/bin');
   assert.ok(path.isAbsolute(env.DATA_DIR), 'DATA_DIR must be absolute');
+  assert.ok(
+    existsSync(path.join(env.EVAL_REPORTS_DIR, 'compare-v1.json')),
+    'EVAL_REPORTS_DIR must point at the committed reports',
+  );
   assert.equal(env.REDIS_URL, 'redis://localhost:6380');
   assert.equal(env.AI_SERVICE_URL, 'http://localhost:8000');
   assert.ok(env.AI_SERVICE_TOKEN.length >= 16, 'the API refuses a shorter AI token');

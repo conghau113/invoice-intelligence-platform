@@ -103,6 +103,25 @@ describe('validateEnv', () => {
     expect(() => validateEnv({ ...base, DATA_DIR: './data' })).toThrow(/DATA_DIR.*absolute/);
   });
 
+  it('EVAL_REPORTS_DIR is optional, empty means not set, and must be absolute when set', () => {
+    const base = {
+      NODE_ENV: 'test',
+      OIDC_ISSUER_URL: ISSUER,
+      DATABASE_URL: DB_URL,
+      DATA_DIR,
+      REDIS_URL,
+      ...AI,
+    };
+    expect(validateEnv(base).EVAL_REPORTS_DIR).toBeUndefined();
+    expect(validateEnv({ ...base, EVAL_REPORTS_DIR: '' }).EVAL_REPORTS_DIR).toBeUndefined();
+    expect(validateEnv({ ...base, EVAL_REPORTS_DIR: '/srv/eval' }).EVAL_REPORTS_DIR).toBe(
+      '/srv/eval',
+    );
+    expect(() => validateEnv({ ...base, EVAL_REPORTS_DIR: 'eval/reports' })).toThrow(
+      /EVAL_REPORTS_DIR.*absolute/,
+    );
+  });
+
   it('names every invalid variable but never prints its value', () => {
     expect.assertions(3);
     try {

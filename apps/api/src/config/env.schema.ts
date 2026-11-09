@@ -19,6 +19,15 @@ export const envSchema = z.object({
   // Where StoragePort(LocalFs) keeps uploaded files. Absolute on purpose: a relative path would depend
   // on the working directory and could land inside the repo, where .gitignore does not cover it.
   DATA_DIR: z.string().refine((v) => path.isAbsolute(v), 'must be an absolute path'),
+  // Committed eval reports (eval/reports) behind /insights (T4.6). Optional: without it the page
+  // shows the human correction rate only. Absolute for the same reason as DATA_DIR; empty = not set.
+  EVAL_REPORTS_DIR: z.preprocess(
+    (v) => (v === '' ? undefined : v),
+    z
+      .string()
+      .refine((v) => path.isAbsolute(v), 'must be an absolute path')
+      .optional(),
+  ),
   // Redis for BullMQ (ADR 0008). The API and the worker process both read it.
   REDIS_URL: z.url(),
   // First wait of the retry backoff; tests set a few ms, production keeps seconds.

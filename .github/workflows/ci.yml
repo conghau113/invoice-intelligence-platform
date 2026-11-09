@@ -136,6 +136,8 @@ jobs:
       KEYCLOAK_CLIENT_SECRET: web-secret-dev-only
       API_BASE_URL: http://localhost:3001
       DATA_DIR: ${{ github.workspace }}/data
+      # The committed eval reports behind /insights (T4.6).
+      EVAL_REPORTS_DIR: ${{ github.workspace }}/eval/reports
       # The API checks it at start and in /health/ready (compose publishes Redis on 6380, no password).
       REDIS_URL: redis://localhost:6380
       # The API and the worker require them at start; the AI service gets the same token below.

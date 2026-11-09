@@ -8,6 +8,7 @@ import { DocumentsModule } from './modules/documents/documents.module';
 import { ExtractionModule } from './modules/extraction/extraction.module';
 import { QueueAdminModule } from './modules/queue/queue-admin.module';
 import { HealthModule } from './modules/health/health.module';
+import { InsightsModule } from './modules/insights/insights.module';
 import { ReviewModule } from './modules/review/review.module';
 
 @Module({
@@ -20,6 +21,7 @@ import { ReviewModule } from './modules/review/review.module';
     ExtractionModule,
     ReviewModule,
     QueueAdminModule,
+    InsightsModule,
   ],
   // Registered here (not in main.ts) so tests that boot AppModule exercise the real wiring.
   providers: [{ provide: APP_FILTER, useClass: ProblemDetailsFilter }],

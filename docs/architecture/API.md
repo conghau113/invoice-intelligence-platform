@@ -54,7 +54,7 @@
 ### Insights
 | Method | Path | Permission |
 |---|---|---|
-| GET | `/insights/extraction` | `insights:read` — correction rate per field, cost per document |
+| GET | `/insights/extraction` | `insights:read` — `{online, offline}` (`ExtractionInsightsSchema` in `packages/contracts`). `online`: correction rate per field over approved PDF/image documents, from `current_invoices` + `current_field_corrections` (line/VAT columns grouped as `lines.*.amount`, one count per document), XML approvals counted apart, mean list-price cost per document. `offline`: aggregate numbers of the primary model's eval report read from `EVAL_REPORTS_DIR`, `null` when unavailable |
 
 ### Notifications
 | Method | Path | Permission |

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatDate, formatMoney, formatNumber } from './format';
+import { formatDate, formatMoney, formatNumber, formatPercent, formatUsdEstimate } from './format';
 
 const NBSP = ' ';
 
@@ -37,5 +37,22 @@ describe('formatDate', () => {
   });
   it('rejects non-dates', () => {
     expect(() => formatDate('not-a-date', 'en')).toThrow(RangeError);
+  });
+});
+
+describe('formatPercent', () => {
+  it('shows a ratio as a percentage with at most one decimal, by locale', () => {
+    expect(formatPercent(0.935, 'en')).toBe('93.5%');
+    expect(formatPercent(0.935, 'vi')).toBe('93,5%');
+    expect(formatPercent(1, 'en')).toBe('100%');
+    expect(formatPercent(0, 'en')).toBe('0%');
+  });
+});
+
+describe('formatUsdEstimate', () => {
+  it('keeps fractions of a cent', () => {
+    expect(formatUsdEstimate(0.004504, 'en')).toBe('$0.0045');
+    expect(formatUsdEstimate(0.004504, 'vi')).toBe(`0,0045${NBSP}US$`);
+    expect(formatUsdEstimate(0, 'en')).toBe('$0.0000');
   });
 });

@@ -449,5 +449,88 @@
       "limit": "This invoice has been reopened too many times and cannot be reopened again. The approved version is unchanged.",
       "error": "The invoice could not be reopened. Please try again."
     }
+  },
+  "Insights": {
+    "title": "AI insights",
+    "description": "How well the AI reads invoices: what reviewers in this organization corrected (online), next to the score on the test set (offline).",
+    "kpi": {
+      "label": "Key numbers",
+      "approved": "Approved PDF and image invoices",
+      "uncorrected": "Approved without any correction",
+      "costOnline": "Cost per document (this organization)",
+      "costOffline": "Cost per document (test set)",
+      "costNone": "No data",
+      "costNote": "List-price estimate. The free tier is billed $0."
+    },
+    "online": {
+      "title": "Human correction rate per field",
+      "description": "Share of approved invoices in which a reviewer changed the field. Counts the approved version only: an invoice reopened for review counts again once it is approved again.",
+      "chartLabel": "Correction rate per field",
+      "value": "{rate} ({documents}/{total})",
+      "xmlExcluded": "{count, plural, =0 {No XML invoice is approved yet.} one {# approved XML invoice is left out: the XML parser is not the AI.} other {# approved XML invoices are left out: the XML parser is not the AI.}}",
+      "emptyTitle": "No approved PDF or image invoice yet",
+      "emptyHint": "The correction rate appears once a reviewer approves an invoice read by the AI."
+    },
+    "offline": {
+      "title": "Accuracy on the test set",
+      "description": "Model {model}, prompt {prompt}, dataset {dataset}: {documents} synthetic invoices, measured on {dates}.",
+      "chartLabel": "Accuracy per field on the test set",
+      "linesF1": "Line items (F1)",
+      "criticalExact": "Every key field right",
+      "documentExact": "Whole invoice right",
+      "latency": "Time per document",
+      "latencyValue": "median {p50} s, 95th percentile {p95} s",
+      "missingTitle": "No evaluation report is available",
+      "missingHint": "The server has no evaluation report configured. The correction rate above is unaffected."
+    },
+    "limits": {
+      "title": "How to read these numbers",
+      "synthetic": "The test set is synthetic invoices, cleaner than real scans: its scores are an upper bound. The correction rate is measured on real work.",
+      "positional": "Line items are compared by position, so deleting a line in the middle marks the lines after it as changed. A line column therefore counts invoices with at least one changed cell, not cells.",
+      "cost": "Costs use the provider's list prices; nothing is billed on the free tier. The mean leaves out documents without a recorded cost.",
+      "latency": "Time per document is measured on the free tier one call at a time, and changes from day to day."
+    },
+    "error": {
+      "session": {
+        "title": "Your session has expired",
+        "hint": "Sign in again to see the numbers."
+      },
+      "forbidden": {
+        "title": "You cannot see these numbers",
+        "hint": "Your role in this organization does not include insights."
+      },
+      "unreachable": {
+        "title": "Cannot reach the server",
+        "hint": "The API service is not responding. Try again in a few minutes."
+      },
+      "error": {
+        "title": "The numbers could not be loaded",
+        "hint": "Something went wrong while loading. Try again."
+      }
+    },
+    "field": {
+      "sellerName": "Seller name",
+      "sellerTaxCode": "Seller tax code",
+      "sellerAddress": "Seller address",
+      "buyerName": "Buyer name",
+      "buyerTaxCode": "Buyer tax code",
+      "buyerAddress": "Buyer address",
+      "invoiceNo": "Invoice number",
+      "series": "Series",
+      "issueDate": "Issue date",
+      "currency": "Currency",
+      "subtotal": "Subtotal",
+      "total": "Total",
+      "linesDescription": "Line: description",
+      "linesQuantity": "Line: quantity",
+      "linesUnit": "Line: unit",
+      "linesUnitPrice": "Line: unit price",
+      "linesVatRate": "Line: VAT rate",
+      "linesAmount": "Line: amount",
+      "vatBreakdownRate": "VAT row: rate",
+      "vatBreakdownBase": "VAT row: taxable amount",
+      "vatBreakdownAmount": "VAT row: VAT",
+      "vatBreakdown": "VAT breakdown"
+    }
   }
 }
