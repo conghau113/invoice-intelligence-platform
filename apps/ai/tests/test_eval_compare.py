@@ -477,7 +477,8 @@ def test_the_comparison_runs_end_to_end_and_its_json_holds_no_value(
     assert built["textLayerCheck"]["B"]["wrong_not_printed"] == 1
     assert built["examples"][0]["where"] == "seller.taxCode"
     figures = compare.write_figures(REAL, built, tmp_path / "fig")
-    assert figures[0] is not None and (tmp_path / "fig" / figures[0]).is_file()
+    assert figures[0] is not None
+    assert (tmp_path / "fig" / figures[0]).is_file()
     monkeypatch.setattr(compare, "build", lambda _dataset: built)
     reports = tmp_path / "reports"
     reports.mkdir()

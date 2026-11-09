@@ -32,7 +32,9 @@
         "$TURBO_ROOT$/tools/invoice-gen/templates/**",
         "$TURBO_ROOT$/tools/invoice-gen/fonts/**",
         "$TURBO_ROOT$/eval/runner/**/*.py",
-        "$TURBO_ROOT$/eval/datasets/v1/**"
+        "$TURBO_ROOT$/eval/datasets/v1/**",
+        "$TURBO_ROOT$/eval/baselines/**",
+        "$TURBO_ROOT$/eval/reports/*.json"
       ],
       "outputs": ["coverage/**"]
     },

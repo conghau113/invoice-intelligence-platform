@@ -1,5 +1,8 @@
 """CLI. Run from apps/ai, where the key is configured: `pnpm eval:run smoke --repeats 3`.
 
+CI gate (T4.5): `pnpm eval:gate` runs `smoke` once and compares it with `eval/baselines/smoke.json`;
+`pnpm eval:baseline` writes that file from the committed report of the current configuration.
+
 No argument is a path (SonarCloud treats a path from the command line as tainted, T4.1b): the
 dataset, the runs file and the report names are derived from the configuration.
 """
@@ -11,7 +14,7 @@ import sys
 
 from app.config import Settings
 from app.providers import build_provider
-from runner import compare, report
+from runner import compare, gate, report
 from runner.dataset import SPLITS, Dataset, DatasetError, load
 from runner.names import REPORTS_DIR, RUNS_DIR, slug
 from runner.run import read_records, run_split
@@ -32,6 +35,10 @@ def _parser() -> argparse.ArgumentParser:
     run.add_argument("--max-calls", type=int, default=150, choices=range(1, 451))
     sub.add_parser("report", help="write eval/reports from the recorded runs")
     sub.add_parser("compare", help="write the T4.4 comparison and every compared report")
+    check = sub.add_parser("gate", help="run smoke once, fail on a drop below the baseline")
+    check.add_argument("--rpm", type=int, default=10, choices=range(1, 31))
+    check.add_argument("--max-calls", type=int, default=60, choices=range(1, 151))
+    sub.add_parser("baseline", help="write eval/baselines/smoke.json from the committed report")
     return parser
 
 
@@ -71,10 +78,49 @@ def _compare(dataset: Dataset) -> int:
     return 0
 
 
+GATE_DIR = RUNS_DIR / "gate"  # git-ignored like every run: it holds the values the model read
+
+
+def _gate(args: argparse.Namespace, config: Settings, dataset: Dataset) -> int:
+    results = GATE_DIR / f"{slug(dataset.name, config.llm_model)}.jsonl"  # checks the model id
+    provider = build_provider(config)
+    print(f"gate split={gate.SPLIT} model={provider.model}", flush=True)
+    code, summary = gate.run_gate(
+        dataset,
+        provider,
+        results,
+        gate.read_baseline(),
+        rpm=args.rpm,
+        max_calls=args.max_calls,
+        say=lambda line: print(line, flush=True),
+    )
+    GATE_DIR.mkdir(parents=True, exist_ok=True)
+    (GATE_DIR / "summary.md").write_text(summary, encoding="utf-8")
+    print(summary, flush=True)
+    return code
+
+
+def _baseline(dataset: Dataset, model: str) -> int:
+    name = slug(dataset.name, model)
+    source = REPORTS_DIR / f"{name}.json"
+    if not source.exists():
+        print(f"no committed report for {model}: run pnpm eval:run smoke --repeats 3 first")
+        return 1
+    built = json.loads(source.read_text(encoding="utf-8"))
+    try:
+        baseline = gate.build_baseline(built, f"eval/reports/{name}.json")
+    except gate.GateError as err:
+        print(f"baseline not written: {err}", file=sys.stderr)
+        return 1
+    gate.write_baseline(baseline)
+    print("wrote eval/baselines/smoke.json")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     config = settings()
-    if args.command != "compare" and config.llm_provider == "fake":
+    if args.command not in ("compare", "baseline") and config.llm_provider == "fake":
         raise SystemExit("LLM_PROVIDER=fake gives canned answers: its report would measure nothing")
     try:
         dataset = load()
@@ -85,6 +131,10 @@ def main(argv: list[str] | None = None) -> int:
         return _run(args, config, dataset)
     if args.command == "compare":
         return _compare(dataset)
+    if args.command == "gate":
+        return _gate(args, config, dataset)
+    if args.command == "baseline":
+        return _baseline(dataset, config.llm_model)
     print(f"wrote {write_report(dataset, config.llm_model)}")
     return 0
 

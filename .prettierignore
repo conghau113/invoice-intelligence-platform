@@ -16,3 +16,5 @@ dist-scripts
 eval/datasets
 # Written by pnpm eval:report
 eval/reports
+# Written by pnpm eval:baseline (T4.5)
+eval/baselines
