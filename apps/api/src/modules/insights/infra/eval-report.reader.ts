@@ -72,7 +72,7 @@ export async function readEvalReport(dir: string | undefined): Promise<EvalRepor
     model: config.model,
     promptVersion: config.promptVersion,
     dataset: config.dataset,
-    runDates: [...new Set(runDates)].sort(),
+    runDates: [...new Set(runDates)].sort((a, b) => a.localeCompare(b)),
     documents: overall.documents,
     fields: fields.flatMap((field) => {
       const accuracy = overall.fields[field]?.accuracy;

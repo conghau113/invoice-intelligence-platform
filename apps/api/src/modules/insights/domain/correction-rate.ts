@@ -30,7 +30,7 @@ export function correctionRate(
   const extra = counts
     .map((c) => c.field)
     .filter((f) => !REPORTED_FIELDS.includes(f))
-    .sort();
+    .sort((a, b) => a.localeCompare(b));
   return [...REPORTED_FIELDS, ...extra].map((field) => {
     const documents = byField.get(field) ?? 0;
     return { field, documents, rate: approvedDocuments === 0 ? 0 : documents / approvedDocuments };
