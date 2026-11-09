@@ -71,7 +71,7 @@ def render_band(pdf_path: Path, needles: list[str]) -> bytes | None:
         if found is None:
             return None
         page = pdf[found.page]
-        width_pt, height_pt = page.get_size()
+        _, height_pt = page.get_size()
         top_cut = max(0.0, height_pt - found.top - BAND_PT)
         bottom_cut = max(0.0, found.bottom - BAND_PT)
         bitmap = page.render(scale=SCALE, crop=(0, bottom_cut, 0, top_cut), rev_byteorder=True)

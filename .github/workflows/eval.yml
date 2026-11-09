@@ -1,0 +1,85 @@
+name: Eval
+
+# Extraction regression gate (T4.5, ADR 0020): one run of the 20-document `smoke` split with the
+# real model, compared with eval/baselines/smoke.json. Red when a critical field or line F1 drops
+# by more than max(measured noise, one document = 5 points), or when the run could not finish.
+#
+# Not on every PR: each run spends ~20-25 calls of the free-tier quota the project shares with
+# development, takes minutes, and its result varies a little between runs. It runs when what it
+# measures changes, by hand, and once a week to catch a provider changing a model behind its name.
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: Model id (empty = the default in apps/ai/app/config.py)
+        required: false
+        default: ''
+  pull_request:
+    paths:
+      - apps/ai/app/prompts/**
+      - apps/ai/app/providers/**
+      - apps/ai/app/config.py
+      - apps/ai/app/services/extract.py
+      - apps/ai/app/services/pdf_pages.py
+      - apps/ai/app/services/image_normalize.py
+      - apps/ai/pyproject.toml
+      - apps/ai/uv.lock
+      - eval/runner/**
+      - eval/baselines/**
+      - eval/datasets/**
+      - .github/workflows/eval.yml
+  schedule:
+    - cron: '0 2 * * 1' # Monday 02:00 UTC (09:00 in Viet Nam), after the daily quota reset
+
+permissions:
+  contents: read
+
+# One eval at a time: two runs side by side would share one free-tier quota and slow each other.
+# Never cancelled, so a started run always reaches a verdict.
+concurrency:
+  group: eval
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: apps/ai
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: 0.13.0
+          enable-cache: true
+          cache-dependency-glob: apps/ai/uv.lock
+      - run: uv sync --frozen --no-build
+      # A PR from a fork gets no secrets: say so instead of failing later with a provider error.
+      - name: Check the API key secret
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "::error::Secret GEMINI_API_KEY is not set (free-tier key, project without billing)."
+            exit 1
+          fi
+      # Same as `pnpm eval:gate`. The model input goes through an environment variable, never into
+      # the script text, and runner/names.py checks it against a pattern before any use.
+      - name: Run smoke and compare with the baseline
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          LLM_PROVIDER: gemini
+          MODEL_INPUT: ${{ inputs.model }}
+          PYTHONPATH: .:../../eval
+        run: |
+          if [ -n "$MODEL_INPUT" ]; then export LLM_MODEL="$MODEL_INPUT"; fi
+          uv run --frozen --no-build python -m runner gate
+      # Rates, field paths and document ids only (runner/gate.py). The runs file holds the values
+      # the model read and is not uploaded.
+      - name: Summary
+        if: always()
+        run: |
+          if [ -f ../../eval/runs/gate/summary.md ]; then
+            cat ../../eval/runs/gate/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi

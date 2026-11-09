@@ -32,6 +32,12 @@ FIGURES_DIR = REPORTS_DIR / NAME
 EXAMPLES = 5
 # Two documents on `core`: a smaller difference in critical exact is not a reason to pay more.
 TIE_DOCUMENTS = 2
+# Error locations and table cells written in several places (SonarCloud S1192).
+LINES_AT = "lines["
+EXTRA_AT = "extra["
+LINE_AT = (LINES_AT, EXTRA_AT)
+TABLE_RULE = "|---|"
+NOT_RUN = "not run"
 # Fields a whole-token check against the PDF text layer could test. Dates are printed in several
 # ways (textlayer.py), names and addresses wrap over lines.
 CHECKABLE = (
@@ -232,9 +238,9 @@ def paired(a: dict[str, dict[str, Any]], b: dict[str, dict[str, Any]]) -> dict[s
 
 def _bucket(where: str) -> str:
     """lines[3].amount -> lines.amount, extra[0] -> extra line; header paths unchanged."""
-    if where.startswith("lines["):
+    if where.startswith(LINES_AT):
         return "lines" + (where[where.index("]") + 1 :] or "")
-    if where.startswith("extra["):
+    if where.startswith(EXTRA_AT):
         return "extra line"
     return where
 
@@ -261,10 +267,10 @@ def _text_check(
 def _needles(doc: dict[str, Any], want: dict[str, Any], where: str) -> list[str]:
     """What to look for on the page for an example: the right value, else its neighbourhood."""
     locale, currency = doc["locale"], doc["currency"]
-    if where.startswith(("lines[", "extra[")):
+    if where.startswith(LINE_AT):
         index = int(where[where.index("[") + 1 : where.index("]")])
         lines = want["lines"]
-        line = lines[index] if where.startswith("lines[") and index < len(lines) else None
+        line = lines[index] if where.startswith(LINES_AT) and index < len(lines) else None
         return [line["description"]] if line else []
     value = value_at(want, where)
     party = where.split(".")[0] if "." in where else None
@@ -342,7 +348,7 @@ def _line_values(
     """`lines[i]`, `lines[i].column` or `extra[i]`: the invoice's value and the answer's."""
     where = e["where"]
     index = int(where[where.index("[") + 1 : where.index("]")])
-    if where.startswith("extra["):
+    if where.startswith(EXTRA_AT):
         line = got_lines[index] if index < len(got_lines) else {}
         return ("(no such line)", _display(line.get("description")))
     want_line = want["lines"][index]
@@ -360,7 +366,7 @@ def _example_values(
     where = e["where"]
     if where == "document":
         return ("the whole invoice", "no answer")
-    if where.startswith(("lines[", "extra[")):
+    if where.startswith(LINE_AT):
         return _line_values(e, (got or {}).get("lines") or [], want)
     return (_display(value_at(want, where)), _display(value_at(got or {}, where)))
 
@@ -527,10 +533,10 @@ def _core_table(configs: list[dict[str, Any]]) -> list[str]:
     cores = [c["core"] for c in configs]
     head = [
         "| | " + " | ".join(f"{c['key']}: `{c['model']}`" for c in configs) + " |",
-        "|---|" + "---|" * len(configs),
+        TABLE_RULE + "---|" * len(configs),
     ]
     rows = [
-        _row(f"**{f}**", [_cell(c["critical"][f]) if c else "not run" for c in cores])
+        _row(f"**{f}**", [_cell(c["critical"][f]) if c else NOT_RUN for c in cores])
         for f in CRITICAL_FIELDS
     ]
 
@@ -584,7 +590,7 @@ def _core_table(configs: list[dict[str, Any]]) -> list[str]:
                 if c["injection"]
                 else f"not run: {c['noInjection']}"
                 if c.get("noInjection")
-                else "not run"
+                else NOT_RUN
                 for c in configs
             ],
         )
@@ -595,7 +601,7 @@ def _core_table(configs: list[dict[str, Any]]) -> list[str]:
             [
                 f"{c['regression']['sellerSuffixCut']} of {c['regression']['cases']}"
                 if c["regression"]
-                else "not run"
+                else NOT_RUN
                 for c in configs
             ],
         )
@@ -614,7 +620,7 @@ def _variant_table(configs: list[dict[str, Any]]) -> list[str]:
         "| Variant | "
         + " | ".join(f"{c['key']}: critical values right / line F1 (docs)" for c in ran)
         + " |",
-        "|---|" + "---|" * len(ran),
+        TABLE_RULE + "---|" * len(ran),
     ]
     for v in variants:
         cells = []
@@ -631,7 +637,7 @@ def _variant_table(configs: list[dict[str, Any]]) -> list[str]:
 
 def _error_tables(built: dict[str, Any]) -> list[str]:
     keys = sorted(built["errors"])
-    out = ["| Class | " + " | ".join(keys) + " |", "|---|" + "---|" * len(keys)]
+    out = ["| Class | " + " | ".join(keys) + " |", TABLE_RULE + "---|" * len(keys)]
     for cls in CLASSES:
         out.append(
             f"| {cls} | "
@@ -707,7 +713,7 @@ def _examples(built: dict[str, Any], dataset: Dataset, figures: list[str | None]
         ]
         box = (
             "the description of that line (the wrong value is in the same row)"
-            if e["where"].startswith(("lines[", "extra["))
+            if e["where"].startswith(LINE_AT)
             else "where the right value is printed"
         )
         if figure:
@@ -751,7 +757,7 @@ def to_markdown(
         "|---|---|---|---|---|---|",
     ]
     for c in configs:
-        link = f"[`{c['report']}.md`]({c['report']}.md)" if c["report"] else "not run"
+        link = f"[`{c['report']}.md`]({c['report']}.md)" if c["report"] else NOT_RUN
         note = c.get("note") or ""
         lines.append(
             f"| {c['key']} | {c['provider']} | `{c['model']}` | {c['role']} | {link} | {note} |"
