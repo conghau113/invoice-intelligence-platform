@@ -247,8 +247,9 @@ def test_gemini_without_parts_and_not_cut_is_still_a_bad_response() -> None:
         "candidates": [{"finishReason": "STOP", "content": {"role": "model"}}],
         "usageMetadata": {"promptTokenCount": 10},
     }
+    provider = gemini(httpx.MockTransport(lambda r: httpx.Response(200, json=body)))
     with pytest.raises(LLMError) as err:
-        call(gemini(httpx.MockTransport(lambda r: httpx.Response(200, json=body))))
+        call(provider)
     assert (err.value.code, err.value.status) == ("LLM_BAD_RESPONSE", 503)
 
 
