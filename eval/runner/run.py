@@ -13,7 +13,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from app.providers.base import LLMProvider
+from app.providers.base import MAX_OUTPUT_TOKENS, LLMProvider
 from app.services.extract import (
     MAX_FIELD_META,
     PROMPT_VERSION,
@@ -51,17 +51,20 @@ def read_records(path: Path) -> list[dict[str, Any]]:
     return records
 
 
-def _config(dataset: Dataset, model: str) -> dict[str, str]:
+def _config(dataset: Dataset, model: str) -> dict[str, str | int]:
     return {
         "dataset": dataset.name,
         "manifestSha256": dataset.manifest_sha256,
         "model": model,
         "promptVersion": PROMPT_VERSION,
         "promptSha256": PROMPT_SHA256,
+        # A larger cap turns cut answers into readings (T4.5b): runs of another cap are not resumed
+        # into the same file, or the old cut documents would count as already measured.
+        "maxOutputTokens": MAX_OUTPUT_TOKENS,
     }
 
 
-def check_same_config(records: list[dict[str, Any]], config: dict[str, str]) -> None:
+def check_same_config(records: list[dict[str, Any]], config: dict[str, str | int]) -> None:
     """One file is one configuration: a prompt edited without a new version must not be mixed in."""
     for record in records:
         for key, value in config.items():
@@ -80,6 +83,7 @@ def _one_document(
     outcome: dict[str, Any] = {"status": "error", "code": "UNKNOWN"}
     totals = {"calls": 0, "inputTokens": 0, "outputTokens": 0}
     max_meta: int | None = None
+    truncated = False
     for number in range(1, MAX_ATTEMPTS + 1):
         pacer.wait()  # outside extract: pacing must not eat into its 55 s budget
         provider.reset()
@@ -96,6 +100,7 @@ def _one_document(
         totals["outputTokens"] += provider.output_tokens
         if provider.max_field_meta is not None:
             max_meta = max(provider.max_field_meta, max_meta or 0)
+        truncated = provider.truncated
         outcome |= {
             "attempts": number,
             "latencyMs": wall_ms,
@@ -108,6 +113,8 @@ def _one_document(
             time.sleep(retry_wait_s)
     if outcome["status"] == "rejected" and max_meta is not None and max_meta > MAX_FIELD_META:
         outcome["reason"] = "FIELD_META_TOO_MANY"  # T4.1: a limit of ours, not a reading error
+    elif outcome["status"] == "rejected" and truncated:
+        outcome["reason"] = "OUTPUT_TOKEN_CAP"  # T4.5b: also a limit of ours, not a misreading
     return outcome | totals | {"maxFieldMeta": max_meta}
 
 

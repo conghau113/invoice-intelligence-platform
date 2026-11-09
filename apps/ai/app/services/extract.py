@@ -126,6 +126,7 @@ def extract_llm(images: list[ImagePart], provider: LLMProvider) -> dict[str, Any
     user_text = FIRST_USER_TEXT
     schema = invoice_json_schema()
     last_problem = ""
+    calls = 0
     for attempt in range(MAX_SCHEMA_RETRIES + 1):
         # One attempt can take `provider.timeout_s`; start another only if it still fits the
         # budget, so slow answers cannot stack up to 3 x timeout (and be billed 3 times).
@@ -141,6 +142,7 @@ def extract_llm(images: list[ImagePart], provider: LLMProvider) -> dict[str, Any
             raise ExtractError(
                 err.status, err.code, "The model provider could not answer"
             ) from None
+        calls += 1
         in_tokens += result.input_tokens
         out_tokens += result.output_tokens  # failed attempts are billed too
         try:
@@ -151,6 +153,11 @@ def extract_llm(images: list[ImagePart], provider: LLMProvider) -> dict[str, Any
             last_problem = (
                 describe_errors(err) if isinstance(err, ValidationError) else type(err).__name__
             )
+            if result.truncated:
+                # Cut at MAX_OUTPUT_TOKENS: the same pages give the same long answer, cut again,
+                # and a retry would be billed for nothing.
+                last_problem = "output cut at the token cap"
+                break
             user_text = (
                 f"{FIRST_USER_TEXT}\nYour previous answer was rejected by schema validation: "
                 f"{last_problem}\nAnswer again with JSON that matches the schema exactly."
@@ -177,7 +184,7 @@ def extract_llm(images: list[ImagePart], provider: LLMProvider) -> dict[str, Any
                 "costUsd": estimate_cost_usd(result.model, in_tokens, out_tokens),
             },
         }
-    log.warning("llm output rejected after %d attempts: %s", MAX_SCHEMA_RETRIES + 1, last_problem)
+    log.warning("llm output rejected after %d attempts: %s", calls, last_problem)
     raise ExtractError(
         422, "EXTRACTION_SCHEMA_INVALID", "The model output did not match the schema"
     )

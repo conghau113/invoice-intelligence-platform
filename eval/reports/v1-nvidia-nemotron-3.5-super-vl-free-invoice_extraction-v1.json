@@ -5,7 +5,8 @@
     "manifestSha256": "09abbf3843d2cd8345c7f796840bf36d65d0170e5700ced3126d76a115ef2614",
     "model": "nvidia/nemotron-3.5-super-vl:free",
     "promptVersion": "invoice_extraction/v1",
-    "promptSha256": "7ce11be8099f7663fbcc2c655357eb325c979760b42b4a7662e03bf0f8ad4cbd"
+    "promptSha256": "7ce11be8099f7663fbcc2c655357eb325c979760b42b4a7662e03bf0f8ad4cbd",
+    "maxOutputTokens": 8192
   },
   "criticalFields": [
     "invoiceNo",

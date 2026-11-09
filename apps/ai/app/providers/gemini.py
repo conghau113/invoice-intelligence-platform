@@ -6,6 +6,7 @@ from typing import Any
 import httpx
 
 from app.providers.base import (
+    MAX_OUTPUT_TOKENS,
     ImagePart,
     LLMRejected,
     LLMResult,
@@ -13,7 +14,6 @@ from app.providers.base import (
     post_json,
 )
 
-MAX_OUTPUT_TOKENS = 8192  # an invoice is ~1k tokens; a looping model must not run to the cap x3
 BASE_URL = "https://generativelanguage.googleapis.com/v1beta"
 
 
@@ -75,6 +75,7 @@ class GeminiProvider:
                 model=self.model,
                 input_tokens=int(usage["promptTokenCount"]),
                 output_tokens=output,
+                truncated=candidate.get("finishReason") == "MAX_TOKENS",
             )
         except (KeyError, IndexError, TypeError, ValueError):
             # No candidate usually means the prompt was blocked; the same input is blocked again.

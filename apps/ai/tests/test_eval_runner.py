@@ -15,7 +15,13 @@ from runner.dataset import Dataset, DatasetError, load
 from runner.provider import Pacer
 from runner.run import read_records, run_split
 
-from app.providers.base import LLMError, LLMRejected, LLMUnavailable
+from app.providers.base import (
+    MAX_OUTPUT_TOKENS,
+    LLMError,
+    LLMRejected,
+    LLMResult,
+    LLMUnavailable,
+)
 from app.providers.fake import FakeProvider
 
 REAL = load()
@@ -186,6 +192,48 @@ def test_too_many_field_meta_entries_is_told_apart_and_its_tokens_are_counted(
     assert record["calls"] == 3 and record["inputTokens"] == 3000  # extract drops these
     failures = report.build(read_records(results), small)["splits"]["smoke"]["failures"]
     assert failures == {"rejected:FIELD_META_TOO_MANY": 1}
+
+
+def test_an_answer_cut_at_the_token_cap_is_told_apart_from_a_misreading(
+    small: Dataset, tmp_path: Path
+) -> None:
+    full = model_answer(small.expected(PDF_DOC))
+    cut = LLMResult(
+        text=full[: len(full) // 2],
+        model="fake-model",
+        input_tokens=2660,
+        output_tokens=MAX_OUTPUT_TOKENS,
+        truncated=True,
+    )
+    provider = FakeProvider(script=[cut, answers(small)[1]])
+    results = tmp_path / "runs.jsonl"
+    assert run(small, provider, results)
+    record = read_records(results)[0]
+    assert (record["status"], record["code"]) == ("rejected", "EXTRACTION_SCHEMA_INVALID")
+    assert record["reason"] == "OUTPUT_TOKEN_CAP"
+    assert record["calls"] == 1 and record["outputTokens"] == MAX_OUTPUT_TOKENS
+    assert record["maxOutputTokens"] == MAX_OUTPUT_TOKENS
+    built = report.build(read_records(results), small)
+    assert built["splits"]["smoke"]["failures"] == {"rejected:OUTPUT_TOKEN_CAP": 1}
+    assert built["config"]["maxOutputTokens"] == MAX_OUTPUT_TOKENS
+
+
+def test_runs_of_another_output_cap_are_not_resumed_into_the_same_file(
+    small: Dataset, tmp_path: Path
+) -> None:
+    # Before T4.5b a run had no maxOutputTokens: resuming would count its cut documents as measured.
+    results = tmp_path / "runs.jsonl"
+    assert run(small, FakeProvider(script=answers(small)), results)
+    lines = [json.loads(line) for line in results.read_text().splitlines()]
+    for line in lines:
+        del line["maxOutputTokens"]
+    results.write_text("\n".join(json.dumps(line) for line in lines) + "\n")
+    with pytest.raises(SystemExit):
+        run(small, FakeProvider(script=answers(small)), results)
+    assert report.build(lines, small)["config"]["maxOutputTokens"] == 8192  # old runs: old cap
+    mixed = [lines[0], {**lines[1], "maxOutputTokens": MAX_OUTPUT_TOKENS}]  # 8192 and 12288
+    with pytest.raises(SystemExit):
+        report.build(mixed, small)
 
 
 def test_runs_of_another_prompt_are_not_mixed_into_the_same_file(

@@ -35,7 +35,7 @@ Business rules (shared TS code, also run in the worker): lines sum to subtotal; 
 1. Worker reads the file through `StoragePort` and sends it as multipart `{file, sourceType}` over the internal network (service token + `traceparent`); the AI service enforces a size cap and timeout.
 2. PDF → page images (pypdfium2, 150 DPI). An uploaded picture is cleaned (`services/image_normalize.py`): metadata is removed by allow-list and an EXIF rotation is applied to the pixels, so the result does not depend on a provider reading EXIF. A turned JPEG leaves as a PNG, at most 2200 px on its long edge. A picture that is not turned keeps its pixels and stays the same size. A damaged file gets `IMAGE_INVALID` without calling a provider; the stored original is never changed.
 3. Provider call (Strategy pattern, ADR 0009): system instructions + JSON Schema as the response schema; **document content is passed only as image/data parts, never concatenated into the instructions**.
-4. Validate with pydantic (generated from JSON Schema). On failure: up to 2 retries including the validation error; then return error code `EXTRACTION_SCHEMA_INVALID`.
+4. Validate with pydantic (generated from JSON Schema). On failure: up to 2 retries including the validation error, except for an answer cut at the output-token cap (§8), which would be cut again; then return error code `EXTRACTION_SCHEMA_INVALID`.
 5. Return `invoice`, `fieldMeta`, and `usage {model, inputTokens, outputTokens, latencyMs, costUsd}`; cost is computed from a versioned price table in config (prices change — update the table, never hard-code in logic).
 
 Prompt versions live in `apps/ai/app/prompts/<name>/v<N>.md`; the version is stored with every extraction so eval results are comparable.
@@ -75,6 +75,7 @@ Prompt versions live in `apps/ai/app/prompts/<name>/v<N>.md`; the version is sto
 
 Free and paid tiers enforce requests per minute (RPM), tokens per minute (TPM) and requests per day (RPD); limits vary by account and change over time, so they are **configuration, not constants** (`LLM_RPM`, `LLM_TPM`, `LLM_RPD`).
 
+- **Output-token cap** (`MAX_OUTPUT_TOKENS` in `providers/base.py`, T4.5b): 12,288, set from time rather than from the model's own limit (65,536 for `gemini-3.5-flash-lite`). At the slowest speed measured (2.2 s + 3.2 ms per output token) the longest answer still arrives inside `llm_timeout_s` (45 s). That is about 86 invoice lines; a longer invoice is cut and fails at once with `EXTRACTION_SCHEMA_INVALID` (the provider reports `MAX_TOKENS` / `length`, and extract does not retry an answer cut at the cap). A larger cap would turn the same invoice into a timeout, which the worker retries and pays for as a temporary error.
 - BullMQ limiter keeps the extraction queue under RPM.
 - On 429: read `Retry-After` if present, otherwise exponential backoff with full jitter; cap total wait; then fail the job with a clear code.
 - Circuit breaker opens after N consecutive provider failures and pauses the queue.

@@ -74,6 +74,7 @@ class RecordingProvider:
         self.output_tokens = 0
         self.provider_ms = 0
         self.max_field_meta: int | None = None
+        self.truncated = False  # an answer stopped at MAX_OUTPUT_TOKENS (T4.5b)
         self.slept_at_reset = self._pacer.slept_s
 
     @property
@@ -99,6 +100,7 @@ class RecordingProvider:
             self.provider_ms += int((time.monotonic() - started) * 1000)
         self.input_tokens += result.input_tokens
         self.output_tokens += result.output_tokens
+        self.truncated = self.truncated or result.truncated
         count = _field_meta_count(result.text)
         if count is not None:
             self.max_field_meta = max(count, self.max_field_meta or 0)

@@ -22,27 +22,27 @@ A configuration that stopped short shows its own denominator; compare it with th
 
 | | A: `gemini-3.1-flash-lite` | B: `gemini-3.5-flash-lite` | C: `nvidia/nemotron-3.5-super-vl:free` |
 |---|---|---|---|
-| **invoiceNo** | 99.0% (99/100) | 99.0% (99/100) | 91.8% (45/49) |
-| **series** | 100.0% (100/100) | 99.0% (99/100) | 93.9% (46/49) |
-| **issueDate** | 99.0% (99/100) | 99.0% (99/100) | 93.9% (46/49) |
-| **currency** | 100.0% (100/100) | 99.0% (99/100) | 93.9% (46/49) |
-| **subtotal** | 100.0% (100/100) | 99.0% (99/100) | 93.9% (46/49) |
-| **total** | 100.0% (100/100) | 99.0% (99/100) | 93.9% (46/49) |
-| **seller.taxCode** | 88.0% (88/100) | 92.0% (92/100) | 93.9% (46/49) |
-| **buyer.taxCode** | 99.0% (99/100) | 99.0% (99/100) | 91.8% (45/49) |
-| line F1 (micro) | 0.999 | 0.943 | 0.654 |
-| line precision / recall | 0.999 / 0.999 | 0.985 / 0.904 | 0.820 / 0.544 |
-| lines missing / extra | 0 / 0 | 54 / 0 | 118 / 0 |
-| all 8 critical fields right | 85.0% (85/100) | 92.0% (92/100) | 89.8% (44/49) |
+| **invoiceNo** | 99.0% (99/100) | 100.0% (100/100) | 91.8% (45/49) |
+| **series** | 100.0% (100/100) | 100.0% (100/100) | 93.9% (46/49) |
+| **issueDate** | 99.0% (99/100) | 100.0% (100/100) | 93.9% (46/49) |
+| **currency** | 100.0% (100/100) | 100.0% (100/100) | 93.9% (46/49) |
+| **subtotal** | 100.0% (100/100) | 100.0% (100/100) | 93.9% (46/49) |
+| **total** | 100.0% (100/100) | 100.0% (100/100) | 93.9% (46/49) |
+| **seller.taxCode** | 88.0% (88/100) | 93.0% (93/100) | 93.9% (46/49) |
+| **buyer.taxCode** | 99.0% (99/100) | 100.0% (100/100) | 91.8% (45/49) |
+| line F1 (micro) | 0.999 | 0.983 | 0.654 |
+| line precision / recall | 0.999 / 0.999 | 0.983 / 0.983 | 0.820 / 0.544 |
+| lines missing / extra | 0 / 0 | 0 / 0 | 118 / 0 |
+| all 8 critical fields right | 85.0% (85/100) | 93.0% (93/100) | 89.8% (44/49) |
 | document exact | 84.0% (84/100) | 85.0% (85/100) | 38.8% (19/49) |
 | seller tax code suffix cut | 12 of 26 | 7 of 26 | 0 of 13 |
-| failed or rejected | 0 | 1 {'rejected:EXTRACTION_SCHEMA_INVALID': 1} | 3 {'rejected:EXTRACTION_SCHEMA_INVALID': 3} |
+| failed or rejected | 0 | 0 | 3 {'rejected:EXTRACTION_SCHEMA_INVALID': 3} |
 | complete | yes | yes | **no** |
 | **amount actually paid** | $0 (free tier) | $0 (free tier) | $0 (free tier) |
-| list price per document, if it were paid | $0.00275 | $0.00452 | $0.00248 |
-| median input tokens | 1568.0 | 1568 | 2626.0 |
-| latency p50 / p95, all pages | 4.2 s / 22.9 s | 4.5 s / 10.7 s | 22.2 s / 64.3 s |
-| latency p50 / p95, single page | 4.2 s / 26.1 s | 4.5 s / 7.1 s | 22.2 s / 64.3 s |
+| list price per document, if it were paid | $0.00275 | $0.00450 | $0.00248 |
+| median input tokens | 1568.0 | 1568.0 | 2626.0 |
+| latency p50 / p95, all pages | 4.2 s / 22.9 s | 4.6 s / 12.5 s | 22.2 s / 64.3 s |
+| latency p50 / p95, single page | 4.2 s / 26.1 s | 4.6 s / 12.3 s | 22.2 s / 64.3 s |
 | injection: attacks that worked | 0 of 24 | 0 of 24 | not run: NVIDIA API Trial Terms §4.10 forbid security testing of the service |
 | regression-00: suffix cut | 3 of 3 | 0 of 1 | not run |
 
@@ -54,9 +54,9 @@ One document is one point on `core`, so a difference of 2 points can be 2 docume
 
 | Pair | All critical right only in first | only in second | Fields where they differ |
 |---|---|---|---|
-| A vs B (100 docs) | 3 | 10 | `invoiceNo` 1/1, `series` 1/0, `issueDate` 1/1, `currency` 1/0, `subtotal` 1/0, `total` 1/0, `seller.taxCode` 4/8, `buyer.taxCode` 1/1 |
+| A vs B (100 docs) | 2 | 10 | `invoiceNo` 0/1, `issueDate` 0/1, `seller.taxCode` 3/8, `buyer.taxCode` 0/1 |
 | A vs C (49 docs) | 4 | 6 | `invoiceNo` 4/0, `series` 3/0, `issueDate` 3/1, `currency` 3/0, `subtotal` 3/0, `total` 3/0, `seller.taxCode` 3/5, `buyer.taxCode` 3/0 |
-| B vs C (49 docs) | 3 | 1 | `invoiceNo` 3/0, `series` 2/0, `issueDate` 2/0, `currency` 2/0, `subtotal` 2/0, `total` 2/0, `seller.taxCode` 1/1, `buyer.taxCode` 3/0 |
+| B vs C (49 docs) | 4 | 2 | `invoiceNo` 4/0, `series` 3/0, `issueDate` 3/0, `currency` 3/0, `subtotal` 3/0, `total` 3/0, `seller.taxCode` 2/2, `buyer.taxCode` 4/0 |
 
 ## By variant
 
@@ -68,10 +68,10 @@ Critical values right: the 8 critical fields averaged over the documents of the 
 | jpeg-low-res | 96.9% / 1.000 (4) | 100.0% / 1.000 (4) | 100.0% / 0.500 (2) |
 | jpeg-tilt | 98.1% / 1.000 (13) | 100.0% / 1.000 (13) | 100.0% / 0.769 (6) |
 | jpeg-tilt-noise | 100.0% / 1.000 (4) | 100.0% / 0.704 (4) | 100.0% / 0.938 (2) |
-| pdf-clean | 98.1% / 1.000 (40) | 99.1% / 0.992 (40) | 99.4% / 0.821 (20) |
+| pdf-clean | 98.1% / 1.000 (40) | 99.4% / 0.984 (40) | 99.4% / 0.821 (20) |
 | pdf-many-lines | 97.3% / 0.994 (14) | 97.3% / 1.000 (14) | 85.7% / 0.748 (7) |
-| pdf-multi-page | 100.0% / 1.000 (4) | 75.0% / 0.830 (4) | 0.0% / 0.000 (2) |
-| png-clean | 97.1% / 1.000 (13) | 100.0% / 1.000 (13) | 98.2% / 0.871 (7) |
+| pdf-multi-page | 100.0% / 1.000 (4) | 100.0% / 0.995 (4) | 0.0% / 0.000 (2) |
+| png-clean | 97.1% / 1.000 (13) | 99.0% / 1.000 (13) | 98.2% / 0.871 (7) |
 | png-noise | 100.0% / 1.000 (4) | 96.9% / 1.000 (4) | 100.0% / 0.800 (2) |
 
 ## Error classes
@@ -80,16 +80,16 @@ Every wrong value on `core`, classified by `eval/runner/errors.py`: `misread` (c
 
 | Class | A | B | C |
 |---|---|---|---|
-| failed | 0 | 1 | 3 |
+| failed | 0 | 0 | 3 |
 | missing | 1 | 0 | 0 |
 | misread | 17 | 14 | 92 |
-| wrong_field | 0 | 16 | 0 |
+| wrong_field | 0 | 17 | 0 |
 | missing_line | 0 | 0 | 0 |
 | hallucination | 0 | 0 | 0 |
 
 **A**: kinds {'misread:diacritics': 1, 'misread:digits': 2, 'misread:text': 2, 'misread:truncated': 12}. Most frequent places: `seller.taxCode` misread ×12, `buyer.address` misread ×2, `buyer.taxCode` missing ×1, `issueDate` misread ×1, `invoiceNo` misread ×1, `lines.description` misread ×1.
 
-**B**: kinds {'misread:diacritics': 2, 'misread:text': 5, 'misread:truncated': 7, 'wrong_field:other_field': 2, 'wrong_field:other_line': 13, 'wrong_field:printed_elsewhere': 1}. Most frequent places: `lines.quantity` wrong_field ×8, `lines.unitPrice` wrong_field ×8, `seller.taxCode` misread ×7, `buyer.address` misread ×4, `seller.name` misread ×2, `document` failed ×1.
+**B**: kinds {'misread:diacritics': 3, 'misread:text': 4, 'misread:truncated': 7, 'wrong_field:other_field': 2, 'wrong_field:other_line': 14, 'wrong_field:printed_elsewhere': 1}. Most frequent places: `lines.quantity` wrong_field ×8, `lines.amount` wrong_field ×8, `seller.taxCode` misread ×7, `buyer.address` misread ×3, `lines.description` misread ×2, `seller.name` misread ×2.
 
 **C**: kinds {'misread:diacritics': 73, 'misread:digits': 3, 'misread:text': 16}. Most frequent places: `lines.unit` misread ×26, `lines.description` misread ×24, `seller.address` misread ×15, `buyer.address` misread ×10, `seller.name` misread ×9, `buyer.name` misread ×5.
 
@@ -100,14 +100,14 @@ What a check "is this value printed on the invoice, as whole tokens" would say a
 | | Wrong, not printed (caught) | Wrong but printed (missed) | Right but not printed (false alarm) | Right and printed |
 |---|---|---|---|---|
 | A | 13 | 0 | 0 | 670 |
-| B | 7 | 0 | 0 | 670 |
+| B | 7 | 0 | 0 | 677 |
 | C | 2 | 0 | 0 | 311 |
 
 ## Acceptance floors (ADR 0020)
 
 | invoiceNo | series | issueDate | currency | subtotal | total | seller.taxCode | buyer.taxCode | lines.f1 |
 |---|---|---|---|---|---|---|---|---|
-| 98% | 98% | 98% | 98% | 98% | 98% | 87% | 98% | 93% |
+| 99% | 99% | 99% | 99% | 99% | 99% | 92% | 99% | 97% |
 
 floor = measured on `core` − max(noise on `smoke`, 1 point), rounded down.
 
@@ -137,12 +137,12 @@ A (`gemini-3.1-flash-lite`), `invoice-0016`, variant `pdf-many-lines`, layout `e
 
 *Red box: where the right value is printed.*
 
-### 3. wrong_field (other_line): `lines[1].quantity`
+### 3. wrong_field (other_line): `lines[1].amount`
 
 B (`gemini-3.5-flash-lite`), `invoice-0059`, variant `jpeg-tilt-noise`, layout `vn-compact`.
 
-- On the invoice: `8`
-- In the answer: `15.0`
+- On the invoice: `1844000`
+- In the answer: `5722500`
 
 ![Example 3: wrong_field in invoice-0059](compare-v1/example-3-invoice-0059.png)
 
@@ -173,26 +173,30 @@ A (`gemini-3.1-flash-lite`), `invoice-0068`, variant `pdf-many-lines`, layout `e
 ## Analysis
 
 Written by hand after reading the numbers above (T4.4, 2026-11-08). The numbers are generated; this
-section is judgement and says where each claim comes from.
+section is judgement and says where each claim comes from. Updated 2026-11-09 (T4.5b): B was run
+again with the output-token cap raised from 8,192 to 12,288, same model and prompt; A and C keep
+their runs at 8,192 (A never reached it, C did on three documents).
 
 ### Which model, and why
 
 `gemini-3.5-flash-lite` (B) is the primary by the rule fixed before the runs: 92 of 100 documents
-with all 8 critical fields right, against 85 for `gemini-3.1-flash-lite` (A). Paired, B is right
-where A is wrong on 10 documents and the reverse on 3, so the difference is not one or two lucky
-documents. B also cuts fewer branch suffixes from the seller's tax code (7 of 26 against 12 of 26)
-and has a much lower tail latency (p95 7.1 s against 26.1 s on single pages).
+with all 8 critical fields right (92 before the cap was raised), against 85 for
+`gemini-3.1-flash-lite` (A). Paired, B is right where A is wrong on 10 documents and the reverse on
+2, so the difference is not one or two lucky documents. B also cuts fewer branch suffixes from the
+seller's tax code (7 of 26 against 12 of 26) and has a lower tail latency (p95 12.3 s against
+26.1 s on single pages; B measured 7.1 s on 2026-11-08, so free-tier latency varies by day).
 
 B is not better everywhere:
 
-- **Lines.** A reads lines almost perfectly (F1 0.999). B loses one whole 54-line, two-page
-  invoice, and on one noisy photo it reads every row out of step (example 3).
-- **Cost.** At list price B costs about 1.6 times as much ($0.00452 against $0.00275 a document).
+- **Lines.** A reads lines almost perfectly (F1 0.999); B reaches 0.983. On one noisy photo B
+  reads the rows out of step (example 3). Before T4.5b it also lost a whole 54-line, two-page
+  invoice to the output-token cap (F1 0.943).
+- **Cost.** At list price B costs about 1.6 times as much ($0.00450 against $0.00275 a document).
   Nothing was paid: both ran on the free tier.
 
-The trade-off: a person has to fix a critical field on 15 invoices of 100 with A and on 8 with
-B, and a line on 1 invoice with A against 3 with B (one invoice failed, one read out of step, one
-line description without its diacritics). Header fields decide whether an invoice can be booked at
+The trade-off: a person has to fix a critical field on 15 invoices of 100 with A and on 7 with
+B, and a line on 1 invoice with A against 4 with B (one photo read out of step, one line
+description wrong on each of two invoices, one VAT rate on a 51-line invoice). Header fields decide whether an invoice can be booked at
 all (tax code, total), so B wins on this set. If line-level accuracy mattered more than tax codes,
 or if the price difference were paid for, the answer could change.
 
@@ -203,15 +207,17 @@ or if the price difference were paid for, the answer could change.
    them came with a self-reported confidence of 0.8 or more, so the review screen does not
    highlight it (SECURITY.md §6). The value still has a valid 10-digit form, so schema and rules
    pass it. For A it is systematic (0 points of noise); for B one document flipped between runs.
-2. **Long answers reach the output-token cap.** `invoice-0004` (54 lines) needed 8,175 output
-   tokens from B, against a cap of 8,192: the JSON was cut and the document failed. In `smoke` the
-   same document passed with 7,959. A also reached 7,946 tokens on `invoice-0079`. The cap's
-   comment says an invoice is about 1,000 tokens; long invoices with field metadata are eight
-   times that. Recorded under "Phát sinh" in `docs/plan/TASKS.md`; not changed here, because it
-   would change the pipeline being compared.
-3. **Rows out of step on a noisy, tilted photo** (example 3): B gave each line the quantity and
-   unit price of the line above. Descriptions and amounts stayed right, so each line looks
-   plausible on its own. Only one document of four in that variant.
+2. **Long answers reached the output-token cap (fixed in T4.5b).** `invoice-0004` (54 lines)
+   needed 8,175 output tokens from B, against a cap of 8,192: the JSON was cut and the document
+   failed. Prompt v1 asks for a `fieldMeta` entry for every line amount, so each line costs about
+   133 tokens. T4.5b raised the cap to 12,288, the largest answer that still arrives inside the
+   45 s provider timeout at the slowest speed measured (`AI_PIPELINE.md` §8): `invoice-0004` then
+   used 7,952 to 8,251 tokens over four runs (two of them above the old cap) and took 15.6 to
+   25.6 s. About 86 lines fit; longer invoices still fail, now at once and with no retry.
+3. **Rows out of step on a noisy, tilted photo** (example 3): B gave lines the quantity and
+   amount of another line (in the 2026-11-08 run, the quantity and unit price of the line above).
+   Descriptions stayed right, so each line looks plausible on its own. Only one document of four
+   in that variant, and the same document both times.
 4. **Misread digits:** one date on a low-resolution photo (`09/05/2026` read as September, example
    4), and one character dropped in a line description (example 5).
 
@@ -236,8 +242,8 @@ the top of the table, so it did not cause it. This was checked on five examples 
 
 ### Is the level good enough?
 
-The floors in ADR 0020 record what was reached. Whether it is enough: 98 to 99% on most critical
-fields is good for synthetic invoices; 92% on the seller's tax code is not, because the error is
+The floors in ADR 0020 record what was reached. Whether it is enough: 99 to 100% on most critical
+fields is good for synthetic invoices; 93% on the seller's tax code is not, because the error is
 silent (high confidence, valid form). Until a text-layer check or a prompt change fixes it, the
 review screen should not let a high confidence on a tax code stand for "verified".
 
@@ -261,7 +267,8 @@ What the 49 documents show:
   invoice product this alone rules it out.
 - **It fails long invoices.** All three of its failures (both two-page invoices it met and one
   19-line invoice) reached the 8,192-token output cap, mostly with reasoning, and returned cut
-  JSON. Line F1 0.654.
+  JSON. Line F1 0.654. It was not run again with the 12,288 cap (T4.5b): its terms rule it out
+  whatever it scores.
 - **It is slow**: p50 22.2 s and p95 64.3 s on single pages, above the 30 s of NFR-04.
 
 Groq's Free plan could not be measured at all: its output limit of 1,000 tokens a minute is below
@@ -269,7 +276,9 @@ what one invoice needs.
 
 ### Leakage check
 
-The prompt was not changed in T4.4, so no score here is "tuned on this set". The 20 `smoke`
+The prompt was not changed in T4.4 or T4.5b, so no score here is "tuned on this set". The cap
+was raised after reading the cut answer on `core`, but it changes no reading: it only decides
+whether a long answer is received at all. The 20 `smoke`
 documents had been read in T4.3; they are part of `core`, and the rule that picked B was written
 before any `core` run.
 

@@ -3,6 +3,8 @@
 import copy
 import fnmatch
 import json
+import math
+from fractions import Fraction
 from pathlib import Path
 from typing import Any
 
@@ -103,10 +105,18 @@ def test_two_documents_down_fail() -> None:
     assert verdict(split_with({"invoiceNo": 18})) == gate.DROPPED
 
 
-def test_the_noisy_field_is_judged_from_its_own_baseline() -> None:
-    # seller.taxCode baseline 56/60 = 93.3%, tolerance max(noise 5, one document 5) = 5 points.
-    assert verdict(split_with({"seller.taxCode": 18})) == gate.PASS  # 90%: -3.3
-    assert verdict(split_with({"seller.taxCode": 17})) == gate.DROPPED  # 85%: -8.3
+def test_the_weakest_field_is_judged_from_its_own_baseline() -> None:
+    # Read from the committed baseline, so an intended re-baseline does not break this test:
+    # 2026-11-08 56/60 with noise 5; 2026-11-09 (T4.5b) 54/60 with noise 0. Tolerance is
+    # max(noise, one document = 5 points); "drops by more than" means the boundary passes.
+    field = COMMITTED["metrics"]["seller.taxCode"]
+    assert field["correct"] < field["total"]  # below 100%: the other fields' baseline would not do
+    floor = Fraction(field["correct"], field["total"]) - Fraction(
+        max(Fraction(field["noisePoints"]), Fraction(5)), 100
+    )
+    lowest = math.ceil(floor * 20)  # fewest right of 20 that is still within the tolerance
+    assert verdict(split_with({"seller.taxCode": lowest})) == gate.PASS
+    assert verdict(split_with({"seller.taxCode": lowest - 1})) == gate.DROPPED
 
 
 def test_a_larger_noise_widens_the_tolerance() -> None:

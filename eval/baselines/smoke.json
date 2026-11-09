@@ -6,11 +6,12 @@
     "manifestSha256": "09abbf3843d2cd8345c7f796840bf36d65d0170e5700ced3126d76a115ef2614",
     "model": "gemini-3.5-flash-lite",
     "promptVersion": "invoice_extraction/v1",
-    "promptSha256": "7ce11be8099f7663fbcc2c655357eb325c979760b42b4a7662e03bf0f8ad4cbd"
+    "promptSha256": "7ce11be8099f7663fbcc2c655357eb325c979760b42b4a7662e03bf0f8ad4cbd",
+    "maxOutputTokens": 12288
   },
   "runDates": [
-    "2026-11-08",
-    "2026-11-08"
+    "2026-11-09",
+    "2026-11-09"
   ],
   "split": "smoke",
   "documents": 20,
@@ -53,10 +54,10 @@
       "noisePoints": 0.0
     },
     "seller.taxCode": {
-      "correct": 56,
+      "correct": 54,
       "total": 60,
-      "accuracy": 0.9333,
-      "noisePoints": 5.0
+      "accuracy": 0.9,
+      "noisePoints": 0.0
     },
     "buyer.taxCode": {
       "correct": 60,
@@ -71,13 +72,13 @@
   },
   "pipeline": {
     "apps/ai/app/prompts/invoice_extraction/v1.md": "7ce11be8099f7663fbcc2c655357eb325c979760b42b4a7662e03bf0f8ad4cbd",
-    "apps/ai/app/services/extract.py": "8898f224ba92b4f2d45ef11fba9f25c99fcd2c54102c1f737fe192b061065a3b",
+    "apps/ai/app/services/extract.py": "b7a47cd7d712766e8cb2b8e771852950a7276e30020c0ef19cfcb2c05e71ef3b",
     "apps/ai/app/services/pdf_pages.py": "5092bccb4a8c1c6d98ce7835111ad70fdac8650510f838a813d4fdb4378b6a83",
     "apps/ai/app/services/image_normalize.py": "f9dc15af40e83801fcae2dde72289489764dbe2711245d7f77825a9c8a4a07e6",
     "apps/ai/app/providers/__init__.py": "f960a49267ad45772b66bb795c836624da9db355da1b86b83004cf334325bac3",
-    "apps/ai/app/providers/base.py": "36810ea643652384e5bcbec5f920262b00af6f2c9758e90f1cced797c1088732",
-    "apps/ai/app/providers/gemini.py": "7fb0f714e8bf27152dc25b65590919846d5994b6e33c92b6739f825bec78eccd",
-    "apps/ai/app/providers/openai_compat.py": "4030480d36fb3c6e76788901d80d5ef6d26782c3283cebe16533f449049f4acc",
+    "apps/ai/app/providers/base.py": "e8df1d3471e71bb8b1ac63235f4ed3ff121f45767edb1c6dd409212294294ce6",
+    "apps/ai/app/providers/gemini.py": "1d2d158c6ab7ddbc7452a5c0c54d62a8b09f8f255cc1197ecb9da55fc0b1f802",
+    "apps/ai/app/providers/openai_compat.py": "f21d98636ad36288d4ce7440486c72ed8f0968ee68d7e2882ea9b1573ce81041",
     "apps/ai/app/schemas/generated.py": "57776af7a86616bd3b980f5f997316fbe2673fd7e76f038047f93834d29ae74e",
     "apps/ai/app/error_codes.py": "94867079773e6ec162ca2f6787114af6817a6442a2fb642ad95f47fbad9ac3cc"
   }
