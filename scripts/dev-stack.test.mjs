@@ -41,19 +41,66 @@ test('linePrefixer: prefixes whole lines, joins a line split across chunks, flus
   assert.equal(out.length, 3);
 });
 
-test('portInUse / busyServices: see a real listener and a free port', async () => {
-  const server = net.createServer().listen(0, '127.0.0.1');
-  await new Promise((r) => server.once('listening', r));
-  const { port } = server.address();
-  assert.equal(await portInUse(port), true);
-  assert.deepEqual(
-    (await busyServices([{ name: 'a', port }, { name: 'noport' }])).map((s) => s.name),
-    ['a'],
-  );
-  await new Promise((r) => server.close(r));
-  assert.equal(await portInUse(port), false);
-  assert.deepEqual(await busyServices([{ name: 'a', port }]), []);
-});
+test(
+  'portInUse / busyServices: see a real listener and a free port',
+  { timeout: 5000 },
+  async () => {
+    const server = net.createServer().listen(0, '127.0.0.1');
+    await new Promise((r) => server.once('listening', r));
+    const { port } = server.address();
+    assert.equal(await portInUse(port), true);
+    assert.deepEqual(
+      (await busyServices([{ name: 'a', port }, { name: 'noport' }])).map((s) => s.name),
+      ['a'],
+    );
+    await new Promise((r) => server.close(r));
+    assert.equal(await portInUse(port), false);
+    assert.deepEqual(await busyServices([{ name: 'a', port }]), []);
+  },
+);
+
+/** A socket that never connects and never fails: what WSL mirrored mode gives for a closed port. */
+function silentSocket() {
+  const socket = new EventEmitter();
+  socket.destroyed = false;
+  socket.destroy = () => {
+    socket.destroyed = true;
+  };
+  return socket;
+}
+
+test(
+  'portInUse: a port that never answers counts as free after the timeout',
+  { timeout: 5000 },
+  async () => {
+    const sockets = [];
+    const connect = () => {
+      const s = silentSocket();
+      sockets.push(s);
+      return s;
+    };
+    const started = Date.now();
+    assert.equal(await portInUse(3001, { timeoutMs: 50, connect }), false);
+    assert.ok(Date.now() - started < 1000);
+    assert.equal(sockets[0].destroyed, true); // the half-open attempt is not left behind
+  },
+);
+
+test(
+  'busyServices: silent ports are checked in parallel, not one timeout after another',
+  { timeout: 5000 },
+  async () => {
+    const connect = () => silentSocket();
+    const services = [
+      { name: 'ai', port: 8000 },
+      { name: 'api', port: 3001 },
+      { name: 'web', port: 3000 },
+    ];
+    const started = Date.now();
+    assert.deepEqual(await busyServices(services, { timeoutMs: 300, connect }), []);
+    assert.ok(Date.now() - started < 800, 'three timeouts of 300 ms ran one after another');
+  },
+);
 
 test(
   'runStack: one service dying stops the others, grandchildren included, and fails the run',

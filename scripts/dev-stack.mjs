@@ -35,23 +35,36 @@ export function linePrefixer(prefix, write) {
   };
 }
 
-/** True when something already accepts connections on the port (on this machine). */
-export function portInUse(port, host = '127.0.0.1') {
+/**
+ * True when something already accepts connections on the port (on this machine).
+ *
+ * A closed port normally answers at once with ECONNREFUSED. In WSL's mirrored networking mode it
+ * may not answer at all, and an unbounded connect then waits for the TCP timeout (about two
+ * minutes per port), so `pnpm dev:stack` looked frozen before printing anything. A listener on
+ * loopback answers in milliseconds: no answer within `timeoutMs` means nothing is listening.
+ */
+export function portInUse(
+  port,
+  { host = '127.0.0.1', timeoutMs = 1000, connect = net.connect } = {},
+) {
   return new Promise((resolve) => {
-    const socket = net.connect({ port, host });
-    socket.once('connect', () => {
+    const socket = connect({ port, host });
+    const done = (inUse) => {
+      clearTimeout(timer);
       socket.destroy();
-      resolve(true);
-    });
-    socket.once('error', () => resolve(false));
+      resolve(inUse);
+    };
+    const timer = setTimeout(() => done(false), timeoutMs);
+    socket.once('connect', () => done(true));
+    socket.once('error', () => done(false));
   });
 }
 
 /** The services whose port is already taken: starting them would only fail with EADDRINUSE. */
-export async function busyServices(services) {
-  const busy = [];
-  for (const s of services) if (s.port !== undefined && (await portInUse(s.port))) busy.push(s);
-  return busy;
+export async function busyServices(services, options) {
+  const withPort = services.filter((s) => s.port !== undefined);
+  const inUse = await Promise.all(withPort.map((s) => portInUse(s.port, options))); // in parallel
+  return withPort.filter((_, i) => inUse[i]);
 }
 
 function signalGroup(child, signal) {
@@ -197,6 +210,12 @@ async function main() {
   if (busy.length > 0) {
     for (const s of busy) console.error(`[stack] port ${s.port} (${s.name}) is already in use`);
     console.error('Stop what is running there first: ss -ltnp | grep :<port>, then kill <pid>.');
+    console.error(
+      'If ss shows nothing, a Windows program holds it (WSL mirrored mode shares localhost). ' +
+        'Often the editor auto-forwarding a port from an earlier run: stop it in the Ports panel ' +
+        'and set remote.autoForwardPorts to false. Find the owner from PowerShell: ' +
+        'Get-NetTCPConnection -LocalPort <port>.',
+    );
     process.exit(1);
   }
 
