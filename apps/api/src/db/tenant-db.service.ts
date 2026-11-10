@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Optional } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { AsyncLocalStorage } from 'node:async_hooks';
@@ -6,6 +6,8 @@ import { isUuid } from '../common/uuid';
 import type * as schema from './schema';
 
 export const DB = Symbol('DB');
+/** true on the public demo (DEMO_READ_ONLY): every tenant transaction is READ ONLY. */
+export const DB_READ_ONLY = Symbol('DB_READ_ONLY');
 export type Db = NodePgDatabase<typeof schema>;
 export type Tx = Parameters<Parameters<Db['transaction']>[0]>[0];
 
@@ -14,19 +16,29 @@ export type Tx = Parameters<Parameters<Db['transaction']>[0]>[0];
  * `app.tenant_id` for that transaction only (set_config(..., true) = SET LOCAL, so a pooled
  * connection never keeps a previous tenant) and hands out the transaction. The request
  * interceptor, workers (T2.4) and retrieval (T5.3) all go through it.
+ *
+ * With `readOnly` (the public demo, ADR 0018) the transaction is opened READ ONLY, so Postgres
+ * itself refuses a write (SQLSTATE 25006) if one ever gets past DemoReadOnlyGuard. Second layer
+ * only: the guard is what answers the client.
  */
 @Injectable()
 export class TenantDbService {
   private readonly scope = new AsyncLocalStorage<Tx>();
 
-  constructor(@Inject(DB) private readonly db: Db) {}
+  constructor(
+    @Inject(DB) private readonly db: Db,
+    @Optional() @Inject(DB_READ_ONLY) private readonly readOnly: boolean = false,
+  ) {}
 
   async run<T>(tenantId: string, fn: (tx: Tx) => Promise<T>): Promise<T> {
     if (!isUuid(tenantId)) throw new Error('Invalid tenant id');
-    return this.db.transaction(async (tx) => {
-      await tx.execute(sql`select set_config('app.tenant_id', ${tenantId}, true)`);
-      return this.scope.run(tx, () => fn(tx));
-    });
+    return this.db.transaction(
+      async (tx) => {
+        await tx.execute(sql`select set_config('app.tenant_id', ${tenantId}, true)`);
+        return this.scope.run(tx, () => fn(tx));
+      },
+      this.readOnly ? { accessMode: 'read only' } : undefined,
+    );
   }
 
   /** The transaction of the current request/job. Throws outside `run` (fail closed). */

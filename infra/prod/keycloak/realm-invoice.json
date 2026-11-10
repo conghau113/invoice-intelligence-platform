@@ -1,0 +1,341 @@
+{
+  "realm": "invoice",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "organizationsEnabled": true,
+  "accessTokenLifespan": 300,
+  "revokeRefreshToken": true,
+  "refreshTokenMaxReuse": 0,
+  "roles": {
+    "realm": [
+      {
+        "name": "tenant_admin",
+        "description": "Manages a tenant and its documents"
+      },
+      {
+        "name": "accountant",
+        "description": "Creates and approves documents"
+      },
+      {
+        "name": "viewer",
+        "description": "Read-only access"
+      },
+      {
+        "name": "offline_access",
+        "description": "${role_offline_access}"
+      },
+      {
+        "name": "uma_authorization",
+        "description": "${role_uma_authorization}"
+      },
+      {
+        "name": "default-roles-invoice",
+        "description": "${role_default-roles}",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "offline_access",
+            "uma_authorization"
+          ],
+          "client": {
+            "account": [
+              "view-profile"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "organizations": [
+    {
+      "id": "00000000-0000-4000-8000-0000000000a1",
+      "name": "acme",
+      "alias": "acme",
+      "enabled": true,
+      "domains": [
+        {
+          "name": "acme.example",
+          "verified": false
+        }
+      ],
+      "members": [
+        {
+          "username": "admin@acme.example"
+        },
+        {
+          "username": "accountant@acme.example"
+        },
+        {
+          "username": "consultant@demo.example"
+        }
+      ]
+    },
+    {
+      "id": "00000000-0000-4000-8000-0000000000a2",
+      "name": "globex",
+      "alias": "globex",
+      "enabled": true,
+      "domains": [
+        {
+          "name": "globex.example",
+          "verified": false
+        }
+      ],
+      "members": [
+        {
+          "username": "viewer@globex.example"
+        },
+        {
+          "username": "consultant@demo.example"
+        }
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "web",
+      "name": "Invoice web (BFF)",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "${WEB_CLIENT_SECRET}",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "https://${DEMO_HOST}/api/auth/callback/keycloak"
+      ],
+      "webOrigins": [
+        "https://${DEMO_HOST}"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "https://${DEMO_HOST}/*"
+      },
+      "defaultClientScopes": [
+        "basic",
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email",
+        "organization"
+      ],
+      "optionalClientScopes": [
+        "offline_access"
+      ],
+      "protocolMappers": [
+        {
+          "name": "audience-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "api",
+      "name": "Invoice API (audience only)",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "bearerOnly": true,
+      "publicClient": false,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false
+    }
+  ],
+  "users": [
+    {
+      "username": "admin@acme.example",
+      "email": "admin@acme.example",
+      "firstName": "SAMPLE Admin",
+      "lastName": "Acme",
+      "enabled": true,
+      "emailVerified": true,
+      "realmRoles": [
+        "tenant_admin"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${DEMO_USER_PASSWORD}",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "accountant@acme.example",
+      "email": "accountant@acme.example",
+      "firstName": "SAMPLE Accountant",
+      "lastName": "Acme",
+      "enabled": true,
+      "emailVerified": true,
+      "realmRoles": [
+        "accountant"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${DEMO_USER_PASSWORD}",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "viewer@globex.example",
+      "email": "viewer@globex.example",
+      "firstName": "SAMPLE Viewer",
+      "lastName": "Globex",
+      "enabled": true,
+      "emailVerified": true,
+      "realmRoles": [
+        "viewer"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${DEMO_USER_PASSWORD}",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "consultant@demo.example",
+      "email": "consultant@demo.example",
+      "firstName": "SAMPLE Consultant",
+      "lastName": "Multi-tenant",
+      "enabled": true,
+      "emailVerified": true,
+      "realmRoles": [
+        "accountant"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${DEMO_USER_PASSWORD}",
+          "temporary": false
+        }
+      ]
+    }
+  ],
+  "defaultRole": {
+    "name": "default-roles-invoice"
+  },
+  "requiredActions": [
+    {
+      "alias": "CONFIGURE_TOTP",
+      "name": "Configure OTP",
+      "providerId": "CONFIGURE_TOTP",
+      "enabled": false,
+      "defaultAction": false,
+      "priority": 10,
+      "config": {}
+    },
+    {
+      "alias": "UPDATE_PASSWORD",
+      "name": "Update Password",
+      "providerId": "UPDATE_PASSWORD",
+      "enabled": false,
+      "defaultAction": false,
+      "priority": 20,
+      "config": {}
+    },
+    {
+      "alias": "UPDATE_PROFILE",
+      "name": "Update Profile",
+      "providerId": "UPDATE_PROFILE",
+      "enabled": false,
+      "defaultAction": false,
+      "priority": 30,
+      "config": {}
+    },
+    {
+      "alias": "UPDATE_EMAIL",
+      "name": "Update Email",
+      "providerId": "UPDATE_EMAIL",
+      "enabled": false,
+      "defaultAction": false,
+      "priority": 40,
+      "config": {}
+    },
+    {
+      "alias": "VERIFY_EMAIL",
+      "name": "Verify Email",
+      "providerId": "VERIFY_EMAIL",
+      "enabled": false,
+      "defaultAction": false,
+      "priority": 50,
+      "config": {}
+    },
+    {
+      "alias": "VERIFY_PROFILE",
+      "name": "Verify Profile",
+      "providerId": "VERIFY_PROFILE",
+      "enabled": false,
+      "defaultAction": false,
+      "priority": 60,
+      "config": {}
+    },
+    {
+      "alias": "TERMS_AND_CONDITIONS",
+      "name": "Terms and Conditions",
+      "providerId": "TERMS_AND_CONDITIONS",
+      "enabled": false,
+      "defaultAction": false,
+      "priority": 70,
+      "config": {}
+    },
+    {
+      "alias": "webauthn-register",
+      "name": "Webauthn Register",
+      "providerId": "webauthn-register",
+      "enabled": false,
+      "defaultAction": false,
+      "priority": 80,
+      "config": {}
+    },
+    {
+      "alias": "webauthn-register-passwordless",
+      "name": "Webauthn Register Passwordless",
+      "providerId": "webauthn-register-passwordless",
+      "enabled": false,
+      "defaultAction": false,
+      "priority": 90,
+      "config": {}
+    },
+    {
+      "alias": "CONFIGURE_RECOVERY_AUTHN_CODES",
+      "name": "Recovery Authentication Codes",
+      "providerId": "CONFIGURE_RECOVERY_AUTHN_CODES",
+      "enabled": false,
+      "defaultAction": false,
+      "priority": 100,
+      "config": {}
+    },
+    {
+      "alias": "delete_credential",
+      "name": "Delete Credential",
+      "providerId": "delete_credential",
+      "enabled": false,
+      "defaultAction": false,
+      "priority": 110,
+      "config": {}
+    },
+    {
+      "alias": "delete_account",
+      "name": "Delete Account",
+      "providerId": "delete_account",
+      "enabled": false,
+      "defaultAction": false,
+      "priority": 120,
+      "config": {}
+    }
+  ],
+  "bruteForceProtected": false
+}

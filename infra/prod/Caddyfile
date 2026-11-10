@@ -1,0 +1,40 @@
+# Public entry of the demo (T4.7, ADR 0010). Only this container publishes ports (80, 443).
+# HTTPS: Caddy gets and renews a Let's Encrypt certificate for {$DEMO_HOST} by itself; port 80
+# answers the ACME challenge and redirects everything else to https.
+#
+# Routes. The browser only ever talks to the web server (BFF, ADR 0006): it owns /api/* (its
+# route handlers and next-auth), so the Nest API is NOT routed here and stays on the internal
+# network. Keycloak is served under /auth (KC_HTTP_RELATIVE_PATH), and only the paths a browser
+# needs for login: the app realm /auth/realms/invoice/* and the static /auth/resources/*. The
+# master realm (where the bootstrap admin signs in: a public token endpoint there would invite
+# password guessing), the admin console, metrics and health endpoints are not reachable from the
+# internet.
+#
+# A host under .localhost (the local rehearsal, infra/prod/README.md) gets a certificate from
+# Caddy's own local CA instead, automatically.
+{$DEMO_HOST} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+
+	@keycloak path /auth/realms/invoice/* /auth/resources/*
+	handle @keycloak {
+		reverse_proxy keycloak:8080
+	}
+
+	# Everything else under /auth (master realm, admin console, /auth/metrics, ...) is not public.
+	handle /auth/* {
+		respond 404
+	}
+
+	handle {
+		reverse_proxy web:3000
+	}
+}

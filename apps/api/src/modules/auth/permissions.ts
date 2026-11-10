@@ -32,3 +32,17 @@ export function permissionsOf(roles: readonly Role[]): Permission[] {
   const granted = new Set(roles.flatMap((r) => ROLE_PERMISSIONS[r] ?? []));
   return PERMISSIONS.filter((p) => granted.has(p));
 }
+
+/**
+ * What a signed-in user may do on the public read-only demo (ADR 0018), whatever their roles.
+ * Only permissions whose routes are all GET: the guard refuses every other method anyway, so
+ * advertising more would show buttons that can only fail. `qa:ask` is left out until Q&A
+ * exists and the demo serves precomputed answers (T5.5).
+ */
+export const DEMO_PERMISSIONS: readonly Permission[] = ['document:read', 'insights:read'];
+
+/** The permissions to advertise: all of `permissionsOf(roles)`, or only the demo's on the demo. */
+export function effectivePermissions(roles: readonly Role[], demoReadOnly: boolean): Permission[] {
+  const all = permissionsOf(roles);
+  return demoReadOnly ? all.filter((p) => DEMO_PERMISSIONS.includes(p)) : all;
+}

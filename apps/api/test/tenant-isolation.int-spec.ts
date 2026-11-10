@@ -351,5 +351,21 @@ describe('tenant isolation in Postgres (RLS)', () => {
       const { rows } = await app.query('SELECT * FROM tenants');
       expect(rows).toEqual([]);
     });
+
+    it('read-only (public demo): reads work, Postgres refuses a write with SQLSTATE 25006', async () => {
+      const svc = new TenantDbService(drizzle(app, { schema }), true);
+      const names = await svc.run(ACME, (tx) => tx.select().from(schema.tenants));
+      expect(names.map((t) => t.alias)).toEqual(['acme']);
+
+      const write = svc.run(ACME, (tx) =>
+        tx.insert(schema.auditLogs).values({ tenantId: ACME, action: 'int-test.read-only' }),
+      );
+      // Drizzle wraps the pg error; the SQLSTATE sits on its cause.
+      await expect(write).rejects.toMatchObject({ cause: { code: '25006' } });
+      const { rows } = await owner.query(
+        `SELECT 1 FROM audit_logs WHERE action = 'int-test.read-only'`,
+      );
+      expect(rows).toEqual([]);
+    });
   });
 });

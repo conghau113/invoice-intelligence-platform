@@ -17,8 +17,8 @@
 | Tracing | W3C `traceparent` accepted and propagated; `traceId` echoed in errors |
 | Versioning | URL major version (`/v1`); additive changes only within a version |
 | Client address | `req.ip` follows `X-Forwarded-For` only from peers in `TRUSTED_PROXIES` (default `loopback`), used for audit rows (SECURITY.md §5). The web upload proxy passes the header on only when `TRUST_FORWARDED_FOR=true` (a proxy that overwrites it is in front); a value that is not an IP is stored as no address |
-| Demo mode | When `DEMO_READ_ONLY=true` every non-GET request returns `403` with code `DEMO_READ_ONLY`, and `/qa/ask` serves only precomputed answers (ADR 0018) |
-| Routing | Behind Caddy: web at `/`, API at `/api` on the same origin (no CORS needed in production) |
+| Demo mode | When `DEMO_READ_ONLY=true` every request other than GET/HEAD/OPTIONS returns `403` with code `DEMO_READ_ONLY`, before authentication and on `@Public()` routes too (`DemoReadOnlyGuard`, T4.7); tenant transactions are opened `READ ONLY` as a second layer; `/auth/me` lists only `document:read` and `insights:read` so the UI hides write actions. Q&A will serve only precomputed answers (ADR 0018, T5.5) |
+| Routing | Behind Caddy only the web server is public (`/`, including its own `/api/*` route handlers and next-auth) and Keycloak's `/auth/realms/*`, `/auth/resources/*`. The API is on the internal network and is reached by the web server (BFF, ADR 0006), never by the browser, so no CORS is needed (T4.7, `infra/prod/Caddyfile`) |
 
 ## Endpoints
 

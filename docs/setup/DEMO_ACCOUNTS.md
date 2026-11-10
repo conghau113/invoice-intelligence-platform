@@ -2,6 +2,8 @@
 
 Synthetic accounts from the Keycloak realm file `infra/keycloak/realm-invoice.json`. They exist only in the local dev stack (`pnpm infra:up`). Do not reuse these passwords anywhere; production removes them (see `docs/plan/TASKS.md`, "Phát sinh" T1.1).
 
+**Public demo (T4.7).** The same four users exist on the read-only demo, built from this realm by `infra/prod/keycloak/build-realm.mjs`: their password is the public `DEMO_USER_PASSWORD` of the server (not `demo-dev-only`), the `dev-cli` client is gone, and every account-changing action (password, profile, OTP, delete) is disabled because visitors share the accounts. Whatever the role, the demo shows read permissions only: `/auth/me` lists `document:read` and `insights:read`, and the API refuses every write with `403 DEMO_READ_ONLY` (ADR 0018).
+
 ## Accounts
 
 All demo users share the password **`demo-dev-only`**.

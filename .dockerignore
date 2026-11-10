@@ -1,0 +1,27 @@
+# Build context of the apps/api and apps/web images (context = repository root, T4.7).
+# Secrets never enter a build context.
+**/.env
+**/.env.*
+# Rebuilt inside the image; host copies would be the wrong platform (amd64 on the laptop).
+**/node_modules
+**/.next
+**/dist
+**/dist-scripts
+**/.turbo
+**/coverage
+**/*.tsbuildinfo
+# Not needed by any image, and some of it is large or holds local data.
+.git
+.claude
+.cursor
+data
+apps/ai
+tools
+eval/datasets
+eval/runs
+eval/probes
+**/test-results
+**/playwright-report
+apps/api/.test-data
+infra
+docs

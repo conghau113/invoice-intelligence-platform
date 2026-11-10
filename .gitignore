@@ -34,3 +34,6 @@ apps/api/.test-data/
 eval/probes/out/
 # Eval runs (T4.3): hold the values the model read; only eval/reports is committed
 eval/runs/
+
+# Demo data snapshot (infra/prod/scripts/demo-snapshot.mjs): copied to the server, not committed
+infra/prod/snapshot/

@@ -22,6 +22,7 @@
     "INVALID_QUERY": "Bộ lọc hoặc tham số tìm kiếm không hợp lệ.",
     "BODY_TOO_LARGE": "Dữ liệu gửi lên quá lớn.",
     "BODY_INVALID": "Dữ liệu gửi lên không hợp lệ.",
+    "DEMO_READ_ONLY": "Đây là bản demo chỉ xem nên không thay đổi được gì. Hãy chạy dự án trên máy của bạn để dùng đầy đủ.",
     "UNAUTHENTICATED": "Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.",
     "FORBIDDEN": "Yêu cầu bị từ chối. Hãy tải lại trang rồi thử lại.",
     "NOT_FOUND": "Không tìm thấy dữ liệu này.",
@@ -160,7 +161,7 @@
     "forbiddenNotMember": "Tổ chức đã chọn không nằm trong các tổ chức của bạn. Hãy chọn tổ chức khác ở thanh trên, hoặc đăng xuất rồi đăng nhập lại nếu quyền truy cập đã thay đổi.",
     "collapseSidebar": "Thu gọn menu",
     "expandSidebar": "Mở rộng menu",
-    "readOnlyBanner": "Chế độ chỉ đọc: các thao tác thay đổi dữ liệu bị tắt.",
+    "readOnlyBanner": "Bản demo chỉ xem, dữ liệu tổng hợp đã xử lý sẵn: không tải lên, không sửa, không gọi AI. Muốn chạy toàn bộ quy trình, hãy chạy dự án trên máy theo hướng dẫn trong README.",
     "user": "Người dùng",
     "userMenu": "Tài khoản"
   },

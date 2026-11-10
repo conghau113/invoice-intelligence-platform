@@ -1,0 +1,311 @@
+# Public read-only demo on one Oracle Always Free A1 VM (T4.7, ADR 0010, ADR 0018).
+# Run from this directory with the server's env file next to it (infra/prod/README.md):
+#   docker compose -f compose.prod.yaml up -d --build --wait
+# Every secret is required (${VAR:?}): a forgotten value stops compose instead of falling back to
+# a dev default. Images are pinned to the versions the dev stack runs (Phát sinh T0.6).
+#
+# Networks
+#   edge     ordinary bridge: Caddy (the only published ports), web, Keycloak, DuckDNS updater.
+#   backend  internal: true, so containers on it have NO route to the internet. API, worker, AI,
+#            Postgres and Redis live only here. The AI service therefore cannot reach any LLM
+#            provider, whatever its config (ADR 0018: no LLM calls from the demo).
+name: invoice-demo
+
+x-api-env: &api-env
+  NODE_ENV: production
+  DEMO_READ_ONLY: 'true'
+  # The issuer browsers see (tokens carry it); the keys are fetched over the internal network.
+  OIDC_ISSUER_URL: https://${DEMO_HOST:?}/auth/realms/invoice
+  OIDC_JWKS_URL: http://keycloak:8080/auth/realms/invoice/protocol/openid-connect/certs
+  DATABASE_URL: postgres://invoice_app:${APP_DB_PASSWORD:?}@postgres:5432/invoice
+  DATA_DIR: /data
+  REDIS_URL: redis://redis:6379
+  AI_SERVICE_URL: http://ai:8000
+  AI_SERVICE_TOKEN: ${AI_SERVICE_TOKEN:?}
+  # Only the web server (fixed address below) may set X-Forwarded-For (SECURITY §5).
+  TRUSTED_PROXIES: 172.31.240.10
+
+services:
+  caddy:
+    image: caddy:2.10.2-alpine
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      DEMO_HOST: ${DEMO_HOST:?}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      edge:
+        # The web server reaches Keycloak by its public URL (the issuer must match) through Caddy
+        # on this network, without leaving the VM.
+        aliases: ['${DEMO_HOST:?}']
+    depends_on:
+      # Traffic only once the apps are ready (Phát sinh T3.9: no 503 right after start).
+      web:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ../..
+      dockerfile: apps/web/Dockerfile
+    image: invoice-demo/web:local
+    restart: unless-stopped
+    environment:
+      NEXTAUTH_URL: https://${DEMO_HOST:?}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:?}
+      KEYCLOAK_ISSUER: https://${DEMO_HOST:?}/auth/realms/invoice
+      KEYCLOAK_CLIENT_ID: web
+      KEYCLOAK_CLIENT_SECRET: ${WEB_CLIENT_SECRET:?}
+      API_BASE_URL: http://api:3001
+      DEMO_READ_ONLY: 'true'
+      # Caddy overwrites X-Forwarded-For with the real client address, so it may be passed on.
+      TRUST_FORWARDED_FOR: 'true'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    networks:
+      edge:
+      backend:
+        ipv4_address: 172.31.240.10
+    depends_on:
+      api:
+        condition: service_healthy
+
+  api:
+    build:
+      context: ../..
+      dockerfile: apps/api/Dockerfile
+    image: invoice-demo/api:local
+    restart: unless-stopped
+    environment: *api-env
+    volumes:
+      # Read-only: the demo never writes a file (third layer after the guard and the DB).
+      - appdata:/data:ro
+    healthcheck:
+      # Readiness checks Postgres and Redis (T1.3, T3.9).
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3001/health/ready').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    networks: [backend]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+
+  worker:
+    image: invoice-demo/api:local
+    pull_policy: never
+    restart: unless-stopped
+    command: ['node', 'dist/worker.js']
+    environment: *api-env
+    volumes:
+      - appdata:/data:ro
+    networks: [backend]
+    depends_on:
+      api:
+        condition: service_healthy
+
+  ai:
+    build:
+      context: ../../apps/ai
+    image: invoice-demo/ai:local
+    restart: unless-stopped
+    environment:
+      ENV: production
+      AI_SERVICE_TOKEN: ${AI_SERVICE_TOKEN:?}
+      # No provider key is configured on the demo. The PDF/image path answers LLM_NOT_CONFIGURED,
+      # and the backend network has no internet route anyway.
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'python',
+          '-c',
+          "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4).status == 200 else 1)",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 15s
+    networks: [backend]
+
+  # One-shot: migrations as the table owner, then the demo tenants (Phát sinh T1.3: a step of its
+  # own before the app starts). Exits 0; api and worker wait for it.
+  migrate:
+    # Same image as api (built by the api service; never pulled from a registry).
+    image: invoice-demo/api:local
+    pull_policy: never
+    restart: 'no'
+    command: ['sh', '-c', 'node dist/db/migrate.js && node dist/db/seed.js']
+    environment:
+      DATABASE_OWNER_URL: postgres://invoice_owner:${OWNER_DB_PASSWORD:?}@postgres:5432/invoice
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?}
+    networks: [backend]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # One-off, by hand: loads the pre-processed demo snapshot (scripts/demo-snapshot.mjs) into an
+  # empty database and the file volume.
+  #   docker compose -f compose.prod.yaml --profile tools run --rm demo-import
+  demo-import:
+    image: invoice-demo/api:local
+    pull_policy: never
+    profiles: [tools]
+    restart: 'no'
+    command: ['node', 'scripts/demo-snapshot.mjs', 'import', '/snapshot']
+    environment:
+      # Superuser: RLS is forced on every business table, and this writes two tenants at once.
+      TARGET_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:?}@postgres:5432/invoice
+      DATA_DIR: /data
+    volumes:
+      - appdata:/data
+      - ./scripts:/app/scripts:ro
+      - ${DEMO_SNAPSHOT_DIR:-./snapshot}:/snapshot:ro
+    networks: [backend]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  postgres:
+    image: pgvector/pgvector:0.8.7-pg17
+    restart: unless-stopped
+    environment:
+      # Superuser: used by the init script and the one-off demo data import only.
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      OWNER_DB_PASSWORD: ${OWNER_DB_PASSWORD:?}
+      KEYCLOAK_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD:?}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d invoice']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+    networks: [backend]
+
+  # Redis 8 is used under AGPLv3, unmodified, as a separate container (docs/LEGAL.md).
+  redis:
+    image: redis:8.10.2
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [backend]
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4.7
+    restart: unless-stopped
+    # Production mode (not start-dev). The realm is imported on first start only (IGNORE_EXISTING).
+    command: ['start', '--import-realm']
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD:?}
+      # Served under https://<host>/auth behind Caddy, which terminates TLS (Phát sinh T1.1).
+      KC_HOSTNAME: https://${DEMO_HOST:?}/auth
+      KC_HTTP_RELATIVE_PATH: /auth
+      KC_HTTP_ENABLED: 'true'
+      KC_PROXY_HEADERS: xforwarded
+      KC_HEALTH_ENABLED: 'true'
+      # Fixed, pre-touched heap. A fixed heap is the usual production JVM setting (no resizing);
+      # it is also what keeps the VM above Oracle's idle line: the whole stack otherwise uses ~1.1 GB
+      # (9% of 12 GB, measured in T4.7), and an A1 VM whose CPU, network AND memory stay under 20%
+      # for 7 days may be reclaimed (ADR 0010). Numbers and reasoning: docs/setup/ORACLE.md §5.
+      JAVA_OPTS_KC_HEAP: -Xms2g -Xmx2g -XX:+AlwaysPreTouch
+      # Temporary admin for the first start only; the admin console is not routed by Caddy.
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:?}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?}
+      # Placeholders in realm-invoice.json, replaced at import.
+      WEB_CLIENT_SECRET: ${WEB_CLIENT_SECRET:?}
+      DEMO_HOST: ${DEMO_HOST:?}
+      DEMO_USER_PASSWORD: ${DEMO_USER_PASSWORD:?}
+    volumes:
+      - ./keycloak/realm-invoice.json:/opt/keycloak/data/import/realm-invoice.json:ro
+    healthcheck:
+      # No curl in the image; probe the management port with bash /dev/tcp.
+      test:
+        - CMD-SHELL
+        - >-
+          exec 3<>/dev/tcp/127.0.0.1/9000 &&
+          printf 'GET /auth/health/ready HTTP/1.0\r\nHost: localhost\r\n\r\n' >&3 &&
+          grep -q '"status": "UP"' <&3
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 90s
+    networks: [edge, backend]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Keeps <subdomain>.duckdns.org pointing at this VM. Only on the server: enable with
+  # COMPOSE_PROFILES=duckdns in the env file. The token stays in that file (ADR 0010).
+  duckdns:
+    image: curlimages/curl:8.17.0
+    restart: unless-stopped
+    profiles: [duckdns]
+    environment:
+      DUCKDNS_SUBDOMAIN: ${DUCKDNS_SUBDOMAIN:-}
+      DUCKDNS_TOKEN: ${DUCKDNS_TOKEN:-}
+    # The token goes in the query string (DuckDNS has no other way) and is never printed: the log
+    # line holds only DuckDNS's answer, OK or KO. Every 30 minutes.
+    entrypoint:
+      - sh
+      - -c
+      - >-
+        while true; do
+        r=$$(curl -fsS --max-time 20 "https://www.duckdns.org/update?domains=$${DUCKDNS_SUBDOMAIN}&token=$${DUCKDNS_TOKEN}&ip=" || echo KO);
+        echo "$$(date -u +%FT%TZ) duckdns $$r";
+        sleep 1800;
+        done
+    networks: [edge]
+
+networks:
+  edge:
+  backend:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.31.240.0/24
+
+volumes:
+  pgdata:
+  redisdata:
+  appdata:
+  caddy_data:
+  caddy_config:

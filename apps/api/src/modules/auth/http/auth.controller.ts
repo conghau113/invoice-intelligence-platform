@@ -1,11 +1,15 @@
 import { Controller, Get } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import type { Env } from '../../../config/env.schema';
 import type { AuthUser } from '../domain/auth-user';
-import { permissionsOf, type Permission } from '../permissions';
+import { effectivePermissions, type Permission } from '../permissions';
 import { CurrentUser } from './current-user.decorator';
 import { AnyAuthenticated } from './require-permission.decorator';
 
 @Controller('auth')
 export class AuthController {
+  constructor(private readonly config: ConfigService<Env, true>) {}
+
   /** Who does the API think I am? `tenants` feeds the tenant switcher; `permissions` lets the UI hide actions (the API still enforces). */
   @AnyAuthenticated()
   @Get('me')
@@ -18,7 +22,12 @@ export class AuthController {
       tenantId: user.tenantId,
       roles: user.roles,
       tenants: user.memberOf,
-      permissions: permissionsOf(user.roles),
+      // On the read-only demo only read permissions, so the UI hides upload/approve/settings.
+      // Hiding is usability; DemoReadOnlyGuard is what refuses the writes.
+      permissions: effectivePermissions(
+        user.roles,
+        this.config.get('DEMO_READ_ONLY', { infer: true }),
+      ),
     };
   }
 }

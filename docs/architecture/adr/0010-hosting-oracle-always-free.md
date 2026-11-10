@@ -30,3 +30,6 @@ Develop locally (WSL2 + Docker). From M4, run a read-only public demo on one Ora
 
 ## Revisit when
 Oracle changes Always Free terms, reclaims the VM repeatedly, or the owner approves a paid option.
+
+## Update 2026-11-10 (T4.7)
+Oracle Free Tier sign-up was refused twice ("an error occurred while creating your account") although the card verified; no reason is given. The owner decided not to deploy a public demo for now: the production stack (`infra/prod/`) runs locally when needed, and the hosting choice is made again in T7.5 (Oracle if sign-up succeeds, otherwise a paid VPS through a new ADR). This decision stays Accepted for Oracle; no alternative is adopted yet.
