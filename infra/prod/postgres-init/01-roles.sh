@@ -9,15 +9,16 @@
 #   invoice_app    runtime role of the API and worker, created by the migrations (no BYPASSRLS).
 #   keycloak       owns only the separate `keycloak` database.
 #
-# Passwords travel as psql variables (:'name' quotes them as literals), never pasted into SQL.
+# Passwords travel as psql variables and are quoted by format('%L') in the server, then run with
+# \gexec: no secret is written into the SQL text (same approach as apps/api/src/db/migrate.ts).
 set -eu
 : "${OWNER_DB_PASSWORD:?}" "${KEYCLOAK_DB_PASSWORD:?}"
 
 psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d postgres \
   -v owner_pw="$OWNER_DB_PASSWORD" -v keycloak_pw="$KEYCLOAK_DB_PASSWORD" <<'SQL'
-CREATE ROLE invoice_owner LOGIN NOSUPERUSER NOBYPASSRLS CREATEROLE NOCREATEDB PASSWORD :'owner_pw';
+SELECT format('CREATE ROLE invoice_owner LOGIN NOSUPERUSER NOBYPASSRLS CREATEROLE NOCREATEDB PASSWORD %L', :'owner_pw') \gexec
 CREATE DATABASE invoice OWNER invoice_owner;
-CREATE ROLE keycloak LOGIN NOSUPERUSER NOBYPASSRLS NOCREATEROLE NOCREATEDB PASSWORD :'keycloak_pw';
+SELECT format('CREATE ROLE keycloak LOGIN NOSUPERUSER NOBYPASSRLS NOCREATEROLE NOCREATEDB PASSWORD %L', :'keycloak_pw') \gexec
 CREATE DATABASE keycloak OWNER keycloak;
 SQL
 
