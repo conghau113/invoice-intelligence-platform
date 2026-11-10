@@ -17,3 +17,14 @@ allowBuilds:
   protobufjs: false
   # msgpackr-extract (via bullmq) only compiles an optional native speed-up; msgpackr falls back to pure JS.
   msgpackr-extract: false
+
+# Security fixes the parents do not pull in yet (T4.7, before the public demo; `pnpm audit --prod`,
+# Phát sinh "Kiểm tra sau M3"). Same major and licence as before; drop an entry once its parent
+# depends on the fixed version. API runtime: multer GHSA-q7qp-rjg7-q26m (pinned by
+# @nestjs/platform-express), body-parser GHSA-27r3-jxmh-p828, qs (moderate, fixed in 6.16.1).
+# Web: fast-uri via @hookform/resolvers > ajv (GHSA-w74x-v6f9-j3xg and three related advisories).
+overrides:
+  body-parser@2: ^2.4.0
+  multer@2: ^2.5.0
+  qs@6: ^6.16.2
+  fast-uri@3: ^3.1.9
