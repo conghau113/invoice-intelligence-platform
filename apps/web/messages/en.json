@@ -22,6 +22,7 @@
     "INVALID_QUERY": "The filter or search parameters are not valid.",
     "BODY_TOO_LARGE": "The data sent is too large.",
     "BODY_INVALID": "The data sent is not valid.",
+    "DEMO_READ_ONLY": "This is a read-only demo: nothing can be changed here. Run the project locally to try the full pipeline.",
     "UNAUTHENTICATED": "Your session has expired. Please sign in again.",
     "FORBIDDEN": "The request was refused. Reload the page and try again.",
     "NOT_FOUND": "This could not be found.",
@@ -160,7 +161,7 @@
     "forbiddenNotMember": "The selected tenant is not one of your tenants. Pick another one in the header, or sign out and in again if your access changed.",
     "collapseSidebar": "Collapse menu",
     "expandSidebar": "Expand menu",
-    "readOnlyBanner": "Read-only mode: actions that change data are turned off.",
+    "readOnlyBanner": "Read-only demo with pre-processed synthetic data: no uploads, no edits, no AI calls. To run the full pipeline, run the project locally as described in the README.",
     "user": "User",
     "userMenu": "Account"
   },

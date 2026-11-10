@@ -18,3 +18,5 @@ eval/datasets
 eval/reports
 # Written by pnpm eval:baseline (T4.5)
 eval/baselines
+# Written by infra/prod/keycloak/build-realm.mjs (T4.7)
+infra/prod/keycloak/realm-invoice.json

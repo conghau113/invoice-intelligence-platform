@@ -3,3 +3,6 @@ __pycache__
 .pytest_cache
 .ruff_cache
 tests
+# Secrets never enter the build context (the Dockerfile copies only pyproject, uv.lock and app/).
+.env
+.env.*

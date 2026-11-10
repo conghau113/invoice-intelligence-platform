@@ -5,7 +5,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import type { Env } from '../config/env.schema';
 import * as schema from './schema';
-import { DB, TenantDbService } from './tenant-db.service';
+import { DB, DB_READ_ONLY, TenantDbService } from './tenant-db.service';
 import { TenantTransactionInterceptor } from './tenant-transaction.interceptor';
 
 export const PG_POOL = Symbol('PG_POOL');
@@ -31,6 +31,12 @@ export const PG_POOL = Symbol('PG_POOL');
       },
     },
     { provide: DB, inject: [PG_POOL], useFactory: (pool: Pool) => drizzle(pool, { schema }) },
+    {
+      provide: DB_READ_ONLY,
+      inject: [ConfigService],
+      useFactory: (config: ConfigService<Env, true>): boolean =>
+        config.get('DEMO_READ_ONLY', { infer: true }) === true,
+    },
     TenantDbService,
     { provide: APP_INTERCEPTOR, useClass: TenantTransactionInterceptor },
   ],

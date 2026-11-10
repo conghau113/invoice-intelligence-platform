@@ -34,7 +34,7 @@
 | insights:read | ✓ | ✓ | ✓ |
 | tenant:manage | ✓ | | |
 
-Demo account: read-only flag enforced in the API guard (non-GET methods rejected), not by role juggling.
+Demo account: read-only flag enforced in the API guard (non-GET methods rejected), not by role juggling. On the public demo (T4.7) three layers refuse writes: `DemoReadOnlyGuard` (first global guard, before authentication), tenant transactions opened `READ ONLY`, and the file volume mounted read-only. The shared demo accounts cannot change themselves: the production realm removes `account/manage-account` from the default role **and** disables every account-changing required action, because a login URL with `kc_action=UPDATE_PASSWORD` needs no account role (found and verified in the T4.7 rehearsal).
 
 ## 4. File upload
 - Uploads are streamed through the API (`POST /documents/upload`) to the file volume via `StoragePort` (ADR 0017); max 10 MB; allowed: PDF, PNG, JPEG, XML. Type verified by magic bytes; mismatch → `rejected`.

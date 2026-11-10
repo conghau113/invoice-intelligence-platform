@@ -35,7 +35,7 @@ flowchart TB
     web_ui["Next.js UI (React, next-intl)"]
   end
   subgraph app["Application (Docker Compose: laptop in dev, one Oracle ARM VM for the demo)"]
-    caddy["Caddy<br/>TLS, / → web, /api → api"]
+    caddy["Caddy<br/>TLS, / → web, /auth → Keycloak"]
     web["apps/web<br/>Next.js server (BFF: session, SSR, upload proxy)"]
     api["apps/api<br/>NestJS REST + WebSocket gateway"]
     worker["apps/api worker<br/>BullMQ consumers"]
@@ -48,8 +48,8 @@ flowchart TB
   llm["LLM provider API"]
   web_ui --> caddy
   caddy --> web
-  caddy --> api
-  web_ui <-->|Socket.IO| caddy
+  caddy -->|/auth/realms, /auth/resources| kc
+  web_ui <-->|Socket.IO, M6: route not decided| caddy
   web -->|REST + bearer token| api
   web --> kc
   api --> pg
@@ -76,7 +76,7 @@ flowchart TB
 | PostgreSQL + pgvector | System of record; Row-Level Security; vector + full-text search | — |
 | Redis | BullMQ queues, cache, token buckets, Socket.IO adapter | Being a source of truth |
 | Keycloak | Users, organizations (tenants), roles, tokens | App permissions beyond roles |
-| Caddy | TLS (Let's Encrypt), path routing, security headers | Application logic |
+| Caddy | TLS (Let's Encrypt), path routing (`/` → web, `/auth/realms/*` and `/auth/resources/*` → Keycloak; the API is not public), security headers | Application logic |
 
 Design patterns used deliberately (and where): **Ports & Adapters** (StoragePort, LLMProvider), **Strategy** (LLM providers; extraction path XML vs vision), **State Machine** (document lifecycle), **Repository** (Drizzle data access per module), **Cache-aside**, **Circuit Breaker**, **Idempotent Consumer**, **BFF** (web session), **Single source of truth for contracts** (Zod → JSON Schema), **Feature flags for environments** (`DEMO_READ_ONLY`).
 
@@ -144,13 +144,13 @@ M2 builds this whole flow for **XML only** (vertical slice). M3 adds the LLM pat
 | Environment | How | Cost |
 |---|---|---|
 | Local (default, M0–M3 and always for development) | Windows + WSL2 Ubuntu + Docker Desktop: `docker compose up` (Postgres+pgvector, Redis, Keycloak dev mode) + `pnpm dev`. Fake LLM provider for offline work and CI. | 0 |
-| Public demo (from M4) | One Oracle Cloud **Always Free** VM (Ampere A1, ARM64, 2 OCPU / 12 GB), Ubuntu, Docker Compose, Caddy (automatic HTTPS), DuckDNS subdomain, images from GHCR built for `linux/arm64`. `DEMO_READ_ONLY=true`. Keycloak production mode on Postgres. Files on the VM disk. | 0 (card verification at sign-up only; never upgrade to Pay-As-You-Go) |
+| Public demo (from M4) | One Oracle Cloud **Always Free** VM (Ampere A1, ARM64, 2 OCPU / 12 GB), Ubuntu, Docker Compose (`infra/prod/compose.prod.yaml`), Caddy (automatic HTTPS), DuckDNS subdomain. Images built natively on the VM for `linux/arm64` (T4.7); from GHCR once CD exists (T7.5). `DEMO_READ_ONLY=true`. Keycloak production mode on its own database in the same Postgres. API, worker, AI, Postgres and Redis on an internal Docker network with no internet route. Files on the VM disk. | 0 (card verification at sign-up only; never upgrade to Pay-As-You-Go) |
 | Fallback | If no Always Free capacity or the VM is reclaimed: rebuild from the runbook, else publish a recorded video demo. | 0 |
 | CI | GitHub Actions on a public repository (standard runners are free for public repos). | 0 |
 
-Memory budget on the 12 GB VM (measured in T4.7): Keycloak ~0.75–1 GB, Postgres ~0.5 GB, Next.js ~0.3 GB, NestJS API + worker ~0.4 GB, FastAPI ~0.3 GB, Redis ~0.1 GB, Caddy ~0.05 GB → ~2.5–3 GB (≈25% of RAM).
+Memory on the 12 GB VM. The earlier estimate (~2.5–3 GB) was too high: measured with `docker stats` in the T4.7 rehearsal, the idle stack uses ~1.1 GB (≈9%): Keycloak ~0.7 GB, Next.js ~0.12 GB, Postgres ~0.07 GB, API ~0.06 GB, AI ~0.05 GB, worker ~0.05 GB, Caddy ~0.03 GB, Redis ~0.01 GB. Keycloak therefore runs with a fixed, pre-touched 2 GB heap, which brings the containers to ~2.8 GB (≈23%) before the operating system; the figure on the VM itself is recorded in the T4.7 learning log.
 
-Oracle may reclaim Always Free instances that are idle for 7 days (CPU p95 < 20%, network < 20%, and for A1 memory < 20%, all true). Keeping the full stack running keeps memory above 20%; T7.5 adds a check and the rebuild runbook. Daily encrypted backups are stored outside Oracle (GitHub Release of this repo; data is synthetic).
+Oracle may reclaim Always Free instances that are idle for 7 days (CPU p95 < 20%, network < 20%, and for A1 memory < 20%, all true). A read-only demo has little CPU or network load, so memory is the condition that keeps it above the line: the fixed Keycloak heap does that; T7.5 adds a check and the rebuild runbook. Daily encrypted backups are stored outside Oracle (GitHub Release of this repo; data is synthetic).
 
 ## 8. Document state machine
 

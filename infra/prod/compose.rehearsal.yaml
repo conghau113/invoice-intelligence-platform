@@ -1,0 +1,13 @@
+# Local rehearsal of the production stack on the laptop (T4.7), before the VM exists. Not used on
+# the server. Caddy serves *.localhost with its own local CA instead of Let's Encrypt, so the web
+# server (which reaches Keycloak by the public URL) must trust that CA. The CA exists only after
+# Caddy's first start, and its folder is readable by root only, so it is copied out first:
+#   1. docker compose -f compose.prod.yaml up -d --build --wait          (DEMO_HOST=invoice.localhost)
+#   2. docker cp invoice-demo-caddy-1:/data/caddy/pki/authorities/local/root.crt <file>
+#   3. REHEARSAL_CA=<file> docker compose -f compose.prod.yaml -f compose.rehearsal.yaml up -d --wait
+services:
+  web:
+    environment:
+      NODE_EXTRA_CA_CERTS: /etc/rehearsal-ca.crt
+    volumes:
+      - ${REHEARSAL_CA:?}:/etc/rehearsal-ca.crt:ro

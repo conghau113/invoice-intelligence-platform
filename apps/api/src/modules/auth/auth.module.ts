@@ -7,6 +7,7 @@ import { TOKEN_VERIFIER } from './application/token-verifier.port';
 import { PgTenantDirectory } from './infra/pg-tenant-directory';
 import { JoseTokenVerifier } from './infra/jose-token-verifier';
 import { AuthController } from './http/auth.controller';
+import { DemoReadOnlyGuard } from './http/demo-read-only.guard';
 import { JwtAuthGuard } from './http/jwt-auth.guard';
 import { PermissionsGuard } from './http/permissions.guard';
 
@@ -28,7 +29,9 @@ import { PermissionsGuard } from './http/permissions.guard';
       },
     },
     { provide: TENANT_DIRECTORY, useClass: PgTenantDirectory },
-    // Order matters: authenticate first, then authorize.
+    // Order matters: the demo's read-only rule first (it does not depend on who is calling),
+    // then authenticate, then authorize.
+    { provide: APP_GUARD, useClass: DemoReadOnlyGuard },
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: PermissionsGuard },
   ],

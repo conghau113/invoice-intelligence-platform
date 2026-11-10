@@ -82,7 +82,8 @@ describe('PermissionsGuard (real guards + filter, fake verifier)', () => {
             idForAlias: (a: string) => Promise.resolve(a === 'acme' ? ACME_ID : undefined),
           },
         },
-        { provide: ConfigService, useValue: {} },
+        // /auth/me reads DEMO_READ_ONLY; the demo itself is covered by demo-read-only.guard.spec.ts.
+        { provide: ConfigService, useValue: { get: () => false } },
         { provide: APP_GUARD, useClass: JwtAuthGuard },
         { provide: APP_GUARD, useClass: PermissionsGuard },
         { provide: APP_FILTER, useClass: ProblemDetailsFilter },

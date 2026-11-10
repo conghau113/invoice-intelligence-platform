@@ -107,7 +107,8 @@ describe('JwtAuthGuard (real jose verifier against a local JWKS server)', () => 
               ),
           },
         },
-        { provide: ConfigService, useValue: {} },
+        // /auth/me reads DEMO_READ_ONLY; the demo itself is covered by demo-read-only.guard.spec.ts.
+        { provide: ConfigService, useValue: { get: () => false } },
         { provide: APP_GUARD, useClass: JwtAuthGuard },
         { provide: APP_FILTER, useClass: ProblemDetailsFilter },
       ],

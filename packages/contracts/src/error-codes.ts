@@ -66,6 +66,7 @@ export const API_ERROR_CODES = [
   'INVALID_QUERY',
   'BODY_TOO_LARGE',
   'BODY_INVALID',
+  'DEMO_READ_ONLY',
 ] as const;
 export type ApiErrorCode = (typeof API_ERROR_CODES)[number];
 
