@@ -567,6 +567,36 @@ test.describe('T3.7: which fields ask for attention', () => {
     expect(first!.y).toBeGreaterThanOrEqual(table!.y);
   });
 
+  test('T4.8: a four-digit quantity and a seven-digit VAT base fit their boxes at common widths', async ({
+    page,
+  }) => {
+    await openWith(page, (data) => {
+      data.lines[0]!.quantity = 1234;
+      // The worst case: the warning icon takes room inside the quantity box too.
+      data.fieldMeta['lines.0.quantity'] = { confidence: 0.5, evidence: null };
+      data.fieldMeta['vatBreakdown.0.base'] = { confidence: 0.5, evidence: null };
+    });
+    await expect(page.getByTestId('field-lines.0.quantity')).toHaveValue(/1.?234/);
+
+    // At 1536 `2xl` puts the VAT card beside the totals, where the card is at its narrowest.
+    for (const width of [1024, 1280, 1440, 1535, 1536, 1920]) {
+      await page.setViewportSize({ width, height: 900 });
+      const cut = await page
+        .locator('[data-testid="invoice-lines"] input, [data-testid^="vat-"] input')
+        .evaluateAll((inputs) =>
+          inputs
+            .map((el) => el as HTMLInputElement)
+            .filter((input) => input.scrollWidth > input.clientWidth)
+            .map((input) => `${input.dataset.testid}=${input.value}`),
+        );
+      // Descriptions may scroll (free text); numbers must be readable without clicking.
+      expect(
+        cut.filter((name) => !name.includes('description')),
+        `cut at ${width}px`,
+      ).toEqual([]);
+    }
+  });
+
   for (const theme of ['light', 'dark'] as const) {
     test(`marks are readable in the ${theme} theme`, async ({ page, context }) => {
       await context.addCookies([{ name: 'theme', value: theme, url: 'http://localhost:3000' }]);

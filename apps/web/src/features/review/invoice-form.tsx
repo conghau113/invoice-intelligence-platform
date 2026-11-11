@@ -290,7 +290,8 @@ function Lines({ canEdit }: Readonly<{ canEdit: boolean }>) {
           <TableHeader>
             <TableRow>
               <TableHead className="min-w-48">{t('description')}</TableHead>
-              <TableHead className="w-20 text-right">{t('quantity')}</TableHead>
+              {/* Room for a four-digit quantity next to the warning icon (T4.8). */}
+              <TableHead className="w-28 text-right">{t('quantity')}</TableHead>
               <TableHead className="w-24">{t('unit')}</TableHead>
               <TableHead className="w-32 text-right">{t('unitPrice')}</TableHead>
               <TableHead className="w-20 text-right">{t('vatRate')}</TableHead>
@@ -416,7 +417,12 @@ function VatRows() {
       ) : (
         <div className="flex flex-col gap-3">
           {fields.map((row, i) => (
-            <div key={row.id} className="grid grid-cols-3 gap-3" data-testid={`vat-${i}`}>
+            <div
+              key={row.id}
+              // The rate is two digits at most; the amounts get the rest of the card.
+              className="grid grid-cols-[4.5rem_minmax(0,1fr)_minmax(0,1fr)] gap-3"
+              data-testid={`vat-${i}`}
+            >
               <NumberField name={`vatBreakdown.${i}.rate`} label={t('vatRate')} money={false} />
               <NumberField name={`vatBreakdown.${i}.base`} label={t('vatBase')} money />
               <NumberField name={`vatBreakdown.${i}.amount`} label={t('vatAmount')} money />
@@ -615,7 +621,8 @@ export function InvoiceForm({
 
           <Lines canEdit={canEdit} />
 
-          <div className="grid gap-4 xl:grid-cols-2">
+          {/* Side by side only when half the form still fits a seven-digit amount (T4.8). */}
+          <div className="grid gap-4 2xl:grid-cols-2">
             <VatRows />
             <Card title={td('totals')}>
               <NumberField
