@@ -67,6 +67,7 @@ export const API_ERROR_CODES = [
   'BODY_TOO_LARGE',
   'BODY_INVALID',
   'DEMO_READ_ONLY',
+  'AI_SERVICE_UNAVAILABLE',
 ] as const;
 export type ApiErrorCode = (typeof API_ERROR_CODES)[number];
 

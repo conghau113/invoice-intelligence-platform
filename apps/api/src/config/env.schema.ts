@@ -5,7 +5,7 @@ import { trustedProxiesProblem } from './trusted-proxies';
 // z.coerce.boolean() would turn the string "false" into true, so booleans are parsed explicitly.
 const booleanString = z.enum(['true', 'false']).transform((v) => v === 'true');
 
-export const envSchema = z.object({
+const envFields = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']),
   PORT: z.coerce.number().int().min(1).max(65535).default(3001),
   DEMO_READ_ONLY: booleanString.default(false),
@@ -49,6 +49,16 @@ export const envSchema = z.object({
       if (problem !== null) ctx.addIssue({ code: 'custom', message: problem });
     }),
   OIDC_AUDIENCE: z.string().min(1).default('api'),
+  // Hybrid retrieval (T5.3): chunks returned after fusion, and candidates read from EACH of the vector
+  // and full-text lists before fusing them (RRF only reorders what the two lists bring).
+  RAG_TOP_K: z.coerce.number().int().min(1).max(20).default(5),
+  RAG_CANDIDATES: z.coerce.number().int().min(5).max(100).default(20),
+});
+
+// Cross-field rules, apart from the fields so that each field keeps its own error message.
+export const envSchema = envFields.refine((env) => env.RAG_CANDIDATES >= env.RAG_TOP_K, {
+  message: 'must be at least RAG_TOP_K',
+  path: ['RAG_CANDIDATES'],
 });
 
 export type Env = z.infer<typeof envSchema>;

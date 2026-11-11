@@ -30,6 +30,8 @@ describe('validateEnv', () => {
       AI_LLM_TIMEOUT_MS: 60000,
       TRUSTED_PROXIES: 'loopback',
       OIDC_AUDIENCE: 'api',
+      RAG_TOP_K: 5,
+      RAG_CANDIDATES: 20,
     });
   });
 
@@ -145,6 +147,27 @@ describe('validateEnv', () => {
     expect(() => validateEnv(base)).toThrow(/AI_SERVICE_URL[\s\S]*AI_SERVICE_TOKEN/);
     expect(() => validateEnv({ ...base, ...AI, AI_SERVICE_TOKEN: 'short' })).toThrow(
       /AI_SERVICE_TOKEN/,
+    );
+  });
+
+  it('RAG_TOP_K and RAG_CANDIDATES are bounded, and the candidates can never be fewer than top-k', () => {
+    const base = {
+      NODE_ENV: 'test',
+      OIDC_ISSUER_URL: ISSUER,
+      DATABASE_URL: DB_URL,
+      DATA_DIR,
+      REDIS_URL,
+      ...AI,
+    };
+    expect(validateEnv({ ...base, RAG_TOP_K: '8', RAG_CANDIDATES: '40' })).toMatchObject({
+      RAG_TOP_K: 8,
+      RAG_CANDIDATES: 40,
+    });
+    expect(() => validateEnv({ ...base, RAG_TOP_K: '0' })).toThrow(/RAG_TOP_K/);
+    expect(() => validateEnv({ ...base, RAG_TOP_K: '21' })).toThrow(/RAG_TOP_K/);
+    expect(() => validateEnv({ ...base, RAG_CANDIDATES: '101' })).toThrow(/RAG_CANDIDATES/);
+    expect(() => validateEnv({ ...base, RAG_TOP_K: '10', RAG_CANDIDATES: '8' })).toThrow(
+      /RAG_CANDIDATES: must be at least RAG_TOP_K/,
     );
   });
 });

@@ -50,6 +50,7 @@
 |---|---|---|---|
 | POST | `/qa/ask` | `qa:ask` | SSE stream: `token` events, then `citations`, then `done` |
 | GET | `/qa/history` | `qa:ask` | Own questions only |
+| POST | `/search/debug` | `qa:ask` | Internal, for debugging retrieval (T5.3); not used by the web app and `404` when `NODE_ENV=production` (POST is also refused on the demo). Body `{question (1–1,000 chars), topK? (1–20, default RAG_TOP_K)}`, anything else `400 BODY_INVALID`. `200 {model, topK, candidates, chunks: [{chunkId, documentId, documentVersion, invoiceId, kind, ordinal, content, refs, score, vectorRank, vectorDistance, ftsRank, ftsScore}]}`, best first; ranks are 1-based and `null` where that list did not return the chunk. The question cannot be embedded → `503 AI_SERVICE_UNAVAILABLE` |
 
 ### Insights
 | Method | Path | Permission |
@@ -77,7 +78,8 @@
 | Method | Path | Body → Result |
 |---|---|---|
 | POST | `/extract` | multipart `{file, sourceType, schemaVersion?}` → `{invoice, warnings, usage}` (`invoice` includes `fieldMeta`, so no separate `confidence`; `usage` is `null` for xml); `sourceType` is `xml \| pdf \| image` (same as `documents.source_type`); `xml` → parser, `pdf/image` → LLM (501 `EXTRACTION_PATH_NOT_IMPLEMENTED` until M3). Errors: `{code, message}` — 422 `XML_*`, 413 `FILE_TOO_LARGE` |
-| POST | `/embed` | `{texts[]}` → `{vectors[], usage}` |
+| POST | `/index` | one row of the view `current_invoices` `{id, tenant_id, document_id, document_version, data}` (extra columns → 422) → `{model, chunks: [{chunk, embedding}]}`: T5.1 chunks, each with a unit vector of 768 numbers (T5.2). Called by the RAG index worker after an approval |
+| POST | `/embed` | `{texts[] (1–512, each 1–8,000 chars), task: "query" \| "document"}` → `{vectors[], usage: {model, texts}}`: unit vectors of 768 numbers; `query` embeds a question for retrieval (T5.3) |
 | POST | `/answer` | `{question, chunks[], locale}` → stream of tokens + `{citations[]}` |
 | POST | `/plan-query` | `{question, locale}` → structured filter (validated schema) |
 

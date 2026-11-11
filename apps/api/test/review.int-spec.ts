@@ -26,6 +26,8 @@ import { JwtAuthGuard } from '../src/modules/auth/http/jwt-auth.guard';
 import { PermissionsGuard } from '../src/modules/auth/http/permissions.guard';
 import { ExtractionModule } from '../src/modules/extraction/extraction.module';
 import { ReviewModule } from '../src/modules/review/review.module';
+import { INDEX_QUEUE_PORT } from '../src/modules/search/application/index-queue.port';
+import { FakeIndexQueue } from '../src/modules/search/testing/fake-index-queue';
 import { MAX_DOCUMENT_VERSION } from '../src/modules/review/domain/approve-limits';
 import { columnsMissingFromView } from './support/rls';
 
@@ -167,7 +169,11 @@ describe('POST /documents/:id/approve (HTTP -> Postgres)', () => {
         { provide: APP_GUARD, useClass: PermissionsGuard },
         { provide: APP_FILTER, useClass: ProblemDetailsFilter },
       ],
-    }).compile();
+    })
+      // Approval enqueues a RAG index job (T5.2); no Redis here.
+      .overrideProvider(INDEX_QUEUE_PORT)
+      .useValue(new FakeIndexQueue())
+      .compile();
     app = mod.createNestApplication<NestExpressApplication>();
     applyJsonBodyLimit(app);
     await app.init();
@@ -904,7 +910,8 @@ describe('POST /documents/:id/approve (HTTP -> Postgres)', () => {
         {
           action: 'document.reopened',
           actor_id: USER,
-          meta: { fromVersion: 1, version: 2 },
+          // chunksRemoved: 0 here, the queue is a fake and no index job ran (T5.2).
+          meta: { fromVersion: 1, version: 2, chunksRemoved: 0 },
         },
       ]);
       const all = await owner.query('SELECT meta FROM audit_logs WHERE entity_id = $1', [id]);

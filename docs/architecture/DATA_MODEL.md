@@ -25,7 +25,7 @@ erDiagram
   field_corrections { uuid id PK; uuid tenant_id; uuid extraction_id FK; int document_version; text field_path; jsonb ai_value; jsonb human_value; timestamptz created_at }
   invoices { uuid id PK; uuid tenant_id; uuid document_id FK; text invoice_no; text series; date issue_date; text seller_tax_code; text seller_name; text buyer_tax_code; char3 currency; bigint subtotal; bigint vat_amount; bigint total; int document_version; jsonb data; jsonb warnings; uuid approved_by; timestamptz approved_at }
   invoice_lines { uuid id PK; uuid tenant_id; uuid invoice_id FK; int line_no; text description; numeric quantity; text unit; bigint unit_price; numeric vat_rate; bigint amount }
-  chunks { uuid id PK; uuid tenant_id; uuid invoice_id FK; text kind; text content; tsvector content_tsv; vector768 embedding; jsonb refs }
+  chunks { uuid id PK; uuid tenant_id; uuid document_id FK; int document_version; uuid invoice_id FK; text kind; int ordinal; text content; tsvector content_tsv; vector768 embedding; text embedding_model; jsonb refs }
   audit_logs { bigint id PK; uuid tenant_id; uuid actor_id; text action; text entity; uuid entity_id; jsonb meta; inet ip; timestamptz at }
   notifications { uuid id PK; uuid tenant_id; uuid user_id; text type; jsonb payload; timestamptz read_at }
 ```
@@ -67,8 +67,12 @@ erDiagram
 - Indexes: `(tenant_id, issue_date)`, `(tenant_id, seller_tax_code)` for aggregate questions.
 
 ### chunks
-- `embedding vector(768)` with HNSW (`vector_cosine_ops`); `content_tsv` with GIN. 768 dims because pgvector's HNSW index supports up to 2,000 dimensions for the `vector` type and Gemini embeddings support Matryoshka truncation (ADR 0011).
+- `embedding vector(768)` with HNSW (`vector_cosine_ops`); `content_tsv` (generated, `to_tsvector('simple', content)`: Postgres has no Vietnamese configuration, `simple` does no stemming and serves vi and en) with GIN. 768 dims because pgvector's HNSW index supports up to 2,000 dimensions for the `vector` type and Gemini embeddings support Matryoshka truncation (ADR 0011). `embedding_model` is kept per row: vectors of two models must never be compared.
 - `refs` lists `{document_id, page, field_path}` used for citations.
+- **Derived data, written only by the index job (T5.2)** from the row of `current_invoices` (never the table `invoices`). Approval enqueues the job inside its own transaction (Redis down → 503, nothing approved); the job id is the invoice id. The job locks the document row `FOR SHARE` before reading and again before writing, and writes only if the document is still `approved` at the job's version; it then replaces all chunks of the document, so running it twice is harmless. `UNIQUE (document_id, document_version, ordinal)`.
+- **Reopening deletes the document's chunks in the same transaction** as the status change (T3.8): from the commit on, a reopened invoice cannot be retrieved. The audit entry `document.reopened` records `chunksRemoved` (a count). Retrieval (T5.3) still filters on the current version as a second layer.
+- Composite foreign keys with `tenant_id` to `invoices` and `documents`. They do not force `invoice_id` to be the invoice of that `document_id` and `document_version`: the index job does (it reads the invoice by id, document and version from `current_invoices`, and refuses an AI answer for anything else). RLS like every table; the app role has `SELECT, INSERT, DELETE` (no `UPDATE`: a chunk is replaced, never edited).
+- Planner behaviour (T5.2, measured as the app role under RLS): with a few chunks per tenant the query `ORDER BY embedding <=> $1 LIMIT k` reads the tenant's rows through `(tenant_id, document_id)` and sorts them (exact); at 2,000 chunks it uses `chunks_embedding_hnsw` on its own, with the RLS condition applied as a filter on the index scan.
 
 ### audit_logs
 - Append-only; never stores document content or extracted PII values — only ids and action names.

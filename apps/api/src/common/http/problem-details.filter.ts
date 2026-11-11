@@ -23,6 +23,7 @@ import {
 import { ExtractionDataInvalidError } from '../../modules/extraction/domain/ai-errors';
 import { JobNotFailedError } from '../../modules/queue/application/admin-jobs.service';
 import { ExtractionMissingError } from '../../modules/review/domain/review-errors';
+import { QueryEmbeddingUnavailableError } from '../../modules/search/application/query-embedder.port';
 
 /**
  * body-parser fails before any route runs, with an error that is not a Nest HttpException: a client
@@ -84,6 +85,13 @@ function domainProblem(
       status: HttpStatus.INTERNAL_SERVER_ERROR,
       code: e.code,
       detail: 'Stored extraction is invalid',
+    };
+  }
+  if (e instanceof QueryEmbeddingUnavailableError) {
+    return {
+      status: HttpStatus.SERVICE_UNAVAILABLE,
+      code: 'AI_SERVICE_UNAVAILABLE',
+      detail: 'The AI service is unavailable, try again',
     };
   }
   if (e instanceof JobNotFailedError) {
