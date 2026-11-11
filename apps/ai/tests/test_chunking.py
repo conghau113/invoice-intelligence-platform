@@ -218,10 +218,12 @@ def test_invisible_format_characters_are_dropped() -> None:
     r = raw("xml-vnd-one-line")
     # U+202E (right-to-left override) can make text read differently from what is stored;
     # U+200B (zero-width space) can hide inside a word.
-    r["data"]["lines"][0]["description"] = "Vật​tư SAMPLE ‮abc"
+    # Escapes, never the raw characters: they would hide in this source file too.
+    r["data"]["lines"][0]["description"] = "Vật\u200btư SAMPLE \u202eabc"
     content = chunk_invoice(ApprovedInvoiceRow.model_validate(r))[1].content
     assert "Dòng / Line 1: Vậttư SAMPLE abc ·" in content
-    assert "​" not in content and "‮" not in content
+    assert "\u200b" not in content
+    assert "\u202e" not in content
 
 
 def test_lines_are_grouped_by_characters_when_they_are_long() -> None:
