@@ -21,8 +21,8 @@
 ## Điểm dừng hiện tại
 
 ```text
-Mốc hiện tại: M2, M3, M4 (còn kiểm tra cuối mốc) → M5
-Task hiện tại: T5.1 TODO (M0 đến M4 đã DONE hết task; T4.7 không có demo public, dời sang T7.5; T4.8 còn chờ Hậu: một người bạn đọc README 2 phút, kiểm $0 billing)
+Mốc hiện tại: M5 (M2, M3, M4 còn kiểm tra cuối mốc)
+Task hiện tại: T5.2 TODO (T5.1 DONE 2026-11-11; M0 đến M4 đã DONE hết task; T4.7 không có demo public, dời sang T7.5; T4.8 còn chờ Hậu: một người bạn đọc README 2 phút, kiểm $0 billing)
 Chặn bởi: không
 Cập nhật: 2026-11-11
 ```
@@ -128,7 +128,7 @@ Cập nhật: 2026-11-11
 
 | ID   | Task                                                          | Ước tính (h) | Phụ thuộc  | Trạng thái | Thực tế (h) | Ghi chú |
 | ---- | ------------------------------------------------------------- | ------------ | ---------- | ---------- | ----------- | ------- |
-| T5.1 | Chiến lược chunk & metadata cho hóa đơn đã duyệt              | 2.5          | T3.5, T3.8 | `TODO`     |             |         |
+| T5.1 | Chiến lược chunk & metadata cho hóa đơn đã duyệt              | 2.5          | T3.5, T3.8 | `DONE`     |             | Agent: `apps/ai/app/services/chunking.py` (`chunk_invoice` nhận 1 dòng `current_invoices`; 1 chunk `header` + chunk dòng hàng ≤10 dòng/≤2.000 ký tự; `refs[{document_id, field_path, page}]`), 5 fixture `tests/fixtures/chunking/`, 44 test |
 | T5.2 | Embedding + pgvector HNSW + job index khi duyệt               | 3            | T5.1, T3.8 | `TODO`     |             |         |
 | T5.3 | Truy hồi hybrid (vector + full-text) với RRF, lọc tenant      | 3.5          | T5.2       | `TODO`     |             |         |
 | T5.4 | Sinh câu trả lời có trích dẫn + công cụ truy vấn số liệu      | 4            | T5.3       | `TODO`     |             |         |
@@ -544,3 +544,6 @@ Cập nhật: 2026-11-11
 | 2026-11-10 | T4.8 | Snapshot demo tạo ở T4.8 (12 tài liệu `acme`, 1 lần sửa, Gemini free tier, git-ignore `infra/prod/snapshot/`) chỉ nằm trên máy dev; tenant `globex` không có tài liệu nên `viewer@globex.example` thấy danh sách trống | T7.5: tạo snapshot cuối, cho `globex` vài file XML bằng `consultant@demo.example` (role accountant ở cả hai tenant) |
 | 2026-11-10 | T4.8 | `docs/PROJECT_OVERVIEW.md` và bản `.vi` vẫn ghi "planning complete" và bảng "Measured results" trống, trong khi README đã có số đo | T8.1 (đọc trước PROJECT_OVERVIEW): đồng bộ số với README |
 | 2026-11-10 | T4.8 | GIF quay bằng script một lần ở scratchpad (Playwright chụp từng cảnh, `sharp` ghép), không commit; các bước ghi trong `docs/learning/T4.8-task-notes.md`. Có link public hoặc đổi UI thì phải quay lại | T8.1/T8.3: quay lại GIF theo task note; nếu quay nhiều lần thì cân nhắc commit script (cần khai `sharp` là devDependency, Hậu duyệt) |
+| 2026-11-11 | T5.1 | Chưa có route AI nào chạy chunking: `API.md` chỉ có `/embed {texts[]}`. `chunk_invoice` nhận một dòng `current_invoices` (`id, tenant_id, document_id, document_version, data`, `extra="forbid"`), nên code đọc DB phải đọc view, không đọc `invoices` | T5.2: thêm route (vd. nhận dòng `current_invoices` → chunk + embed) và ghi vào `API.md`; upsert theo `(document_id, document_version, ordinal)` |
+| 2026-11-11 | T5.1 | Một dòng hàng có `description` dài hơn 2.000 ký tự được giữ nguyên trong một chunk, không cắt (schema không giới hạn độ dài). Chunk `header` không có giới hạn kích thước (`address`, `name` không giới hạn, cộng các dòng `vatBreakdown`). Chưa đo giới hạn token của `gemini-embedding-001` với chunk như vậy | T5.2: kiểm giới hạn input của model embedding cho cả chunk dòng hàng và `header`, quyết định cắt bớt hay báo lỗi có mã |
+| 2026-11-11 | T5.1 | `content` chứa nguyên chuỗi do người dùng sửa được (`description`, `seller.name`); chunking chỉ gộp khoảng trắng và bỏ ký tự điều khiển để không giả được dòng nhãn, không phải lớp chặn injection | T5.4, T5.7: đặt chunk trong khối dữ liệu tách biệt, kiểm trích dẫn; fixture `injection-newlines.json` dùng lại được |
