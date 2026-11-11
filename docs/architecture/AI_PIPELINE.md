@@ -65,7 +65,7 @@ Prompt versions live in `apps/ai/app/prompts/<name>/v<N>.md`; the version is sto
 ## 7. RAG
 
 - **Index only approved invoices** (human-verified data).
-- Chunks: one header chunk per invoice (parties, dates, totals) + chunks of grouped lines; metadata `{tenant_id, invoice_id, page, field_paths}`.
+- Chunks (`apps/ai/app/services/chunking.py`): input is one row of the view `current_invoices`; one header chunk per invoice (parties, dates, totals) + chunks of consecutive lines (at most 10 lines / 2,000 characters, a line is never split); metadata `{tenant_id, document_id, document_version, invoice_id, kind, ordinal}` and `refs[{document_id, field_path, page}]` for every field rendered in the chunk (`page` from `fieldMeta` evidence, `null` for XML).
 - Embeddings: `gemini-embedding-001` truncated to 768 dims (Matryoshka); stored in `vector(768)` with HNSW cosine index.
 - Retrieval: vector top-k and Postgres full-text top-k in parallel → Reciprocal Rank Fusion. Executed inside a transaction with `app.tenant_id` set (RLS) **and** an explicit tenant filter (defense in depth).
 - Question routing: *lookup* → RAG answer; *aggregate* ("total paid to X in Q3") → LLM produces a structured filter validated by schema → parameterized SQL → LLM phrases the result. The model never writes SQL and never does arithmetic on totals.
