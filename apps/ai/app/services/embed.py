@@ -25,13 +25,16 @@ EMBED_MAX_CHARS = MAX_CHUNK_CHARS
 EMBED_BATCH_SIZE = 100
 # Texts per request to /embed. A query is one text; an invoice of 2,000 lines is ~200 chunks.
 MAX_TEXTS = 512
+# Below this length a vector has no usable direction (an all-zero or underflowed answer).
+MIN_NORM = 1e-12
 
 
 def _unit(v: list[float]) -> list[float]:
     """L2-normalised. Gemini vectors cut below 3,072 dims are not unit length (its docs say to
     normalise them); cosine distance would not care, but a unit vector keeps scores comparable."""
     norm = math.sqrt(sum(x * x for x in v))
-    if norm == 0.0:
+    # (Nearly) zero: no direction to keep, and dividing would only blow up noise.
+    if norm < MIN_NORM:
         raise LLMUnavailable("LLM_BAD_RESPONSE")
     return [x / norm for x in v]
 

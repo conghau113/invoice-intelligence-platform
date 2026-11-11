@@ -278,9 +278,13 @@ describe('RAG index (T5.2): approve -> chunks, reopen -> gone', () => {
         { document_version: 1, ordinal: 1 },
       ]);
       // The row sent to the AI service has exactly the columns the chunker accepts (extra="forbid").
-      expect(Object.keys(indexer.rows.at(-1)!).sort()).toEqual(
-        ['data', 'document_id', 'document_version', 'id', 'tenant_id'].sort(),
-      );
+      expect(Object.keys(indexer.rows.at(-1)!).sort((a, b) => a.localeCompare(b))).toEqual([
+        'data',
+        'document_id',
+        'document_version',
+        'id',
+        'tenant_id',
+      ]);
       const { rows } = await owner.query(
         `SELECT embedding_model, vector_dims(embedding) AS dims, content_tsv @@ plainto_tsquery('simple', $2) AS fts
            FROM chunks WHERE document_id = $1 AND ordinal = 0`,

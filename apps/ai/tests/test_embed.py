@@ -147,6 +147,12 @@ def test_a_zero_vector_is_a_bad_answer() -> None:
     assert err.value.code == "LLM_BAD_RESPONSE"
 
 
+def test_a_nearly_zero_vector_is_a_bad_answer_too() -> None:
+    with pytest.raises(LLMError) as err:
+        embed_texts(gemini(lambda _r: answer(1, [1e-15] * 768)), ["x"], "query")
+    assert err.value.code == "LLM_BAD_RESPONSE"
+
+
 def test_texts_go_out_in_batches() -> None:
     provider = FakeEmbedder()
     vectors = embed_texts(provider, [f"t{i}" for i in range(EMBED_BATCH_SIZE * 2 + 1)], "document")
@@ -201,7 +207,9 @@ def test_index_keeps_the_whole_chunk_and_embeds_every_one() -> None:
 def test_index_is_deterministic() -> None:
     """Same row, same chunks and vectors: re-indexing a version changes nothing (idempotent)."""
     r = row("pdf-two-pages")
-    assert index_invoice(FakeEmbedder(), r) == index_invoice(FakeEmbedder(), r)
+    first = index_invoice(FakeEmbedder(), r)
+    second = index_invoice(FakeEmbedder(), r)
+    assert first == second
 
 
 # --- configuration -------------------------------------------------------------------------------
