@@ -42,6 +42,18 @@ CANNED_LLM_OUTPUT = {
 }
 
 
+# Q&A answers when nothing is scripted (T5.4), chosen by the title of the schema asked for, so that
+# LLM_PROVIDER=fake runs the whole Q&A path in dev, in the web's browser tests (T5.5) and in load
+# tests (M6): every question is a lookup, answered from the first source.
+CANNED_BY_SCHEMA_TITLE = {
+    "QaRoute": {"intent": "lookup", "filter": None},
+    "QaAnswer": {
+        "insufficientEvidence": False,
+        "answer": "SAMPLE answer from the fake model provider [1].",
+    },
+}
+
+
 class FakeProvider:
     name = "fake"
     timeout_s = 0.0
@@ -50,6 +62,7 @@ class FakeProvider:
         self, script: list[str | LLMResult | LLMError] | None = None, model: str = "fake-model"
     ) -> None:
         self.model = model
+        self._scripted = bool(script)
         self._script = list(script) if script else [json.dumps(CANNED_LLM_OUTPUT)]
         self.calls: list[dict[str, Any]] = []  # what extract sent, for assertions
 
@@ -64,6 +77,11 @@ class FakeProvider:
         self.calls.append(
             {"system": system, "user_text": user_text, "images": images, "schema": json_schema}
         )
+        canned = CANNED_BY_SCHEMA_TITLE.get(str(json_schema.get("title")))
+        if not self._scripted and canned is not None:
+            return LLMResult(
+                text=json.dumps(canned), model=self.model, input_tokens=300, output_tokens=30
+            )
         step = self._script.pop(0) if len(self._script) > 1 else self._script[0]
         if isinstance(step, LLMError):
             raise step

@@ -23,6 +23,7 @@ import {
 import { ExtractionDataInvalidError } from '../../modules/extraction/domain/ai-errors';
 import { JobNotFailedError } from '../../modules/queue/application/admin-jobs.service';
 import { ExtractionMissingError } from '../../modules/review/domain/review-errors';
+import { QaModelUnavailableError } from '../../modules/qa/application/qa-model.port';
 import { QueryEmbeddingUnavailableError } from '../../modules/search/application/query-embedder.port';
 
 /**
@@ -87,7 +88,8 @@ function domainProblem(
       detail: 'Stored extraction is invalid',
     };
   }
-  if (e instanceof QueryEmbeddingUnavailableError) {
+  // Retrieval (T5.3) or a Q&A model step (T5.4): the AI service could not answer.
+  if (e instanceof QueryEmbeddingUnavailableError || e instanceof QaModelUnavailableError) {
     return {
       status: HttpStatus.SERVICE_UNAVAILABLE,
       code: 'AI_SERVICE_UNAVAILABLE',
