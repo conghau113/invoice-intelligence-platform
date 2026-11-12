@@ -36,8 +36,9 @@ export function permissionsOf(roles: readonly Role[]): Permission[] {
 /**
  * What a signed-in user may do on the public read-only demo (ADR 0018), whatever their roles.
  * Only permissions whose routes are all GET: the guard refuses every other method anyway, so
- * advertising more would show buttons that can only fail. `qa:ask` is left out until Q&A
- * exists and the demo serves precomputed answers (T5.5).
+ * advertising more would show buttons that can only fail. `qa:ask` is left out until the demo
+ * serves precomputed answers (moved from T5.5 to T7.5); adding it back needs a test that the
+ * demo never calls the model.
  */
 export const DEMO_PERMISSIONS: readonly Permission[] = ['document:read', 'insights:read'];
 

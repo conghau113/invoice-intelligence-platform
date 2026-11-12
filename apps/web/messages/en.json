@@ -450,7 +450,8 @@
       "unreachable": "The server cannot be reached. The invoice was not reopened, please try again.",
       "limit": "This invoice has been reopened too many times and cannot be reopened again. The approved version is unchanged.",
       "error": "The invoice could not be reopened. Please try again."
-    }
+    },
+    "citedNote": "The fields framed in blue are the sources the Q&A answer cited."
   },
   "Insights": {
     "title": "AI insights",
@@ -533,6 +534,56 @@
       "vatBreakdownBase": "VAT row: taxable amount",
       "vatBreakdownAmount": "VAT row: VAT",
       "vatBreakdown": "VAT breakdown"
+    }
+  },
+  "Qa": {
+    "title": "Ask",
+    "description": "Ask about your organization's approved invoices. Every answer names its sources: click a number to open the invoice.",
+    "label": "Question",
+    "placeholder": "For example: How much did we spend with supplier Garcia-Riley in September?",
+    "count": "{count, number}/{max, number} characters",
+    "ask": "Ask",
+    "stop": "Stop",
+    "waiting": "Searching the invoices and checking the sources. The answer appears only once it has been checked, which can take up to a minute and a half.",
+    "finished": "The answer is complete.",
+    "cancelled": "You stopped this question.",
+    "unfinished": "The answer did not arrive in full. Do not rely on what is shown.",
+    "openSource": "Open source {n}",
+    "sources": "Sources: the first {shown, plural, one {# invoice} other {# invoices}} of {total, plural, one {# invoice} other {# invoices}} added up.",
+    "refusal": {
+      "OUT_OF_SCOPE": "This question is not about your organization's invoices, so there is no answer.",
+      "INSUFFICIENT_EVIDENCE": "The approved invoices do not contain enough information to answer this question.",
+      "NO_MATCHING_INVOICES": "No approved invoice matches this question.",
+      "ANSWER_REJECTED": "The answer failed the source check, so it is not shown. Try asking in a different way."
+    },
+    "error": {
+      "network": "The server could not be reached. Please try again.",
+      "stream": "The answer was interrupted or malformed. Please ask again.",
+      "http": "The question could not be asked right now. Please try again."
+    },
+    "aggregate": {
+      "metric": {
+        "total": "Total amount paid (VAT included)",
+        "subtotal": "Total before VAT",
+        "vatAmount": "Total VAT",
+        "lineAmount": "Total of the matching lines (before VAT)",
+        "invoiceCount": "Number of invoices"
+      },
+      "perCurrency": "Each currency is added up separately, without conversion.",
+      "invoices": "Based on {count, plural, one {# approved invoice} other {# approved invoices}}.",
+      "sellers": "Includes {count, plural, one {# supplier} other {# suppliers}}: {names}.",
+      "moreSellers": "and {count, plural, one {# other supplier} other {# other suppliers}}.",
+      "filter": {
+        "applied": "Conditions applied: {conditions}",
+        "none": "No conditions: every approved invoice is counted.",
+        "seller": "supplier name contains “{name}”",
+        "taxCode": "supplier tax code {code}",
+        "between": "issued from {from} to {to}",
+        "from": "issued from {from}",
+        "to": "issued until {to}",
+        "item": "line description contains “{item}”",
+        "currency": "currency {currency}"
+      }
     }
   }
 }

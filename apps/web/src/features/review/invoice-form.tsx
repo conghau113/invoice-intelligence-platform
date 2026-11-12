@@ -3,7 +3,15 @@
 import { todayInVietnam, type Invoice, type RuleWarning } from 'contracts';
 import { Plus, Trash2 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { Fragment, useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
+import {
+  Fragment,
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Controller,
   FormProvider,
@@ -24,6 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { firstCitedWithEvidence } from './cited-fields';
 import { DateInput } from './date-input';
 import { FieldShell } from './field-shell';
 import {
@@ -451,7 +460,17 @@ export interface InvoiceFormProps {
   readOnlyText?: string;
   /** This is an approved invoice: the AI's doubts are not marked, only the rule warnings. */
   approved?: boolean;
+  /**
+   * Fields a Q&A answer cited (T5.5). They are framed; on mount the first one is scrolled into view
+   * and the viewer jumps to the evidence of the first one that has some.
+   */
+  cited?: readonly string[];
 }
+
+const NO_CITED: readonly string[] = [];
+
+/** The wrapper `FieldShell` puts around a field. Paths are checked (`cited-fields.ts`), but escape anyway. */
+const fieldSelector = (path: string) => `[data-field-path="${CSS.escape(path)}"]`;
 
 export function InvoiceForm({
   extraction,
@@ -462,6 +481,7 @@ export function InvoiceForm({
   submitError,
   readOnlyText,
   approved = false,
+  cited = NO_CITED,
 }: Readonly<InvoiceFormProps>) {
   const t = useTranslations('Review');
   const td = useTranslations('DocumentDetail');
@@ -550,11 +570,35 @@ export function InvoiceForm({
     [getValues, onEvidence],
   );
 
+  const citedSet = useMemo(() => new Set(cited), [cited]);
+  // Once per mount, when the page opens from a citation: show where the answer's value is, in the
+  // form and in the original. Later focus changes are the reviewer's. A client-side change of
+  // `?fields=` on the same document updates the frames but does not scroll again.
+  const citedShown = useRef(false);
+  useEffect(() => {
+    if (citedShown.current || cited.length === 0) return;
+    citedShown.current = true;
+    const first = cited.find((p) => document.querySelector(fieldSelector(p)) !== null);
+    if (first !== undefined) {
+      document.querySelector(fieldSelector(first))?.scrollIntoView({ block: 'center' });
+    }
+    const withEvidence = firstCitedWithEvidence(cited, getValues('fieldMeta'));
+    if (withEvidence !== undefined) onFocusPath(withEvidence);
+  }, [cited, getValues, onFocusPath]);
+
   const errorCount = Object.keys(methods.formState.errors).length;
 
   return (
     <ReviewProvider
-      value={{ weak, readOnly: !canEdit, fractionDigits, reasonText, onFocusPath, errorText }}
+      value={{
+        weak,
+        readOnly: !canEdit,
+        fractionDigits,
+        reasonText,
+        onFocusPath,
+        errorText,
+        cited: citedSet,
+      }}
     >
       <FormProvider {...methods}>
         <form

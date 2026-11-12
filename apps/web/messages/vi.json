@@ -450,7 +450,8 @@
       "unreachable": "Không kết nối được máy chủ. Hoá đơn chưa được mở lại, hãy thử lại.",
       "limit": "Hoá đơn này đã được mở lại quá nhiều lần nên không mở lại được nữa. Bản đã duyệt vẫn giữ nguyên.",
       "error": "Không mở lại được. Hãy thử lại."
-    }
+    },
+    "citedNote": "Các ô có viền xanh là nguồn mà câu trả lời hỏi đáp đã trích."
   },
   "Insights": {
     "title": "Số liệu AI",
@@ -533,6 +534,56 @@
       "vatBreakdownBase": "Dòng thuế: tiền chịu thuế",
       "vatBreakdownAmount": "Dòng thuế: tiền thuế",
       "vatBreakdown": "Bảng thuế GTGT"
+    }
+  },
+  "Qa": {
+    "title": "Hỏi đáp",
+    "description": "Hỏi về các hoá đơn đã duyệt của tổ chức. Mỗi câu trả lời kèm nguồn, bấm vào số để mở hoá đơn.",
+    "label": "Câu hỏi",
+    "placeholder": "Ví dụ: Tháng 9 chi bao nhiêu cho nhà cung cấp Garcia-Riley?",
+    "count": "{count, number}/{max, number} ký tự",
+    "ask": "Hỏi",
+    "stop": "Dừng",
+    "waiting": "Đang tìm trong hoá đơn và kiểm tra nguồn. Câu trả lời chỉ hiện sau khi kiểm xong, có thể mất tới khoảng một phút rưỡi.",
+    "finished": "Đã trả lời xong.",
+    "cancelled": "Bạn đã dừng câu hỏi này.",
+    "unfinished": "Câu trả lời chưa nhận đủ. Đừng dựa vào phần đang hiện.",
+    "openSource": "Mở nguồn {n}",
+    "sources": "Nguồn: {shown, plural, other {# hoá đơn}} đầu tiên trong {total, plural, other {# hoá đơn}} được tính.",
+    "refusal": {
+      "OUT_OF_SCOPE": "Câu hỏi này không nói về hoá đơn của tổ chức, nên không có câu trả lời.",
+      "INSUFFICIENT_EVIDENCE": "Không tìm thấy đủ thông tin trong các hoá đơn đã duyệt để trả lời câu hỏi này.",
+      "NO_MATCHING_INVOICES": "Không có hoá đơn đã duyệt nào khớp với câu hỏi.",
+      "ANSWER_REJECTED": "Câu trả lời không qua được bước kiểm tra nguồn nên không được hiển thị. Hãy hỏi lại theo cách khác."
+    },
+    "error": {
+      "network": "Không kết nối được máy chủ. Hãy thử lại.",
+      "stream": "Câu trả lời bị gián đoạn hoặc không đúng định dạng. Hãy hỏi lại.",
+      "http": "Không hỏi được lúc này. Hãy thử lại."
+    },
+    "aggregate": {
+      "metric": {
+        "total": "Tổng tiền thanh toán (đã gồm VAT)",
+        "subtotal": "Tổng tiền trước VAT",
+        "vatAmount": "Tổng tiền VAT",
+        "lineAmount": "Tổng tiền các dòng hàng khớp (trước VAT)",
+        "invoiceCount": "Số hoá đơn"
+      },
+      "perCurrency": "Mỗi loại tiền được cộng riêng, không quy đổi.",
+      "invoices": "Tính trên {count, plural, other {# hoá đơn đã duyệt}}.",
+      "sellers": "Gồm {count, plural, other {# người bán}}: {names}.",
+      "moreSellers": "và {count, plural, other {# người bán khác}}.",
+      "filter": {
+        "applied": "Điều kiện đã áp: {conditions}",
+        "none": "Không có điều kiện lọc: tính trên mọi hoá đơn đã duyệt.",
+        "seller": "người bán có tên chứa “{name}”",
+        "taxCode": "mã số thuế người bán {code}",
+        "between": "ngày lập từ {from} đến {to}",
+        "from": "ngày lập từ {from}",
+        "to": "ngày lập đến {to}",
+        "item": "dòng hàng có mô tả chứa “{item}”",
+        "currency": "loại tiền {currency}"
+      }
     }
   }
 }
