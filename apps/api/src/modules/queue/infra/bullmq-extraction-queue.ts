@@ -23,7 +23,7 @@ const DAY_SECONDS = 24 * 3600;
  * covered by the connection's own command timeout. Without this bound an unreachable Redis would
  * make a request hang instead of failing, so every call to Redis goes through it.
  */
-async function bounded<T>(work: Promise<T>): Promise<T> {
+export async function bounded<T>(work: Promise<T>): Promise<T> {
   let timer: NodeJS.Timeout | undefined;
   const timeout = new Promise<never>((_, reject) => {
     timer = setTimeout(() => reject(new Error('Redis timeout')), COMMAND_TIMEOUT_MS);

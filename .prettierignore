@@ -20,3 +20,5 @@ eval/reports
 eval/baselines
 # Written by infra/prod/keycloak/build-realm.mjs (T4.7)
 infra/prod/keycloak/realm-invoice.json
+# Written by apps/ai/scripts/export_retrieval_corpus.py (T5.3), kept equal by a pytest
+apps/api/test/fixtures/retrieval/corpus.json

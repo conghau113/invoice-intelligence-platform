@@ -23,6 +23,7 @@
     "BODY_TOO_LARGE": "The data sent is too large.",
     "BODY_INVALID": "The data sent is not valid.",
     "DEMO_READ_ONLY": "This is a read-only demo: nothing can be changed here. Run the project locally to try the full pipeline.",
+    "AI_SERVICE_UNAVAILABLE": "The AI service is not responding, so the invoices cannot be searched right now. Please try again later.",
     "UNAUTHENTICATED": "Your session has expired. Please sign in again.",
     "FORBIDDEN": "The request was refused. Reload the page and try again.",
     "NOT_FOUND": "This could not be found.",

@@ -3,6 +3,7 @@ import {
   bigint,
   char,
   check,
+  customType,
   date,
   foreignKey,
   index,
@@ -16,6 +17,7 @@ import {
   timestamp,
   unique,
   uuid,
+  vector,
 } from 'drizzle-orm/pg-core';
 
 // Tables and indexes only. Roles, grants, RLS and policies are hand-written in
@@ -309,5 +311,63 @@ export const idempotencyKeys = pgTable(
     primaryKey({ columns: [t.tenantId, t.key] }),
     check('idempotency_keys_request_hash_check', sql`${t.requestHash} ~ '^[0-9a-f]{64}$'`),
     check('idempotency_keys_status_code_check', sql`${t.statusCode} in (200, 201)`),
+  ],
+);
+
+/** Postgres full-text vector. Drizzle has no built-in type for it; it is only ever generated. */
+const tsvector = customType<{ data: string }>({ dataType: () => 'tsvector' });
+
+/** Length of `chunks.embedding`: gemini-embedding-001 cut to 768 dims (ADR 0011). */
+export const EMBEDDING_DIMENSIONS = 768;
+
+/**
+ * RAG index of approved invoices (T5.2). Derived data: written only by the index job from the row
+ * of `current_invoices`, and rebuilt from it at will, so the app role may also DELETE (reopening
+ * removes a document's chunks in the same transaction, T3.8). `content` is document content: never
+ * log it. `refs` lists `{document_id, field_path, page}` for citations (T5.1).
+ */
+export const chunks = pgTable(
+  'chunks',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    documentId: uuid('document_id').notNull(),
+    documentVersion: integer('document_version').notNull(),
+    invoiceId: uuid('invoice_id').notNull(),
+    kind: text('kind').notNull(),
+    // 0 = header, then line groups in order (T5.1); with the version it makes re-indexing idempotent.
+    ordinal: integer('ordinal').notNull(),
+    content: text('content').notNull(),
+    // 'simple': Postgres has no Vietnamese configuration, and 'simple' (no stemming) serves vi and en.
+    contentTsv: tsvector('content_tsv')
+      .notNull()
+      .generatedAlwaysAs(sql`to_tsvector('simple'::regconfig, content)`),
+    embedding: vector('embedding', { dimensions: EMBEDDING_DIMENSIONS }).notNull(),
+    // Which model made the vector: vectors of two models must never be compared (T5.6).
+    embeddingModel: text('embedding_model').notNull(),
+    refs: jsonb('refs').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    unique('chunks_document_version_ordinal_unique').on(t.documentId, t.documentVersion, t.ordinal),
+    foreignKey({
+      name: 'chunks_invoice_tenant_fk',
+      columns: [t.invoiceId, t.tenantId],
+      foreignColumns: [invoices.id, invoices.tenantId],
+    }),
+    foreignKey({
+      name: 'chunks_document_tenant_fk',
+      columns: [t.documentId, t.tenantId],
+      foreignColumns: [documents.id, documents.tenantId],
+    }),
+    index('chunks_tenant_document_idx').on(t.tenantId, t.documentId),
+    // HNSW over cosine distance (`<=>`): approximate nearest neighbours (ADR 0011).
+    index('chunks_embedding_hnsw').using('hnsw', t.embedding.op('vector_cosine_ops')),
+    index('chunks_content_tsv_idx').using('gin', t.contentTsv),
+    check('chunks_kind_check', sql`${t.kind} in ('header', 'lines')`),
+    check('chunks_ordinal_check', sql`${t.ordinal} >= 0`),
+    check('chunks_document_version_check', sql`${t.documentVersion} >= 1`),
   ],
 );

@@ -4,6 +4,7 @@ import { auditLogs } from '../../../db/schema';
 import { TenantDbService } from '../../../db/tenant-db.service';
 import { DocumentStateMachine } from '../../documents/application/document-state-machine';
 import { DocumentNotFoundError } from '../../documents/domain/document-not-found.error';
+import { ChunkStore } from '../../search/application/chunk-store';
 import { MAX_DOCUMENT_VERSION } from '../domain/approve-limits';
 import { REOPEN_LIMIT_REACHED } from '../domain/review-errors';
 
@@ -29,12 +30,14 @@ export class ReopenService {
   constructor(
     private readonly tenantDb: TenantDbService,
     private readonly machine: DocumentStateMachine,
+    private readonly chunkStore: ChunkStore,
   ) {}
 
   /**
    * Runs in the request's tenant transaction, so the status change and the audit entry commit
    * together. The approved invoice stays: bumping the version is what makes it stop counting as
-   * approved (`current_invoices`), and the form reopens with its values.
+   * approved (`current_invoices`), and the form reopens with its values. Its RAG chunks are
+   * removed in the same transaction (T5.2): from the commit on, Q&A can no longer find them.
    */
   async reopen(input: ReopenInput): Promise<ReopenResult> {
     if (!isUuid(input.documentId)) throw new DocumentNotFoundError();
@@ -52,6 +55,8 @@ export class ReopenService {
       });
     }
 
+    const chunksRemoved = await this.chunkStore.removeForDocument(input.tenantId, input.documentId);
+
     // Numbers only (SECURITY.md section 5): the values themselves stay out of the audit log.
     await this.tenantDb
       .current()
@@ -62,7 +67,7 @@ export class ReopenService {
         action: DOCUMENT_REOPENED,
         entity: 'document',
         entityId: input.documentId,
-        meta: { fromVersion: input.expectedVersion, version },
+        meta: { fromVersion: input.expectedVersion, version, chunksRemoved },
         ip: input.ip,
       });
 

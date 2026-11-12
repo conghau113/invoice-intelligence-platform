@@ -10,6 +10,7 @@ import { QueueAdminModule } from './modules/queue/queue-admin.module';
 import { HealthModule } from './modules/health/health.module';
 import { InsightsModule } from './modules/insights/insights.module';
 import { ReviewModule } from './modules/review/review.module';
+import { RetrievalModule } from './modules/search/retrieval.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ReviewModule } from './modules/review/review.module';
     ReviewModule,
     QueueAdminModule,
     InsightsModule,
+    RetrievalModule,
   ],
   // Registered here (not in main.ts) so tests that boot AppModule exercise the real wiring.
   providers: [{ provide: APP_FILTER, useClass: ProblemDetailsFilter }],

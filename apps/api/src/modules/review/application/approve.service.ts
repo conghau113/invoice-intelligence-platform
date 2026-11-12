@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Inject, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import {
   checkInvoice,
   InvoiceSchema,
@@ -19,6 +19,8 @@ import { TenantDbService } from '../../../db/tenant-db.service';
 import { DocumentStateMachine } from '../../documents/application/document-state-machine';
 import { DocumentNotFoundError } from '../../documents/domain/document-not-found.error';
 import { ExtractionDataInvalidError } from '../../extraction/domain/ai-errors';
+import { queueUnavailable } from '../../queue/application/queue-unavailable';
+import { INDEX_QUEUE_PORT, type IndexQueuePort } from '../../search/application/index-queue.port';
 import { withinApproveLimits } from '../domain/approve-limits';
 import { diffInvoice } from '../domain/diff-invoice';
 import { ExtractionMissingError, INVOICE_INVALID } from '../domain/review-errors';
@@ -60,12 +62,18 @@ export class ApproveService {
   constructor(
     private readonly tenantDb: TenantDbService,
     private readonly machine: DocumentStateMachine,
+    @Inject(INDEX_QUEUE_PORT) private readonly indexQueue: IndexQueuePort,
   ) {}
 
   /**
    * Runs in the request's tenant transaction: status change, invoice, lines, corrections and audit
    * commit or roll back together. The state machine goes first because it takes the row lock: a
    * second approval waits there, then fails its checks, before anything else is read or written.
+   *
+   * The RAG index job (T5.2) is enqueued last, still inside the transaction: if Redis is down the
+   * approval rolls back with 503 (like an upload), so an approved invoice never misses its job. The
+   * job may start before the commit; it waits on the document row lock (index.processor.ts), and
+   * finds nothing to do if this transaction rolls back.
    */
   async approve(input: ApproveInput): Promise<ApproveResult> {
     if (!isUuid(input.documentId)) throw new DocumentNotFoundError();
@@ -145,6 +153,17 @@ export class ApproveService {
       meta: { version, corrections: corrections.length },
       ip: input.ip,
     });
+
+    try {
+      await this.indexQueue.enqueue({
+        tenantId: input.tenantId,
+        documentId: input.documentId,
+        documentVersion: version,
+        invoiceId: created.id,
+      });
+    } catch {
+      throw queueUnavailable();
+    }
 
     return {
       id: input.documentId,

@@ -37,3 +37,6 @@ eval/runs/
 
 # Demo data snapshot (infra/prod/scripts/demo-snapshot.mjs): copied to the server, not committed
 infra/prod/snapshot/
+
+# Personal mock-interview draft (2026-11-11): kept locally, not committed
+docs/interview/mock-interview-draft.md

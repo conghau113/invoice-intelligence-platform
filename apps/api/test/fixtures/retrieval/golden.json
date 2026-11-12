@@ -1,0 +1,65 @@
+{
+  "description": "T5.3 golden set: 10 questions over corpus.json (the 100 core invoices of eval/datasets/v1). A question hits when a chunk of the expected invoice is in the top 5. Written before anything was measured; `kind` says what the question tests.",
+  "questions": [
+    {
+      "id": "g01",
+      "kind": "invoice number, vi",
+      "question": "Hoá đơn C26TEA-6411465 gồm những mặt hàng nào?",
+      "expected": "invoice-0017"
+    },
+    {
+      "id": "g02",
+      "kind": "item code, en",
+      "question": "Which invoice includes the swivel office chair P7036?",
+      "expected": "invoice-0089"
+    },
+    {
+      "id": "g03",
+      "kind": "item code, English question for a Vietnamese line",
+      "question": "Who sold us the network cable N3806?",
+      "expected": "invoice-0042"
+    },
+    {
+      "id": "g04",
+      "kind": "buyer name, en",
+      "question": "What did Sandra Marks buy?",
+      "expected": "invoice-0003"
+    },
+    {
+      "id": "g05",
+      "kind": "buyer name, Vietnamese question for an English invoice",
+      "question": "Stephanie Wood đã mua những gì?",
+      "expected": "invoice-0012"
+    },
+    {
+      "id": "g06",
+      "kind": "seller shared by 10 invoices + date written another way, en",
+      "question": "Show the Dennis and Sons invoice issued on March 31, 2026",
+      "expected": "invoice-0072"
+    },
+    {
+      "id": "g07",
+      "kind": "no diacritics + date, vi",
+      "question": "hoa don ngay 2026-01-22 cua Nguyen va Dang",
+      "expected": "invoice-0071"
+    },
+    {
+      "id": "g08",
+      "kind": "no diacritics + item code, vi",
+      "question": "hoa don thep cuon can nong N6085",
+      "expected": "invoice-0058"
+    },
+    {
+      "id": "g09",
+      "kind": "total amount, en",
+      "question": "Which invoice has a total of 3505.09 USD?",
+      "expected": "invoice-0024"
+    },
+    {
+      "id": "g10",
+      "kind": "paraphrase, no code: seller + buyer + item + date written another way, vi",
+      "question": "Mai Trần bán thiết bị chuyển mạch cho doanh nghiệp tư nhân Nguyễn và Phạm ngày 1/6/2026",
+      "expected": "invoice-0017"
+    }
+  ]
+}

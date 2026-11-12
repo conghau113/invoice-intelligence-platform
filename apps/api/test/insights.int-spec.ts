@@ -35,6 +35,8 @@ import { JwtAuthGuard } from '../src/modules/auth/http/jwt-auth.guard';
 import { PermissionsGuard } from '../src/modules/auth/http/permissions.guard';
 import { InsightsModule } from '../src/modules/insights/insights.module';
 import { ReviewModule } from '../src/modules/review/review.module';
+import { INDEX_QUEUE_PORT } from '../src/modules/search/application/index-queue.port';
+import { FakeIndexQueue } from '../src/modules/search/testing/fake-index-queue';
 
 const ACME = '00000000-0000-4000-8000-0000000000a1';
 const GLOBEX = '00000000-0000-4000-8000-0000000000a2';
@@ -185,7 +187,11 @@ describe('GET /insights/extraction (HTTP -> Postgres)', () => {
         { provide: APP_GUARD, useClass: PermissionsGuard },
         { provide: APP_FILTER, useClass: ProblemDetailsFilter },
       ],
-    }).compile();
+    })
+      // Approval enqueues a RAG index job (T5.2); no Redis here.
+      .overrideProvider(INDEX_QUEUE_PORT)
+      .useValue(new FakeIndexQueue())
+      .compile();
     app = mod.createNestApplication<NestExpressApplication>();
     applyJsonBodyLimit(app);
     await app.init();

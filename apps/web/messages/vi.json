@@ -23,6 +23,7 @@
     "BODY_TOO_LARGE": "Dữ liệu gửi lên quá lớn.",
     "BODY_INVALID": "Dữ liệu gửi lên không hợp lệ.",
     "DEMO_READ_ONLY": "Đây là bản demo chỉ xem nên không thay đổi được gì. Hãy chạy dự án trên máy của bạn để dùng đầy đủ.",
+    "AI_SERVICE_UNAVAILABLE": "Dịch vụ AI tạm thời không phản hồi nên chưa tìm được trong hoá đơn. Vui lòng thử lại sau.",
     "UNAUTHENTICATED": "Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.",
     "FORBIDDEN": "Yêu cầu bị từ chối. Hãy tải lại trang rồi thử lại.",
     "NOT_FOUND": "Không tìm thấy dữ liệu này.",
