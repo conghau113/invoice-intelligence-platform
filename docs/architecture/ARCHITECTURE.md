@@ -134,9 +134,10 @@ M2 builds this whole flow for **XML only** (vertical slice). M3 adds the LLM pat
 
 ### 6.2 Question → cited answer
 
-1. API classifies the question: **lookup** (RAG) or **aggregate** (numbers).
-2. Lookup: hybrid retrieval (pgvector HNSW + Postgres full-text, fused with RRF) inside a transaction with `app.tenant_id` set (RLS) → AI service writes an answer that must cite retrieved chunk ids → API verifies every citation exists in the retrieved set.
-3. Aggregate: LLM produces a **structured filter** (validated against a schema: supplier, date range, metric) → API runs a parameterized SQL query → LLM phrases the result and cites the invoices used. The LLM never writes SQL.
+1. API asks the AI service to classify the question (the model sees the question only): **lookup** (RAG), **aggregate** (numbers) or **out of scope** (refused).
+2. Lookup: hybrid retrieval (pgvector HNSW + Postgres full-text, fused with RRF) inside a transaction with `app.tenant_id` set (RLS) → AI service writes an answer that cites the numbered sources it was given → API verifies every citation is a chunk of this retrieval, or refuses.
+3. Aggregate: LLM produces a **structured filter** (validated against a schema: supplier, date range, metric) → API runs a parameterized SQL query over the `current_*` views → the number goes to the web as data with the invoices used as citations, formatted by the web (T5.4: no model rewords it). The LLM never writes SQL.
+   The whole outcome is decided before the SSE response starts (verify first, then stream).
 4. In the public demo (`DEMO_READ_ONLY=true`) no LLM is called: only precomputed answers for listed sample questions are served (ADR 0018).
 
 ## 7. Deployment

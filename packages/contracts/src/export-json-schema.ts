@@ -2,9 +2,10 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { z } from 'zod';
 import { InvoiceSchema } from './invoice';
+import { QaModelOutputsSchema } from './qa';
 
 // Every schema exported to Python is listed here; output is deterministic (no timestamps).
-const schemas = { invoice: InvoiceSchema };
+const schemas = { invoice: InvoiceSchema, qa: QaModelOutputsSchema };
 
 const outDir = join(__dirname);
 mkdirSync(outDir, { recursive: true });
