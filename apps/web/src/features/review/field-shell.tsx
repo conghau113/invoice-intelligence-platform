@@ -43,8 +43,9 @@ export function FieldShell({
   children: (control: ControlProps) => ReactNode;
 }>) {
   const id = useId();
-  const { weak, readOnly, reasonText, onFocusPath } = useReview();
+  const { weak, readOnly, reasonText, onFocusPath, cited } = useReview();
   const reasons = weak.get(path) ?? [];
+  const isCited = cited?.has(path) ?? false;
   const mark = fieldMark(reasons);
   const visibleReason = mark === 'warning' && !hideLabel;
   const described = [
@@ -62,7 +63,16 @@ export function FieldShell({
   });
 
   return (
-    <div className={cn('flex min-w-0 flex-col gap-1.5', className)}>
+    <div
+      className={cn(
+        'flex min-w-0 flex-col gap-1.5',
+        // A frame around label and value: the answer took this value from here.
+        isCited && 'rounded-lg ring-2 ring-info ring-offset-4 ring-offset-card',
+        className,
+      )}
+      data-field-path={path}
+      data-cited={isCited || undefined}
+    >
       <Label htmlFor={id} className={hideLabel ? 'sr-only' : undefined}>
         {label}
       </Label>

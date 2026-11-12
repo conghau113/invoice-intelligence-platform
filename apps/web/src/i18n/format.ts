@@ -9,7 +9,7 @@ export function formatNumber(value: number, locale: string): string {
 }
 
 /** `minor` = smallest unit: VND has 0 decimals (1234567 = 1.234.567 ₫), USD has 2 (123450 = $1,234.50). */
-export function formatMoney(minor: number, currency: 'VND' | 'USD', locale: string): string {
+export function formatMoney(minor: number, currency: string, locale: string): string {
   if (!Number.isSafeInteger(minor))
     throw new RangeError('money must be a safe integer of minor units');
   const nf = new Intl.NumberFormat(tag(locale), { style: 'currency', currency });

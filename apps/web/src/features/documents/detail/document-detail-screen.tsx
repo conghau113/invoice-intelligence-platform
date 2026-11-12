@@ -17,10 +17,11 @@ import { useDocumentDetail } from './use-document-detail';
 export function DocumentDetailScreen({
   id,
   canApprove,
-}: Readonly<{ id: string; canApprove: boolean }>) {
+  citedFields,
+}: Readonly<{ id: string; canApprove: boolean; citedFields?: readonly string[] }>) {
   return (
     <QueryProvider>
-      <Detail id={id} canApprove={canApprove} />
+      <Detail id={id} canApprove={canApprove} citedFields={citedFields} />
     </QueryProvider>
   );
 }
@@ -61,7 +62,11 @@ function ErrorAction({ kind, retry }: Readonly<{ kind: DetailError['kind']; retr
   );
 }
 
-function Detail({ id, canApprove }: Readonly<{ id: string; canApprove: boolean }>) {
+function Detail({
+  id,
+  canApprove,
+  citedFields,
+}: Readonly<{ id: string; canApprove: boolean; citedFields?: readonly string[] }>) {
   const t = useTranslations('DocumentDetail');
   const ts = useTranslations('Status');
   const tt = useTranslations('Documents');
@@ -90,6 +95,7 @@ function Detail({ id, canApprove }: Readonly<{ id: string; canApprove: boolean }
           extraction={data.extraction}
           canApprove={canApprove}
           onChanged={() => refetch()}
+          citedFields={citedFields}
         />
       </>
     );

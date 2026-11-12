@@ -54,6 +54,7 @@ export function ReviewScreen({
   extraction,
   canApprove,
   onChanged,
+  citedFields,
 }: Readonly<{
   document: Pick<
     DocumentDetail,
@@ -64,6 +65,8 @@ export function ReviewScreen({
   canApprove: boolean;
   /** Ask the page to load the document again; settles when it has. */
   onChanged: () => unknown;
+  /** Fields a Q&A answer cited, when the page was opened from a citation (T5.5). */
+  citedFields?: readonly string[];
 }>) {
   const t = useTranslations('Review');
   const tApi = useTranslations('ApiError');
@@ -142,6 +145,9 @@ export function ReviewScreen({
   return (
     <TooltipProvider delayDuration={150}>
       <div className="flex min-h-0 flex-1 flex-col gap-3" data-testid="review-screen">
+        {citedFields !== undefined && citedFields.length > 0 && (
+          <InfoBanner>{t('citedNote')}</InfoBanner>
+        )}
         {shown.reopenedFromVersion !== null && (
           <InfoBanner>{t('reopenedFrom', { version: shown.reopenedFromVersion })}</InfoBanner>
         )}
@@ -218,6 +224,7 @@ export function ReviewScreen({
               approved={shown.approvedAt !== null}
               readOnlyText={shown.approvedAt === null ? undefined : t('approvedReadOnly')}
               onEvidence={setEvidence}
+              cited={citedFields}
               onValid={(invoice) => void approve(invoice)}
               submitting={submitting}
               submitError={

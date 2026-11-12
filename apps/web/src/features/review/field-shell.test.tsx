@@ -6,7 +6,7 @@ import { FieldShell } from './field-shell';
 import { ReviewProvider } from './review-context';
 import type { WeakReason } from './weak-fields';
 
-const render = (reasons: WeakReason[], hideLabel = false) =>
+const render = (reasons: WeakReason[], hideLabel = false, cited: string[] = []) =>
   renderToStaticMarkup(
     <TooltipProvider>
       <ReviewProvider
@@ -17,6 +17,7 @@ const render = (reasons: WeakReason[], hideLabel = false) =>
           reasonText: (r) => `reason:${r.kind}`,
           onFocusPath: () => undefined,
           errorText: () => 'error',
+          cited: new Set(cited),
         }}
       >
         <FieldShell path="total" label="Total" hideLabel={hideLabel}>
@@ -27,6 +28,16 @@ const render = (reasons: WeakReason[], hideLabel = false) =>
   );
 
 describe('FieldShell marks', () => {
+  it('a field a Q&A answer cited is framed and findable by its path; others are not (T5.5)', () => {
+    const html = render([], false, ['total']);
+    expect(html).toContain('data-field-path="total"');
+    expect(html).toContain('data-cited="true"');
+    expect(html).toContain('ring-info');
+    const other = render([], false, ['seller.name']);
+    expect(other).not.toContain('data-cited');
+    expect(other).not.toContain('ring-info');
+  });
+
   it('no confidence: a dashed frame and a description, nothing that looks like a warning', () => {
     const html = render([{ kind: 'noMeta' }]);
     expect(html).toContain('data-no-meta="true"');

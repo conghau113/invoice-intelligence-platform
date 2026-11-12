@@ -14,6 +14,8 @@ export interface ReviewContextValue {
   onFocusPath: (path: string) => void;
   /** Translated message for a schema error (zod issue code). */
   errorText: (type: string | undefined) => string;
+  /** Fields a Q&A answer cited (`?fields=` from a citation chip, T5.5): framed as the source. */
+  cited?: ReadonlySet<string>;
 }
 
 const Ctx = createContext<ReviewContextValue | null>(null);
