@@ -24,6 +24,8 @@
     "BODY_INVALID": "The data sent is not valid.",
     "DEMO_READ_ONLY": "This is a read-only demo: nothing can be changed here. Run the project locally to try the full pipeline.",
     "AI_SERVICE_UNAVAILABLE": "The AI service is not responding, so the invoices cannot be searched right now. Please try again later.",
+    "RATE_LIMITED": "You are sending requests too quickly. Please wait a moment and try again.",
+    "RATE_LIMIT_UNAVAILABLE": "This action is temporarily unavailable. Please try again in a few minutes.",
     "UNAUTHENTICATED": "Your session has expired. Please sign in again.",
     "FORBIDDEN": "The request was refused. Reload the page and try again.",
     "NOT_FOUND": "This could not be found.",
@@ -233,6 +235,10 @@
         "title": "Cannot reach the server",
         "hint": "The API service is not responding. Try again in a few minutes."
       },
+      "rateLimited": {
+        "title": "Too many requests",
+        "hint": "You are refreshing too quickly. Wait a moment, then try again."
+      },
       "error": {
         "title": "The list could not be loaded",
         "hint": "Something went wrong while loading the list. Try again."
@@ -336,6 +342,10 @@
       "unreachable": {
         "title": "Cannot reach the server",
         "hint": "The API service is not responding. Try again in a few minutes."
+      },
+      "rateLimited": {
+        "title": "Too many requests",
+        "hint": "You are opening documents too quickly. Wait a moment, then try again."
       },
       "error": {
         "title": "The document could not be loaded",

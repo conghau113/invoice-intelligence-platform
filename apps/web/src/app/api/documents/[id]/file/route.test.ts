@@ -12,6 +12,7 @@ vi.mock('next/headers', () => ({
 }));
 
 import { GET } from './route';
+import { expectRateLimitedPassedOn, rateLimitedUpstream } from '@/lib/testing/rate-limited';
 
 const ID = '3f1c9a52-7d0e-4b7a-9c1d-2a6f0b8e4d11';
 const fetchMock = vi.fn();
@@ -77,5 +78,12 @@ describe('GET /api/documents/[id]/file', () => {
     expect(JSON.stringify(await broken.json())).not.toContain('secret');
     fetchMock.mockRejectedValueOnce(new Error('ECONNREFUSED'));
     expect((await get(ID)).status).toBe(502);
+  });
+});
+
+describe('GET /api/documents/[id]/file: rate limited by the API (T6.1)', () => {
+  it('passes 429 on with our code and the Retry-After seconds, never the upstream body', async () => {
+    fetchMock.mockResolvedValueOnce(rateLimitedUpstream());
+    await expectRateLimitedPassedOn(await get(ID));
   });
 });

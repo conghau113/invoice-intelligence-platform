@@ -3,7 +3,7 @@ import { authEnv } from '@/auth/env';
 import { isSameOrigin } from '@/auth/logout';
 import { getAccessToken } from '@/auth/session';
 import { apiBaseUrl, currentTenant } from '@/lib/api';
-import { bffError } from '@/lib/bff-error';
+import { bffError, rateLimited } from '@/lib/bff-error';
 
 // Same limit as the API (apps/api documents.module.ts); only used for the early 413 below.
 const MAX_BODY_BYTES = 11 * 1024 * 1024;
@@ -61,6 +61,9 @@ export async function POST(req: NextRequest) {
   } catch {
     return bffError('UPSTREAM_UNAVAILABLE', 502);
   }
+
+  const limited = rateLimited(upstream);
+  if (limited !== null) return limited;
 
   const out = new Headers({
     'content-type': upstream.headers.get('content-type') ?? 'application/json',

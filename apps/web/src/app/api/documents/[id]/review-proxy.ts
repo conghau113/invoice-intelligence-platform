@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { authEnv } from '@/auth/env';
 import { isSameOrigin } from '@/auth/logout';
 import { upstreamHeaders } from '@/lib/api';
-import { bffError } from '@/lib/bff-error';
+import { bffError, rateLimited } from '@/lib/bff-error';
 import { isUuid } from '@/lib/uuid';
 
 /** Answers the review screen explains to the person; anything else is an API fault. */
@@ -35,6 +35,8 @@ export async function reviewHeaders(req: NextRequest): Promise<Record<string, st
 /** Errors pass on the status and our own code, never the upstream body. */
 export async function answerFrom(upstream: Response): Promise<NextResponse> {
   if (upstream.ok) return NextResponse.json(await upstream.json(), { status: 200 });
+  const limited = rateLimited(upstream);
+  if (limited !== null) return limited;
   const body = (await upstream.json().catch(() => ({}))) as { code?: unknown };
   const code = typeof body.code === 'string' ? body.code : undefined;
   if (PASSED_ON.has(upstream.status)) {

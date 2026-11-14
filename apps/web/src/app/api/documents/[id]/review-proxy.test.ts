@@ -16,6 +16,7 @@ vi.mock('@/auth/env', () => ({
 
 import { POST as approve } from './approve/route';
 import { POST as reopen } from './reopen/route';
+import { expectRateLimitedPassedOn, rateLimitedUpstream } from '@/lib/testing/rate-limited';
 
 const ID = '3f1c9a52-7d0e-4b7a-9c1d-2a6f0b8e4d11';
 const ORIGIN = 'http://localhost:3000';
@@ -152,5 +153,19 @@ describe('what only reopen does: it has no body', () => {
     await postReopen(ID);
     const [, init] = fetchMock.mock.calls[0] as [string, { body?: unknown }];
     expect(init.body).toBeUndefined();
+  });
+});
+
+describe('approve: rate limited by the API (T6.1)', () => {
+  it('passes 429 on with our code and the Retry-After seconds, never the upstream body', async () => {
+    fetchMock.mockResolvedValueOnce(rateLimitedUpstream());
+    await expectRateLimitedPassedOn(await postApprove(ID));
+  });
+});
+
+describe('reopen: rate limited by the API (T6.1)', () => {
+  it('passes 429 on with our code and the Retry-After seconds, never the upstream body', async () => {
+    fetchMock.mockResolvedValueOnce(rateLimitedUpstream());
+    await expectRateLimitedPassedOn(await postReopen(ID));
   });
 });

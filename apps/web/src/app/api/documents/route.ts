@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { parseListParams, toApiQuery } from '@/features/documents/list-params';
 import { apiBaseUrl, upstreamHeaders } from '@/lib/api';
-import { bffError } from '@/lib/bff-error';
+import { bffError, rateLimited } from '@/lib/bff-error';
 
 /** The browser asks with `limit` (the API's word); the parser reads the URL's `pageSize`. */
 function readApiParams(search: URLSearchParams): URLSearchParams {
@@ -31,6 +31,8 @@ export async function GET(req: NextRequest) {
     return bffError('API_UNREACHABLE', 502);
   }
   if (upstream.ok) return NextResponse.json(await upstream.json(), { status: 200 });
+  const limited = rateLimited(upstream);
+  if (limited !== null) return limited;
 
   // Pass on only the status class and our own error code, never the upstream body.
   const body = (await upstream.json().catch(() => ({}))) as { code?: unknown };

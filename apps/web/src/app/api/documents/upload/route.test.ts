@@ -12,6 +12,7 @@ vi.mock('next/headers', () => ({
 }));
 
 import { POST } from './route';
+import { expectRateLimitedPassedOn, rateLimitedUpstream } from '@/lib/testing/rate-limited';
 
 const fetchMock = vi.fn();
 beforeEach(() => {
@@ -132,5 +133,12 @@ describe('POST /api/documents/upload', () => {
   it('answers 502 when the API is unreachable', async () => {
     fetchMock.mockRejectedValue(new Error('ECONNREFUSED'));
     expect((await upload()).status).toBe(502);
+  });
+});
+
+describe('POST /api/documents/upload: rate limited by the API (T6.1)', () => {
+  it('passes 429 on with our code and the Retry-After seconds, never the upstream body', async () => {
+    fetchMock.mockResolvedValueOnce(rateLimitedUpstream());
+    await expectRateLimitedPassedOn(await upload());
   });
 });

@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { apiBaseUrl, upstreamHeaders } from '@/lib/api';
-import { bffError } from '@/lib/bff-error';
+import { bffError, rateLimited } from '@/lib/bff-error';
 import { isUuid } from '@/lib/uuid';
 
 // Types the API can answer with (document-file.service.ts); anything else is sent as opaque bytes.
@@ -44,6 +44,9 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
       },
     });
   }
+
+  const limited = rateLimited(upstream);
+  if (limited !== null) return limited;
 
   // Pass on only the status class and our own error code, never the upstream body.
   const body = (await upstream.json().catch(() => ({}))) as { code?: unknown };

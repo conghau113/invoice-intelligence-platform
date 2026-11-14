@@ -15,6 +15,7 @@ vi.mock('@/auth/env', () => ({
 }));
 
 import { POST } from './route';
+import { expectRateLimitedPassedOn, rateLimitedUpstream } from '@/lib/testing/rate-limited';
 
 const ORIGIN = 'http://localhost:3000';
 const SSE = 'event: token\ndata: {"text":"Hi [1]"}\n\nevent: done\ndata: {}\n\n';
@@ -191,5 +192,12 @@ describe('POST /api/qa/ask', () => {
     const res = await post();
     expect(res.status).toBe(502);
     expect(await res.json()).toEqual({ code: 'API_UNREACHABLE' });
+  });
+});
+
+describe('POST /api/qa/ask: rate limited by the API (T6.1)', () => {
+  it('passes 429 on with our code and the Retry-After seconds, never the upstream body', async () => {
+    fetchMock.mockResolvedValueOnce(rateLimitedUpstream());
+    await expectRateLimitedPassedOn(await post());
   });
 });

@@ -20,6 +20,7 @@ import { auditIp } from '../../../config/trusted-proxies';
 import { SkipTenantTransaction } from '../../../db/skip-tenant-transaction.decorator';
 import type { AuthenticatedRequest } from '../../auth/http/authenticated-request';
 import { RequirePermission } from '../../auth/http/require-permission.decorator';
+import { RateLimit } from '../../rate-limit/http/rate-limit.decorator';
 import { DocumentsListService, type DocumentPage } from '../application/documents-list.service';
 import { DocumentFileService } from '../application/document-file.service';
 import { DocumentsService, type DocumentView } from '../application/documents.service';
@@ -76,6 +77,7 @@ export class DocumentsController {
    * DocumentsService opens a short one after the file is on disk.
    */
   @RequirePermission('document:create')
+  @RateLimit('upload')
   @SkipTenantTransaction()
   @UseGuards(IdempotencyKeyGuard)
   @Post('upload')

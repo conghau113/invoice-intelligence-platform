@@ -12,6 +12,7 @@ vi.mock('next/headers', () => ({
 }));
 
 import { GET } from './route';
+import { expectRateLimitedPassedOn, rateLimitedUpstream } from '@/lib/testing/rate-limited';
 
 const fetchMock = vi.fn();
 beforeEach(() => {
@@ -101,5 +102,12 @@ describe('GET /api/documents', () => {
     const err = await get();
     expect(err.status).toBe(502);
     expect(await err.json()).toEqual({ code: 'API_ERROR' });
+  });
+});
+
+describe('GET /api/documents: rate limited by the API (T6.1)', () => {
+  it('passes 429 on with our code and the Retry-After seconds, never the upstream body', async () => {
+    fetchMock.mockResolvedValueOnce(rateLimitedUpstream());
+    await expectRateLimitedPassedOn(await get());
   });
 });

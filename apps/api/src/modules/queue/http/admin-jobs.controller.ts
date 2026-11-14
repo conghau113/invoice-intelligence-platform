@@ -13,6 +13,7 @@ import { isUuid } from '../../../common/uuid';
 import { SkipTenantTransaction } from '../../../db/skip-tenant-transaction.decorator';
 import type { AuthenticatedRequest } from '../../auth/http/authenticated-request';
 import { RequirePermission } from '../../auth/http/require-permission.decorator';
+import { RateLimit } from '../../rate-limit/http/rate-limit.decorator';
 import type { AuthUser } from '../../auth/domain/auth-user';
 import { AdminJobsService } from '../application/admin-jobs.service';
 
@@ -62,6 +63,7 @@ export class AdminJobsController {
   }
 
   @RequirePermission('document:manage')
+  @RateLimit('write')
   @SkipTenantTransaction()
   @Post(':id/retry')
   @HttpCode(202)
