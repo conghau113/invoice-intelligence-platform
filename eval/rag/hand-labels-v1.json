@@ -1,0 +1,160 @@
+{
+  "description": "T5.6 hand labels (eval/rag/README.md). Keys and labels only, no content.",
+  "labelledBy": "cong-hau",
+  "labelledOn": "2026-11-14",
+  "samples": [
+    {
+      "key": "r1/q01",
+      "sentences": [
+        {
+          "i": 0,
+          "verdict": "supported",
+          "cites": {
+            "2": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "r1/q02",
+      "sentences": [
+        {
+          "i": 0,
+          "verdict": "supported",
+          "cites": {
+            "1": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "r1/q05",
+      "sentences": [
+        {
+          "i": 0,
+          "verdict": "supported",
+          "cites": {
+            "2": true
+          }
+        },
+        {
+          "i": 1,
+          "verdict": "supported",
+          "cites": {
+            "3": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "r1/q06",
+      "sentences": [
+        {
+          "i": 0,
+          "verdict": "supported",
+          "cites": {
+            "1": true,
+            "2": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "r1/q07",
+      "sentences": [
+        {
+          "i": 0,
+          "verdict": "supported",
+          "cites": {
+            "1": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "r1/q08",
+      "sentences": [
+        {
+          "i": 0,
+          "verdict": "supported",
+          "cites": {
+            "1": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "r1/q10",
+      "sentences": [
+        {
+          "i": 0,
+          "verdict": "supported",
+          "cites": {
+            "2": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "r1/q12",
+      "sentences": [
+        {
+          "i": 0,
+          "verdict": "supported",
+          "cites": {
+            "1": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "r1/q14",
+      "sentences": [
+        {
+          "i": 0,
+          "verdict": "no_claim",
+          "cites": {
+            "1": false
+          }
+        }
+      ]
+    },
+    {
+      "key": "r1/q16",
+      "sentences": [
+        {
+          "i": 0,
+          "verdict": "supported",
+          "cites": {
+            "1": true,
+            "2": true
+          }
+        }
+      ]
+    }
+  ],
+  "revisions": [
+    {
+      "key": "r1/q05",
+      "i": 0,
+      "blind": {
+        "verdict": "unsupported",
+        "cites": {
+          "2": true
+        }
+      },
+      "why": "the first label broke the rule (a true [n] means supported); changed after the first report listed the disagreements"
+    },
+    {
+      "key": "r1/q14",
+      "i": 0,
+      "blind": {
+        "verdict": "supported",
+        "cites": {
+          "1": true
+        }
+      },
+      "why": "changed after the first report showed the judge's verdict"
+    }
+  ]
+}

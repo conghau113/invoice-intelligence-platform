@@ -42,6 +42,11 @@
     "eval:compare": "cd apps/ai && PYTHONPATH=.:../../eval uv run --frozen python -m runner compare",
     "eval:gate": "cd apps/ai && PYTHONPATH=.:../../eval uv run --frozen python -m runner gate",
     "eval:baseline": "cd apps/ai && PYTHONPATH=.:../../eval uv run --frozen python -m runner baseline",
+    "eval:rag:run": "pnpm --filter api exec jest --config jest.eval.config.js --runInBand",
+    "eval:rag:sheet": "cd apps/ai && PYTHONPATH=.:../../eval uv run --frozen python -m rag sheet",
+    "eval:rag:judge": "cd apps/ai && PYTHONPATH=.:../../eval uv run --frozen python -m rag judge",
+    "eval:rag:tokens": "cd apps/ai && PYTHONPATH=.:../../eval uv run --frozen python -m rag tokens",
+    "eval:rag:report": "cd apps/ai && PYTHONPATH=.:../../eval uv run --frozen python -m rag report",
     "gen:invoices:verify": "pnpm --filter contracts build && uv run --frozen --project apps/ai --group invoice-gen python tools/invoice-gen/verify.py && cd tools/invoice-gen/out && node ../check-rules.mjs",
     "test:invoice-gen": "pnpm --filter contracts build && uv run --frozen --project apps/ai --group invoice-gen pytest apps/ai/tests/test_invoice_gen_render.py -o addopts= -m browser --rootdir apps/ai -c apps/ai/pyproject.toml",
     "check:full": "pnpm check:fast && turbo run build && pnpm test:int && pnpm check && pnpm test:scripts && pnpm test:invoice-gen && pnpm check:secrets"
