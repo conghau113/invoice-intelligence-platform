@@ -69,3 +69,21 @@ describe('detailCodeFor', () => {
     expect(detailCodeFor('server', { status: 500 })).toBeUndefined();
   });
 });
+
+describe('a rate-limited upload (T6.1)', () => {
+  it('says what the server said and can be tried again', () => {
+    const failure = { status: 429, code: 'RATE_LIMITED' };
+    const key = errorKeyFor(failure);
+    expect(key).toBe('unknown');
+    expect(detailCodeFor(key, failure)).toBe('RATE_LIMITED');
+    expect(isRetryable(key)).toBe(true);
+  });
+
+  it('a fail-closed limiter (Redis down) is a server error that can be tried again', () => {
+    const failure = { status: 503, code: 'RATE_LIMIT_UNAVAILABLE' };
+    const key = errorKeyFor(failure);
+    expect(key).toBe('server');
+    expect(detailCodeFor(key, failure)).toBe('RATE_LIMIT_UNAVAILABLE');
+    expect(isRetryable(key)).toBe(true);
+  });
+});

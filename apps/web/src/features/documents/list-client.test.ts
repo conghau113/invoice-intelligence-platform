@@ -50,6 +50,7 @@ describe('fetchDocuments', () => {
   it.each([
     [401, {}, 'session'],
     [403, { code: 'FORBIDDEN_PERMISSION' }, 'forbidden'],
+    [429, { code: 'RATE_LIMITED' }, 'rateLimited'],
     [502, { code: 'API_UNREACHABLE' }, 'unreachable'],
     [502, { code: 'API_ERROR' }, 'error'],
     [500, {}, 'error'],

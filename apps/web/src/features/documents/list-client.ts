@@ -24,7 +24,7 @@ export type DocumentPage = z.infer<typeof pageSchema>;
 export type DocumentRow = DocumentPage['items'][number];
 
 /** Why a load failed, in the terms the screen explains to the user. */
-export type ListErrorKind = 'session' | 'forbidden' | 'unreachable' | 'error';
+export type ListErrorKind = 'session' | 'forbidden' | 'unreachable' | 'rateLimited' | 'error';
 
 export class ListError extends Error {
   constructor(readonly kind: ListErrorKind) {
@@ -36,6 +36,7 @@ export class ListError extends Error {
 const kindOf = (status: number, code: unknown): ListErrorKind => {
   if (status === 401) return 'session';
   if (status === 403) return 'forbidden';
+  if (status === 429) return 'rateLimited';
   if (status === 502 && code === ('API_UNREACHABLE' satisfies BffErrorCode)) return 'unreachable';
   return 'error';
 };

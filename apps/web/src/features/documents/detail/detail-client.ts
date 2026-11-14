@@ -38,7 +38,8 @@ const detailSchema = z.object({
 export type DocumentDetail = z.infer<typeof detailSchema>;
 
 /** Why a load failed, in the terms the screen explains to the user. */
-export type DetailErrorKind = 'session' | 'forbidden' | 'notFound' | 'unreachable' | 'error';
+export type DetailErrorKind =
+  'session' | 'forbidden' | 'notFound' | 'unreachable' | 'rateLimited' | 'error';
 
 export class DetailError extends Error {
   constructor(readonly kind: DetailErrorKind) {
@@ -50,6 +51,7 @@ export class DetailError extends Error {
 const kindOf = (status: number, code: unknown): DetailErrorKind => {
   if (status === 401) return 'session';
   if (status === 403) return 'forbidden';
+  if (status === 429) return 'rateLimited';
   if (status === 404) return 'notFound';
   if (status === 502 && code === ('API_UNREACHABLE' satisfies BffErrorCode)) return 'unreachable';
   return 'error';

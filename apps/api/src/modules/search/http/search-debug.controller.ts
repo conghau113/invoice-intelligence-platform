@@ -16,6 +16,7 @@ import type { Env } from '../../../config/env.schema';
 import { SkipTenantTransaction } from '../../../db/skip-tenant-transaction.decorator';
 import type { AuthenticatedRequest } from '../../auth/http/authenticated-request';
 import { RequirePermission } from '../../auth/http/require-permission.decorator';
+import { RateLimit } from '../../rate-limit/http/rate-limit.decorator';
 import {
   MAX_QUESTION_CHARS,
   MAX_TOP_K,
@@ -47,6 +48,8 @@ export class SearchDebugController {
   }
 
   @RequirePermission('qa:ask')
+  // Each call embeds the question on the same LLM quota as Q&A.
+  @RateLimit('qa')
   // Retrieval opens its own short transactions and waits on the AI service in between.
   @SkipTenantTransaction()
   @HttpCode(HttpStatus.OK)

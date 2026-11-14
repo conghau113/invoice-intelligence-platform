@@ -179,7 +179,7 @@ Only `DocumentStateMachine` may change `documents.status`. Every transition writ
 | LLM provider returns 429 | Respect `Retry-After`, exponential backoff with jitter, queue limiter at provider RPM | T6.2 |
 | LLM returns invalid JSON | Retry up to 2 times with the validation error; then `failed` with code | T3.1 |
 | AI service down | Job retried with backoff; circuit breaker pauses queue; no data loss | T2.9, T6.7 |
-| Redis down | API returns 503 for upload/queue endpoints; reads from Postgres keep working; jobs resume after recovery | T6.7 |
+| Redis down | API returns 503 for upload/queue endpoints; reads from Postgres keep working; jobs resume after recovery. The rate limiter fails open for reads and writes (approve, reopen, retry) and closed for upload and Q&A (503 `RATE_LIMIT_UNAVAILABLE`), which spend the shared LLM quota (ADR 0012, T6.1) | T6.1, T6.7 |
 | Worker killed mid-job | Job becomes stalled and is retried; processing is idempotent by (document, version) | T6.7 |
 | Duplicate upload | Same (tenant, sha256) returns the existing document | T2.3 |
 | Two reviewers approve at once | Optimistic concurrency → second gets 409 | T3.5 |

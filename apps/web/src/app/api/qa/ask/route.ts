@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { authEnv } from '@/auth/env';
 import { isSameOrigin } from '@/auth/logout';
 import { apiBaseUrl, upstreamHeaders } from '@/lib/api';
-import { bffError } from '@/lib/bff-error';
+import { bffError, rateLimited } from '@/lib/bff-error';
 
 /** The question is at most 1,000 characters (QaAskBodySchema): 16 KiB is plenty, even escaped. */
 const MAX_BODY_BYTES = 16 * 1024;
@@ -16,8 +16,8 @@ const MAX_BODY_BYTES = 16 * 1024;
  */
 const UPSTREAM_TIMEOUT_MS = 90_000;
 
-/** Answers the Q&A screen explains with its own code; anything else is an API fault. 429 is T6.1. */
-const PASSED_ON = new Set([400, 401, 403, 404, 413, 429, 503]);
+/** Answers the Q&A screen explains with its own code (429 goes through rateLimited); anything else is an API fault. */
+const PASSED_ON = new Set([400, 401, 403, 404, 413, 503]);
 
 /**
  * Q&A proxy (ADR 0006: the browser holds no token). The question goes up as it came, the answer
@@ -79,6 +79,8 @@ export async function POST(req: NextRequest) {
     });
   }
   if (upstream.ok) return bffError('API_ERROR', 502);
+  const limited = rateLimited(upstream);
+  if (limited !== null) return limited;
 
   // Pass on the status and our own code, never the upstream body.
   const body = (await upstream.json().catch(() => ({}))) as { code?: unknown };

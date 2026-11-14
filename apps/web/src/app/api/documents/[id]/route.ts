@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { apiBaseUrl, upstreamHeaders } from '@/lib/api';
-import { bffError } from '@/lib/bff-error';
+import { bffError, rateLimited } from '@/lib/bff-error';
 import { isUuid } from '@/lib/uuid';
 
 /**
@@ -23,6 +23,8 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
     return bffError('API_UNREACHABLE', 502);
   }
   if (upstream.ok) return NextResponse.json(await upstream.json(), { status: 200 });
+  const limited = rateLimited(upstream);
+  if (limited !== null) return limited;
 
   // Pass on only the status class and our own error code, never the upstream body.
   const body = (await upstream.json().catch(() => ({}))) as { code?: unknown };

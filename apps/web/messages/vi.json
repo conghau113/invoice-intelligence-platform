@@ -24,6 +24,8 @@
     "BODY_INVALID": "Dữ liệu gửi lên không hợp lệ.",
     "DEMO_READ_ONLY": "Đây là bản demo chỉ xem nên không thay đổi được gì. Hãy chạy dự án trên máy của bạn để dùng đầy đủ.",
     "AI_SERVICE_UNAVAILABLE": "Dịch vụ AI tạm thời không phản hồi nên chưa tìm được trong hoá đơn. Vui lòng thử lại sau.",
+    "RATE_LIMITED": "Bạn đang gửi yêu cầu quá nhanh. Vui lòng đợi một lát rồi thử lại.",
+    "RATE_LIMIT_UNAVAILABLE": "Hệ thống tạm thời không nhận yêu cầu này. Vui lòng thử lại sau ít phút.",
     "UNAUTHENTICATED": "Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại.",
     "FORBIDDEN": "Yêu cầu bị từ chối. Hãy tải lại trang rồi thử lại.",
     "NOT_FOUND": "Không tìm thấy dữ liệu này.",
@@ -233,6 +235,10 @@
         "title": "Không kết nối được máy chủ",
         "hint": "Dịch vụ API không phản hồi. Thử lại sau ít phút."
       },
+      "rateLimited": {
+        "title": "Thao tác quá nhanh",
+        "hint": "Bạn tải lại danh sách quá nhanh. Đợi một lát rồi thử lại."
+      },
       "error": {
         "title": "Không tải được danh sách",
         "hint": "Đã có lỗi khi tải danh sách. Thử lại."
@@ -336,6 +342,10 @@
       "unreachable": {
         "title": "Không kết nối được máy chủ",
         "hint": "Dịch vụ API không phản hồi. Hãy thử lại sau vài phút."
+      },
+      "rateLimited": {
+        "title": "Thao tác quá nhanh",
+        "hint": "Bạn mở tài liệu quá nhanh. Đợi một lát rồi thử lại."
       },
       "error": {
         "title": "Không tải được tài liệu",

@@ -94,3 +94,19 @@ describe('GET /api/documents/[id]', () => {
     expect(await down.json()).toEqual({ code: 'API_UNREACHABLE' });
   });
 });
+
+describe('GET /api/documents/[id]: rate limited by the API (T6.1)', () => {
+  const limited = (retryAfter = '7') =>
+    new Response(JSON.stringify({ code: 'RATE_LIMITED', detail: 'SAMPLE upstream text' }), {
+      status: 429,
+      headers: { 'content-type': 'application/problem+json', 'retry-after': retryAfter },
+    });
+
+  it('passes 429 on with our code and the Retry-After seconds, never the upstream body', async () => {
+    fetchMock.mockResolvedValueOnce(limited());
+    const res = await get(ID);
+    expect(res.status).toBe(429);
+    expect(res.headers.get('retry-after')).toBe('7');
+    expect(await res.json()).toEqual({ code: 'RATE_LIMITED' });
+  });
+});

@@ -13,6 +13,7 @@ import {
 import { auditIp } from '../../../config/trusted-proxies';
 import type { AuthenticatedRequest } from '../../auth/http/authenticated-request';
 import { RequirePermission } from '../../auth/http/require-permission.decorator';
+import { RateLimit } from '../../rate-limit/http/rate-limit.decorator';
 import { ApproveService, type ApproveResult } from '../application/approve.service';
 import { ReopenService, type ReopenResult } from '../application/reopen.service';
 import { IF_MATCH_REQUIRED, parseIfMatch } from '../domain/if-match';
@@ -41,6 +42,7 @@ export class ReviewController {
    * reviewed. A stale version or a document already approved is 409 and nothing is written.
    */
   @RequirePermission('document:approve')
+  @RateLimit('write')
   @HttpCode(HttpStatus.OK)
   @Post(':id/approve')
   approve(
@@ -65,6 +67,7 @@ export class ReviewController {
    * stale version or a document that is not approved is 409 and nothing is written.
    */
   @RequirePermission('document:approve')
+  @RateLimit('write')
   @HttpCode(HttpStatus.OK)
   @Post(':id/reopen')
   reopen(

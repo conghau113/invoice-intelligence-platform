@@ -111,6 +111,8 @@ describe('fetchDocumentDetail', () => {
     expect(await kind()).toBe('forbidden');
     fetchMock.mockResolvedValueOnce(Response.json({}, { status: 404 }));
     expect(await kind()).toBe('notFound');
+    fetchMock.mockResolvedValueOnce(Response.json({ code: 'RATE_LIMITED' }, { status: 429 }));
+    expect(await kind()).toBe('rateLimited');
     fetchMock.mockResolvedValueOnce(Response.json({ code: 'API_UNREACHABLE' }, { status: 502 }));
     expect(await kind()).toBe('unreachable');
     fetchMock.mockResolvedValueOnce(Response.json({ code: 'API_ERROR' }, { status: 502 }));

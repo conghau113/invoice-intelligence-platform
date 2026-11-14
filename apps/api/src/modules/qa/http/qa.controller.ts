@@ -12,6 +12,7 @@ import type { Response } from 'express';
 import { SkipTenantTransaction } from '../../../db/skip-tenant-transaction.decorator';
 import type { AuthenticatedRequest } from '../../auth/http/authenticated-request';
 import { RequirePermission } from '../../auth/http/require-permission.decorator';
+import { RateLimit } from '../../rate-limit/http/rate-limit.decorator';
 import { QaService } from '../application/qa.service';
 import { formatEvent, outcomeEvents } from './sse';
 
@@ -34,6 +35,7 @@ export class QaController {
   constructor(private readonly qa: QaService) {}
 
   @RequirePermission('qa:ask')
+  @RateLimit('qa')
   @SkipTenantTransaction()
   @Post('ask')
   async ask(
