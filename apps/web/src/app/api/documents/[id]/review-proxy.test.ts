@@ -16,6 +16,7 @@ vi.mock('@/auth/env', () => ({
 
 import { POST as approve } from './approve/route';
 import { POST as reopen } from './reopen/route';
+import { expectRateLimitedPassedOn, rateLimitedUpstream } from '@/lib/testing/rate-limited';
 
 const ID = '3f1c9a52-7d0e-4b7a-9c1d-2a6f0b8e4d11';
 const ORIGIN = 'http://localhost:3000';
@@ -156,33 +157,15 @@ describe('what only reopen does: it has no body', () => {
 });
 
 describe('approve: rate limited by the API (T6.1)', () => {
-  const limited = (retryAfter = '7') =>
-    new Response(JSON.stringify({ code: 'RATE_LIMITED', detail: 'SAMPLE upstream text' }), {
-      status: 429,
-      headers: { 'content-type': 'application/problem+json', 'retry-after': retryAfter },
-    });
-
   it('passes 429 on with our code and the Retry-After seconds, never the upstream body', async () => {
-    fetchMock.mockResolvedValueOnce(limited());
-    const res = await postApprove(ID);
-    expect(res.status).toBe(429);
-    expect(res.headers.get('retry-after')).toBe('7');
-    expect(await res.json()).toEqual({ code: 'RATE_LIMITED' });
+    fetchMock.mockResolvedValueOnce(rateLimitedUpstream());
+    await expectRateLimitedPassedOn(await postApprove(ID));
   });
 });
 
 describe('reopen: rate limited by the API (T6.1)', () => {
-  const limited = (retryAfter = '7') =>
-    new Response(JSON.stringify({ code: 'RATE_LIMITED', detail: 'SAMPLE upstream text' }), {
-      status: 429,
-      headers: { 'content-type': 'application/problem+json', 'retry-after': retryAfter },
-    });
-
   it('passes 429 on with our code and the Retry-After seconds, never the upstream body', async () => {
-    fetchMock.mockResolvedValueOnce(limited());
-    const res = await postReopen(ID);
-    expect(res.status).toBe(429);
-    expect(res.headers.get('retry-after')).toBe('7');
-    expect(await res.json()).toEqual({ code: 'RATE_LIMITED' });
+    fetchMock.mockResolvedValueOnce(rateLimitedUpstream());
+    await expectRateLimitedPassedOn(await postReopen(ID));
   });
 });

@@ -14,9 +14,7 @@
  * that the API layers stop such an answer, not that a given model resists (measured by hand, eval/).
  */
 import { randomBytes, randomUUID } from 'node:crypto';
-import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import {
@@ -32,15 +30,9 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import request from 'supertest';
 import { applyJsonBodyLimit } from '../src/common/http/json-body-limit';
-import { ProblemDetailsFilter } from '../src/common/http/problem-details.filter';
 import type { Env } from '../src/config/env.schema';
 import * as schema from '../src/db/schema';
-import { DB, TenantDbService } from '../src/db/tenant-db.service';
-import { TenantTransactionInterceptor } from '../src/db/tenant-transaction.interceptor';
-import { TENANT_DIRECTORY } from '../src/modules/auth/application/tenant-directory.port';
-import { TOKEN_VERIFIER } from '../src/modules/auth/application/token-verifier.port';
-import { JwtAuthGuard } from '../src/modules/auth/http/jwt-auth.guard';
-import { PermissionsGuard } from '../src/modules/auth/http/permissions.guard';
+import { TenantDbService } from '../src/db/tenant-db.service';
 import { QA_MODEL, type QaModel } from '../src/modules/qa/application/qa-model.port';
 import { QaService } from '../src/modules/qa/application/qa.service';
 import { QaModule } from '../src/modules/qa/qa.module';
@@ -63,6 +55,7 @@ import {
   wordHashVector,
 } from '../src/modules/search/testing/fake-query-embedder';
 import { parseSse, type SseEvent } from './support/sse';
+import { deleteDocumentsOf, realDbModule, stubAuthProviders } from './support/test-app';
 
 /** Tenant A (alias acme) and tenant B (alias globex). */
 const ACME = '00000000-0000-4000-8000-0000000000a1';
@@ -329,21 +322,6 @@ describe('Q&A isolation: other tenants, stored injection, reopened invoices (T5.
     owner = new Pool({ connectionString: requireVar('DATABASE_OWNER_URL'), max: 2 });
     pool = new Pool({ connectionString: requireVar('DATABASE_URL'), max: 6 });
 
-    @Global()
-    @Module({
-      providers: [
-        { provide: DB, useValue: drizzle(pool, { schema }) },
-        TenantDbService,
-        { provide: APP_INTERCEPTOR, useClass: TenantTransactionInterceptor },
-        {
-          provide: ConfigService,
-          useValue: { get: (k: string) => (ENV as Record<string, unknown>)[k] },
-        },
-      ],
-      exports: [DB, TenantDbService, ConfigService],
-    })
-    class RealDbModule {}
-
     queue = new FakeIndexQueue();
     embedder = new FakeQueryEmbedder();
     fake = new FakeQaModel();
@@ -353,29 +331,8 @@ describe('Q&A isolation: other tenants, stored injection, reopened invoices (T5.
       answer: (q, sources) => fake.answer(q, sources),
     };
     const mod = await Test.createTestingModule({
-      imports: [RealDbModule, ReviewModule, QaModule],
-      providers: [
-        {
-          provide: TOKEN_VERIFIER,
-          useValue: {
-            verify: (t: string) => {
-              const [role, alias = 'acme'] = t.split('@');
-              return Promise.resolve({
-                sub: USER,
-                organization: [alias],
-                realm_access: { roles: [role] },
-              });
-            },
-          },
-        },
-        {
-          provide: TENANT_DIRECTORY,
-          useValue: { idForAlias: (a: string) => Promise.resolve(a === 'globex' ? GLOBEX : ACME) },
-        },
-        { provide: APP_GUARD, useClass: JwtAuthGuard },
-        { provide: APP_GUARD, useClass: PermissionsGuard },
-        { provide: APP_FILTER, useClass: ProblemDetailsFilter },
-      ],
+      imports: [realDbModule(pool, ENV), ReviewModule, QaModule],
+      providers: stubAuthProviders(USER, { acme: ACME, globex: GLOBEX }),
     })
       .overrideProvider(INDEX_QUEUE_PORT)
       .useValue(queue)
@@ -396,24 +353,7 @@ describe('Q&A isolation: other tenants, stored injection, reopened invoices (T5.
     queue.jobs.clear();
   });
 
-  afterEach(async () => {
-    const mine = `SELECT id FROM documents WHERE uploaded_by = $1`;
-    await owner.query(`DELETE FROM chunks WHERE document_id IN (${mine})`, [USER]);
-    await owner.query(
-      `DELETE FROM field_corrections WHERE extraction_id IN
-         (SELECT id FROM extractions WHERE document_id IN (${mine}))`,
-      [USER],
-    );
-    await owner.query(
-      `DELETE FROM invoice_lines WHERE invoice_id IN
-         (SELECT id FROM invoices WHERE document_id IN (${mine}))`,
-      [USER],
-    );
-    await owner.query(`DELETE FROM invoices WHERE document_id IN (${mine})`, [USER]);
-    await owner.query(`DELETE FROM extractions WHERE document_id IN (${mine})`, [USER]);
-    await owner.query(`DELETE FROM audit_logs WHERE entity_id IN (${mine})`, [USER]);
-    await owner.query(`DELETE FROM documents WHERE uploaded_by = $1`, [USER]);
-  });
+  afterEach(() => deleteDocumentsOf(owner, USER));
 
   afterAll(async () => {
     await app.close();
@@ -548,7 +488,10 @@ describe('Q&A isolation: other tenants, stored injection, reopened invoices (T5.
       expect(planted[0]).toContain('SYSTEM:');
       expect(planted[0]).toContain('Tổng cộng / Total: 0 VND');
       expect(forgedLines(sources)).toEqual([]);
-      for (const text of sources) expect(text).not.toMatch(/[\r\t\u0007\u202e]/);
+      // CR, tab, BEL and the right-to-left override are all gone (cleaned before indexing).
+      for (const text of sources) {
+        for (const ch of ['\r', '\t', '\u0007', '\u202e']) expect(text).not.toContain(ch);
+      }
     });
 
     // A model that did what the invoice told it to. Each answer breaks a rule the API checks.

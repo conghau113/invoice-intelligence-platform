@@ -15,6 +15,7 @@ vi.mock('@/auth/env', () => ({
 }));
 
 import { POST } from './route';
+import { expectRateLimitedPassedOn, rateLimitedUpstream } from '@/lib/testing/rate-limited';
 
 const ORIGIN = 'http://localhost:3000';
 const SSE = 'event: token\ndata: {"text":"Hi [1]"}\n\nevent: done\ndata: {}\n\n';
@@ -195,17 +196,8 @@ describe('POST /api/qa/ask', () => {
 });
 
 describe('POST /api/qa/ask: rate limited by the API (T6.1)', () => {
-  const limited = (retryAfter = '7') =>
-    new Response(JSON.stringify({ code: 'RATE_LIMITED', detail: 'SAMPLE upstream text' }), {
-      status: 429,
-      headers: { 'content-type': 'application/problem+json', 'retry-after': retryAfter },
-    });
-
   it('passes 429 on with our code and the Retry-After seconds, never the upstream body', async () => {
-    fetchMock.mockResolvedValueOnce(limited());
-    const res = await post();
-    expect(res.status).toBe(429);
-    expect(res.headers.get('retry-after')).toBe('7');
-    expect(await res.json()).toEqual({ code: 'RATE_LIMITED' });
+    fetchMock.mockResolvedValueOnce(rateLimitedUpstream());
+    await expectRateLimitedPassedOn(await post());
   });
 });
