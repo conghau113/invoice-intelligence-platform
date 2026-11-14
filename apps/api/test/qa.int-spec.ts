@@ -21,7 +21,6 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import {
-  QA_STREAM_EVENTS,
   type QaAggregateFilter,
   type QaAggregateResult,
   type QaCitation,
@@ -56,6 +55,7 @@ import {
   WORD_HASH_MODEL,
   wordHashVector,
 } from '../src/modules/search/testing/fake-query-embedder';
+import { parseSse, type SseEvent } from './support/sse';
 
 const ACME = '00000000-0000-4000-8000-0000000000a1';
 const GLOBEX = '00000000-0000-4000-8000-0000000000a2';
@@ -146,25 +146,6 @@ function requireVar(name: string): string {
     throw new Error(`${name} is not set: run "pnpm --filter api test:int"`);
   }
   return value;
-}
-
-type SseEvent = { event: string; data: unknown };
-
-/** Parses `text/event-stream` like an EventSource, and checks each event against the contract. */
-function parseSse(text: string): SseEvent[] {
-  return text
-    .split('\n\n')
-    .filter((block) => block.trim() !== '')
-    .map((block) => {
-      const lines = block.split('\n');
-      const event = lines.find((l) => l.startsWith('event: '))!.slice('event: '.length);
-      const data = JSON.parse(
-        lines.find((l) => l.startsWith('data: '))!.slice('data: '.length),
-      ) as unknown;
-      const parsed = QA_STREAM_EVENTS[event as keyof typeof QA_STREAM_EVENTS].safeParse(data);
-      if (!parsed.success) throw new Error(`event ${event} does not match the contract`);
-      return { event, data };
-    });
 }
 
 const filter = (over: Partial<QaAggregateFilter>): QaAggregateFilter => ({
