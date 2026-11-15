@@ -89,6 +89,23 @@ function requireVar(name: string): string {
 const quantile = (sorted: number[], q: number) =>
   sorted[Math.min(sorted.length - 1, Math.ceil(q * sorted.length) - 1)] ?? Number.NaN;
 
+// Measurement helpers (pure, so they live outside the suite).
+const fmt = (n: number) => n.toFixed(2);
+const summary = (ms: number[]) => {
+  const sorted = [...ms].sort((a, b) => a - b);
+  return `p50 ${fmt(quantile(sorted, 0.5))} ms, p95 ${fmt(quantile(sorted, 0.95))} ms`;
+};
+const hitRate = (s: Record<string, number>, name: string) => {
+  const hit = s[`${name}:hit`] ?? 0;
+  const all = hit + (s[`${name}:miss`] ?? 0) + (s[`${name}:coalesced`] ?? 0);
+  return all === 0 ? 0 : hit / all;
+};
+async function time(work: () => Promise<unknown>): Promise<number> {
+  const started = performance.now();
+  await work();
+  return performance.now() - started;
+}
+
 describe('cache (T6.3): cache-aside reads and the extraction result cache', () => {
   let owner: Pool;
   let pool: Pool;
@@ -372,7 +389,7 @@ describe('cache (T6.3): cache-aside reads and the extraction result cache', () =
       const keys = await client.keys('cache:*');
       const listKeys = keys.filter((k) => k.includes('documents-list'));
       expect(listKeys).toHaveLength(1);
-      expect(listKeys[0]).toMatch(new RegExp(`^cache:\\{${ACME}\\}:g0:documents-list:`));
+      expect(listKeys[0]).toMatch(new RegExp(String.raw`^cache:\{${ACME}\}:g0:documents-list:`));
       const ttl = await client.pttl(listKeys[0]!);
       expect(ttl).toBeGreaterThan(0);
       expect(ttl).toBeLessThanOrEqual(30_000);
@@ -505,22 +522,6 @@ describe('cache (T6.3): cache-aside reads and the extraction result cache', () =
       console.log(`T6.3 measurement\n${report.join('\n')}`);
     });
 
-    const hitRate = (s: Record<string, number>, name: string) => {
-      const hit = s[`${name}:hit`] ?? 0;
-      const all = hit + (s[`${name}:miss`] ?? 0) + (s[`${name}:coalesced`] ?? 0);
-      return all === 0 ? 0 : hit / all;
-    };
-    const fmt = (n: number) => n.toFixed(2);
-
-    const summary = (ms: number[]) => {
-      const sorted = [...ms].sort((a, b) => a - b);
-      return `p50 ${fmt(quantile(sorted, 0.5))} ms, p95 ${fmt(quantile(sorted, 0.95))} ms`;
-    };
-    async function time(work: () => Promise<unknown>): Promise<number> {
-      const started = performance.now();
-      await work();
-      return performance.now() - started;
-    }
     const get = (on: INestApplication, url: string) =>
       request(on.getHttpServer()).get(url).set('Authorization', 'Bearer viewer@acme').expect(200);
 
