@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { Logger } from '@nestjs/common';
 import type { InsightsRepository } from '../infra/insights.repository';
+import { disabledReadCache } from '../../cache/testing/no-cache';
 import { InsightsService } from './insights.service';
 
 const REPO_REPORTS = path.join(__dirname, '../../../../../../eval/reports');
@@ -21,7 +22,11 @@ describe('InsightsService', () => {
   afterEach(() => warn.mockRestore());
 
   it('puts the online numbers next to the offline report', async () => {
-    const body = await new InsightsService(repository, REPO_REPORTS).extraction('t');
+    const body = await new InsightsService(
+      repository,
+      REPO_REPORTS,
+      disabledReadCache(),
+    ).extraction('t');
     expect(body.online).toMatchObject({
       approvedDocuments: 4,
       uncorrectedDocuments: 3,
@@ -37,7 +42,7 @@ describe('InsightsService', () => {
   });
 
   it('not configured: offline is null, logged once with the code only', async () => {
-    const service = new InsightsService(repository, undefined);
+    const service = new InsightsService(repository, undefined, disabledReadCache());
     await service.extraction('t');
     const body = await service.extraction('t');
     expect(body.offline).toBeNull();
@@ -48,7 +53,7 @@ describe('InsightsService', () => {
   it('an unreadable report is read again later: a late mount does not need a restart', async () => {
     const dir = await mkdtemp(path.join(tmpdir(), 'eval-late-'));
     try {
-      const service = new InsightsService(repository, dir);
+      const service = new InsightsService(repository, dir, disabledReadCache());
       expect((await service.extraction('t')).offline).toBeNull();
       expect(warn).toHaveBeenCalledWith('Eval report unavailable (UNREADABLE)');
       // The reports appear after the first request.

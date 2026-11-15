@@ -1,4 +1,7 @@
 import { TenantDbService } from '../../../db/tenant-db.service';
+import { CACHE_ENABLED, CACHE_STORE } from '../../cache/application/cache-store.port';
+import { EXTRACTION_CACHE_OPTIONS } from '../../cache/application/extraction-result-cache';
+import { MemoryCacheStore } from '../../cache/testing/memory-cache-store';
 import { TenantTransactionInterceptor } from '../../../db/tenant-transaction.interceptor';
 import { Global, Module, type INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -123,6 +126,12 @@ describe('POST /documents/upload (real guards, filter, multer engine and LocalFs
       .useValue(new LocalFsStorage(root))
       .overrideProvider(EXTRACTION_QUEUE_PORT)
       .useValue(new FakeExtractionQueue())
+      .overrideProvider(CACHE_STORE)
+      .useValue(new MemoryCacheStore())
+      .overrideProvider(CACHE_ENABLED)
+      .useValue(false)
+      .overrideProvider(EXTRACTION_CACHE_OPTIONS)
+      .useValue({ resultTtlMs: 1, lockTtlMs: 1, pollMs: 1 })
       .compile();
     app = mod.createNestApplication();
     await app.init();

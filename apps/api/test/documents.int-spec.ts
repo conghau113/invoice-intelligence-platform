@@ -3,6 +3,7 @@
  * The database comes from support/postgres.global-setup.ts (real migrations). Fixtures are inserted
  * with fixed ids and removed afterwards by the owner (the app role cannot DELETE documents).
  */
+import { NO_CACHE_INVALIDATION } from '../src/modules/cache/application/tenant-read-cache';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { DocumentStateMachine } from '../src/modules/documents/application/document-state-machine';
@@ -72,7 +73,7 @@ describe('documents (Postgres, RLS, state machine)', () => {
     owner = new Pool({ connectionString: requireVar('DATABASE_OWNER_URL'), max: 1 });
     app = new Pool({ connectionString: requireVar('DATABASE_URL'), max: 4 });
     tenantDb = new TenantDbService(drizzle(app, { schema }));
-    machine = new DocumentStateMachine(tenantDb);
+    machine = new DocumentStateMachine(tenantDb, NO_CACHE_INVALIDATION);
   });
   afterAll(async () => {
     await clean();

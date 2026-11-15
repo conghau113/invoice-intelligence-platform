@@ -2,6 +2,10 @@ import { Inject, Injectable, Logger, UnprocessableEntityException } from '@nestj
 import { and, eq, gt, sql } from 'drizzle-orm';
 import { auditLogs, documents, idempotencyKeys } from '../../../db/schema';
 import { TenantDbService, type Tx } from '../../../db/tenant-db.service';
+import {
+  TENANT_CACHE_INVALIDATOR,
+  type TenantCacheInvalidator,
+} from '../../cache/application/tenant-read-cache';
 import { STORAGE_PORT, type StoragePort } from '../../storage/application/storage.port';
 import { queueUnavailable } from '../../queue/application/queue-unavailable';
 import {
@@ -68,6 +72,7 @@ export class DocumentsService {
     @Inject(STORAGE_PORT) private readonly storage: StoragePort,
     private readonly machine: DocumentStateMachine,
     @Inject(EXTRACTION_QUEUE_PORT) private readonly queue: ExtractionQueuePort,
+    @Inject(TENANT_CACHE_INVALIDATOR) private readonly cache: TenantCacheInvalidator,
   ) {}
 
   /**
@@ -187,6 +192,8 @@ export class DocumentsService {
       meta: { sourceType: file.sourceType },
       ip: input.ip,
     });
+    // A new row shows in the list even before it is queued (the queue step may fail).
+    if (created) this.tenantDb.afterCommit(() => this.cache.invalidate(input.tenantId));
     return { document, created, statusCode, replayed: false };
   }
 

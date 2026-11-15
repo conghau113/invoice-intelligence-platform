@@ -70,6 +70,7 @@ An upload writes one row: `document.created`, or `document.upload_duplicate` whe
 ## 7. Logging and PII
 - JSON logs with `trace_id`, `span_id`, `tenant_id`; redaction of emails, phone numbers, tax codes, person/company names via a shared logger config with tests.
 - Spans carry model name and token counts, never prompts or document text.
+- Redis caches (T6.3, ADR 0013) hold document data: list pages (ids, statuses, dates; 30 s), dashboard counts (60 s) and whole extraction results incl. party names and tax codes (7 days). Every key starts with `cache:{tenant_id}` and is built from ids, hashes and version tokens only, never from request text; a value read back is schema-validated before use. Nothing removes a tenant's entries early (offboarding, a deletion request): they leave by TTL only, to be handled with data deletion (M7/M8). Logs of the cache carry a code only. The public demo (`DEMO_READ_ONLY`) still writes these derived entries to Redis on reads, as the rate limiter does; Postgres stays read-only. Redis runs with its default `maxmemory-policy noeviction` (BullMQ requires it), so a tenant's generation counter is never evicted while its entries live.
 
 ## 8. Supply chain & platform
 - Lockfiles committed; Dependabot; `pnpm audit`/OSV and `pip-audit` in CI; gitleaks on every push.

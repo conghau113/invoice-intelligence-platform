@@ -3,6 +3,7 @@
  * Idempotency-Key sent again must leave one document and report `created` exactly once (the queue,
  * T2.4, starts a job only then). Files are real, in a LocalFs test root.
  */
+import { NO_CACHE_INVALIDATION } from '../src/modules/cache/application/tenant-read-cache';
 import { UnprocessableEntityException } from '@nestjs/common';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Readable } from 'node:stream';
@@ -75,7 +76,13 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
     tenantDb = new TenantDbService(drizzle(app, { schema }));
     storage = new LocalFsStorage(await newRoot());
     queue = new FakeExtractionQueue();
-    service = new DocumentsService(tenantDb, storage, new DocumentStateMachine(tenantDb), queue);
+    service = new DocumentsService(
+      tenantDb,
+      storage,
+      new DocumentStateMachine(tenantDb, NO_CACHE_INVALIDATION),
+      queue,
+      NO_CACHE_INVALIDATION,
+    );
   });
   afterAll(async () => {
     await clean();
@@ -305,7 +312,13 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
       await realRun(...args);
       throw new Error('connection reset');
     };
-    const flaky = new DocumentsService(dropped, storage, new DocumentStateMachine(dropped), queue);
+    const flaky = new DocumentsService(
+      dropped,
+      storage,
+      new DocumentStateMachine(dropped, NO_CACHE_INVALIDATION),
+      queue,
+      NO_CACHE_INVALIDATION,
+    );
 
     await expect(
       flaky.create({ tenantId: ACME, userId: USER, ip: undefined, idempotencyKey: 'k1', file }),
@@ -324,8 +337,9 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
     const svc = new DocumentsService(
       tenantDb,
       brokenStorage,
-      new DocumentStateMachine(tenantDb),
+      new DocumentStateMachine(tenantDb, NO_CACHE_INVALIDATION),
       queue,
+      NO_CACHE_INVALIDATION,
     );
     await create(ACME, 'k1', await stored(ACME, 'del-fail'));
     const res = await svc.create({

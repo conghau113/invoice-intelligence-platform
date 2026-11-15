@@ -3,6 +3,7 @@
  * the pagination is lossless and counts correctly, the filters and the time zone boundary are right, tenants are
  * isolated, and the query uses the indexes of migration 0007 (spec T2.6: 1.000 rows, EXPLAIN).
  */
+import { withoutCache } from './support/test-app';
 import { Global, Module, type INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -104,34 +105,36 @@ describe('GET /documents (HTTP -> Postgres, RLS on)', () => {
     })
     class RealDbModule {}
 
-    const mod = await Test.createTestingModule({
-      imports: [RealDbModule, DocumentsModule],
-      providers: [
-        {
-          provide: TOKEN_VERIFIER,
-          useValue: {
-            verify: (token: string) => {
-              const [role, alias] = token.split('@');
-              return Promise.resolve({
-                sub: '00000000-0000-4000-8000-00000000f004',
-                organization: [alias],
-                realm_access: { roles: [role] },
-              });
+    const mod = await withoutCache(
+      Test.createTestingModule({
+        imports: [RealDbModule, DocumentsModule],
+        providers: [
+          {
+            provide: TOKEN_VERIFIER,
+            useValue: {
+              verify: (token: string) => {
+                const [role, alias] = token.split('@');
+                return Promise.resolve({
+                  sub: '00000000-0000-4000-8000-00000000f004',
+                  organization: [alias],
+                  realm_access: { roles: [role] },
+                });
+              },
             },
           },
-        },
-        {
-          provide: TENANT_DIRECTORY,
-          useValue: {
-            idForAlias: (alias: keyof typeof TENANTS) => Promise.resolve(TENANTS[alias]),
+          {
+            provide: TENANT_DIRECTORY,
+            useValue: {
+              idForAlias: (alias: keyof typeof TENANTS) => Promise.resolve(TENANTS[alias]),
+            },
           },
-        },
-        { provide: ConfigService, useValue: {} },
-        { provide: APP_GUARD, useClass: JwtAuthGuard },
-        { provide: APP_GUARD, useClass: PermissionsGuard },
-        { provide: APP_FILTER, useClass: ProblemDetailsFilter },
-      ],
-    })
+          { provide: ConfigService, useValue: {} },
+          { provide: APP_GUARD, useClass: JwtAuthGuard },
+          { provide: APP_GUARD, useClass: PermissionsGuard },
+          { provide: APP_FILTER, useClass: ProblemDetailsFilter },
+        ],
+      }),
+    )
       .overrideProvider(STORAGE_PORT)
       .useValue(new LocalFsStorage(root))
       .overrideProvider(EXTRACTION_QUEUE_PORT)

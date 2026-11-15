@@ -6,6 +6,8 @@ import {
   PermanentExtractionError,
   TransientExtractionError,
 } from '../../queue/domain/extraction-job';
+import { z } from 'zod';
+import { isExtractionVersion, type ExtractionVersion } from '../../cache/domain/cache-keys';
 import type { AiExtractInput, AiExtractor } from '../application/ai-extractor.port';
 import { aiExtractResponseSchema, type AiExtractResponse } from '../domain/ai-extract-response';
 import {
@@ -25,6 +27,15 @@ const XML_TIMEOUT_MS = 15_000;
  */
 export const DEFAULT_LLM_TIMEOUT_MS = 60_000;
 
+/** GET /extract/version is a lookup in memory; a slow answer is not worth waiting for. */
+const VERSION_TIMEOUT_MS = 2_000;
+
+const versionSchema = z.strictObject({
+  model: z.string(),
+  promptVersion: z.string(),
+  pipelineVersion: z.string(),
+});
+
 /** Statuses where "try again later" is the right answer, not a verdict on the file. */
 const RETRYABLE_4XX: ReadonlySet<number> = new Set([408, 429]);
 
@@ -42,11 +53,13 @@ const MISCONFIGURED: ReadonlySet<number> = new Set([401, 403, 404]);
 @Injectable()
 export class HttpAiExtractor implements AiExtractor {
   private readonly endpoint: URL;
+  private readonly versionEndpoint: URL;
   private readonly token: string;
   private readonly llmTimeoutMs: number;
 
   constructor(config: ConfigService<Env, true>) {
     this.endpoint = new URL('/extract', config.get('AI_SERVICE_URL', { infer: true }));
+    this.versionEndpoint = new URL('/extract/version', this.endpoint);
     this.token = config.get('AI_SERVICE_TOKEN', { infer: true });
     this.llmTimeoutMs = config.get('AI_LLM_TIMEOUT_MS', { infer: true }) ?? DEFAULT_LLM_TIMEOUT_MS;
   }
@@ -96,6 +109,24 @@ export class HttpAiExtractor implements AiExtractor {
     // Other 4xx: the service looked at the request and said no. Retrying would get the same answer.
     const code = await readErrorCode(res);
     throw new PermanentExtractionError(isFailureCode(code) ? code : EXTRACTION_FAILED);
+  }
+
+  async version(): Promise<ExtractionVersion | null> {
+    try {
+      const res = await fetch(this.versionEndpoint, {
+        headers: { authorization: `Bearer ${this.token}` },
+        signal: AbortSignal.timeout(VERSION_TIMEOUT_MS),
+      });
+      if (!res.ok) {
+        await res.body?.cancel().catch(() => undefined);
+        return null;
+      }
+      const parsed = versionSchema.safeParse(await res.json());
+      // Its parts become a Redis key: only short tokens of known characters (cache-keys.ts).
+      return parsed.success && isExtractionVersion(parsed.data) ? parsed.data : null;
+    } catch {
+      return null; // refused, timeout, not JSON: extract without the cache
+    }
   }
 
   private async parse(res: Response): Promise<AiExtractResponse> {

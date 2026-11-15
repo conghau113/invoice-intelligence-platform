@@ -8,11 +8,11 @@ export const COMMAND_TIMEOUT_MS = 2_000;
  * is down is parked until it comes back, which hangs the request. Here it fails at once and the
  * API answers 503. ioredis keeps reconnecting in the background.
  */
-export function producerConnection(url: string): Redis {
+export function producerConnection(url: string, commandTimeoutMs = COMMAND_TIMEOUT_MS): Redis {
   return swallowErrorEvents(
     new Redis(url, {
       enableOfflineQueue: false,
-      commandTimeout: COMMAND_TIMEOUT_MS,
+      commandTimeout: commandTimeoutMs,
       maxRetriesPerRequest: 1,
     }),
   );

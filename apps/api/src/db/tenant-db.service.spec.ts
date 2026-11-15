@@ -66,6 +66,57 @@ describe('TenantDbService', () => {
     expect(() => svc.current()).toThrow('No tenant transaction');
   });
 
+  it('runs afterCommit work once the transaction committed, in order', async () => {
+    const { db, log } = fakeDb();
+    const svc = new TenantDbService(db);
+    await svc.run(ACME, () => {
+      svc.afterCommit(() => {
+        log.push('first');
+      });
+      svc.afterCommit(() => {
+        log.push('second');
+      });
+      log.push('body');
+      return Promise.resolve();
+    });
+    expect(log.slice(-4)).toEqual(['body', 'commit', 'first', 'second']);
+  });
+
+  it('drops afterCommit work when the transaction rolls back', async () => {
+    const { db, log } = fakeDb();
+    const svc = new TenantDbService(db);
+    await expect(
+      svc.run(ACME, () => {
+        svc.afterCommit(() => {
+          log.push('ran');
+        });
+        return Promise.reject(new Error('boom'));
+      }),
+    ).rejects.toThrow('boom');
+    expect(log).not.toContain('ran');
+  });
+
+  it('a failing afterCommit step neither fails the committed run nor stops the next one', async () => {
+    const { db, log } = fakeDb();
+    const svc = new TenantDbService(db);
+    const out = await svc.run(ACME, () => {
+      svc.afterCommit(() => Promise.reject(new Error('redis down')));
+      svc.afterCommit(() => {
+        log.push('next');
+      });
+      return Promise.resolve(42);
+    });
+    expect(out).toBe(42);
+    expect(log).toContain('next');
+  });
+
+  it('afterCommit outside run throws (fail closed)', () => {
+    const { db } = fakeDb();
+    expect(() => new TenantDbService(db).afterCommit(() => undefined)).toThrow(
+      'No tenant transaction',
+    );
+  });
+
   it('keeps concurrent runs apart (each sees its own transaction)', async () => {
     const { db } = fakeDb();
     const svc = new TenantDbService(db);

@@ -3,6 +3,7 @@
  * Postgres (as the app role). Only token verification is stubbed. Proves the spec check "send the
  * same request twice -> one row" through HTTP, including status codes, the replay header and files.
  */
+import { withoutCache } from './support/test-app';
 import { Global, Module, type INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -86,33 +87,37 @@ describe('POST /documents/upload (HTTP -> Postgres -> LocalFs)', () => {
     })
     class RealDbModule {}
 
-    const mod = await Test.createTestingModule({
-      imports: [RealDbModule, DocumentsModule],
-      providers: [
-        {
-          provide: TOKEN_VERIFIER,
-          useValue: {
-            // Token "<role>" (tenant acme) or "<role>@<tenant alias>".
-            verify: (token: string) => {
-              const [role, alias = 'acme'] = token.split('@');
-              return Promise.resolve({
-                sub: USER,
-                organization: [alias],
-                realm_access: { roles: [role] },
-              });
+    const mod = await withoutCache(
+      Test.createTestingModule({
+        imports: [RealDbModule, DocumentsModule],
+        providers: [
+          {
+            provide: TOKEN_VERIFIER,
+            useValue: {
+              // Token "<role>" (tenant acme) or "<role>@<tenant alias>".
+              verify: (token: string) => {
+                const [role, alias = 'acme'] = token.split('@');
+                return Promise.resolve({
+                  sub: USER,
+                  organization: [alias],
+                  realm_access: { roles: [role] },
+                });
+              },
             },
           },
-        },
-        {
-          provide: TENANT_DIRECTORY,
-          useValue: { idForAlias: (a: string) => Promise.resolve(a === 'globex' ? GLOBEX : ACME) },
-        },
-        { provide: ConfigService, useValue: {} },
-        { provide: APP_GUARD, useClass: JwtAuthGuard },
-        { provide: APP_GUARD, useClass: PermissionsGuard },
-        { provide: APP_FILTER, useClass: ProblemDetailsFilter },
-      ],
-    })
+          {
+            provide: TENANT_DIRECTORY,
+            useValue: {
+              idForAlias: (a: string) => Promise.resolve(a === 'globex' ? GLOBEX : ACME),
+            },
+          },
+          { provide: ConfigService, useValue: {} },
+          { provide: APP_GUARD, useClass: JwtAuthGuard },
+          { provide: APP_GUARD, useClass: PermissionsGuard },
+          { provide: APP_FILTER, useClass: ProblemDetailsFilter },
+        ],
+      }),
+    )
       .overrideProvider(STORAGE_PORT)
       .useValue(new LocalFsStorage(root))
       .overrideProvider(EXTRACTION_QUEUE_PORT)
