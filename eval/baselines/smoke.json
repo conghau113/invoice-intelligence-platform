@@ -11,7 +11,7 @@
   },
   "runDates": [
     "2026-11-09",
-    "2026-11-09"
+    "2026-11-15"
   ],
   "split": "smoke",
   "documents": 20,
@@ -54,9 +54,9 @@
       "noisePoints": 0.0
     },
     "seller.taxCode": {
-      "correct": 54,
+      "correct": 57,
       "total": 60,
-      "accuracy": 0.9,
+      "accuracy": 0.95,
       "noisePoints": 0.0
     },
     "buyer.taxCode": {
@@ -72,11 +72,11 @@
   },
   "pipeline": {
     "apps/ai/app/prompts/invoice_extraction/v1.md": "7ce11be8099f7663fbcc2c655357eb325c979760b42b4a7662e03bf0f8ad4cbd",
-    "apps/ai/app/services/extract.py": "b7a47cd7d712766e8cb2b8e771852950a7276e30020c0ef19cfcb2c05e71ef3b",
+    "apps/ai/app/services/extract.py": "5ae8ad2a1b9a1a3eeefb6369f2443931f5fc7be26beeb44c796a488233fe42ec",
     "apps/ai/app/services/pdf_pages.py": "5092bccb4a8c1c6d98ce7835111ad70fdac8650510f838a813d4fdb4378b6a83",
     "apps/ai/app/services/image_normalize.py": "f9dc15af40e83801fcae2dde72289489764dbe2711245d7f77825a9c8a4a07e6",
-    "apps/ai/app/providers/__init__.py": "f960a49267ad45772b66bb795c836624da9db355da1b86b83004cf334325bac3",
-    "apps/ai/app/providers/base.py": "02f65fce4f1d2ff1e72347ff7f8b08233d2e99f52feafe0ba5567d9b22932b7f",
+    "apps/ai/app/providers/__init__.py": "0c7926b7f14d0355eb311674534bf152625ae4031c60b1b3707f0212a04de5d9",
+    "apps/ai/app/providers/base.py": "a6bf35f58100232fc8c396ae0ac7c4789916ab428a4b0cdfc3edfda61aa33154",
     "apps/ai/app/providers/gemini.py": "b29718df6d13c983b050a7d3ce6d3131c0e3df388712016d56ef5c0b9410cd88",
     "apps/ai/app/providers/openai_compat.py": "62485e8451d6d494bf03ca136306238dd5f23dbaaac313f496ea47aa7218091a",
     "apps/ai/app/schemas/generated.py": "57776af7a86616bd3b980f5f997316fbe2673fd7e76f038047f93834d29ae74e",

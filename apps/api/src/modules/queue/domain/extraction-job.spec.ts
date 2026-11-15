@@ -46,21 +46,20 @@ describe('parseTraceparent', () => {
   });
 });
 
-describe('backoffMs', () => {
-  it('grows exponentially: the range doubles with every failed attempt', () => {
-    const low = (n: number) => backoffMs(n, 1000, () => 0);
-    const high = (n: number) => backoffMs(n, 1000, () => 0.999999);
-    expect([low(1), low(2), low(3), low(4)]).toEqual([500, 1000, 2000, 4000]);
-    expect(high(1)).toBeLessThan(1000);
-    expect(high(3)).toBeLessThan(4000);
-    expect(high(3)).toBeGreaterThanOrEqual(low(3));
+describe('backoffMs (full jitter)', () => {
+  it('draws from 0 up to a ceiling that doubles with every failed attempt', () => {
+    const top = (n: number) => backoffMs(n, 1000, () => 0.999999);
+    expect([1, 2, 3, 4].map((n) => backoffMs(n, 1000, () => 0))).toEqual([0, 0, 0, 0]);
+    expect([top(1), top(2), top(3), top(4)]).toEqual([999, 1999, 3999, 7999]);
   });
 
-  it('jitters: different random draws give different waits within one attempt', () => {
-    expect(backoffMs(3, 1000, () => 0.1)).not.toBe(backoffMs(3, 1000, () => 0.9));
+  it('spreads over the whole range, not only its upper half', () => {
+    // Equal jitter would never go below half of the ceiling (2000 ms on the third attempt).
+    expect(backoffMs(3, 1000, () => 0.1)).toBe(400);
+    expect(backoffMs(3, 1000, () => 0.9)).toBe(3600);
   });
 
   it('is capped', () => {
-    expect(backoffMs(40, 1000, () => 0.999999)).toBeLessThanOrEqual(MAX_BACKOFF_MS);
+    expect(backoffMs(40, 1000, () => 0.999999)).toBeLessThan(MAX_BACKOFF_MS);
   });
 });

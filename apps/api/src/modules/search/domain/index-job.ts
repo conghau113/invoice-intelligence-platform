@@ -23,6 +23,8 @@ export type IndexJobData = z.infer<typeof indexJobSchema>;
 /** What a failed index job records in Redis: a code, never a message (it may hold content). */
 export const INDEX_JOB_INVALID = 'INDEX_JOB_INVALID';
 export const INDEX_RETRY = 'INDEX_RETRY';
+/** The embedding provider was over its rate limit: back to the queue, no attempt used (T6.2). */
+export const INDEX_RATE_LIMITED = 'INDEX_RATE_LIMITED';
 export const INDEX_FAILED = 'INDEX_FAILED';
 /** The AI service answered for another invoice, tenant or version than the job: never written. */
 export const INDEX_RESPONSE_MISMATCH = 'INDEX_RESPONSE_MISMATCH';
@@ -35,11 +37,33 @@ export class PermanentIndexError extends Error {
   }
 }
 
+/**
+ * The AI service could not answer this time (down, timed out, 5xx, our settings). `rateLimited`:
+ * it said the provider is over its limit, with the wait it named (Retry-After) when there is one.
+ */
+export class TransientIndexError extends Error {
+  constructor(
+    readonly rateLimited = false,
+    readonly retryAfterMs?: number,
+  ) {
+    super(INDEX_RETRY);
+    this.name = 'TransientIndexError';
+  }
+}
+
 /** The only error that leaves the processor; its message is always one of the codes above. */
 export class IndexJobError extends Error {
   constructor(
     readonly code: string,
     readonly retryable: boolean,
+    readonly options: {
+      /** Hold the queue this long, keep the job's attempts (provider over its rate limit). */
+      deferMs?: number;
+      /** Over its limit, but the job has waited enough: hold the queue, the attempt is used. */
+      holdMs?: number;
+      /** The AI service or the provider could not answer: counts towards the circuit breaker. */
+      providerDown?: boolean;
+    } = {},
   ) {
     super(code);
     this.name = 'IndexJobError';

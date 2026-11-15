@@ -176,7 +176,7 @@ Only `DocumentStateMachine` may change `documents.status`. Every transition writ
 
 | Failure | Expected behaviour | Verified in |
 |---|---|---|
-| LLM provider returns 429 | Respect `Retry-After`, exponential backoff with jitter, queue limiter at provider RPM | T6.2 |
+| LLM provider returns 429 | Queue paced to the plan's RPM/TPM; on a 429 the whole queue waits the provider's `Retry-After` (passed on by the AI service) and the job keeps its attempts; after 60 such waits a 429 counts as a failed attempt. Other failures: exponential backoff with full jitter; a circuit breaker holds the queue after 5 failures in a row from different documents (AI_PIPELINE.md §8) | T6.2 |
 | LLM returns invalid JSON | Retry up to 2 times with the validation error; then `failed` with code | T3.1 |
 | AI service down | Job retried with backoff; circuit breaker pauses queue; no data loss | T2.9, T6.7 |
 | Redis down | API returns 503 for upload/queue endpoints; reads from Postgres keep working; jobs resume after recovery. The rate limiter fails open for reads and writes (approve, reopen, retry) and closed for upload and Q&A (503 `RATE_LIMIT_UNAVAILABLE`), which spend the shared LLM quota (ADR 0012, T6.1) | T6.1, T6.7 |

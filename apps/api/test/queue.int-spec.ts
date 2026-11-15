@@ -34,6 +34,7 @@ import { QueueAdminModule } from '../src/modules/queue/queue-admin.module';
 import { EXTRACTION_QUEUE_PORT } from '../src/modules/queue/application/extraction-queue.port';
 import { queueReady } from './support/queue-ready';
 import { startRedis } from './support/reachable-container';
+import { UNLIMITED_PROVIDER } from './support/test-app';
 import { STORAGE_PORT } from '../src/modules/storage/application/storage.port';
 import { LocalFsStorage } from '../src/modules/storage/infra/local-fs.storage';
 import { useTestRoots } from '../src/modules/storage/testing/test-root';
@@ -82,7 +83,9 @@ describe('extraction queue (HTTP -> Postgres -> Redis -> worker)', () => {
 
   const config = (url: string) => ({
     get: (key: string) =>
-      ({ REDIS_URL: url, QUEUE_BACKOFF_BASE_MS: 10, DATA_DIR: root })[key] as unknown,
+      ({ REDIS_URL: url, QUEUE_BACKOFF_BASE_MS: 10, DATA_DIR: root, ...UNLIMITED_PROVIDER })[
+        key
+      ] as unknown,
   });
 
   async function makeApp(url: string): Promise<INestApplication> {
@@ -431,7 +434,7 @@ describe('extraction queue (HTTP -> Postgres -> Redis -> worker)', () => {
     );
     await processor.process(
       { documentId: res.body.id, tenantId: ACME },
-      { attempt: 1, maxAttempts: 5 },
+      { attempt: 1, maxAttempts: 5, deferrals: 0 },
     );
     expect(handler.calls).toBe(1);
     expect(await statusOf(res.body.id)).toBe('needs_review');

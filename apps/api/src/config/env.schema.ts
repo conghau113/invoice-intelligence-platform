@@ -38,6 +38,19 @@ const envFields = z.object({
   // How long the worker waits for /extract on the PDF/image (LLM) path; XML has its own short limit.
   // Keep it above the AI service's own 55 s budget so the service can answer with its error code.
   AI_LLM_TIMEOUT_MS: z.coerce.number().int().min(100).max(300_000).default(60_000),
+  // What the LLM provider plan allows (AI_PIPELINE.md §8, T6.2). Limits vary by account and change:
+  // take them from the provider's rate-limit page (AI Studio for Gemini). The extraction queue is
+  // paced to stay under both; a 429 still holds the queue for the wait the provider names.
+  LLM_RPM: z.coerce.number().int().min(1).max(100_000).default(10),
+  LLM_TPM: z.coerce.number().int().min(1).max(100_000_000).default(100_000),
+  // The same for the embedding model behind indexing (its own quota; 30K TPM on Gemini free, T5.3).
+  EMBED_RPM: z.coerce.number().int().min(1).max(100_000).default(60),
+  EMBED_TPM: z.coerce.number().int().min(1).max(100_000_000).default(30_000),
+  // Length of the provider's "minute": 60 000. Tests shrink it to run the pacing in seconds.
+  PROVIDER_MINUTE_MS: z.coerce.number().int().min(100).max(60_000).default(60_000),
+  // Circuit breaker of the queues: failures in a row that stop them, and the first pause.
+  BREAKER_THRESHOLD: z.coerce.number().int().min(1).max(100).default(5),
+  BREAKER_COOLDOWN_MS: z.coerce.number().int().min(100).max(600_000).default(60_000),
   // Peers whose X-Forwarded-For the API believes, so audit rows get the caller's address instead of
   // the web server's. Default: only a proxy on the same machine (dev, CI). In deployment set the
   // reverse proxy's address or network (M4). Never a value that trusts everyone (see trusted-proxies.ts).

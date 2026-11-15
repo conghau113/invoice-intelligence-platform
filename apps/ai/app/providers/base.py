@@ -7,6 +7,8 @@ with. The API worker retries 5xx/408/429 and fails 4xx at once, so the status IS
 No exception message ever contains a provider response body or document text (CLAUDE.md).
 """
 
+import math
+import re
 from dataclasses import dataclass
 from typing import Any, Protocol
 
@@ -23,6 +25,15 @@ from app.error_codes import registered
 # temporary; a cut answer is final. One line with its `fieldMeta` entry is ~133 tokens, so about
 # 86 lines fit (8,192 fitted ~54: invoice-0004 was cut, T4.4).
 MAX_OUTPUT_TOKENS = 12288
+
+# Longest wait we pass on from a provider's 429 (T6.2). A longer one (a daily quota that resets in
+# hours) is cut here; the API worker then waits again and, after enough waits, fails the job. The
+# worker caps at the same 300 s (`MAX_RATE_LIMIT_WAIT_MS`, apps/api extraction/resilience.ts).
+MAX_RETRY_AFTER_S = 300
+# Google's RetryInfo writes a duration like "37s" or "1.5s". Bounded, so no backtracking.
+_GOOGLE_DURATION = re.compile(r"(\d{1,6}(?:\.\d{1,9})?)s", re.ASCII)
+# Whole seconds, ASCII digits only ("²".isdigit() is True but int() refuses it).
+_SECONDS = re.compile(r"\d{1,6}", re.ASCII)
 
 
 @dataclass(frozen=True)
@@ -44,19 +55,24 @@ class LLMResult:
 
 
 class LLMError(Exception):
-    """A provider call failed. `status` >= 500: try again later; 4xx: retrying will not help."""
+    """A provider call failed. `status` >= 500: try again later; 4xx: retrying will not help.
 
-    def __init__(self, code: str, status: int) -> None:
+    `retry_after_s`: how long the provider asked us to wait (429 only), passed on to the API worker
+    as a `Retry-After` header so the whole queue waits instead of hammering a provider that said no.
+    """
+
+    def __init__(self, code: str, status: int, retry_after_s: int | None = None) -> None:
         super().__init__(code)
         self.code = registered(code)
         self.status = status
+        self.retry_after_s = retry_after_s
 
 
 class LLMUnavailable(LLMError):
     """Provider down, rate-limited, timed out or our key/URL wrong: not the file's fault."""
 
-    def __init__(self, code: str = "LLM_UNAVAILABLE") -> None:
-        super().__init__(code, 503)
+    def __init__(self, code: str = "LLM_UNAVAILABLE", retry_after_s: int | None = None) -> None:
+        super().__init__(code, 503, retry_after_s)
 
 
 class LLMRejected(LLMError):
@@ -91,6 +107,33 @@ def _error_reasons(res: httpx.Response) -> set[str]:
         return set()
 
 
+def _bounded_seconds(value: float) -> int:
+    return min(MAX_RETRY_AFTER_S, max(1, math.ceil(value)))
+
+
+def retry_after_s(res: httpx.Response) -> int | None:
+    """The wait a 429 asks for: a `Retry-After` header in seconds (OpenAI-compatible providers), or
+    Google's `RetryInfo.retryDelay` in the error details. Only these machine fields are read, never
+    the message. None when the provider says nothing usable (an HTTP date is ignored too)."""
+    header = res.headers.get("retry-after", "").strip()
+    if _SECONDS.fullmatch(header):
+        return _bounded_seconds(int(header))
+    try:
+        details = res.json()["error"]["details"]
+    except (ValueError, KeyError, TypeError):
+        return None
+    if not isinstance(details, list):
+        return None
+    for d in details:
+        if not isinstance(d, dict) or not str(d.get("@type", "")).endswith("google.rpc.RetryInfo"):
+            continue
+        delay = d.get("retryDelay")
+        match = _GOOGLE_DURATION.fullmatch(delay) if isinstance(delay, str) else None
+        if match:
+            return _bounded_seconds(float(match.group(1)))
+    return None
+
+
 def post_json(
     client: httpx.Client, url: str, headers: dict[str, str], body: dict[str, Any]
 ) -> dict[str, Any]:
@@ -100,7 +143,7 @@ def post_json(
     except httpx.HTTPError:  # timeout, refused, reset, DNS: the network's fault, not the file's
         raise LLMUnavailable("LLM_TIMEOUT_OR_NETWORK") from None
     if res.status_code == 429:
-        raise LLMUnavailable("LLM_RATE_LIMITED")
+        raise LLMUnavailable("LLM_RATE_LIMITED", retry_after_s(res))
     if res.status_code in (401, 403, 404):
         raise LLMUnavailable(
             "LLM_MISCONFIGURED"

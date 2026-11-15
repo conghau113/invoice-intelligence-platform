@@ -79,3 +79,17 @@ export async function deleteDocumentsOf(owner: Pool, user: string): Promise<void
   await owner.query(`DELETE FROM audit_logs WHERE entity_id IN (${mine})`, [user]);
   await owner.query(`DELETE FROM documents WHERE uploaded_by = $1`, [user]);
 }
+
+/**
+ * Provider limits that never slow a test down and a breaker that never opens: for integration
+ * tests about something else. The pacing and the breaker have their own test (resilience.int-spec).
+ */
+export const UNLIMITED_PROVIDER = {
+  LLM_RPM: 100_000,
+  LLM_TPM: 100_000_000,
+  EMBED_RPM: 100_000,
+  EMBED_TPM: 100_000_000,
+  PROVIDER_MINUTE_MS: 100,
+  BREAKER_THRESHOLD: 100,
+  BREAKER_COOLDOWN_MS: 100,
+};

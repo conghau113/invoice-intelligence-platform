@@ -28,7 +28,8 @@ export const isFailureCode = isDocumentFailureCode;
  * The AI service answered 401/403/404: our own settings (token, URL) are wrong, not the document.
  * Treated as transient on purpose: a token rotated or a deploy half done is usually fixed within
  * the retry window, and when it is not, the document fails with this code (not a file error) so
- * an administrator knows to fix the configuration and retry. Circuit-breaking the queue is T6.7.
+ * an administrator knows to fix the configuration and retry. Each failure also counts towards the
+ * queue's circuit breaker (resilience.ts, T6.2), which holds the queue after several in a row.
  */
 export const AI_SERVICE_MISCONFIGURED = 'AI_SERVICE_MISCONFIGURED' satisfies DocumentFailureCode;
 

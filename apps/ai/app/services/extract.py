@@ -49,11 +49,15 @@ FIRST_USER_TEXT = "Extract the invoice from the attached page images."
 class ExtractError(Exception):
     """Rendered by the router as {code, message} with `status`."""
 
-    def __init__(self, status: int, code: str, message: str) -> None:
+    def __init__(
+        self, status: int, code: str, message: str, retry_after_s: int | None = None
+    ) -> None:
         super().__init__(code)
         self.status = status
         self.code = registered(code)
         self.message = message
+        # From a provider's 429: the router sends it on as a Retry-After header (T6.2).
+        self.retry_after_s = retry_after_s
 
 
 def invoice_json_schema() -> dict[str, Any]:
@@ -140,7 +144,7 @@ def extract_llm(images: list[ImagePart], provider: LLMProvider) -> dict[str, Any
         except LLMError as err:
             log.warning("llm call failed code=%s attempt=%d", err.code, attempt + 1)
             raise ExtractError(
-                err.status, err.code, "The model provider could not answer"
+                err.status, err.code, "The model provider could not answer", err.retry_after_s
             ) from None
         calls += 1
         in_tokens += result.input_tokens

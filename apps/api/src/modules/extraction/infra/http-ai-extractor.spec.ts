@@ -62,7 +62,12 @@ describe('HttpAiExtractor (real HTTP against a local stub)', () => {
     });
     await new Promise<void>((r) => server.listen(0, '127.0.0.1', r));
   });
-  afterAll(() => new Promise<void>((r) => server.close(() => r())));
+  afterAll(() => {
+    // A test cancels a large error body mid-write: that socket is not idle, and close() alone
+    // would wait for it, keeping the jest worker alive after the run.
+    server.closeAllConnections();
+    return new Promise<void>((r) => server.close(() => r()));
+  });
   beforeEach(() => {
     seen = undefined;
   });
@@ -298,5 +303,67 @@ describe('HttpAiExtractor (real HTTP against a local stub)', () => {
       true
     >);
     await expect(ex.extract(input)).rejects.toBeInstanceOf(TransientExtractionError);
+  });
+
+  describe('rate limit (T6.2)', () => {
+    it('passes on the wait the provider named, as Retry-After on the 503', async () => {
+      reply = (res) =>
+        res
+          .writeHead(503, { 'content-type': 'application/json', 'retry-after': '9' })
+          .end(JSON.stringify({ code: 'LLM_RATE_LIMITED', message: 'x' }));
+      const err = await extractor()
+        .extract({ ...input, sourceType: 'pdf' })
+        .catch((e: unknown) => e);
+      expect(err).toBeInstanceOf(TransientExtractionError);
+      expect(err).toMatchObject({ code: 'LLM_RATE_LIMITED', retryAfterMs: 9_000 });
+    });
+
+    it('has no wait when the AI service gave none, or one that is not whole seconds', async () => {
+      for (const header of [undefined, 'Wed, 21 Oct 2026 07:28:00 GMT']) {
+        reply = (res) => {
+          const headers: Record<string, string> = { 'content-type': 'application/json' };
+          if (header !== undefined) headers['retry-after'] = header;
+          res.writeHead(503, headers).end(JSON.stringify({ code: 'LLM_RATE_LIMITED' }));
+        };
+        const err = await extractor()
+          .extract({ ...input, sourceType: 'pdf' })
+          .catch((e: unknown) => e);
+        expect((err as TransientExtractionError).retryAfterMs).toBeUndefined();
+      }
+    });
+
+    it('a 503 with Retry-After but without LLM_RATE_LIMITED is down, not busy', async () => {
+      // A reverse proxy in maintenance answers like this: it must count as a failure.
+      reply = (res) =>
+        res
+          .writeHead(503, { 'content-type': 'application/json', 'retry-after': '30' })
+          .end(JSON.stringify({ code: 'LLM_UNAVAILABLE' }));
+      const err = await extractor()
+        .extract({ ...input, sourceType: 'pdf' })
+        .catch((e: unknown) => e);
+      expect(err).toMatchObject({
+        code: 'LLM_UNAVAILABLE',
+        rateLimited: false,
+        retryAfterMs: 30_000,
+      });
+    });
+
+    it('a bare 429 (no code, e.g. from a proxy) is busy', async () => {
+      reply = (res) => res.writeHead(429).end();
+      const err = await extractor()
+        .extract({ ...input, sourceType: 'pdf' })
+        .catch((e: unknown) => e);
+      expect(err).toMatchObject({ rateLimited: true });
+    });
+
+    it('reads at most 4 KiB of an error body: a huge one keeps the generic code', async () => {
+      const filler = 'x'.repeat(64 * 1024);
+      reply = json(503, { message: filler, code: 'LLM_RATE_LIMITED' });
+      const err = await extractor()
+        .extract({ ...input, sourceType: 'pdf' })
+        .catch((e: unknown) => e);
+      expect(err).toBeInstanceOf(TransientExtractionError);
+      expect((err as TransientExtractionError).code).toBe('EXTRACTION_RETRIES_EXHAUSTED');
+    });
   });
 });

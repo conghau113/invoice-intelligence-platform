@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { UnrecoverableError, Worker, type Job } from 'bullmq';
 import type { Redis } from 'ioredis';
 import type { Env } from '../../../config/env.schema';
+import { EXTRACTION_TOKENS_PER_JOB } from '../../extraction/resilience';
 import { ExtractionProcessor } from '../application/extraction.processor';
 import {
   EXTRACTION_FAILED,
@@ -18,6 +19,7 @@ import {
   MAX_ATTEMPTS,
   backoffMs,
 } from '../domain/extraction-job';
+import { ProviderGuard, isRateLimitError } from './provider-guard';
 import { settleWithin, workerConnection } from './redis-connection';
 
 /** Documents handled at the same time by one worker process. */
@@ -36,6 +38,8 @@ export class ExtractionWorker implements OnApplicationBootstrap, OnApplicationSh
   private readonly logger = new Logger(ExtractionWorker.name);
   private connection?: Redis;
   private worker?: Worker;
+  /** Pace, circuit breaker, and holding the whole queue when the provider says wait (T6.2). */
+  private guard?: ProviderGuard;
 
   constructor(
     private readonly config: ConfigService<Env, true>,
@@ -45,9 +49,19 @@ export class ExtractionWorker implements OnApplicationBootstrap, OnApplicationSh
   onApplicationBootstrap(): void {
     const baseMs = this.config.get('QUEUE_BACKOFF_BASE_MS', { infer: true });
     this.connection = workerConnection(this.config.get('REDIS_URL', { infer: true }));
+    // Starts are spaced so that no minute holds more jobs than the provider plan allows (T6.2).
+    const { guard, limiter } = ProviderGuard.forQueue(
+      EXTRACTION_QUEUE,
+      this.connection,
+      this.config,
+      { rpm: 'LLM_RPM', tpm: 'LLM_TPM', tokensPerJob: EXTRACTION_TOKENS_PER_JOB },
+      this.logger,
+    );
+    this.guard = guard;
     this.worker = new Worker(EXTRACTION_QUEUE, (job) => this.handle(job), {
       connection: this.connection,
       concurrency: CONCURRENCY,
+      limiter,
       // A job whose worker died is given back once; a second stall fails it (see reconcile).
       maxStalledCount: 1,
       settings: { backoffStrategy: (attemptsMade) => backoffMs(attemptsMade, baseMs) },
@@ -76,12 +90,22 @@ export class ExtractionWorker implements OnApplicationBootstrap, OnApplicationSh
   }
 
   private async handle(job: Job): Promise<void> {
+    const guard = this.guard;
+    if (guard === undefined) throw new Error(EXTRACTION_FAILED); // not bootstrapped
     try {
-      await this.processor.process(job.data, {
-        attempt: job.attemptsMade + 1,
-        maxAttempts: job.opts.attempts ?? MAX_ATTEMPTS,
-      });
+      // An open circuit or a rate limit gives the job back to the queue inside `run`.
+      await guard.run(
+        job,
+        async (deferrals) =>
+          (await this.processor.process(job.data, {
+            attempt: job.attemptsMade + 1,
+            maxAttempts: job.opts.attempts ?? MAX_ATTEMPTS,
+            deferrals,
+          })) === 'done',
+        (e) => (e instanceof ExtractionJobError ? e.options : undefined),
+      );
     } catch (e) {
+      if (isRateLimitError(e)) throw e;
       // Unknown errors (e.g. the database is down) are retried like a handler failure would be.
       if (e instanceof ExtractionJobError && !e.retryable) throw new UnrecoverableError(e.code);
       if (e instanceof ExtractionJobError) throw e;
@@ -95,6 +119,7 @@ export class ExtractionWorker implements OnApplicationBootstrap, OnApplicationSh
     // after the grace period the connection is cut and the worker closed forcibly (a job that was
     // running is then redelivered as stalled).
     await settleWithin(SHUTDOWN_GRACE_MS, this.worker.close());
+    await settleWithin(SHUTDOWN_GRACE_MS, this.guard?.close() ?? Promise.resolve());
     this.connection?.disconnect();
     await settleWithin(SHUTDOWN_GRACE_MS, this.worker.close(true));
   }

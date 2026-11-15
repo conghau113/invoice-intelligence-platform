@@ -35,7 +35,7 @@
   ],
   "runDates": [
     "2026-11-09",
-    "2026-11-09"
+    "2026-11-15"
   ],
   "limits": [
     "Synthetic invoices from tools/invoice-gen: a score here says how the model reads this generator's documents, not the real invoices a business receives.",
@@ -57,19 +57,19 @@
         "documents": 60,
         "fields": {
           "seller.name": {
+            "correct": 56,
+            "total": 60,
+            "accuracy": 0.9333
+          },
+          "seller.taxCode": {
             "correct": 57,
             "total": 60,
             "accuracy": 0.95
           },
-          "seller.taxCode": {
-            "correct": 54,
-            "total": 60,
-            "accuracy": 0.9
-          },
           "seller.address": {
-            "correct": 60,
+            "correct": 59,
             "total": 60,
-            "accuracy": 1.0
+            "accuracy": 0.9833
           },
           "buyer.name": {
             "correct": 60,
@@ -82,9 +82,9 @@
             "accuracy": 1.0
           },
           "buyer.address": {
-            "correct": 58,
+            "correct": 60,
             "total": 60,
-            "accuracy": 0.9667
+            "accuracy": 1.0
           },
           "invoiceNo": {
             "correct": 60,
@@ -167,14 +167,14 @@
           }
         },
         "documentExact": {
-          "correct": 49,
+          "correct": 53,
           "total": 60,
-          "accuracy": 0.8167
+          "accuracy": 0.8833
         },
         "criticalExact": {
-          "correct": 54,
+          "correct": 57,
           "total": 60,
-          "accuracy": 0.9
+          "accuracy": 0.95
         }
       },
       "perRepeat": [
@@ -187,14 +187,262 @@
               "accuracy": 0.95
             },
             "seller.taxCode": {
-              "correct": 18,
+              "correct": 19,
               "total": 20,
-              "accuracy": 0.9
+              "accuracy": 0.95
             },
             "seller.address": {
               "correct": 20,
               "total": 20,
               "accuracy": 1.0
+            },
+            "buyer.name": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "buyer.taxCode": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "buyer.address": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "invoiceNo": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "series": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "issueDate": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "currency": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "subtotal": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "total": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "vatBreakdown": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            }
+          },
+          "lines": {
+            "expected": 161,
+            "predicted": 161,
+            "paired": 161,
+            "correct": 161,
+            "missing": 0,
+            "extra": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "macroF1": 1.0,
+            "columns": {
+              "description": {
+                "correct": 161,
+                "total": 161,
+                "accuracy": 1.0
+              },
+              "quantity": {
+                "correct": 161,
+                "total": 161,
+                "accuracy": 1.0
+              },
+              "unit": {
+                "correct": 161,
+                "total": 161,
+                "accuracy": 1.0
+              },
+              "unitPrice": {
+                "correct": 161,
+                "total": 161,
+                "accuracy": 1.0
+              },
+              "vatRate": {
+                "correct": 161,
+                "total": 161,
+                "accuracy": 1.0
+              },
+              "amount": {
+                "correct": 161,
+                "total": 161,
+                "accuracy": 1.0
+              }
+            }
+          },
+          "documentExact": {
+            "correct": 18,
+            "total": 20,
+            "accuracy": 0.9
+          },
+          "criticalExact": {
+            "correct": 19,
+            "total": 20,
+            "accuracy": 0.95
+          }
+        },
+        {
+          "documents": 20,
+          "fields": {
+            "seller.name": {
+              "correct": 19,
+              "total": 20,
+              "accuracy": 0.95
+            },
+            "seller.taxCode": {
+              "correct": 19,
+              "total": 20,
+              "accuracy": 0.95
+            },
+            "seller.address": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "buyer.name": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "buyer.taxCode": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "buyer.address": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "invoiceNo": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "series": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "issueDate": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "currency": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "subtotal": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "total": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            },
+            "vatBreakdown": {
+              "correct": 20,
+              "total": 20,
+              "accuracy": 1.0
+            }
+          },
+          "lines": {
+            "expected": 161,
+            "predicted": 161,
+            "paired": 161,
+            "correct": 161,
+            "missing": 0,
+            "extra": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "macroF1": 1.0,
+            "columns": {
+              "description": {
+                "correct": 161,
+                "total": 161,
+                "accuracy": 1.0
+              },
+              "quantity": {
+                "correct": 161,
+                "total": 161,
+                "accuracy": 1.0
+              },
+              "unit": {
+                "correct": 161,
+                "total": 161,
+                "accuracy": 1.0
+              },
+              "unitPrice": {
+                "correct": 161,
+                "total": 161,
+                "accuracy": 1.0
+              },
+              "vatRate": {
+                "correct": 161,
+                "total": 161,
+                "accuracy": 1.0
+              },
+              "amount": {
+                "correct": 161,
+                "total": 161,
+                "accuracy": 1.0
+              }
+            }
+          },
+          "documentExact": {
+            "correct": 18,
+            "total": 20,
+            "accuracy": 0.9
+          },
+          "criticalExact": {
+            "correct": 19,
+            "total": 20,
+            "accuracy": 0.95
+          }
+        },
+        {
+          "documents": 20,
+          "fields": {
+            "seller.name": {
+              "correct": 18,
+              "total": 20,
+              "accuracy": 0.9
+            },
+            "seller.taxCode": {
+              "correct": 19,
+              "total": 20,
+              "accuracy": 0.95
+            },
+            "seller.address": {
+              "correct": 19,
+              "total": 20,
+              "accuracy": 0.95
             },
             "buyer.name": {
               "correct": 20,
@@ -297,257 +545,9 @@
             "accuracy": 0.85
           },
           "criticalExact": {
-            "correct": 18,
+            "correct": 19,
             "total": 20,
-            "accuracy": 0.9
-          }
-        },
-        {
-          "documents": 20,
-          "fields": {
-            "seller.name": {
-              "correct": 19,
-              "total": 20,
-              "accuracy": 0.95
-            },
-            "seller.taxCode": {
-              "correct": 18,
-              "total": 20,
-              "accuracy": 0.9
-            },
-            "seller.address": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "buyer.name": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "buyer.taxCode": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "buyer.address": {
-              "correct": 19,
-              "total": 20,
-              "accuracy": 0.95
-            },
-            "invoiceNo": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "series": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "issueDate": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "currency": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "subtotal": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "total": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "vatBreakdown": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            }
-          },
-          "lines": {
-            "expected": 161,
-            "predicted": 161,
-            "paired": 161,
-            "correct": 161,
-            "missing": 0,
-            "extra": 0,
-            "precision": 1.0,
-            "recall": 1.0,
-            "f1": 1.0,
-            "macroF1": 1.0,
-            "columns": {
-              "description": {
-                "correct": 161,
-                "total": 161,
-                "accuracy": 1.0
-              },
-              "quantity": {
-                "correct": 161,
-                "total": 161,
-                "accuracy": 1.0
-              },
-              "unit": {
-                "correct": 161,
-                "total": 161,
-                "accuracy": 1.0
-              },
-              "unitPrice": {
-                "correct": 161,
-                "total": 161,
-                "accuracy": 1.0
-              },
-              "vatRate": {
-                "correct": 161,
-                "total": 161,
-                "accuracy": 1.0
-              },
-              "amount": {
-                "correct": 161,
-                "total": 161,
-                "accuracy": 1.0
-              }
-            }
-          },
-          "documentExact": {
-            "correct": 16,
-            "total": 20,
-            "accuracy": 0.8
-          },
-          "criticalExact": {
-            "correct": 18,
-            "total": 20,
-            "accuracy": 0.9
-          }
-        },
-        {
-          "documents": 20,
-          "fields": {
-            "seller.name": {
-              "correct": 19,
-              "total": 20,
-              "accuracy": 0.95
-            },
-            "seller.taxCode": {
-              "correct": 18,
-              "total": 20,
-              "accuracy": 0.9
-            },
-            "seller.address": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "buyer.name": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "buyer.taxCode": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "buyer.address": {
-              "correct": 19,
-              "total": 20,
-              "accuracy": 0.95
-            },
-            "invoiceNo": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "series": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "issueDate": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "currency": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "subtotal": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "total": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            },
-            "vatBreakdown": {
-              "correct": 20,
-              "total": 20,
-              "accuracy": 1.0
-            }
-          },
-          "lines": {
-            "expected": 161,
-            "predicted": 161,
-            "paired": 161,
-            "correct": 161,
-            "missing": 0,
-            "extra": 0,
-            "precision": 1.0,
-            "recall": 1.0,
-            "f1": 1.0,
-            "macroF1": 1.0,
-            "columns": {
-              "description": {
-                "correct": 161,
-                "total": 161,
-                "accuracy": 1.0
-              },
-              "quantity": {
-                "correct": 161,
-                "total": 161,
-                "accuracy": 1.0
-              },
-              "unit": {
-                "correct": 161,
-                "total": 161,
-                "accuracy": 1.0
-              },
-              "unitPrice": {
-                "correct": 161,
-                "total": 161,
-                "accuracy": 1.0
-              },
-              "vatRate": {
-                "correct": 161,
-                "total": 161,
-                "accuracy": 1.0
-              },
-              "amount": {
-                "correct": 161,
-                "total": 161,
-                "accuracy": 1.0
-              }
-            }
-          },
-          "documentExact": {
-            "correct": 16,
-            "total": 20,
-            "accuracy": 0.8
-          },
-          "criticalExact": {
-            "correct": 18,
-            "total": 20,
-            "accuracy": 0.9
+            "accuracy": 0.95
           }
         }
       ],
@@ -602,9 +602,9 @@
               "accuracy": 1.0
             },
             "buyer.address": {
-              "correct": 22,
+              "correct": 24,
               "total": 24,
-              "accuracy": 0.9167
+              "accuracy": 1.0
             },
             "invoiceNo": {
               "correct": 24,
@@ -687,9 +687,9 @@
             }
           },
           "documentExact": {
-            "correct": 19,
+            "correct": 21,
             "total": 24,
-            "accuracy": 0.7917
+            "accuracy": 0.875
           },
           "criticalExact": {
             "correct": 24,
@@ -701,9 +701,9 @@
           "documents": 12,
           "fields": {
             "seller.name": {
-              "correct": 12,
+              "correct": 11,
               "total": 12,
-              "accuracy": 1.0
+              "accuracy": 0.9167
             },
             "seller.taxCode": {
               "correct": 12,
@@ -711,9 +711,9 @@
               "accuracy": 1.0
             },
             "seller.address": {
-              "correct": 12,
+              "correct": 11,
               "total": 12,
-              "accuracy": 1.0
+              "accuracy": 0.9167
             },
             "buyer.name": {
               "correct": 12,
@@ -811,9 +811,9 @@
             }
           },
           "documentExact": {
-            "correct": 12,
+            "correct": 11,
             "total": 12,
-            "accuracy": 1.0
+            "accuracy": 0.9167
           },
           "criticalExact": {
             "correct": 12,
@@ -830,9 +830,9 @@
               "accuracy": 1.0
             },
             "seller.taxCode": {
-              "correct": 18,
+              "correct": 21,
               "total": 24,
-              "accuracy": 0.75
+              "accuracy": 0.875
             },
             "seller.address": {
               "correct": 24,
@@ -935,14 +935,14 @@
             }
           },
           "documentExact": {
-            "correct": 18,
+            "correct": 21,
             "total": 24,
-            "accuracy": 0.75
+            "accuracy": 0.875
           },
           "criticalExact": {
-            "correct": 18,
+            "correct": 21,
             "total": 24,
-            "accuracy": 0.75
+            "accuracy": 0.875
           }
         }
       },
@@ -1257,9 +1257,9 @@
               "accuracy": 1.0
             },
             "seller.taxCode": {
-              "correct": 6,
+              "correct": 9,
               "total": 9,
-              "accuracy": 0.6667
+              "accuracy": 1.0
             },
             "buyer.taxCode": {
               "correct": 9,
@@ -1316,41 +1316,44 @@
           "linesF1": 1.0
         }
       },
-      "accentOnly": {},
+      "accentOnly": {
+        "seller.name": 1,
+        "seller.address": 1
+      },
       "confidentWrong": {
-        "seller.taxCode": 6
+        "seller.taxCode": 3
       },
       "sellerBranchSuffixCut": {
-        "count": 6,
+        "count": 3,
         "of": 15
       },
       "failures": {},
       "usage": {
-        "calls": 69,
+        "calls": 67,
         "inputTokens": 97356,
-        "outputTokens": 108990,
+        "outputTokens": 107679,
         "medianInputTokens": 1568.0,
-        "costUsdTotal": 0.301682,
-        "costUsdPerDocument": 0.005028,
+        "costUsdTotal": 0.298404,
+        "costUsdPerDocument": 0.004973,
         "pricesVersion": "2026-11-08",
         "latency": {
           "all": {
             "n": 60,
-            "p50Ms": 10105,
-            "p95Ms": 16048
+            "p50Ms": 4882,
+            "p95Ms": 12061
           },
           "singlePage": {
             "n": 57,
-            "p50Ms": 10092,
-            "p95Ms": 15917
+            "p50Ms": 4879,
+            "p95Ms": 8841
           },
           "multiPage": {
             "n": 3,
-            "p50Ms": 20442,
-            "p95Ms": 21758
+            "p50Ms": 20498,
+            "p95Ms": 21382
           }
         },
-        "retriedDocuments": 9,
+        "retriedDocuments": 7,
         "maxFieldMeta": 61
       },
       "wrong": [
@@ -1365,31 +1368,11 @@
           "linesExtra": 0
         },
         {
-          "doc": "invoice-0011",
-          "repeat": 0,
-          "status": "ok",
-          "fields": [
-            "seller.taxCode"
-          ],
-          "linesNotRight": 0,
-          "linesExtra": 0
-        },
-        {
           "doc": "invoice-0016",
           "repeat": 0,
           "status": "ok",
           "fields": [
             "seller.taxCode"
-          ],
-          "linesNotRight": 0,
-          "linesExtra": 0
-        },
-        {
-          "doc": "invoice-0007",
-          "repeat": 1,
-          "status": "ok",
-          "fields": [
-            "buyer.address"
           ],
           "linesNotRight": 0,
           "linesExtra": 0
@@ -1405,31 +1388,11 @@
           "linesExtra": 0
         },
         {
-          "doc": "invoice-0011",
-          "repeat": 1,
-          "status": "ok",
-          "fields": [
-            "seller.taxCode"
-          ],
-          "linesNotRight": 0,
-          "linesExtra": 0
-        },
-        {
           "doc": "invoice-0016",
           "repeat": 1,
           "status": "ok",
           "fields": [
             "seller.taxCode"
-          ],
-          "linesNotRight": 0,
-          "linesExtra": 0
-        },
-        {
-          "doc": "invoice-0007",
-          "repeat": 2,
-          "status": "ok",
-          "fields": [
-            "buyer.address"
           ],
           "linesNotRight": 0,
           "linesExtra": 0
@@ -1445,11 +1408,12 @@
           "linesExtra": 0
         },
         {
-          "doc": "invoice-0011",
+          "doc": "invoice-0014",
           "repeat": 2,
           "status": "ok",
           "fields": [
-            "seller.taxCode"
+            "seller.name",
+            "seller.address"
           ],
           "linesNotRight": 0,
           "linesExtra": 0

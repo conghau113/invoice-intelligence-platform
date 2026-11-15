@@ -3,7 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import type { Env } from '../../../config/env.schema';
 import type { AiIndexer, CurrentInvoiceRow } from '../application/ai-indexer.port';
 import { aiIndexResponseSchema, type AiIndexResponse } from '../domain/ai-index-response';
-import { PermanentIndexError } from '../domain/index-job';
+import { RATE_LIMITED_CODE, parseRetryAfterMs, readErrorCode } from '../../extraction/resilience';
+import { PermanentIndexError, TransientIndexError } from '../domain/index-job';
 
 /** Statuses where "try again later" is the right answer. */
 const RETRYABLE_4XX: ReadonlySet<number> = new Set([408, 429]);
@@ -42,14 +43,18 @@ export class HttpAiIndexer implements AiIndexer {
         signal: AbortSignal.timeout(this.timeoutMs),
       });
     } catch {
-      throw new Error('AI service unreachable'); // refused, reset, DNS or timeout: transient
+      throw new TransientIndexError(); // refused, reset, DNS or timeout
     }
     if (res.ok) return this.parse(res);
-    // The body of an error is never read (it may echo the invoice): release the socket instead.
-    await res.body?.cancel().catch(() => undefined);
     if (res.status >= 500 || RETRYABLE_4XX.has(res.status) || MISCONFIGURED.has(res.status)) {
-      throw new Error(`AI service answered ${res.status}`); // transient
+      // Only the `code` is taken from the body (at most 4 KiB read, never logged), to tell a
+      // provider over its rate limit from one that is down; Retry-After is the wait it named.
+      const retryAfterMs = parseRetryAfterMs(res.headers.get('retry-after'));
+      const code = await readErrorCode(res);
+      throw new TransientIndexError(code === RATE_LIMITED_CODE || res.status === 429, retryAfterMs);
     }
+    // Refused: the body is not needed, release the socket.
+    await res.body?.cancel().catch(() => undefined);
     throw new PermanentIndexError(INDEX_REQUEST_REJECTED);
   }
 
@@ -58,7 +63,7 @@ export class HttpAiIndexer implements AiIndexer {
     try {
       text = await res.text();
     } catch {
-      throw new Error('AI service body cut off'); // transient, like a timeout
+      throw new TransientIndexError(); // body cut off, like a timeout
     }
     let body: unknown;
     try {

@@ -56,9 +56,12 @@ class AnswerRequest(BaseModel):
 
 
 def _provider_error(err: LLMError) -> JSONResponse:
+    # A provider's 429 wait goes on as Retry-After, so the API can hold its queue (T6.2).
+    headers = {"Retry-After": str(err.retry_after_s)} if err.retry_after_s is not None else None
     return JSONResponse(
         status_code=err.status,
         content={"code": registered(err.code), "message": "The model provider failed"},
+        headers=headers,
     )
 
 
