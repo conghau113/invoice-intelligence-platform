@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { TenantDbService } from '../../../db/tenant-db.service';
 import { auditLogs, documents } from '../../../db/schema';
@@ -11,6 +11,10 @@ import {
   type DocumentStatus,
 } from '../domain/document-status';
 import { DocumentNotFoundError } from '../domain/document-not-found.error';
+import {
+  TENANT_CACHE_INVALIDATOR,
+  type TenantCacheInvalidator,
+} from '../../cache/application/tenant-read-cache';
 
 export interface TransitionContext {
   /** Keycloak sub of the user, or null when the system acts (worker). */
@@ -48,7 +52,10 @@ export const DOCUMENT_STATUS_CHANGED = 'document.status_changed';
  */
 @Injectable()
 export class DocumentStateMachine {
-  constructor(private readonly tenantDb: TenantDbService) {}
+  constructor(
+    private readonly tenantDb: TenantDbService,
+    @Inject(TENANT_CACHE_INVALIDATOR) private readonly cache: TenantCacheInvalidator,
+  ) {}
 
   async transition(
     documentId: string,
@@ -102,6 +109,9 @@ export class DocumentStateMachine {
           : { from: row.status, to, code: ctx.code },
     });
 
+    // Every list and dashboard number of the tenant may have changed. After COMMIT, never before:
+    // a reader in between would cache the old rows again (ADR 0013, T6.3).
+    this.tenantDb.afterCommit(() => this.cache.invalidate(row.tenantId));
     return { from: row.status, to, version };
   }
 }

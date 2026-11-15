@@ -7,6 +7,7 @@
  * (`--runInBand`): run them in parallel and another spec's approvals would land between the two
  * reads of a test.
  */
+import { withoutCache } from './support/test-app';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -162,32 +163,36 @@ describe('GET /insights/extraction (HTTP -> Postgres)', () => {
     })
     class RealDbModule {}
 
-    const mod = await Test.createTestingModule({
-      imports: [RealDbModule, ReviewModule, InsightsModule],
-      providers: [
-        {
-          provide: TOKEN_VERIFIER,
-          useValue: {
-            // Token "<role>" (tenant acme) or "<role>@<tenant alias>".
-            verify: (token: string) => {
-              const [role, alias = 'acme'] = token.split('@');
-              return Promise.resolve({
-                sub: USER,
-                organization: [alias],
-                realm_access: { roles: [role] },
-              });
+    const mod = await withoutCache(
+      Test.createTestingModule({
+        imports: [RealDbModule, ReviewModule, InsightsModule],
+        providers: [
+          {
+            provide: TOKEN_VERIFIER,
+            useValue: {
+              // Token "<role>" (tenant acme) or "<role>@<tenant alias>".
+              verify: (token: string) => {
+                const [role, alias = 'acme'] = token.split('@');
+                return Promise.resolve({
+                  sub: USER,
+                  organization: [alias],
+                  realm_access: { roles: [role] },
+                });
+              },
             },
           },
-        },
-        {
-          provide: TENANT_DIRECTORY,
-          useValue: { idForAlias: (a: string) => Promise.resolve(a === 'globex' ? GLOBEX : ACME) },
-        },
-        { provide: APP_GUARD, useClass: JwtAuthGuard },
-        { provide: APP_GUARD, useClass: PermissionsGuard },
-        { provide: APP_FILTER, useClass: ProblemDetailsFilter },
-      ],
-    })
+          {
+            provide: TENANT_DIRECTORY,
+            useValue: {
+              idForAlias: (a: string) => Promise.resolve(a === 'globex' ? GLOBEX : ACME),
+            },
+          },
+          { provide: APP_GUARD, useClass: JwtAuthGuard },
+          { provide: APP_GUARD, useClass: PermissionsGuard },
+          { provide: APP_FILTER, useClass: ProblemDetailsFilter },
+        ],
+      }),
+    )
       // Approval enqueues a RAG index job (T5.2); no Redis here.
       .overrideProvider(INDEX_QUEUE_PORT)
       .useValue(new FakeIndexQueue())

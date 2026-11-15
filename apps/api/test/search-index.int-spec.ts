@@ -4,6 +4,7 @@
  * transaction. The AI service is replaced by an in-process indexer (no Python, no network); the
  * queue by an in-memory one. Both "Xong khi" checks of the spec are here.
  */
+import { withoutCache } from './support/test-app';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -198,32 +199,36 @@ describe('RAG index (T5.2): approve -> chunks, reopen -> gone', () => {
     class RealDbModule {}
 
     queue = new FakeIndexQueue();
-    const mod = await Test.createTestingModule({
-      imports: [RealDbModule, ReviewModule],
-      providers: [
-        {
-          provide: TOKEN_VERIFIER,
-          useValue: {
-            verify: (token: string) => {
-              const [role, alias = 'acme'] = token.split('@');
-              return Promise.resolve({
-                sub: USER,
-                organization: [alias],
-                realm_access: { roles: [role] },
-              });
+    const mod = await withoutCache(
+      Test.createTestingModule({
+        imports: [RealDbModule, ReviewModule],
+        providers: [
+          {
+            provide: TOKEN_VERIFIER,
+            useValue: {
+              verify: (token: string) => {
+                const [role, alias = 'acme'] = token.split('@');
+                return Promise.resolve({
+                  sub: USER,
+                  organization: [alias],
+                  realm_access: { roles: [role] },
+                });
+              },
             },
           },
-        },
-        {
-          provide: TENANT_DIRECTORY,
-          useValue: { idForAlias: (a: string) => Promise.resolve(a === 'globex' ? GLOBEX : ACME) },
-        },
-        { provide: ConfigService, useValue: {} },
-        { provide: APP_GUARD, useClass: JwtAuthGuard },
-        { provide: APP_GUARD, useClass: PermissionsGuard },
-        { provide: APP_FILTER, useClass: ProblemDetailsFilter },
-      ],
-    })
+          {
+            provide: TENANT_DIRECTORY,
+            useValue: {
+              idForAlias: (a: string) => Promise.resolve(a === 'globex' ? GLOBEX : ACME),
+            },
+          },
+          { provide: ConfigService, useValue: {} },
+          { provide: APP_GUARD, useClass: JwtAuthGuard },
+          { provide: APP_GUARD, useClass: PermissionsGuard },
+          { provide: APP_FILTER, useClass: ProblemDetailsFilter },
+        ],
+      }),
+    )
       .overrideProvider(INDEX_QUEUE_PORT)
       .useValue(queue)
       .compile();

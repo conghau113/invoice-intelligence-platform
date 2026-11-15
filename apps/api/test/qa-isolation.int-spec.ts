@@ -55,7 +55,12 @@ import {
   wordHashVector,
 } from '../src/modules/search/testing/fake-query-embedder';
 import { parseSse, type SseEvent } from './support/sse';
-import { deleteDocumentsOf, realDbModule, stubAuthProviders } from './support/test-app';
+import {
+  deleteDocumentsOf,
+  realDbModule,
+  stubAuthProviders,
+  withoutCache,
+} from './support/test-app';
 
 /** Tenant A (alias acme) and tenant B (alias globex). */
 const ACME = '00000000-0000-4000-8000-0000000000a1';
@@ -330,10 +335,12 @@ describe('Q&A isolation: other tenants, stored injection, reopened invoices (T5.
       classify: (q, today) => fake.classify(q, today),
       answer: (q, sources) => fake.answer(q, sources),
     };
-    const mod = await Test.createTestingModule({
-      imports: [realDbModule(pool, ENV), ReviewModule, QaModule],
-      providers: stubAuthProviders(USER, { acme: ACME, globex: GLOBEX }),
-    })
+    const mod = await withoutCache(
+      Test.createTestingModule({
+        imports: [realDbModule(pool, ENV), ReviewModule, QaModule],
+        providers: stubAuthProviders(USER, { acme: ACME, globex: GLOBEX }),
+      }),
+    )
       .overrideProvider(INDEX_QUEUE_PORT)
       .useValue(queue)
       .overrideProvider(QUERY_EMBEDDER)

@@ -10,6 +10,7 @@
  *  - The AI service is down: after BREAKER_THRESHOLD failures in a row the circuit opens and no call
  *    reaches it for the cooldown; then one probe, and once it answers the queue drains.
  */
+import { disabledResultCache } from '../src/modules/cache/testing/no-cache';
 import { Logger, type INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
@@ -45,6 +46,7 @@ import {
   deleteDocumentsOf,
   realDbModule,
   stubAuthProviders,
+  withoutCache,
 } from './support/test-app';
 
 const ACME = '00000000-0000-4000-8000-0000000000a1';
@@ -122,6 +124,7 @@ describe('provider resilience (T6.2: pacing, 429, circuit breaker)', () => {
       tenantDb,
       new LocalFsStorage(root),
       new HttpAiExtractor(config),
+      disabledResultCache(),
     );
     const w = new ExtractionWorker(
       config,
@@ -191,10 +194,12 @@ describe('provider resilience (T6.2: pacing, 429, circuit breaker)', () => {
     redis = await startRedis();
     redisUrl = `redis://${redis.getHost()}:${redis.getMappedPort(6379)}`;
 
-    const mod = await Test.createTestingModule({
-      imports: [realDbModule(pool, env()), DocumentsModule],
-      providers: stubAuthProviders(USER, { acme: ACME }),
-    })
+    const mod = await withoutCache(
+      Test.createTestingModule({
+        imports: [realDbModule(pool, env()), DocumentsModule],
+        providers: stubAuthProviders(USER, { acme: ACME }),
+      }),
+    )
       .overrideProvider(STORAGE_PORT)
       .useValue(new LocalFsStorage(root))
       .compile();

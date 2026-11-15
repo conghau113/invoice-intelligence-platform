@@ -8,6 +8,7 @@ from app.providers import build_provider
 from app.providers.base import LLMError, LLMProvider
 from app.security import require_service_token
 from app.services.extract import ExtractError, extract
+from app.services.pipeline_version import extraction_version
 from app.services.xml_invoice import MAX_XML_BYTES
 
 router = APIRouter(dependencies=[Depends(require_service_token)])
@@ -30,6 +31,13 @@ def get_llm_provider(request: Request) -> LLMProvider:
     if getattr(state, "llm_provider", None) is None:
         state.llm_provider = build_provider(state.settings)
     return state.llm_provider
+
+
+@router.get("/extract/version")
+def extract_version(request: Request) -> dict[str, str]:
+    """What a result of POST /extract depends on (T6.3): the API worker keys its result cache by
+    these and the file hash. Names and hashes only; no secret and no document data."""
+    return extraction_version(request.app.state.settings)
 
 
 @router.post("/extract", response_model=None)

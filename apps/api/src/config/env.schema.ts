@@ -30,6 +30,9 @@ const envFields = z.object({
   ),
   // Redis for BullMQ (ADR 0008). The API and the worker process both read it.
   REDIS_URL: z.url(),
+  // Read cache (lists, dashboard) and extraction result cache in Redis (ADR 0013, T6.3). `false`
+  // sends every read to Postgres and every PDF/image to the AI service: for before/after measurements.
+  CACHE_ENABLED: booleanString.default(true),
   // First wait of the retry backoff; tests set a few ms, production keeps seconds.
   QUEUE_BACKOFF_BASE_MS: z.coerce.number().int().min(1).max(60_000).default(5_000),
   // Internal AI service (ADR 0002): base URL and the shared bearer token the worker sends (API.md).

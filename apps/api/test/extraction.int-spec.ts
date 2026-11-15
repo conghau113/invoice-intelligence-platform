@@ -6,6 +6,7 @@
  * stubbed. Covers: data visible after upload, AI down -> retries -> failed with a code the API
  * returns, permanent AI errors fail at once, idempotent re-delivery, tenant isolation.
  */
+import { disabledResultCache } from '../src/modules/cache/testing/no-cache';
 import { Global, Module, type INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -42,7 +43,7 @@ import { LocalFsStorage } from '../src/modules/storage/infra/local-fs.storage';
 import { useTestRoots } from '../src/modules/storage/testing/test-root';
 import { queueReady } from './support/queue-ready';
 import { startRedis } from './support/reachable-container';
-import { UNLIMITED_PROVIDER } from './support/test-app';
+import { UNLIMITED_PROVIDER, withoutCache } from './support/test-app';
 
 const ACME = '00000000-0000-4000-8000-0000000000a1';
 const GLOBEX = '00000000-0000-4000-8000-0000000000a2';
@@ -138,32 +139,36 @@ describe('extraction slice (upload -> worker -> AI service -> GET /documents/:id
     })
     class RealDbModule {}
 
-    const mod = await Test.createTestingModule({
-      imports: [RealDbModule, DocumentsModule, ExtractionModule, QueueAdminModule],
-      providers: [
-        {
-          provide: TOKEN_VERIFIER,
-          useValue: {
-            // Token "<role>@<tenant alias>".
-            verify: (token: string) => {
-              const [role, alias] = token.split('@');
-              return Promise.resolve({
-                sub: USER,
-                organization: [alias],
-                realm_access: { roles: [role] },
-              });
+    const mod = await withoutCache(
+      Test.createTestingModule({
+        imports: [RealDbModule, DocumentsModule, ExtractionModule, QueueAdminModule],
+        providers: [
+          {
+            provide: TOKEN_VERIFIER,
+            useValue: {
+              // Token "<role>@<tenant alias>".
+              verify: (token: string) => {
+                const [role, alias] = token.split('@');
+                return Promise.resolve({
+                  sub: USER,
+                  organization: [alias],
+                  realm_access: { roles: [role] },
+                });
+              },
             },
           },
-        },
-        {
-          provide: TENANT_DIRECTORY,
-          useValue: { idForAlias: (a: string) => Promise.resolve(a === 'globex' ? GLOBEX : ACME) },
-        },
-        { provide: APP_GUARD, useClass: JwtAuthGuard },
-        { provide: APP_GUARD, useClass: PermissionsGuard },
-        { provide: APP_FILTER, useClass: ProblemDetailsFilter },
-      ],
-    })
+          {
+            provide: TENANT_DIRECTORY,
+            useValue: {
+              idForAlias: (a: string) => Promise.resolve(a === 'globex' ? GLOBEX : ACME),
+            },
+          },
+          { provide: APP_GUARD, useClass: JwtAuthGuard },
+          { provide: APP_GUARD, useClass: PermissionsGuard },
+          { provide: APP_FILTER, useClass: ProblemDetailsFilter },
+        ],
+      }),
+    )
       .overrideProvider(STORAGE_PORT)
       .useValue(new LocalFsStorage(root))
       .compile();
@@ -283,6 +288,7 @@ describe('extraction slice (upload -> worker -> AI service -> GET /documents/:id
       tenantDb,
       new LocalFsStorage(root),
       new HttpAiExtractor(config(redisUrl) as unknown as ConfigService<Env, true>),
+      disabledResultCache(),
     );
     worker = new ExtractionWorker(
       config(redisUrl) as unknown as ConfigService<Env, true>,

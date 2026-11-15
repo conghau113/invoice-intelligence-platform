@@ -1,11 +1,15 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import type { ExtractionInsights } from 'contracts';
+import { OnlineInsightsSchema, type ExtractionInsights, type OnlineInsights } from 'contracts';
+import { TenantReadCache } from '../../cache/application/tenant-read-cache';
 import { correctionRate } from '../domain/correction-rate';
 import { readEvalReport, type EvalReportResult } from '../infra/eval-report.reader';
 import { InsightsRepository } from '../infra/insights.repository';
 
 /** Directory of the committed eval reports (EVAL_REPORTS_DIR), undefined when not set. */
 export const EVAL_REPORTS_DIR = Symbol('EVAL_REPORTS_DIR');
+
+/** The dashboard changes on approve/reopen only, both of which bump the tenant's generation. */
+export const INSIGHTS_CACHE_TTL_MS = 60_000;
 
 /**
  * GET /insights/extraction: the online signal (what reviewers corrected in this tenant) next to the
@@ -22,21 +26,33 @@ export class InsightsService {
   constructor(
     private readonly repository: InsightsRepository,
     @Inject(EVAL_REPORTS_DIR) private readonly reportsDir: string | undefined,
+    private readonly cache: TenantReadCache,
   ) {}
 
   async extraction(tenantId: string): Promise<ExtractionInsights> {
+    // Only the database half is cached per tenant (T6.3); the report is kept for the process below.
+    const online = await this.cache.read(
+      {
+        tenantId,
+        name: 'insights-online',
+        schema: OnlineInsightsSchema,
+        ttlMs: INSIGHTS_CACHE_TTL_MS,
+      },
+      () => this.online(tenantId),
+    );
+    return { online, offline: await this.offline() };
+  }
+
+  private async online(tenantId: string): Promise<OnlineInsights> {
     // One after the other: both run on the request's single transaction connection.
     const totals = await this.repository.approvedTotals(tenantId);
     const counts = await this.repository.correctedFields(tenantId);
     return {
-      online: {
-        approvedDocuments: totals.aiDocuments,
-        uncorrectedDocuments: Math.max(0, totals.aiDocuments - totals.correctedDocuments),
-        excludedXmlDocuments: totals.xmlDocuments,
-        fields: correctionRate(totals.aiDocuments, counts),
-        costUsdPerDocument: totals.meanCostUsd,
-      },
-      offline: await this.offline(),
+      approvedDocuments: totals.aiDocuments,
+      uncorrectedDocuments: Math.max(0, totals.aiDocuments - totals.correctedDocuments),
+      excludedXmlDocuments: totals.xmlDocuments,
+      fields: correctionRate(totals.aiDocuments, counts),
+      costUsdPerDocument: totals.meanCostUsd,
     };
   }
 

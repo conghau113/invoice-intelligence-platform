@@ -38,7 +38,7 @@
 | Method | Path | Permission | Notes |
 |---|---|---|---|
 | POST | `/documents/upload` | `document:create` | `multipart/form-data` (one file ≤ 10 MB, streamed); type checked by magic bytes; dedupe by (tenant, sha256); `Idempotency-Key` required |
-| GET | `/documents` | `document:read` | Paginated list with filters; items are `{id, status, sourceType, version, createdAt}`, plus `meta` |
+| GET | `/documents` | `document:read` | Paginated list with filters; items are `{id, status, sourceType, version, createdAt}`, plus `meta`. Cached per tenant and query in Redis for 30 s (T6.3, ADR 0013); every status change and upload of the tenant invalidates it after COMMIT, so the answer is current unless that invalidation failed, and then at most 30 s old |
 | GET | `/documents/:id` | `document:read` | `{id, status, sourceType, version, createdAt, failureCode, extraction, invoice, reopenedFrom}`; `failureCode` is set only while `failed`; `extraction` is `null` until one exists, else `{id, documentVersion, source, data (Invoice incl. fieldMeta), warnings, createdAt}`; `invoice` is the invoice approved at the current version, else `null`, as `{id, documentVersion, data, warnings, approvedAt}`; `reopenedFrom` has the same shape: the invoice approved before a reopen, not approved any more, and `null` whenever `invoice` is set, the document was never approved, or that older row no longer passes the schema (the form then starts from the extraction). Another tenant's id and a malformed id are both `404`; stored data that no longer matches the schema is `500 EXTRACTION_DATA_INVALID` |
 | GET | `/documents/:id/file` | `document:read` | Streams the file through the API after the permission check (no public file URLs) |
 | POST | `/documents/:id/retry` | `document:manage` | Only from `failed` |
@@ -55,7 +55,7 @@
 ### Insights
 | Method | Path | Permission |
 |---|---|---|
-| GET | `/insights/extraction` | `insights:read` — `{online, offline}` (`ExtractionInsightsSchema` in `packages/contracts`). `online`: correction rate per field over approved PDF/image documents, from `current_invoices` + `current_field_corrections` (line/VAT columns grouped as `lines.*.amount`, one count per document), XML approvals counted apart, mean list-price cost per document. `offline`: aggregate numbers of the primary model's eval report read from `EVAL_REPORTS_DIR`, `null` when unavailable |
+| GET | `/insights/extraction` | `insights:read` — `{online, offline}` (`ExtractionInsightsSchema` in `packages/contracts`). `online`: correction rate per field over approved PDF/image documents, from `current_invoices` + `current_field_corrections` (line/VAT columns grouped as `lines.*.amount`, one count per document), XML approvals counted apart, mean list-price cost per document (an extraction reused from the result cache keeps the cost of the call that produced it, whose own row was never written). `online` is cached per tenant for 60 s and invalidated by approve/reopen like the list (T6.3). `offline`: aggregate numbers of the primary model's eval report read from `EVAL_REPORTS_DIR`, `null` when unavailable |
 
 ### Notifications
 | Method | Path | Permission |
@@ -78,6 +78,7 @@
 | Method | Path | Body → Result |
 |---|---|---|
 | POST | `/extract` | multipart `{file, sourceType, schemaVersion?}` → `{invoice, warnings, usage}` (`invoice` includes `fieldMeta`, so no separate `confidence`; `usage` is `null` for xml); `sourceType` is `xml \| pdf \| image` (same as `documents.source_type`); `xml` → parser, `pdf/image` → LLM (501 `EXTRACTION_PATH_NOT_IMPLEMENTED` until M3). Errors: `{code, message}` — 422 `XML_*`, 413 `FILE_TOO_LARGE` |
+| GET | `/extract/version` | `{model, promptVersion, pipelineVersion}`: what an LLM answer depends on (T6.3). `model` is what `usage.model` will carry, `pipelineVersion` a sha256 over the pipeline files of the eval gate and the installed render library version (`pypdfium2`; `app/services/pipeline_version.py`). The worker keys its extraction result cache by these and the file hash; any error answer or malformed body means no cache for that attempt |
 | POST | `/index` | one row of the view `current_invoices` `{id, tenant_id, document_id, document_version, data}` (extra columns → 422) → `{model, chunks: [{chunk, embedding}]}`: T5.1 chunks, each with a unit vector of 768 numbers (T5.2). Called by the RAG index worker after an approval |
 | POST | `/embed` | `{texts[] (1–512, each 1–8,000 chars), task: "query" \| "document"}` → `{vectors[], usage: {model, texts}}`: unit vectors of 768 numbers; `query` embeds a question for retrieval (T5.3) |
 | POST | `/classify` | `{question (1–1,000 chars), today (YYYY-MM-DD)}` → `{output: QaRoute \| null, usage}`: `{intent: lookup \| aggregate \| out_of_scope, filter}`, the structured filter of an aggregate (`QaAggregateFilter`). The model sees the question only, never document content (T5.4). On both Q&A routes `output` is `null` when the model's text does not match the schema or was cut off (the API refuses with `ANSWER_REJECTED`); a provider failure keeps its code and status (`503 LLM_*`). Not retried |

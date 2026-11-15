@@ -21,6 +21,7 @@ describe('validateEnv', () => {
       NODE_ENV: 'test',
       PORT: 3001,
       DEMO_READ_ONLY: false,
+      CACHE_ENABLED: true,
       OIDC_ISSUER_URL: ISSUER,
       DATABASE_URL: DB_URL,
       DATA_DIR,
@@ -66,6 +67,8 @@ describe('validateEnv', () => {
     };
     expect(validateEnv({ ...base, DEMO_READ_ONLY: 'false' }).DEMO_READ_ONLY).toBe(false);
     expect(validateEnv({ ...base, DEMO_READ_ONLY: 'true' }).DEMO_READ_ONLY).toBe(true);
+    // The same parser for the cache switch: the string "false" must really turn it off.
+    expect(validateEnv({ ...base, CACHE_ENABLED: 'false' }).CACHE_ENABLED).toBe(false);
   });
 
   it('requires REDIS_URL and bounds the backoff base', () => {

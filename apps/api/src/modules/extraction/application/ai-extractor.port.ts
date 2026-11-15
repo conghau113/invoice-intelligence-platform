@@ -1,3 +1,4 @@
+import type { ExtractionVersion } from '../../cache/domain/cache-keys';
 import type { AiExtractResponse, SourceType } from '../domain/ai-extract-response';
 
 export const AI_EXTRACTOR = Symbol('AI_EXTRACTOR');
@@ -15,4 +16,9 @@ export interface AiExtractInput {
  */
 export interface AiExtractor {
   extract(input: AiExtractInput): Promise<AiExtractResponse>;
+  /**
+   * What an LLM answer depends on (GET /extract/version, T6.3): the result cache key. Null when the
+   * service does not answer it usably; the caller then extracts without the cache. Never throws.
+   */
+  version(): Promise<ExtractionVersion | null>;
 }

@@ -366,4 +366,41 @@ describe('HttpAiExtractor (real HTTP against a local stub)', () => {
       expect((err as TransientExtractionError).code).toBe('EXTRACTION_RETRIES_EXHAUSTED');
     });
   });
+
+  describe('version() (GET /extract/version, T6.3)', () => {
+    const VERSION = {
+      model: 'gemini-3.5-flash-lite',
+      promptVersion: 'invoice_extraction/v1',
+      pipelineVersion: 'b'.repeat(64),
+    };
+
+    it('asks with the service token and returns the three parts', async () => {
+      reply = json(200, VERSION);
+      expect(await extractor().version()).toEqual(VERSION);
+      expect(seen?.url).toBe('/extract/version');
+      expect(seen?.headers.authorization).toBe(`Bearer ${TOKEN}`);
+    });
+
+    it.each([
+      ['an error status', json(503, { code: 'LLM_UNAVAILABLE' })],
+      ['a missing part', json(200, { model: 'm', promptVersion: 'p' })],
+      ['an extra part', json(200, { ...VERSION, extra: 1 })],
+      ['a part that cannot go into a key', json(200, { ...VERSION, model: 'a:b}' })],
+      [
+        'a body that is not JSON',
+        (res: import('node:http').ServerResponse) => res.writeHead(200).end('not json'),
+      ],
+    ])('answers null (no cache, never an error) for %s', async (_label, answer) => {
+      reply = answer;
+      await expect(extractor().version()).resolves.toBeNull();
+    });
+
+    it('answers null when nothing listens', async () => {
+      const gone = new HttpAiExtractor({
+        get: (k: keyof Env) =>
+          ({ AI_SERVICE_URL: 'http://127.0.0.1:1', AI_SERVICE_TOKEN: TOKEN })[k as string],
+      } as unknown as ConfigService<Env, true>);
+      await expect(gone.version()).resolves.toBeNull();
+    });
+  });
 });

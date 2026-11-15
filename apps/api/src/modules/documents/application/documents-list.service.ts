@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { and, eq, gte, lt, sql, type SQL } from 'drizzle-orm';
+import { z } from 'zod';
 import { documents } from '../../../db/schema';
 import { TenantDbService, type Db, type Tx } from '../../../db/tenant-db.service';
-import { LIST_TIME_ZONE, type DocumentListQuery } from '../domain/document-list-query';
+import { TenantReadCache } from '../../cache/application/tenant-read-cache';
+import { DOCUMENT_STATUSES } from '../domain/document-status';
+import { SOURCE_TYPES } from '../domain/file-type';
+import { LIST_TIME_ZONE, MAX_LIMIT, type DocumentListQuery } from '../domain/document-list-query';
 
 /** One row of the list. No storage key; the content hash is not needed to find a document. */
 export interface DocumentListItem {
@@ -18,13 +22,61 @@ export interface DocumentPage {
   meta: { page: number; limit: number; total: number; totalPages: number };
 }
 
+/**
+ * A page as it comes back from the cache (JSON: dates are strings). Stricter than the type so a
+ * value that is not a page (an old format, a corrupted entry) is a miss, not a wrong answer.
+ */
+const cachedPageSchema: z.ZodType<DocumentPage> = z.strictObject({
+  items: z
+    .array(
+      z.strictObject({
+        id: z.uuid(),
+        status: z.enum(DOCUMENT_STATUSES),
+        sourceType: z.enum(SOURCE_TYPES),
+        version: z.int().min(1),
+        createdAt: z.iso.datetime().transform((v) => new Date(v)),
+      }),
+    )
+    .max(MAX_LIMIT),
+  meta: z.strictObject({
+    page: z.int().min(1),
+    limit: z.int().min(1),
+    total: z.int().min(0),
+    totalPages: z.int().min(0),
+  }),
+});
+
+/** Short: a status bump that failed to reach Redis is visible for this long at most (ADR 0013). */
+export const LIST_CACHE_TTL_MS = 30_000;
+
 /** Midnight of a calendar day in LIST_TIME_ZONE, as a timestamptz. */
 const startOfDay = (day: string | SQL) =>
   sql`(${day}::date)::timestamp AT TIME ZONE ${LIST_TIME_ZONE}`;
 
 @Injectable()
 export class DocumentsListService {
-  constructor(private readonly tenantDb: TenantDbService) {}
+  constructor(
+    private readonly tenantDb: TenantDbService,
+    private readonly cache: TenantReadCache,
+  ) {}
+
+  /**
+   * Cache-aside (T6.3): the same page of the same filters, until a document of the tenant changes
+   * (DocumentStateMachine and the upload bump the tenant's generation after COMMIT) or for
+   * LIST_CACHE_TTL_MS. The key holds the tenant and every query field.
+   */
+  list(tenantId: string, query: DocumentListQuery): Promise<DocumentPage> {
+    return this.cache.read(
+      {
+        tenantId,
+        name: 'documents-list',
+        params: { ...query },
+        schema: cachedPageSchema,
+        ttlMs: LIST_CACHE_TTL_MS,
+      },
+      () => this.load(tenantId, query),
+    );
+  }
 
   /**
    * One page and the total. `total` counts the rows that match the filters, after the tenant
@@ -33,7 +85,7 @@ export class DocumentsListService {
    * end answers no items and the true meta; the caller decides where to go (ADR 0019).
    * Sort always ends with `id`, so equal timestamps cannot swap places between pages.
    */
-  async list(tenantId: string, query: DocumentListQuery): Promise<DocumentPage> {
+  async load(tenantId: string, query: DocumentListQuery): Promise<DocumentPage> {
     const tx = this.tenantDb.current();
     // One after the other on the request's connection. They are still two statements under READ
     // COMMITTED, so a row inserted between them can make `total` differ from `items` by one until

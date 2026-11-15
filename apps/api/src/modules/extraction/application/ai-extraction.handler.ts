@@ -4,6 +4,7 @@ import { and, eq } from 'drizzle-orm';
 import type { Readable } from 'node:stream';
 import { documents, extractions } from '../../../db/schema';
 import { TenantDbService } from '../../../db/tenant-db.service';
+import { ExtractionResultCache } from '../../cache/application/extraction-result-cache';
 import type { ExtractionHandler } from '../../queue/application/extraction-handler.port';
 import {
   EXTRACTION_FAILED,
@@ -16,7 +17,12 @@ import {
   type StoragePort,
 } from '../../storage/application/storage.port';
 import { FILE_MISSING, FILE_TOO_LARGE } from '../domain/ai-errors';
-import { MAX_FILE_BYTES, isSourceType } from '../domain/ai-extract-response';
+import {
+  MAX_FILE_BYTES,
+  isSourceType,
+  type AiExtractResponse,
+  type SourceType,
+} from '../domain/ai-extract-response';
 import { AI_EXTRACTOR, type AiExtractor } from './ai-extractor.port';
 
 /**
@@ -31,6 +37,7 @@ export class AiExtractionHandler implements ExtractionHandler {
     private readonly tenantDb: TenantDbService,
     @Inject(STORAGE_PORT) private readonly storage: StoragePort,
     @Inject(AI_EXTRACTOR) private readonly ai: AiExtractor,
+    private readonly results: ExtractionResultCache,
   ) {}
 
   async extract(job: ExtractionJobData): Promise<void> {
@@ -38,6 +45,7 @@ export class AiExtractionHandler implements ExtractionHandler {
       const [row] = await tx
         .select({
           storageKey: documents.storageKey,
+          contentHash: documents.contentHash,
           sourceType: documents.sourceType,
           version: documents.version,
         })
@@ -61,14 +69,33 @@ export class AiExtractionHandler implements ExtractionHandler {
     // again: it would cost money on the LLM path (T3.2) and could only produce the same row.
     if (doc.alreadyExtracted) return;
 
-    const bytes = await this.readFile(doc.storageKey);
-    const started = Date.now();
-    const result = await this.ai.extract({
-      bytes,
-      sourceType: doc.sourceType,
-      traceparent: job.traceparent,
-    });
-    const measuredMs = Date.now() - started;
+    const sourceType: SourceType = doc.sourceType;
+    // The XML path has no `usage`: its latency is the AI request alone, not the file read before it.
+    let callMs = 0;
+    const call = async (): Promise<AiExtractResponse> => {
+      const bytes = await this.readFile(doc.storageKey);
+      const sent = Date.now();
+      const answer = await this.ai.extract({ bytes, sourceType, traceparent: job.traceparent });
+      callMs = Date.now() - sent;
+      return answer;
+    };
+    // T6.3: the LLM path reuses an earlier answer for the same bytes, model, prompt and pipeline
+    // (ADR 0013). XML is parsed in milliseconds without a model, so it is not cached.
+    const { result } =
+      sourceType === 'xml'
+        ? { result: await call() }
+        : await this.results.getOrCall(
+            {
+              tenantId: job.tenantId,
+              contentHash: doc.contentHash,
+              version: () => this.ai.version(),
+            },
+            call,
+          );
+    // A reused answer keeps the usage of the call that produced it. That call was paid for and, in
+    // every case where the cache answers, its own row was never written: the attempt after a failed
+    // write, or a waiter whose holder's row exists already (then the insert below adds nothing).
+    // Recording $0 here would hide a real cost from the dashboard (code review T6.3).
     // Business rules (T3.3, packages/contracts): warnings on fields, no number is changed. The
     // same function runs in the web form and, from T3.5, when a correction is saved. The rules come
     // first: on the same code and path the first one wins, so the AI service cannot restate a result.
@@ -91,7 +118,7 @@ export class AiExtractionHandler implements ExtractionHandler {
           promptVersion: result.usage?.promptVersion ?? null,
           inputTokens: result.usage?.inputTokens ?? null,
           outputTokens: result.usage?.outputTokens ?? null,
-          latencyMs: result.usage?.latencyMs ?? measuredMs,
+          latencyMs: result.usage?.latencyMs ?? callMs,
           costUsd: result.usage === null ? null : result.usage.costUsd.toFixed(6),
         })
         // The unique (document, version) key: a second delivery of the same job adds nothing.
