@@ -13,6 +13,7 @@ import {
   EXTRACTION_SCHEMA_INVALID,
   isFailureCode,
 } from '../domain/ai-errors';
+import { RATE_LIMITED_CODE, parseRetryAfterMs, readErrorCode } from '../resilience';
 
 /** One XML parse takes milliseconds. */
 const XML_TIMEOUT_MS = 15_000;
@@ -77,16 +78,24 @@ export class HttpAiExtractor implements AiExtractor {
     // 501 is the service saying "this path does not exist yet": permanent, unlike a crash (500/502/503).
     if ((res.status >= 500 && res.status !== 501) || RETRYABLE_4XX.has(res.status)) {
       // Keep the AI service's reason (LLM_UNAVAILABLE, LLM_RATE_LIMITED...) for when the attempts
-      // run out; a proxy's 502 has no usable code and gets the generic one.
-      const body = (await res.json().catch(() => null)) as { code?: unknown } | null;
-      throw isFailureCode(body?.code)
-        ? new TransientExtractionError(body.code)
-        : new TransientExtractionError();
+      // run out; a proxy's 502 has no usable code and gets the generic one. Retry-After is the
+      // wait the provider asked for after a 429 (T6.2): the worker holds the queue that long.
+      const retryAfterMs = parseRetryAfterMs(res.headers.get('retry-after'));
+      const code = await readErrorCode(res);
+      const rateLimited = code === RATE_LIMITED_CODE || res.status === 429;
+      throw new TransientExtractionError(
+        isFailureCode(code) ? code : undefined,
+        retryAfterMs,
+        rateLimited,
+      );
     }
-    if (MISCONFIGURED.has(res.status)) throw new TransientExtractionError(AI_SERVICE_MISCONFIGURED);
+    if (MISCONFIGURED.has(res.status)) {
+      await res.body?.cancel().catch(() => undefined);
+      throw new TransientExtractionError(AI_SERVICE_MISCONFIGURED);
+    }
     // Other 4xx: the service looked at the request and said no. Retrying would get the same answer.
-    const body = (await res.json().catch(() => null)) as { code?: unknown } | null;
-    throw new PermanentExtractionError(isFailureCode(body?.code) ? body.code : EXTRACTION_FAILED);
+    const code = await readErrorCode(res);
+    throw new PermanentExtractionError(isFailureCode(code) ? code : EXTRACTION_FAILED);
   }
 
   private async parse(res: Response): Promise<AiExtractResponse> {

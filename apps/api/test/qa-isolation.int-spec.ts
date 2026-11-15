@@ -63,7 +63,7 @@ const GLOBEX = '00000000-0000-4000-8000-0000000000a2';
 /** Uploader of every row this file writes, so cleanup touches nothing else. */
 const USER = '00000000-0000-4000-8000-00000000f057';
 const ENV = { RAG_TOP_K: 5, RAG_CANDIDATES: 20, NODE_ENV: 'test' };
-const ATTEMPT = { attempt: 1, maxAttempts: 5 };
+const ATTEMPT = { attempt: 1, maxAttempts: 5, deferrals: 0 };
 
 function requireVar(name: string): string {
   const value = process.env[name];

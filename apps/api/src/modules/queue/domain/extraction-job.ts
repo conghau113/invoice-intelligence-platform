@@ -31,9 +31,12 @@ export function parseTraceparent(header: unknown): string | undefined {
 }
 
 /**
- * Wait before the next attempt: exponential growth (base * 2^(n-1), capped) with "equal jitter",
- * half fixed and half random. The fixed half keeps a minimum gap; the random half spreads jobs
- * that failed together (e.g. the AI service was down) so they do not all retry in the same second.
+ * Wait before the next attempt: exponential growth (base * 2^(n-1), capped) with "full jitter",
+ * a random point anywhere between 0 and that ceiling (T6.2). Jobs that failed together (the AI
+ * service was down) would otherwise all come back in the same instant and knock it over again
+ * (thundering herd); spread over the whole range, they arrive one by one. Compared with keeping a
+ * fixed half ("equal jitter"), full jitter spreads more and finishes the work sooner overall; a
+ * job may retry almost at once, which is fine because the queue limiter still paces the starts.
  * `attemptsMade` counts the attempts that already failed, so the first retry has attemptsMade = 1.
  */
 export function backoffMs(
@@ -43,11 +46,13 @@ export function backoffMs(
 ): number {
   const exponent = Math.max(0, attemptsMade - 1);
   const ceiling = Math.min(MAX_BACKOFF_MS, baseMs * 2 ** exponent);
-  return Math.floor(ceiling / 2 + random() * (ceiling / 2));
+  return Math.floor(random() * ceiling);
 }
 
 /** What the worker records when a job ends or is retried: a code, never a message (may hold content). */
 export const EXTRACTION_RETRY = 'EXTRACTION_RETRY';
+/** The provider was over its rate limit: the job went back to the queue without using an attempt. */
+export const EXTRACTION_RATE_LIMITED = 'EXTRACTION_RATE_LIMITED';
 export const EXTRACTION_FAILED = 'EXTRACTION_FAILED' satisfies DocumentFailureCode;
 export const EXTRACTION_RETRIES_EXHAUSTED =
   'EXTRACTION_RETRIES_EXHAUSTED' satisfies DocumentFailureCode;
@@ -74,7 +79,16 @@ export class PermanentExtractionError extends Error {
  * non-permanent error behaves like this one with the generic code.
  */
 export class TransientExtractionError extends Error {
-  constructor(readonly code: DocumentFailureCode = EXTRACTION_RETRIES_EXHAUSTED) {
+  constructor(
+    readonly code: DocumentFailureCode = EXTRACTION_RETRIES_EXHAUSTED,
+    /** The wait the AI service passed on from the provider's 429 (Retry-After), if any. */
+    readonly retryAfterMs?: number,
+    /**
+     * The provider is over its rate limit (busy, not broken): the AI service said LLM_RATE_LIMITED,
+     * or answered 429. A Retry-After alone does not make it one: a proxy sends it with a 503 too.
+     */
+    readonly rateLimited: boolean = code === 'LLM_RATE_LIMITED',
+  ) {
     super(code);
     this.name = 'TransientExtractionError';
   }
@@ -89,6 +103,14 @@ export class ExtractionJobError extends Error {
     readonly code: string,
     /** False: do not retry (BullMQ `UnrecoverableError`). */
     readonly retryable: boolean,
+    readonly options: {
+      /** The provider is over its limit: hold the queue this long, keep the job's attempts (T6.2). */
+      deferMs?: number;
+      /** Over its limit, but the job has waited enough: hold the queue, the attempt is used. */
+      holdMs?: number;
+      /** The AI service or the provider could not answer: counts towards the circuit breaker. */
+      providerDown?: boolean;
+    } = {},
   ) {
     super(code);
     this.name = 'ExtractionJobError';

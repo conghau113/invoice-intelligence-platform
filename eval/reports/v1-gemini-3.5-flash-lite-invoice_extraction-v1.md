@@ -1,6 +1,6 @@
 # Extraction eval: `gemini-3.5-flash-lite`, `invoice_extraction/v1`
 
-Dataset `v1` (manifest `09abbf3843d2`), prompt `7ce11be8099f`, output cap 12288 tokens, runs 2026-11-09 to 2026-11-09. Written by `pnpm eval:report` from `eval/runs/`; do not edit by hand.
+Dataset `v1` (manifest `09abbf3843d2`), prompt `7ce11be8099f`, output cap 12288 tokens, runs 2026-11-09 to 2026-11-15. Written by `pnpm eval:report` from `eval/runs/`; do not edit by hand.
 
 **Limits**
 
@@ -18,12 +18,12 @@ Complete: yes. Failures: none.
 
 | Field | All repeats | Repeat 0 | Repeat 1 | Repeat 2 |
 |---|---|---|---|---|
-| seller.name | 95.0% (57/60) | 95.0% (19/20) | 95.0% (19/20) | 95.0% (19/20) |
-| **seller.taxCode** | 90.0% (54/60) | 90.0% (18/20) | 90.0% (18/20) | 90.0% (18/20) |
-| seller.address | 100.0% (60/60) | 100.0% (20/20) | 100.0% (20/20) | 100.0% (20/20) |
+| seller.name | 93.3% (56/60) | 95.0% (19/20) | 95.0% (19/20) | 90.0% (18/20) |
+| **seller.taxCode** | 95.0% (57/60) | 95.0% (19/20) | 95.0% (19/20) | 95.0% (19/20) |
+| seller.address | 98.3% (59/60) | 100.0% (20/20) | 100.0% (20/20) | 95.0% (19/20) |
 | buyer.name | 100.0% (60/60) | 100.0% (20/20) | 100.0% (20/20) | 100.0% (20/20) |
 | **buyer.taxCode** | 100.0% (60/60) | 100.0% (20/20) | 100.0% (20/20) | 100.0% (20/20) |
-| buyer.address | 96.7% (58/60) | 100.0% (20/20) | 95.0% (19/20) | 95.0% (19/20) |
+| buyer.address | 100.0% (60/60) | 100.0% (20/20) | 100.0% (20/20) | 100.0% (20/20) |
 | **invoiceNo** | 100.0% (60/60) | 100.0% (20/20) | 100.0% (20/20) | 100.0% (20/20) |
 | **series** | 100.0% (60/60) | 100.0% (20/20) | 100.0% (20/20) | 100.0% (20/20) |
 | **issueDate** | 100.0% (60/60) | 100.0% (20/20) | 100.0% (20/20) | 100.0% (20/20) |
@@ -35,13 +35,13 @@ Complete: yes. Failures: none.
 
 Critical fields (ADR 0020) in bold. A failed document counts as wrong on every field.
 
-- Document exact match (every field and every line): 81.7% (49/60)
-- All 8 critical fields right: 90.0% (54/60)
+- Document exact match (every field and every line): 88.3% (53/60)
+- All 8 critical fields right: 95.0% (57/60)
 - Lines: 483 expected, 483 predicted, 483 fully right, 0 missing, 0 extra. Precision 1.000, recall 1.000, macro F1 1.0
 - Line columns: description 100.0% (483/483), quantity 100.0% (483/483), unit 100.0% (483/483), unitPrice 100.0% (483/483), vatRate 100.0% (483/483), amount 100.0% (483/483)
-- Seller tax code with its branch suffix cut: 6 of 15 answers where a suffix is printed
-- Wrong at self-reported confidence >= 0.8: {'seller.taxCode': 6}
-- Wrong only by diacritics: none
+- Seller tax code with its branch suffix cut: 3 of 15 answers where a suffix is printed
+- Wrong at self-reported confidence >= 0.8: {'seller.taxCode': 3}
+- Wrong only by diacritics: {'seller.name': 1, 'seller.address': 1}
 
 **Noise** (largest difference between repeats, percentage points, ADR 0020):
 
@@ -53,9 +53,9 @@ Documents right in one repeat and wrong in another, per critical field: 0 ({'inv
 
 | Difficulty | Docs | Critical exact | Document exact | Line F1 |
 |---|---|---|---|---|
-| easy | 24 | 100.0% (24/24) | 79.2% (19/24) | 1.000 |
-| hard | 12 | 100.0% (12/12) | 100.0% (12/12) | 1.000 |
-| medium | 24 | 75.0% (18/24) | 75.0% (18/24) | 1.000 |
+| easy | 24 | 100.0% (24/24) | 87.5% (21/24) | 1.000 |
+| hard | 12 | 100.0% (12/12) | 91.7% (11/12) | 1.000 |
+| medium | 24 | 87.5% (21/24) | 87.5% (21/24) | 1.000 |
 
 | Variant | Docs | Critical fields right | Line F1 |
 |---|---|---|---|
@@ -65,16 +65,16 @@ Documents right in one repeat and wrong in another, per critical field: 0 ({'inv
 | pdf-clean | 24 | 192/192 | 1.000 |
 | pdf-many-lines | 9 | 69/72 | 1.000 |
 | pdf-multi-page | 3 | 24/24 | 1.000 |
-| png-clean | 9 | 69/72 | 1.000 |
+| png-clean | 9 | 72/72 | 1.000 |
 | png-noise | 3 | 24/24 | 1.000 |
 
-Cost per document at list price: **$0.005028** (prices 2026-11-08; 97356 input and 108990 output tokens, 69 calls). Documents retried after a temporary error: 9. Longest fieldMeta list: 61.
+Cost per document at list price: **$0.004973** (prices 2026-11-08; 97356 input and 107679 output tokens, 67 calls). Documents retried after a temporary error: 7. Longest fieldMeta list: 61.
 
 | Latency | n | p50 | p95 |
 |---|---|---|---|
-| all | 60 | 10.1 s | 16.0 s |
-| singlePage | 57 | 10.1 s | 15.9 s |
-| multiPage | 3 | 20.4 s | 21.8 s |
+| all | 60 | 4.9 s | 12.1 s |
+| singlePage | 57 | 4.9 s | 8.8 s |
+| multiPage | 3 | 20.5 s | 21.4 s |
 
 ## `core`: 100 documents x 1 repeats
 

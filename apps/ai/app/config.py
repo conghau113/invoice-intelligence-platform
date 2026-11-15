@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     # Fallback provider through its official OpenAI-compatible API (chosen in T4.4).
     llm_fallback_base_url: str | None = None
     llm_fallback_api_key: SecretStr | None = Field(default=None, repr=False)
+    # LLM_PROVIDER=fake only: every Nth call answers like a provider over its rate limit (429 with
+    # a wait of FAKE_LLM_RETRY_AFTER_S), to watch the API slow down and recover (T6.2, T6.7).
+    # 0 = never.
+    fake_llm_rate_limit_every: int = Field(default=0, ge=0)
+    fake_llm_retry_after_s: int = Field(default=2, ge=1, le=300)
 
     @model_validator(mode="after")
     def _check_llm(self) -> "Settings":

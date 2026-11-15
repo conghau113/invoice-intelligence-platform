@@ -1,9 +1,10 @@
 """Scripted provider for tests and CI: no network, no key. Never allowed in production."""
 
 import json
+import threading
 from typing import Any
 
-from app.providers.base import ImagePart, LLMError, LLMResult
+from app.providers.base import ImagePart, LLMError, LLMResult, LLMUnavailable
 
 # A valid, obviously synthetic invoice: what LLM_PROVIDER=fake answers when nothing is scripted.
 CANNED_INVOICE = {
@@ -59,9 +60,20 @@ class FakeProvider:
     timeout_s = 0.0
 
     def __init__(
-        self, script: list[str | LLMResult | LLMError] | None = None, model: str = "fake-model"
+        self,
+        script: list[str | LLMResult | LLMError] | None = None,
+        model: str = "fake-model",
+        *,
+        rate_limit_every: int = 0,
+        retry_after_s: int = 2,
     ) -> None:
         self.model = model
+        # Every Nth call is refused like a provider over its rate limit; 0 = never (T6.2).
+        self._rate_limit_every = rate_limit_every
+        self._retry_after_s = retry_after_s
+        self._count = 0
+        # FastAPI runs sync handlers in a threadpool: the counter is shared between requests.
+        self._lock = threading.Lock()
         self._scripted = bool(script)
         self._script = list(script) if script else [json.dumps(CANNED_LLM_OUTPUT)]
         self.calls: list[dict[str, Any]] = []  # what extract sent, for assertions
@@ -77,6 +89,12 @@ class FakeProvider:
         self.calls.append(
             {"system": system, "user_text": user_text, "images": images, "schema": json_schema}
         )
+        if self._rate_limit_every:
+            with self._lock:
+                self._count += 1
+                limited = self._count % self._rate_limit_every == 0
+            if limited:
+                raise LLMUnavailable("LLM_RATE_LIMITED", self._retry_after_s)
         canned = CANNED_BY_SCHEMA_TITLE.get(str(json_schema.get("title")))
         if not self._scripted and canned is not None:
             return LLMResult(

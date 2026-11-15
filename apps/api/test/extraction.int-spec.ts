@@ -42,6 +42,7 @@ import { LocalFsStorage } from '../src/modules/storage/infra/local-fs.storage';
 import { useTestRoots } from '../src/modules/storage/testing/test-root';
 import { queueReady } from './support/queue-ready';
 import { startRedis } from './support/reachable-container';
+import { UNLIMITED_PROVIDER } from './support/test-app';
 
 const ACME = '00000000-0000-4000-8000-0000000000a1';
 const GLOBEX = '00000000-0000-4000-8000-0000000000a2';
@@ -115,9 +116,13 @@ describe('extraction slice (upload -> worker -> AI service -> GET /documents/:id
   });
   const config = (redisUrl: string) => ({
     get: (key: string) =>
-      ({ REDIS_URL: redisUrl, QUEUE_BACKOFF_BASE_MS: 10, DATA_DIR: root, ...env() })[
-        key
-      ] as unknown,
+      ({
+        REDIS_URL: redisUrl,
+        QUEUE_BACKOFF_BASE_MS: 10,
+        DATA_DIR: root,
+        ...UNLIMITED_PROVIDER,
+        ...env(),
+      })[key] as unknown,
   });
 
   async function makeApp(redisUrl: string): Promise<INestApplication> {
@@ -240,7 +245,9 @@ describe('extraction slice (upload -> worker -> AI service -> GET /documents/:id
           return json(200, { invoice: { total: 'lots' }, warnings: [], usage: null });
         if (mode === 'llm-unavailable') return json(503, { code: 'LLM_UNAVAILABLE', message: 'x' });
         if (mode === 'llm-rate-limited')
-          return json(429, { code: 'LLM_RATE_LIMITED', message: 'x' });
+          return res
+            .writeHead(503, { 'content-type': 'application/json', 'retry-after': '1' })
+            .end(JSON.stringify({ code: 'LLM_RATE_LIMITED', message: 'x' }));
         if (mode === 'llm-rejected') return json(422, { code: 'PDF_INVALID', message: 'x' });
         if (mode === 'llm-flaky' && aiCalls.length <= 2)
           return json(500, { code: 'LLM_UNAVAILABLE', message: 'x' });
@@ -476,20 +483,32 @@ describe('extraction slice (upload -> worker -> AI service -> GET /documents/:id
     expect((await get(up.body.id).expect(200)).body.failureCode).toBeNull();
   });
 
-  it.each([
-    ['llm-unavailable', 'LLM_UNAVAILABLE'],
-    ['llm-rate-limited', 'LLM_RATE_LIMITED'],
-  ] as const)(
-    "T3.2: %s is transient: 5 attempts, then failed with the AI service's own code %s",
-    async (m, code) => {
-      mode = m;
-      const up = await uploadPdf('k1').expect(201);
-      await waitForStatus(up.body.id, 'failed');
-      expect(aiCalls).toHaveLength(5);
-      expect(await extractionCount(up.body.id)).toBe(0);
-      expect((await get(up.body.id).expect(200)).body.failureCode).toBe(code);
-    },
-  );
+  it("T3.2: LLM_UNAVAILABLE is transient: 5 attempts, then failed with the AI service's own code", async () => {
+    mode = 'llm-unavailable';
+    const up = await uploadPdf('k1').expect(201);
+    await waitForStatus(up.body.id, 'failed');
+    expect(aiCalls).toHaveLength(5);
+    expect(await extractionCount(up.body.id)).toBe(0);
+    expect((await get(up.body.id).expect(200)).body.failureCode).toBe('LLM_UNAVAILABLE');
+  });
+
+  it('T6.2: a provider over its rate limit holds the job without using an attempt, then it succeeds', async () => {
+    // 429 with the wait the provider named (1 s), six times, then the provider answers. With
+    // five attempts this document would have failed before T6.2.
+    mode = 'llm-rate-limited';
+    const up = await uploadPdf('k1').expect(201);
+    const until = Date.now() + 20_000;
+    while (aiCalls.length < 6 && Date.now() < until) await sleep(25);
+    mode = 'llm-ok';
+    await waitForStatus(up.body.id, 'needs_review', 10_000);
+    expect(aiCalls.length).toBeGreaterThanOrEqual(7);
+    const audit = await owner.query(
+      `SELECT count(*)::int AS n FROM audit_logs
+        WHERE entity_id = $1 AND meta->>'code' = 'EXTRACTION_RATE_LIMITED'`,
+      [up.body.id],
+    );
+    expect(audit.rows[0].n).toBeGreaterThanOrEqual(6);
+  }, 40_000);
 
   it('T3.2: a permanent LLM-path answer (422 PDF_INVALID) fails at once with that code, no retry', async () => {
     mode = 'llm-rejected';

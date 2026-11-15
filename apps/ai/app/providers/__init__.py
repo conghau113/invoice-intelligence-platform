@@ -9,7 +9,10 @@ def build_provider(settings: Settings) -> LLMProvider:
     """Pick the adapter named in settings. A missing key is a 503, not a crash at startup:
     the XML path needs no key and must keep working without one."""
     if settings.llm_provider == "fake":
-        return FakeProvider()
+        return FakeProvider(
+            rate_limit_every=settings.fake_llm_rate_limit_every,
+            retry_after_s=settings.fake_llm_retry_after_s,
+        )
     if settings.llm_provider == "gemini":
         if settings.gemini_api_key is None:
             raise LLMUnavailable("LLM_NOT_CONFIGURED")

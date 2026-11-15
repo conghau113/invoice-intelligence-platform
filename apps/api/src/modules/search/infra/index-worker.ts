@@ -8,7 +8,9 @@ import { ConfigService } from '@nestjs/config';
 import { UnrecoverableError, Worker, type Job } from 'bullmq';
 import type { Redis } from 'ioredis';
 import type { Env } from '../../../config/env.schema';
+import { INDEX_TOKENS_PER_JOB } from '../../extraction/resilience';
 import { backoffMs } from '../../queue/domain/extraction-job';
+import { ProviderGuard, isRateLimitError } from '../../queue/infra/provider-guard';
 import { settleWithin, workerConnection } from '../../queue/infra/redis-connection';
 import { IndexProcessor } from '../application/index.processor';
 import { INDEX_FAILED, INDEX_MAX_ATTEMPTS, INDEX_QUEUE, IndexJobError } from '../domain/index-job';
@@ -23,6 +25,7 @@ export class IndexWorker implements OnApplicationBootstrap, OnApplicationShutdow
   private readonly logger = new Logger(IndexWorker.name);
   private connection?: Redis;
   private worker?: Worker;
+  private guard?: ProviderGuard;
 
   constructor(
     private readonly config: ConfigService<Env, true>,
@@ -32,9 +35,19 @@ export class IndexWorker implements OnApplicationBootstrap, OnApplicationShutdow
   onApplicationBootstrap(): void {
     const baseMs = this.config.get('QUEUE_BACKOFF_BASE_MS', { infer: true });
     this.connection = workerConnection(this.config.get('REDIS_URL', { infer: true }));
+    // Paced by the embedding model's own quota (T6.2; TPM is the tight one on Gemini free, T5.3).
+    const { guard, limiter } = ProviderGuard.forQueue(
+      INDEX_QUEUE,
+      this.connection,
+      this.config,
+      { rpm: 'EMBED_RPM', tpm: 'EMBED_TPM', tokensPerJob: INDEX_TOKENS_PER_JOB },
+      this.logger,
+    );
+    this.guard = guard;
     this.worker = new Worker(INDEX_QUEUE, (job) => this.handle(job), {
       connection: this.connection,
       concurrency: CONCURRENCY,
+      limiter,
       maxStalledCount: 1,
       settings: { backoffStrategy: (attemptsMade) => backoffMs(attemptsMade, baseMs) },
     });
@@ -46,12 +59,22 @@ export class IndexWorker implements OnApplicationBootstrap, OnApplicationShutdow
   }
 
   private async handle(job: Job): Promise<void> {
+    const guard = this.guard;
+    if (guard === undefined) throw new Error(INDEX_FAILED); // not bootstrapped
     try {
-      await this.processor.process(job.data, {
-        attempt: job.attemptsMade + 1,
-        maxAttempts: job.opts.attempts ?? INDEX_MAX_ATTEMPTS,
-      });
+      // `true`: chunks were written, so the AI service answered. `false` may not have asked it.
+      await guard.run(
+        job,
+        (deferrals) =>
+          this.processor.process(job.data, {
+            attempt: job.attemptsMade + 1,
+            maxAttempts: job.opts.attempts ?? INDEX_MAX_ATTEMPTS,
+            deferrals,
+          }),
+        (e) => (e instanceof IndexJobError ? e.options : undefined),
+      );
     } catch (e) {
+      if (isRateLimitError(e)) throw e;
       const queueError = toQueueError(e);
       // Only for errors that are not ours: the class and, for Postgres, the SQLSTATE. Never the
       // message or detail, which can quote the row (document content).
@@ -65,6 +88,7 @@ export class IndexWorker implements OnApplicationBootstrap, OnApplicationShutdow
   async onApplicationShutdown(): Promise<void> {
     if (!this.worker) return;
     await settleWithin(SHUTDOWN_GRACE_MS, this.worker.close());
+    await settleWithin(SHUTDOWN_GRACE_MS, this.guard?.close() ?? Promise.resolve());
     this.connection?.disconnect();
     await settleWithin(SHUTDOWN_GRACE_MS, this.worker.close(true));
   }

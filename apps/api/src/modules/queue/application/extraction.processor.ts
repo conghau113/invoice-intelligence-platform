@@ -5,8 +5,10 @@ import { TenantDbService } from '../../../db/tenant-db.service';
 import { DocumentStateMachine } from '../../documents/application/document-state-machine';
 import { DocumentNotFoundError } from '../../documents/domain/document-not-found.error';
 import { isDocumentStatus, type DocumentStatus } from '../../documents/domain/document-status';
+import { mayDefer, rateLimitHoldMs } from '../../extraction/resilience';
 import {
   EXTRACTION_FAILED,
+  EXTRACTION_RATE_LIMITED,
   EXTRACTION_RETRIES_EXHAUSTED,
   EXTRACTION_RETRY,
   ExtractionJobError,
@@ -20,7 +22,12 @@ export interface AttemptInfo {
   /** 1-based number of this attempt. */
   attempt: number;
   maxAttempts: number;
+  /** Times this job already went back to the queue for a 429 (resilience.ts `deferralsOf`). */
+  deferrals: number;
 }
+
+/** `skipped`: the document was already settled, nothing was asked of the AI service. */
+export type ProcessOutcome = 'done' | 'skipped';
 
 /** The job's work is already done or no longer wanted; running it again would be wrong. */
 const SETTLED: ReadonlySet<DocumentStatus> = new Set([
@@ -44,7 +51,7 @@ export class ExtractionProcessor {
     @Inject(EXTRACTION_HANDLER) private readonly handler: ExtractionHandler,
   ) {}
 
-  async process(raw: unknown, info: AttemptInfo): Promise<void> {
+  async process(raw: unknown, info: AttemptInfo): Promise<ProcessOutcome> {
     const parsed = extractionJobSchema.safeParse(raw);
     // Never put the zod message in the error: it can echo a value from the job.
     if (!parsed.success) throw new ExtractionJobError(EXTRACTION_FAILED, false);
@@ -52,7 +59,7 @@ export class ExtractionProcessor {
 
     const status = await this.statusOf(job.tenantId, job.documentId);
     if (status === undefined) throw new ExtractionJobError(EXTRACTION_FAILED, false);
-    if (SETTLED.has(status)) return;
+    if (SETTLED.has(status)) return 'skipped';
     // `processing` here means an earlier run of this job died after starting (stalled job):
     // carry on from the state it left instead of failing the invalid processing -> processing edge.
     if (status === 'queued') await this.move(job.tenantId, job.documentId, 'processing');
@@ -62,20 +69,29 @@ export class ExtractionProcessor {
     } catch (e) {
       // The handler's message is deliberately dropped: it may contain document content.
       const permanent = e instanceof PermanentExtractionError;
+      const transient = e instanceof TransientExtractionError;
+      const rateLimited = transient && e.rateLimited;
+      // The whole queue waits what the provider asked, so the next jobs do not hit the same wall.
+      const holdMs = rateLimited ? rateLimitHoldMs(e.retryAfterMs) : undefined;
+      // The provider is only busy: back to the queue, the attempt is not used (T6.2).
+      if (holdMs !== undefined && mayDefer(info.deferrals)) {
+        await this.move(job.tenantId, job.documentId, 'queued', EXTRACTION_RATE_LIMITED);
+        throw new ExtractionJobError(EXTRACTION_RATE_LIMITED, true, { deferMs: holdMs });
+      }
+      // A busy provider is not a broken one: only other transient failures count for the breaker.
+      const signal = { providerDown: transient && !rateLimited, holdMs };
       const exhausted = info.attempt >= info.maxAttempts;
       if (permanent || exhausted) {
         // A transient error may carry the reason to keep when the attempts run out.
-        const code =
-          permanent || e instanceof TransientExtractionError
-            ? e.code
-            : EXTRACTION_RETRIES_EXHAUSTED;
+        const code = permanent || transient ? e.code : EXTRACTION_RETRIES_EXHAUSTED;
         await this.move(job.tenantId, job.documentId, 'failed', code);
-        throw new ExtractionJobError(code, false);
+        throw new ExtractionJobError(code, false, signal);
       }
       await this.move(job.tenantId, job.documentId, 'queued', EXTRACTION_RETRY);
-      throw new ExtractionJobError(EXTRACTION_RETRY, true);
+      throw new ExtractionJobError(EXTRACTION_RETRY, true, signal);
     }
     await this.move(job.tenantId, job.documentId, 'needs_review');
+    return 'done';
   }
 
   /**

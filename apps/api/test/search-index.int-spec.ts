@@ -36,17 +36,20 @@ import type { AiIndexResponse } from '../src/modules/search/domain/ai-index-resp
 import {
   INDEX_FAILED,
   INDEX_JOB_INVALID,
+  INDEX_RATE_LIMITED,
   INDEX_RESPONSE_MISMATCH,
   INDEX_RETRY,
   PermanentIndexError,
+  TransientIndexError,
   type IndexJobData,
 } from '../src/modules/search/domain/index-job';
+import { MAX_RATE_LIMIT_DEFERRALS } from '../src/modules/extraction/resilience';
 import { FakeIndexQueue } from '../src/modules/search/testing/fake-index-queue';
 
 const ACME = '00000000-0000-4000-8000-0000000000a1';
 const GLOBEX = '00000000-0000-4000-8000-0000000000a2';
 const USER = '00000000-0000-4000-8000-00000000f052';
-const ATTEMPT = { attempt: 1, maxAttempts: 5 };
+const ATTEMPT = { attempt: 1, maxAttempts: 5, deferrals: 0 };
 
 function requireVar(name: string): string {
   const value = process.env[name];
@@ -522,17 +525,58 @@ describe('RAG index (T5.2): approve -> chunks, reopen -> gone', () => {
     it('a transient AI failure before the last attempt is retried', async () => {
       const job = await approved();
       indexer.fail = new Error('AI service answered 503');
-      await expect(processor.process(job, { attempt: 1, maxAttempts: 5 })).rejects.toMatchObject({
+      await expect(
+        processor.process(job, { attempt: 1, maxAttempts: 5, deferrals: 0 }),
+      ).rejects.toMatchObject({
         code: INDEX_RETRY,
         retryable: true,
       });
       expect(await visibleChunks(ACME, job.documentId)).toEqual([]);
     });
 
+    it('T6.2: a provider over its rate limit holds the queue and keeps the attempt', async () => {
+      const job = await approved();
+      indexer.fail = new TransientIndexError(true, 2_000);
+      await expect(
+        processor.process(job, { attempt: 5, maxAttempts: 5, deferrals: 0 }),
+      ).rejects.toMatchObject({
+        code: INDEX_RATE_LIMITED,
+        retryable: true,
+        options: { deferMs: 2_000 },
+      });
+      expect(await visibleChunks(ACME, job.documentId)).toEqual([]);
+    });
+
+    it('T6.2: a job given back often enough treats a 429 as a failed attempt, still holding the queue', async () => {
+      const job = await approved();
+      indexer.fail = new TransientIndexError(true, 2_000);
+      await expect(
+        processor.process(job, {
+          attempt: 1,
+          maxAttempts: 5,
+          deferrals: MAX_RATE_LIMIT_DEFERRALS,
+        }),
+      ).rejects.toMatchObject({
+        code: INDEX_RETRY,
+        options: { providerDown: false, holdMs: 2_000 },
+      });
+    });
+
+    it('T6.2: a provider that is down counts towards the circuit breaker', async () => {
+      const job = await approved();
+      indexer.fail = new TransientIndexError();
+      await expect(processor.process(job, ATTEMPT)).rejects.toMatchObject({
+        code: INDEX_RETRY,
+        options: { providerDown: true },
+      });
+    });
+
     it('the same failure on the last attempt ends the job', async () => {
       const job = await approved();
       indexer.fail = new Error('AI service answered 503');
-      await expect(processor.process(job, { attempt: 5, maxAttempts: 5 })).rejects.toMatchObject({
+      await expect(
+        processor.process(job, { attempt: 5, maxAttempts: 5, deferrals: 0 }),
+      ).rejects.toMatchObject({
         code: INDEX_FAILED,
         retryable: false,
       });

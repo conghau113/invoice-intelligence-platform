@@ -16,8 +16,12 @@ SourceType = Literal["xml", "pdf", "image"]  # same vocabulary as documents.sour
 MAX_FILE_BYTES = MAX_XML_BYTES  # 10 MiB, same cap as the API upload
 
 
-def _error(status: int, code: str, message: str) -> JSONResponse:
-    return JSONResponse(status_code=status, content={"code": registered(code), "message": message})
+def _error(status: int, code: str, message: str, retry_after_s: int | None = None) -> JSONResponse:
+    # Retry-After: what the provider asked for after a 429, so the API worker can hold the queue.
+    headers = {"Retry-After": str(retry_after_s)} if retry_after_s is not None else None
+    return JSONResponse(
+        status_code=status, content={"code": registered(code), "message": message}, headers=headers
+    )
 
 
 def get_llm_provider(request: Request) -> LLMProvider:
@@ -43,6 +47,8 @@ def extract_endpoint(
     try:
         return extract(data, source_type, lambda: get_llm_provider(request))
     except LLMError as err:  # provider could not even be built (missing key)
-        return _error(err.status, err.code, "The model provider is not available")
+        return _error(
+            err.status, err.code, "The model provider is not available", err.retry_after_s
+        )
     except ExtractError as err:
-        return _error(err.status, err.code, err.message)
+        return _error(err.status, err.code, err.message, err.retry_after_s)

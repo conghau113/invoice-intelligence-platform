@@ -2,14 +2,17 @@ import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { chunks, documents } from '../../../db/schema';
 import { TenantDbService, type Tx } from '../../../db/tenant-db.service';
+import { mayDefer, rateLimitHoldMs } from '../../extraction/resilience';
 import type { AiIndexResponse } from '../domain/ai-index-response';
 import {
   INDEX_FAILED,
   INDEX_JOB_INVALID,
+  INDEX_RATE_LIMITED,
   INDEX_RESPONSE_MISMATCH,
   INDEX_RETRY,
   IndexJobError,
   PermanentIndexError,
+  TransientIndexError,
   indexJobSchema,
   type IndexJobData,
 } from '../domain/index-job';
@@ -19,6 +22,8 @@ export interface IndexAttemptInfo {
   /** 1-based number of this attempt. */
   attempt: number;
   maxAttempts: number;
+  /** Times this job already went back to the queue for a 429 (resilience.ts `deferralsOf`). */
+  deferrals: number;
 }
 
 /** Rows per insert: 51 chunks at most (500 lines, T5.1 groups of 10), far below Postgres' limits. */
@@ -62,8 +67,15 @@ export class IndexProcessor {
     } catch (e) {
       // The indexer's message is dropped on purpose: it may contain document content.
       if (e instanceof PermanentIndexError) throw new IndexJobError(e.code, false);
-      if (info.attempt >= info.maxAttempts) throw new IndexJobError(INDEX_FAILED, false);
-      throw new IndexJobError(INDEX_RETRY, true);
+      const rateLimited = e instanceof TransientIndexError && e.rateLimited;
+      const holdMs = rateLimited ? rateLimitHoldMs(e.retryAfterMs) : undefined;
+      // The provider is only busy: hold the queue, keep the attempt (T6.2).
+      if (holdMs !== undefined && mayDefer(info.deferrals)) {
+        throw new IndexJobError(INDEX_RATE_LIMITED, true, { deferMs: holdMs });
+      }
+      const signal = { providerDown: e instanceof TransientIndexError && !rateLimited, holdMs };
+      if (info.attempt >= info.maxAttempts) throw new IndexJobError(INDEX_FAILED, false, signal);
+      throw new IndexJobError(INDEX_RETRY, true, signal);
     }
     if (!matchesJob(result, job)) throw new IndexJobError(INDEX_RESPONSE_MISMATCH, false);
 

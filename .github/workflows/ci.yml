@@ -143,6 +143,12 @@ jobs:
       # The API and the worker require them at start; the AI service gets the same token below.
       AI_SERVICE_URL: http://localhost:8000
       AI_SERVICE_TOKEN: ci-only-token-not-a-secret-0123456789
+      # The AI service runs the fake provider here: no quota to protect, so the worker is not paced
+      # (T6.2). The pacing itself is tested in apps/api/test/resilience.int-spec.ts.
+      LLM_RPM: 6000
+      LLM_TPM: 100000000
+      EMBED_RPM: 6000
+      EMBED_TPM: 100000000
     steps:
       - uses: actions/checkout@v7
       - run: corepack enable
