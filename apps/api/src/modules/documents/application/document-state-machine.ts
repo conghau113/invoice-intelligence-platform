@@ -21,6 +21,11 @@ import {
   REALTIME_PUBLISHER,
   type RealtimePublisher,
 } from '../../realtime/application/realtime-publisher.port';
+import {
+  DOCUMENT_NOTIFIER,
+  NO_NOTIFIER,
+  type DocumentNotifier,
+} from '../../notifications/application/document-notifier.port';
 
 export interface TransitionContext {
   /** Keycloak sub of the user, or null when the system acts (worker). */
@@ -64,6 +69,9 @@ export class DocumentStateMachine {
     @Optional()
     @Inject(REALTIME_PUBLISHER)
     private readonly realtime: RealtimePublisher = NO_REALTIME,
+    @Optional()
+    @Inject(DOCUMENT_NOTIFIER)
+    private readonly notifier: DocumentNotifier = NO_NOTIFIER,
   ) {}
 
   async transition(
@@ -83,6 +91,7 @@ export class DocumentStateMachine {
         tenantId: documents.tenantId,
         status: documents.status,
         version: documents.version,
+        uploadedBy: documents.uploadedBy,
       })
       .from(documents)
       .where(eq(documents.id, documentId))
@@ -116,6 +125,16 @@ export class DocumentStateMachine {
         ctx.code === undefined
           ? { from: row.status, to }
           : { from: row.status, to, code: ctx.code },
+    });
+    // In this transaction, not after it: the notification exists exactly when the status does, so
+    // a crash between COMMIT and a later write cannot lose it (T6.5, ADR 0014: offline delivery).
+    await this.notifier.onTransition({
+      tenantId: row.tenantId,
+      documentId,
+      uploadedBy: row.uploadedBy,
+      from: row.status,
+      to,
+      failureCode,
     });
 
     // Every list and dashboard number of the tenant may have changed. After COMMIT, never before:

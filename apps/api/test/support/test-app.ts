@@ -72,6 +72,7 @@ export function stubAuthProviders(sub: string, tenants: Record<string, string>):
 export async function deleteDocumentsOf(owner: Pool, user: string): Promise<void> {
   const mine = `SELECT id FROM documents WHERE uploaded_by = $1`;
   await owner.query(`DELETE FROM chunks WHERE document_id IN (${mine})`, [user]);
+  await owner.query(`DELETE FROM notifications WHERE document_id IN (${mine})`, [user]);
   await owner.query(
     `DELETE FROM field_corrections WHERE extraction_id IN
        (SELECT id FROM extractions WHERE document_id IN (${mine}))`,

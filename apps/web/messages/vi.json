@@ -595,5 +595,19 @@
         "currency": "loại tiền {currency}"
       }
     }
+  },
+  "Notifications": {
+    "title": "Thông báo",
+    "bell": "Thông báo",
+    "bellUnread": "Thông báo ({count} chưa đọc)",
+    "readAll": "Đánh dấu tất cả đã đọc",
+    "extraction_succeeded": "Đã trích xuất xong, tài liệu chờ duyệt",
+    "extraction_failed": "Trích xuất thất bại",
+    "unread": "chưa đọc",
+    "empty": "Chưa có thông báo nào.",
+    "loading": "Đang tải thông báo…",
+    "loadError": "Không tải được thông báo. Hãy thử lại sau.",
+    "writeError": "Không cập nhật được trạng thái đã đọc. Hãy thử lại.",
+    "announce": "Có thông báo mới"
   }
 }

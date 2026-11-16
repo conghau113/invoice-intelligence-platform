@@ -7,6 +7,7 @@ import { ThemeToggle } from '@/components/common/theme-toggle';
 import { Button } from '@/components/ui/button';
 import type { Theme } from '@/lib/theme';
 import { initialsOf } from '@/lib/user-display';
+import { NotificationBell } from '@/features/notifications/notification-bell';
 import { AppSidebar } from './app-sidebar';
 import { groupedNavItems } from './nav-items';
 import { MobileMenu } from './mobile-menu';
@@ -29,6 +30,8 @@ interface Props {
   sidebarCollapsed?: boolean;
   /** Show the read-only notice (DEMO_READ_ONLY). It informs; the API is what refuses writes. */
   readOnly?: boolean;
+  /** Show the notification bell (T6.5): only when the API answered who the user is. */
+  notifications?: boolean;
 }
 
 /**
@@ -46,6 +49,7 @@ export async function AppShell({
   user,
   sidebarCollapsed = false,
   readOnly = false,
+  notifications = false,
 }: Readonly<Props>) {
   const t = await getTranslations('Shell');
   const tNav = await getTranslations('Nav');
@@ -86,6 +90,7 @@ export async function AppShell({
           <TenantSwitcher tenants={switchable} current={tenant} />
         )}
         <div className="ml-auto flex min-w-0 items-center gap-2">
+          {notifications && <NotificationBell />}
           <LanguageSwitcher />
           <ThemeToggle initial={theme} />
           <div className="flex min-w-0 items-center gap-2" role="group" aria-label={t('userMenu')}>

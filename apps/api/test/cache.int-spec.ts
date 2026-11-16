@@ -304,6 +304,10 @@ describe('cache (T6.3): cache-aside reads and the extraction result cache', () =
   afterEach(clean);
   afterAll(async () => {
     await owner.query(
+      `DELETE FROM notifications WHERE document_id IN
+         (SELECT id FROM documents WHERE storage_key LIKE '%/sample-${MEASURE_PREFIX}-%')`,
+    );
+    await owner.query(
       `DELETE FROM documents WHERE storage_key LIKE '%/sample-${MEASURE_PREFIX}-%'`,
     );
     for (const made of extra) await made.close();

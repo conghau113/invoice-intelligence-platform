@@ -172,6 +172,11 @@ describe('extraction queue (HTTP -> Postgres -> Redis -> worker)', () => {
          (SELECT id FROM documents WHERE uploaded_by = $1)`,
       [USER],
     );
+    // Notifications reference documents (T6.5): remove them first.
+    await owner.query(
+      'DELETE FROM notifications WHERE document_id IN (SELECT id FROM documents WHERE uploaded_by = $1)',
+      [USER],
+    );
     await owner.query('DELETE FROM documents WHERE uploaded_by = $1', [USER]);
     handler.calls = 0;
     handler.failTimes = 0;

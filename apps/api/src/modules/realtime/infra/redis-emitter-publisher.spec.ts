@@ -54,6 +54,47 @@ describe('RedisEmitterPublisher', () => {
     expect(calls).toEqual([]);
   });
 
+  it('sends a notification to the user room with its own schema', () => {
+    const { redis, calls } = fakeRedis(() => Promise.resolve(1));
+    const publisher = new RedisEmitterPublisher(redis);
+    const created = {
+      id: '00000000-0000-4000-8000-00000000e001',
+      kind: 'extraction_succeeded' as const,
+      documentId: payload.id,
+    };
+
+    publisher.toUser(TENANT, USER, { name: 'notification.created', payload: created });
+
+    expect(calls.map((c) => c.channel)).toEqual([
+      `socket.io#/realtime#tenant:${TENANT}:user:${USER}#`,
+    ]);
+    const sent = calls[0];
+    if (sent === undefined) throw new Error('nothing published');
+    const [, packet] = decode(sent.message) as [string, { data: unknown[] }];
+    expect(packet.data).toEqual(['notification.created', created]);
+  });
+
+  it.each([
+    ['a field the notification schema does not know', { fileName: 'SAMPLE.pdf' }],
+    // A document payload under the notification name: each event is checked by its own schema.
+    ['the payload of another event', { status: 'approved', version: 2 }],
+  ])('never sends a notification with %s', (_name, extra) => {
+    const { redis, calls } = fakeRedis(() => Promise.resolve(1));
+    const publisher = new RedisEmitterPublisher(redis);
+
+    publisher.toUser(TENANT, USER, {
+      name: 'notification.created',
+      payload: {
+        id: '00000000-0000-4000-8000-00000000e001',
+        kind: 'extraction_failed',
+        documentId: payload.id,
+        ...extra,
+      } as never,
+    });
+
+    expect(calls).toEqual([]);
+  });
+
   it('does not throw or leave a rejected promise behind when Redis is down', async () => {
     const { redis } = fakeRedis(() =>
       Promise.reject(new Error('Connection is closed. redis-host:6379')),

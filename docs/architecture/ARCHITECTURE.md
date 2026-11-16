@@ -126,8 +126,8 @@ sequenceDiagram
   AI->>AI: XML → parser | PDF/image → LLM + JSON Schema
   AI-->>K: invoice JSON + confidence + usage
   K->>K: validate (Zod) + business rules
-  K->>A: persist extraction, status=needs_review
-  K-->>U: Socket.IO document.updated via Redis (T6.4), then the UI reads again over REST
+  K->>A: persist extraction, status=needs_review, notification for the uploader (same transaction, T6.5)
+  K-->>U: Socket.IO document.updated (tenant room) + notification.created (user room) via Redis, then the UI reads again over REST
 ```
 
 M2 builds this whole flow for **XML only** (vertical slice). M3 adds the LLM path for PDF/images to the same flow.

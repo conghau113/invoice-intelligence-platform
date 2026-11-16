@@ -1,7 +1,14 @@
-import type { DOCUMENT_UPDATED, DocumentUpdatedEvent } from 'contracts';
+import type {
+  DOCUMENT_UPDATED,
+  DocumentUpdatedEvent,
+  NOTIFICATION_CREATED,
+  NotificationCreatedEvent,
+} from 'contracts';
 
 /** Every event the server pushes, with its payload (API.md "Realtime"). */
-export type RealtimeEvent = { name: typeof DOCUMENT_UPDATED; payload: DocumentUpdatedEvent };
+export type RealtimeEvent =
+  | { name: typeof DOCUMENT_UPDATED; payload: DocumentUpdatedEvent }
+  | { name: typeof NOTIFICATION_CREATED; payload: NotificationCreatedEvent };
 
 /**
  * "Tell the browsers": used by the API and by the worker, which is a separate process with no

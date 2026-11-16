@@ -1,4 +1,11 @@
-import { DOCUMENT_UPDATED, DocumentUpdatedEventSchema, type DocumentUpdatedEvent } from 'contracts';
+import {
+  DOCUMENT_UPDATED,
+  DocumentUpdatedEventSchema,
+  NOTIFICATION_CREATED,
+  NotificationCreatedEventSchema,
+  type DocumentUpdatedEvent,
+  type NotificationCreatedEvent,
+} from 'contracts';
 import type { TokenResult } from './token-client';
 
 /**
@@ -17,6 +24,7 @@ export interface SocketLike {
   on(event: 'disconnect', fn: (reason: string) => void): unknown;
   on(event: 'connect_error', fn: (err: Error) => void): unknown;
   on(event: typeof DOCUMENT_UPDATED, fn: (payload: unknown) => void): unknown;
+  on(event: typeof NOTIFICATION_CREATED, fn: (payload: unknown) => void): unknown;
   connect(): unknown;
   disconnect(): unknown;
 }
@@ -66,6 +74,7 @@ export class RealtimeConnection {
   private nextToken: string | null = null;
   private readonly statusListeners = new Set<() => void>();
   private readonly eventListeners = new Set<(e: DocumentUpdatedEvent) => void>();
+  private readonly notificationListeners = new Set<(e: NotificationCreatedEvent) => void>();
   private readonly resyncListeners = new Set<() => void>();
 
   constructor(private readonly deps: ConnectionDeps) {}
@@ -80,6 +89,12 @@ export class RealtimeConnection {
   onEvent(fn: (e: DocumentUpdatedEvent) => void): () => void {
     this.eventListeners.add(fn);
     return () => this.eventListeners.delete(fn);
+  }
+
+  /** A notification was stored for this user (T6.5). Sent to the user's room only. */
+  onNotification(fn: (e: NotificationCreatedEvent) => void): () => void {
+    this.notificationListeners.add(fn);
+    return () => this.notificationListeners.delete(fn);
   }
 
   onResync(fn: () => void): () => void {
@@ -160,6 +175,12 @@ export class RealtimeConnection {
       const parsed = DocumentUpdatedEventSchema.safeParse(payload);
       if (!parsed.success) return; // not something this version understands: ignore it
       for (const fn of this.eventListeners) fn(parsed.data);
+    });
+    socket.on(NOTIFICATION_CREATED, (payload) => {
+      if (!current()) return;
+      const parsed = NotificationCreatedEventSchema.safeParse(payload);
+      if (!parsed.success) return;
+      for (const fn of this.notificationListeners) fn(parsed.data);
     });
   }
 
