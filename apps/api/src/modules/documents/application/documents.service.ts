@@ -2,10 +2,6 @@ import { Inject, Injectable, Logger, UnprocessableEntityException } from '@nestj
 import { and, eq, gt, sql } from 'drizzle-orm';
 import { auditLogs, documents, idempotencyKeys } from '../../../db/schema';
 import { TenantDbService, type Tx } from '../../../db/tenant-db.service';
-import {
-  TENANT_CACHE_INVALIDATOR,
-  type TenantCacheInvalidator,
-} from '../../cache/application/tenant-read-cache';
 import { STORAGE_PORT, type StoragePort } from '../../storage/application/storage.port';
 import { queueUnavailable } from '../../queue/application/queue-unavailable';
 import {
@@ -72,7 +68,6 @@ export class DocumentsService {
     @Inject(STORAGE_PORT) private readonly storage: StoragePort,
     private readonly machine: DocumentStateMachine,
     @Inject(EXTRACTION_QUEUE_PORT) private readonly queue: ExtractionQueuePort,
-    @Inject(TENANT_CACHE_INVALIDATOR) private readonly cache: TenantCacheInvalidator,
   ) {}
 
   /**
@@ -97,11 +92,13 @@ export class DocumentsService {
   }
 
   /**
-   * Hands the document to the queue: uploaded -> queued, then one job whose id is the document id.
-   * Redis may fail after the row committed. The document is then left `uploaded` or `queued` with
-   * no job and this answers 503; the client's retry (same Idempotency-Key, or the same file) lands
-   * here again as a duplicate, sees that status and sends the job. Adding a job id that already
-   * exists does nothing, so a retry can never produce a second job.
+   * Hands the document to the queue: one job whose id is the document id. A new document is
+   * already `queued` (moved in `register`); a row still `uploaded` (written before T6.6, or by a
+   * seed) is moved here first. Redis may fail after the row committed: the document is then left
+   * `queued` (or `uploaded`) with no job and this answers 503. The client's retry (same
+   * Idempotency-Key, or the same file) lands here again as a duplicate, sees that status and sends
+   * the job. Adding a job id that already exists does nothing, so a retry can never produce a
+   * second job.
    */
   private async dispatch(
     result: CreateDocumentResult,
@@ -192,9 +189,23 @@ export class DocumentsService {
       meta: { sourceType: file.sourceType },
       ip: input.ip,
     });
-    // A new row shows in the list even before it is queued (the queue step may fail).
-    if (created) this.tenantDb.afterCommit(() => this.cache.invalidate(input.tenantId));
-    return { document, created, statusCode, replayed: false };
+    if (!created) return { document, created, statusCode, replayed: false };
+
+    // uploaded -> queued in this same transaction (T6.6): a second transaction only for this step
+    // cost BEGIN, set_config and COMMIT on every upload, and upload bursts are CPU-bound on the API
+    // (docs/reports/load-test-v1.md). The row is still born `uploaded` (RLS `initial_state`) and
+    // moved by the state machine, which also invalidates the read cache and pushes the realtime
+    // event after COMMIT. If the enqueue in `dispatch` then fails, the row is `queued` with no job:
+    // the retry path there sends it.
+    const { version } = await this.machine.transition(document.id, 'queued', {
+      actorId: input.userId,
+    });
+    return {
+      document: { ...document, status: 'queued', version },
+      created,
+      statusCode,
+      replayed: false,
+    };
   }
 
   private async replay(
