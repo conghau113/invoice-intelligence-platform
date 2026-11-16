@@ -56,16 +56,17 @@ export default async function AppLayout({ children }: Readonly<{ children: React
     );
   }
   const tenant = await currentTenant();
-  // Realtime progress (T6.4) for whoever may read documents; the API checks the same permission
-  // when it issues the socket token. Keyed by tenant: switching tenants opens a new socket.
-  const content = me.data.permissions.includes('document:read') ? (
-    <RealtimeProvider key={tenant ?? ''}>{children}</RealtimeProvider>
-  ) : (
-    children
-  );
-  return (
-    <AppShell {...shellProps} access={me.data} tenant={tenant}>
-      {content}
+  const shell = (
+    <AppShell {...shellProps} access={me.data} tenant={tenant} notifications>
+      {children}
     </AppShell>
+  );
+  // Realtime progress (T6.4) for whoever may read documents; the API checks the same permission
+  // when it issues the socket token. Keyed by tenant: switching tenants opens a new socket. Around
+  // the whole shell, so the notification bell in the top bar (T6.5) gets its events too.
+  return me.data.permissions.includes('document:read') ? (
+    <RealtimeProvider key={tenant ?? ''}>{shell}</RealtimeProvider>
+  ) : (
+    shell
   );
 }

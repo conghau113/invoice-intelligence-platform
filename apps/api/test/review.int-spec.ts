@@ -201,6 +201,11 @@ describe('POST /documents/:id/approve (HTTP -> Postgres)', () => {
     await owner.query(`DELETE FROM invoices WHERE document_id IN (${mine})`, [USER]);
     await owner.query(`DELETE FROM extractions WHERE document_id IN (${mine})`, [USER]);
     await owner.query(`DELETE FROM audit_logs WHERE entity_id IN (${mine})`, [USER]);
+    // Notifications reference documents (T6.5): remove them first.
+    await owner.query(
+      'DELETE FROM notifications WHERE document_id IN (SELECT id FROM documents WHERE uploaded_by = $1)',
+      [USER],
+    );
     await owner.query(`DELETE FROM documents WHERE uploaded_by = $1`, [USER]);
     await Promise.all([owner.end(), pool.end()]);
   });

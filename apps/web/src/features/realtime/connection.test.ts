@@ -107,6 +107,26 @@ describe('RealtimeConnection', () => {
     expect(t.resyncs()).toBe(0); // the first connect is not a reconnect
   });
 
+  it('passes on valid notification events to their own listeners only', async () => {
+    const t = setup([ok()]);
+    const notes: unknown[] = [];
+    t.conn.onNotification((e) => notes.push(e));
+    await t.conn.start();
+    const note = {
+      id: '1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f',
+      kind: 'extraction_succeeded',
+      documentId: EVENT.id,
+    };
+
+    t.socket().fire('connect');
+    t.socket().fire('notification.created', note);
+    t.socket().fire('notification.created', { ...note, fileName: 'SAMPLE.pdf' }); // unknown field
+    t.socket().fire('notification.created', EVENT); // a document event under the wrong name
+
+    expect(notes).toEqual([note]);
+    expect(t.events).toEqual([]); // document listeners never see a notification
+  });
+
   it('fetches a fresh token for every later handshake', async () => {
     const t = setup([ok('t1'), ok('t2')]);
     await t.conn.start();

@@ -1,9 +1,24 @@
 import { Logger, type OnApplicationShutdown } from '@nestjs/common';
 import { Emitter } from '@socket.io/redis-emitter';
-import { DocumentUpdatedEventSchema } from 'contracts';
+import {
+  DOCUMENT_UPDATED,
+  DocumentUpdatedEventSchema,
+  NOTIFICATION_CREATED,
+  NotificationCreatedEventSchema,
+} from 'contracts';
 import type { Redis } from 'ioredis';
+import type { z } from 'zod';
 import type { RealtimeEvent, RealtimePublisher } from '../application/realtime-publisher.port';
 import { REALTIME_NAMESPACE, tenantRoom, userRoom } from '../domain/rooms';
+
+/**
+ * The schema each event's payload must pass before it leaves for the browsers. A record over the
+ * event names, so a new event that is added to the union without a schema does not compile.
+ */
+const PAYLOAD_SCHEMAS: Record<RealtimeEvent['name'], z.ZodType> = {
+  [DOCUMENT_UPDATED]: DocumentUpdatedEventSchema,
+  [NOTIFICATION_CREATED]: NotificationCreatedEventSchema,
+};
 
 /**
  * Publishes through Redis in the Socket.IO adapter's own format (`@socket.io/redis-emitter`): every
@@ -43,7 +58,7 @@ export class RedisEmitterPublisher implements RealtimePublisher, OnApplicationSh
 
   private send(room: string, event: RealtimeEvent): void {
     // Strict schema: a field added by mistake (content, a name) is never sent to browsers.
-    const parsed = DocumentUpdatedEventSchema.safeParse(event.payload);
+    const parsed = PAYLOAD_SCHEMAS[event.name].safeParse(event.payload);
     if (!parsed.success) {
       this.logger.error(`Realtime event refused by its schema (${event.name})`);
       return;

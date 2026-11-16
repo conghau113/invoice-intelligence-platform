@@ -595,5 +595,19 @@
         "currency": "currency {currency}"
       }
     }
+  },
+  "Notifications": {
+    "title": "Notifications",
+    "bell": "Notifications",
+    "bellUnread": "Notifications ({count} unread)",
+    "readAll": "Mark all as read",
+    "extraction_succeeded": "Extraction finished, the document is ready for review",
+    "extraction_failed": "Extraction failed",
+    "unread": "unread",
+    "empty": "No notifications yet.",
+    "loading": "Loading notifications…",
+    "loadError": "Could not load notifications. Please try again later.",
+    "writeError": "Could not mark as read. Please try again.",
+    "announce": "New notification"
   }
 }

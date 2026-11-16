@@ -371,3 +371,52 @@ export const chunks = pgTable(
     check('chunks_document_version_check', sql`${t.documentVersion} >= 1`),
   ],
 );
+
+/**
+ * In-app notifications (T6.5, ADR 0014): the offline half of delivery. A row is written in the same
+ * transaction as the status change it reports (DocumentStateMachine), so a committed change always
+ * has its notification and a rolled-back one never does; the socket push after COMMIT is only the
+ * online half. One recipient per row (`user_id`, the uploader). RLS scopes rows to the tenant; the
+ * user filter is in every query (the database knows the tenant, not the user). Ids and a code only:
+ * never document content or a file name. `user_id` has no FK, like `documents.uploaded_by`.
+ */
+export const notifications = pgTable(
+  'notifications',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+      .notNull()
+      .references(() => tenants.id),
+    userId: uuid('user_id').notNull(),
+    kind: text('kind').notNull(),
+    documentId: uuid('document_id').notNull(),
+    // Why extraction failed (the document's failure code); null for every other kind.
+    failureCode: text('failure_code'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    // Null until the user reads it. The only column the app role may update.
+    readAt: timestamp('read_at', { withTimezone: true }),
+  },
+  (t) => [
+    foreignKey({
+      name: 'notifications_document_tenant_fk',
+      columns: [t.documentId, t.tenantId],
+      foreignColumns: [documents.id, documents.tenantId],
+    }),
+    // The list (newest first) and its count, per user.
+    index('notifications_tenant_user_created_idx').on(
+      t.tenantId,
+      t.userId,
+      t.createdAt.desc(),
+      t.id.desc(),
+    ),
+    // The unread badge: only unread rows are in it, so it stays small however long the history.
+    index('notifications_tenant_user_unread_idx')
+      .on(t.tenantId, t.userId)
+      .where(sql`${t.readAt} is null`),
+    check(
+      'notifications_kind_check',
+      sql`${t.kind} in ('extraction_succeeded', 'extraction_failed')`,
+    ),
+    check('notifications_failure_code_check', sql`${t.failureCode} ~ '^[A-Z][A-Z0-9_]{1,63}$'`),
+  ],
+);

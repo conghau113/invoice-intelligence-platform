@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { NotificationKindSchema } from './notifications';
 
 /**
  * Realtime events (T6.4, ADR 0014, API.md "Realtime"). Pushed by the API's Socket.IO gateway; the
@@ -19,6 +20,19 @@ export const DocumentUpdatedEventSchema = z.strictObject({
   version: z.int().min(1),
 });
 export type DocumentUpdatedEvent = z.infer<typeof DocumentUpdatedEventSchema>;
+
+/**
+ * A notification was stored for the user (T6.5). Sent to that user's room only, after COMMIT. The
+ * notification itself is read through `GET /notifications`; the event only says "read again".
+ */
+export const NOTIFICATION_CREATED = 'notification.created';
+
+export const NotificationCreatedEventSchema = z.strictObject({
+  id: z.uuid(),
+  kind: NotificationKindSchema,
+  documentId: z.uuid(),
+});
+export type NotificationCreatedEvent = z.infer<typeof NotificationCreatedEventSchema>;
 
 /** What `POST /realtime/token` answers: a token that only the gateway accepts, for one handshake. */
 export const RealtimeTokenSchema = z.strictObject({

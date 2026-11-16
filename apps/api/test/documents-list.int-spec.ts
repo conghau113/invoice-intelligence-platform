@@ -87,7 +87,11 @@ describe('GET /documents (HTTP -> Postgres, RLS on)', () => {
        VALUES ($1, 'xml', $2, $3, '00000000-0000-4000-8000-00000000f0fe', $4)`,
       [tenant, `tenant/${tenant}/edge-${n}`, HASH(n), createdAt],
     );
-  const clean = () => owner.query('DELETE FROM documents');
+  const clean = async () => {
+    // Notifications reference documents (T6.5): remove them first.
+    await owner.query('DELETE FROM notifications');
+    await owner.query('DELETE FROM documents');
+  };
 
   beforeAll(async () => {
     owner = new Pool({ connectionString: requireVar('DATABASE_OWNER_URL'), max: 2 });

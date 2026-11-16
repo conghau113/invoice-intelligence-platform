@@ -60,8 +60,12 @@
 ### Notifications
 | Method | Path | Permission |
 |---|---|---|
-| GET | `/notifications` | authenticated (own) |
-| POST | `/notifications/:id/read` | authenticated (own) |
+| GET | `/notifications` | authenticated (own) — `?page` (default 1) `&limit` (1–50, default 20), anything else `400 INVALID_QUERY`. `200 {items, meta: {page, limit, total, totalPages}, unreadCount}` (`NotificationPageSchema`, ADR 0019), newest first; items are `{id, kind, documentId, failureCode, createdAt, readAt}`. `kind`: `extraction_succeeded` (`processing → needs_review`) or `extraction_failed` (`processing → failed`, with the document's `failureCode` when it is in the shared list, else `null`). Only the caller's own rows in the current tenant: a colleague's and another tenant's are never counted. Not cached |
+| POST | `/notifications/:id/read` | authenticated (own) — `204`; idempotent (keeps the first `readAt`); someone else's id or an unknown one `404`, not a uuid `400` |
+| POST | `/notifications/read-all` | authenticated (own) — `204`; marks every unread notification of the caller in the current tenant |
+
+- Written by `DocumentStateMachine` in the same transaction as the status change (T6.5), for the uploader only, so a committed change always has its notification and a rolled-back one never does. Ids and codes only: no file name, no content; the web builds the sentence in the user's language.
+- The browser reaches them through the web's `GET /api/notifications`, `POST /api/notifications/:id/read` and `POST /api/notifications/read-all` (the POSTs same-origin only); the answer is checked against the contract before it is passed on. The public demo refuses the POSTs (`403 DEMO_READ_ONLY`).
 
 ### Admin (tenant_admin)
 | Method | Path | Notes |
@@ -78,8 +82,8 @@
 - The token is an HS256 JWT signed with `REALTIME_TOKEN_SECRET` (same value on every API instance): `iss=invoice-api`, `aud=realtime`, `sub` (user), `tid` (tenant id), 60 s. The REST guard refuses it and the gateway refuses a Keycloak token.
 - Handshake: WebSocket transport only (no sticky sessions behind several instances), `Origin` must be in `REALTIME_ALLOWED_ORIGINS`, `auth.token` must verify; else the connection is refused (`UNAUTHORIZED`, no reason given). The socket then joins `tenant:<tid>` and `tenant:<tid>:user:<uid>`, nothing else; the gateway has no client-to-server messages.
 - The server closes a socket after `REALTIME_MAX_CONNECTION_MS` (default 15 min, minus up to 10%); the client reconnects with a new token from the web, so a signed-out user loses the stream within that time.
-- Server events: `document.updated {id, status, version}` to the tenant room, after the status change has committed (`DocumentStateMachine`; from the API and the worker through `@socket.io/redis-emitter`, delivered by every instance's Redis adapter). Payloads pass a strict schema (`packages/contracts/src/realtime.ts`): ids and status only. `notification.created {id, type}` to the user room comes with T6.5.
-- Clients treat events as hints and refetch via REST (events can be missed): the web reads again after each reconnect and keeps a 30 s poll while a document is in flight; without a socket it polls every 5 s (list) / 2 s (detail) as before.
+- Server events: `document.updated {id, status, version}` to the tenant room, after the status change has committed (`DocumentStateMachine`; from the API and the worker through `@socket.io/redis-emitter`, delivered by every instance's Redis adapter). Payloads pass a strict schema (`packages/contracts/src/realtime.ts`): ids and status only. `notification.created {id, kind, documentId}` to the user room `tenant:<tid>:user:<uid>` only, after COMMIT (T6.5); each event name has its own strict schema, chosen by name before publishing.
+- Clients treat events as hints and refetch via REST (events can be missed): the web reads again after each reconnect and keeps a 30 s poll while a document is in flight; without a socket it polls every 5 s (list) / 2 s (detail) as before. The notification bell reads `/api/notifications` again on each `notification.created` (bursts coalesced) and after a reconnect; it polls every 5 min while connected and every 60 s without a socket (never in a hidden tab).
 
 ## Internal API: AI service (not public)
 | Method | Path | Body → Result |

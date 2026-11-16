@@ -1,6 +1,6 @@
 'use client';
 
-import type { DocumentUpdatedEvent } from 'contracts';
+import type { DocumentUpdatedEvent, NotificationCreatedEvent } from 'contracts';
 import { REALTIME_PATH } from 'contracts';
 import {
   createContext,
@@ -76,6 +76,27 @@ export function useDocumentEvents(
   useEffect(() => {
     if (c === null) return;
     const offEvent = c.onEvent((e) => latest.current.listener(e));
+    const offResync = c.onResync(() => latest.current.onResync?.());
+    return () => {
+      offEvent();
+      offResync();
+    };
+  }, [c]);
+}
+
+/** Runs `listener` for every notification of this user, and `onResync` after a reconnect. */
+export function useNotificationEvents(
+  listener: (e: NotificationCreatedEvent) => void,
+  onResync?: () => void,
+): void {
+  const c = useContext(RealtimeContext);
+  const latest = useRef({ listener, onResync });
+  useEffect(() => {
+    latest.current = { listener, onResync };
+  });
+  useEffect(() => {
+    if (c === null) return;
+    const offEvent = c.onNotification((e) => latest.current.listener(e));
     const offResync = c.onResync(() => latest.current.onResync?.());
     return () => {
       offEvent();
