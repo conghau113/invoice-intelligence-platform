@@ -217,6 +217,12 @@ services:
   redis:
     image: redis:8.10.2
     restart: unless-stopped
+    # AOF, fsync once a second, so a killed Redis keeps its queued jobs (T6.7,
+    # docs/reports/failure-drill-v1.md); RDB snapshots alone lost every job since the last one.
+    # On a volume with data from before: `redis-cli CONFIG SET appendonly yes`, wait for
+    # `aof_rewrite_in_progress:0`, then recreate; started with AOF on and no AOF file, Redis
+    # starts empty and ignores dump.rdb.
+    command: ['redis-server', '--appendonly', 'yes', '--appendfsync', 'everysec']
     volumes:
       - redisdata:/data
     healthcheck:
