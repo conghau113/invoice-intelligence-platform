@@ -81,7 +81,6 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
       storage,
       new DocumentStateMachine(tenantDb, NO_CACHE_INVALIDATION),
       queue,
-      NO_CACHE_INVALIDATION,
     );
   });
   afterAll(async () => {
@@ -116,6 +115,40 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
       tenantId: ACME,
     });
     expect(await exists(file)).toBe(true);
+  });
+
+  it('uploaded -> queued is in the transaction of the insert: a failing transition leaves no row (T6.6)', async () => {
+    const machine = new DocumentStateMachine(tenantDb, NO_CACHE_INVALIDATION);
+    machine.transition = () => Promise.reject(new Error('transition failed'));
+    const svc = new DocumentsService(tenantDb, storage, machine, queue);
+
+    await expect(
+      svc.create({
+        tenantId: ACME,
+        userId: USER,
+        ip: undefined,
+        idempotencyKey: 'k1',
+        file: await stored(ACME, 'tx'),
+      }),
+    ).rejects.toThrow('transition failed');
+    // Neither an `uploaded` row nor its key or audit entry survived: one transaction rolled back.
+    expect(await count('documents', `uploaded_by = '${USER}'`)).toBe(0);
+    expect(await count('idempotency_keys', `tenant_id = '${ACME}'`)).toBe(0);
+    expect(await count('audit_logs', `actor_id = '${USER}'`)).toBe(0);
+    expect(queue.jobs.size).toBe(0);
+  });
+
+  // Regression, not a guard of T6.6: the two-transaction version also left exactly these audits.
+  it('a new document is answered as `queued` with one status audit, uploaded -> queued', async () => {
+    const res = await create(ACME, 'k1', await stored(ACME, 'audit'));
+    const { rows } = await owner.query(
+      `SELECT action, meta FROM audit_logs WHERE entity_id = $1 ORDER BY action`,
+      [res.document.id],
+    );
+    expect(rows).toEqual([
+      { action: 'document.created', meta: { sourceType: 'pdf' } },
+      { action: 'document.status_changed', meta: { from: 'uploaded', to: 'queued' } },
+    ]);
   });
 
   it('the same request twice (same key, same file) -> one row, one create, same answer', async () => {
@@ -317,7 +350,6 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
       storage,
       new DocumentStateMachine(dropped, NO_CACHE_INVALIDATION),
       queue,
-      NO_CACHE_INVALIDATION,
     );
 
     await expect(
@@ -339,7 +371,6 @@ describe('documents create: dedupe + Idempotency-Key (Postgres, LocalFs)', () =>
       brokenStorage,
       new DocumentStateMachine(tenantDb, NO_CACHE_INVALIDATION),
       queue,
-      NO_CACHE_INVALIDATION,
     );
     await create(ACME, 'k1', await stored(ACME, 'del-fail'));
     const res = await svc.create({
