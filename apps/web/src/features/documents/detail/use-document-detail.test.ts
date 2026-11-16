@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { DocumentDetail } from './detail-client';
+import { SAFETY_POLL_MS } from '../use-document-list';
 import { DETAIL_POLL_MS, refetchIntervalFor } from './use-document-detail';
 
 const doc = (status: DocumentDetail['status']) => ({ status }) as DocumentDetail;
@@ -15,5 +16,9 @@ describe('refetchIntervalFor', () => {
       expect(refetchIntervalFor(doc(s))).toBe(false);
     }
     expect(refetchIntervalFor(undefined)).toBe(false);
+  });
+  it('only polls slowly while realtime is connected', () => {
+    expect(refetchIntervalFor(doc('processing'), true)).toBe(SAFETY_POLL_MS);
+    expect(refetchIntervalFor(doc('needs_review'), true)).toBe(false);
   });
 });

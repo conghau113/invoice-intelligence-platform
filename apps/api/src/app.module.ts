@@ -12,6 +12,7 @@ import { InsightsModule } from './modules/insights/insights.module';
 import { ReviewModule } from './modules/review/review.module';
 import { QaModule } from './modules/qa/qa.module';
 import { RetrievalModule } from './modules/search/retrieval.module';
+import { RealtimeModule } from './modules/realtime/realtime.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { RetrievalModule } from './modules/search/retrieval.module';
     InsightsModule,
     RetrievalModule,
     QaModule,
+    RealtimeModule,
   ],
   // Registered here (not in main.ts) so tests that boot AppModule exercise the real wiring.
   providers: [{ provide: APP_FILTER, useClass: ProblemDetailsFilter }],

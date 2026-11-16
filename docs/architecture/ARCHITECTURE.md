@@ -49,7 +49,7 @@ flowchart TB
   web_ui --> caddy
   caddy --> web
   caddy -->|/auth/realms, /auth/resources| kc
-  web_ui <-->|Socket.IO, M6: route not decided| caddy
+  web_ui <-->|"Socket.IO /realtime (T6.4): dev direct to api, demo off (no public route)"| api
   web -->|REST + bearer token| api
   web --> kc
   api --> pg
@@ -127,7 +127,7 @@ sequenceDiagram
   AI-->>K: invoice JSON + confidence + usage
   K->>K: validate (Zod) + business rules
   K->>A: persist extraction, status=needs_review
-  A-->>U: Socket.IO "document.updated" (M6; polling before that)
+  K-->>U: Socket.IO document.updated via Redis (T6.4), then the UI reads again over REST
 ```
 
 M2 builds this whole flow for **XML only** (vertical slice). M3 adds the LLM path for PDF/images to the same flow.
@@ -180,6 +180,7 @@ Only `DocumentStateMachine` may change `documents.status`. Every transition writ
 | LLM returns invalid JSON | Retry up to 2 times with the validation error; then `failed` with code | T3.1 |
 | AI service down | Job retried with backoff; circuit breaker pauses queue; no data loss | T2.9, T6.7 |
 | Redis down | API returns 503 for upload/queue endpoints; reads from Postgres keep working; jobs resume after recovery. The rate limiter fails open for reads and writes (approve, reopen, retry) and closed for upload and Q&A (503 `RATE_LIMIT_UNAVAILABLE`), which spend the shared LLM quota (ADR 0012, T6.1) | T6.1, T6.7 |
+| Realtime socket lost (API restart, Redis down, WebSocket blocked) | The web falls back to polling (list 5 s, detail 2 s) and reads again on reconnect; while connected it still polls every 30 s while a document is in flight, so an event lost after COMMIT (Redis down) costs at most that delay. A publish failure never fails the request or job that made the change | T6.4, T6.7 |
 | Worker killed mid-job | Job becomes stalled and is retried; processing is idempotent by (document, version) | T6.7 |
 | Duplicate upload | Same (tenant, sha256) returns the existing document | T2.3 |
 | Two reviewers approve at once | Optimistic concurrency → second gets 409 | T3.5 |

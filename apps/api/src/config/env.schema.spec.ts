@@ -40,6 +40,8 @@ describe('validateEnv', () => {
       OIDC_AUDIENCE: 'api',
       RAG_TOP_K: 5,
       RAG_CANDIDATES: 20,
+      REALTIME_ALLOWED_ORIGINS: ['http://localhost:3000'],
+      REALTIME_MAX_CONNECTION_MS: 900000,
     });
   });
 
@@ -179,5 +181,50 @@ describe('validateEnv', () => {
     expect(() => validateEnv({ ...base, RAG_TOP_K: '10', RAG_CANDIDATES: '8' })).toThrow(
       /RAG_CANDIDATES: must be at least RAG_TOP_K/,
     );
+  });
+
+  it('realtime is off without a secret, and a secret, origins and max age are checked when set', () => {
+    const base = {
+      NODE_ENV: 'test',
+      OIDC_ISSUER_URL: ISSUER,
+      DATABASE_URL: DB_URL,
+      DATA_DIR,
+      REDIS_URL,
+      ...AI,
+    };
+    expect(
+      validateEnv({ ...base, REALTIME_TOKEN_SECRET: '' }).REALTIME_TOKEN_SECRET,
+    ).toBeUndefined();
+    expect(
+      validateEnv({ ...base, REALTIME_TOKEN_SECRET: 's'.repeat(32) }).REALTIME_TOKEN_SECRET,
+    ).toBe('s'.repeat(32));
+    expect(() => validateEnv({ ...base, REALTIME_TOKEN_SECRET: 's'.repeat(31) })).toThrow(
+      /REALTIME_TOKEN_SECRET/,
+    );
+    expect(
+      validateEnv({
+        ...base,
+        REALTIME_ALLOWED_ORIGINS: 'http://localhost:3000, https://invoice.example.test',
+      }).REALTIME_ALLOWED_ORIGINS,
+    ).toEqual(['http://localhost:3000', 'https://invoice.example.test']);
+    expect(() => validateEnv({ ...base, REALTIME_ALLOWED_ORIGINS: '*' })).toThrow(
+      /REALTIME_ALLOWED_ORIGINS/,
+    );
+    expect(() =>
+      validateEnv({ ...base, REALTIME_ALLOWED_ORIGINS: 'http://localhost:3000/app' }),
+    ).toThrow(/REALTIME_ALLOWED_ORIGINS/);
+    expect(() => validateEnv({ ...base, REALTIME_MAX_CONNECTION_MS: '10' })).toThrow(
+      /REALTIME_MAX_CONNECTION_MS/,
+    );
+    // Production with realtime on must name its web origin; without realtime it need not.
+    const prod = { ...base, NODE_ENV: 'production', REALTIME_TOKEN_SECRET: 's'.repeat(32) };
+    expect(() => validateEnv(prod)).toThrow(
+      /REALTIME_ALLOWED_ORIGINS: required in production when REALTIME_TOKEN_SECRET is set/,
+    );
+    expect(
+      validateEnv({ ...prod, REALTIME_ALLOWED_ORIGINS: 'https://invoice.example.test' })
+        .REALTIME_ALLOWED_ORIGINS,
+    ).toEqual(['https://invoice.example.test']);
+    expect(() => validateEnv({ ...base, NODE_ENV: 'production' })).not.toThrow();
   });
 });

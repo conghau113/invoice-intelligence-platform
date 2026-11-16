@@ -5,6 +5,15 @@ import { trustedProxiesProblem } from './trusted-proxies';
 // z.coerce.boolean() would turn the string "false" into true, so booleans are parsed explicitly.
 const booleanString = z.enum(['true', 'false']).transform((v) => v === 'true');
 
+/** `https://host[:port]` with no path, query or trailing slash: what a browser sends as Origin. */
+function isBareOrigin(value: string): boolean {
+  try {
+    return new URL(value).origin === value;
+  } catch {
+    return false;
+  }
+}
+
 const envFields = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']),
   PORT: z.coerce.number().int().min(1).max(65535).default(3001),
@@ -69,13 +78,51 @@ const envFields = z.object({
   // and full-text lists before fusing them (RRF only reorders what the two lists bring).
   RAG_TOP_K: z.coerce.number().int().min(1).max(20).default(5),
   RAG_CANDIDATES: z.coerce.number().int().min(5).max(100).default(20),
+  // Realtime gateway (T6.4, ADR 0014). The key that signs the short-lived handshake tokens: the same
+  // value on every API instance, at least 32 characters. Not set (or empty) = realtime is off: no
+  // token is issued, every handshake is refused, and the web keeps polling (the public demo).
+  REALTIME_TOKEN_SECRET: z.preprocess(
+    (v) => (v === '' ? undefined : v),
+    z.string().min(32).optional(),
+  ),
+  // Browser origins allowed to open a socket (comma-separated). The web's own origin; never `*`.
+  // Defaults to the local web outside production; required in production when realtime is on.
+  REALTIME_ALLOWED_ORIGINS: z.preprocess(
+    (v) => (v === '' ? undefined : v),
+    z
+      .string()
+      .transform((v) => v.split(',').map((o) => o.trim()))
+      .pipe(z.array(z.url().refine(isBareOrigin, 'must be a bare origin')).min(1))
+      .optional(),
+  ),
+  // A socket is closed after this long (plus up to 10% jitter) so the client reconnects with a new
+  // token: a user signed out or removed from the tenant loses the stream within this time.
+  REALTIME_MAX_CONNECTION_MS: z.coerce.number().int().min(1_000).max(3_600_000).default(900_000),
 });
 
+/** The web of `pnpm --filter web dev`; never assumed in production. */
+const DEV_WEB_ORIGIN = 'http://localhost:3000';
+
 // Cross-field rules, apart from the fields so that each field keeps its own error message.
-export const envSchema = envFields.refine((env) => env.RAG_CANDIDATES >= env.RAG_TOP_K, {
-  message: 'must be at least RAG_TOP_K',
-  path: ['RAG_CANDIDATES'],
-});
+export const envSchema = envFields
+  .refine((env) => env.RAG_CANDIDATES >= env.RAG_TOP_K, {
+    message: 'must be at least RAG_TOP_K',
+    path: ['RAG_CANDIDATES'],
+  })
+  .refine(
+    (env) =>
+      env.NODE_ENV !== 'production' ||
+      env.REALTIME_TOKEN_SECRET === undefined ||
+      env.REALTIME_ALLOWED_ORIGINS !== undefined,
+    {
+      message: 'required in production when REALTIME_TOKEN_SECRET is set',
+      path: ['REALTIME_ALLOWED_ORIGINS'],
+    },
+  )
+  .transform((env) => ({
+    ...env,
+    REALTIME_ALLOWED_ORIGINS: env.REALTIME_ALLOWED_ORIGINS ?? [DEV_WEB_ORIGIN],
+  }));
 
 export type Env = z.infer<typeof envSchema>;
 

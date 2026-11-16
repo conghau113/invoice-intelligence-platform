@@ -1,5 +1,9 @@
 import { TenantDbService } from '../../../db/tenant-db.service';
 import { CACHE_ENABLED, CACHE_STORE } from '../../cache/application/cache-store.port';
+import {
+  NO_REALTIME,
+  REALTIME_PUBLISHER,
+} from '../../realtime/application/realtime-publisher.port';
 import { EXTRACTION_CACHE_OPTIONS } from '../../cache/application/extraction-result-cache';
 import { MemoryCacheStore } from '../../cache/testing/memory-cache-store';
 import { TenantTransactionInterceptor } from '../../../db/tenant-transaction.interceptor';
@@ -132,6 +136,8 @@ describe('POST /documents/upload (real guards, filter, multer engine and LocalFs
       .useValue(false)
       .overrideProvider(EXTRACTION_CACHE_OPTIONS)
       .useValue({ resultTtlMs: 1, lockTtlMs: 1, pollMs: 1 })
+      .overrideProvider(REALTIME_PUBLISHER)
+      .useValue(NO_REALTIME)
       .compile();
     app = mod.createNestApplication();
     await app.init();

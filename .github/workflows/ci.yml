@@ -149,6 +149,11 @@ jobs:
       LLM_TPM: 100000000
       EMBED_RPM: 6000
       EMBED_TPM: 100000000
+      # Realtime (T6.4): the API signs socket tokens with this key and takes sockets from the web's
+      # origin; the web (a production build, where realtime is off unless told) hands out this URL.
+      REALTIME_TOKEN_SECRET: ci-only-realtime-key-not-a-secret-0123456789
+      REALTIME_ALLOWED_ORIGINS: http://localhost:3000
+      REALTIME_PUBLIC_URL: http://localhost:3001
     steps:
       - uses: actions/checkout@v7
       - run: corepack enable

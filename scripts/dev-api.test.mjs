@@ -19,6 +19,8 @@ test('dev-api: fills in the variables the API needs, building the database URL f
   assert.equal(env.REDIS_URL, 'redis://localhost:6380');
   assert.equal(env.AI_SERVICE_URL, 'http://localhost:8000');
   assert.ok(env.AI_SERVICE_TOKEN.length >= 16, 'the API refuses a shorter AI token');
+  assert.ok(env.REALTIME_TOKEN_SECRET.length >= 32, 'the API refuses a shorter realtime secret');
+  assert.equal(env.REALTIME_ALLOWED_ORIGINS, 'http://localhost:3000');
 });
 
 test('dev-api: values already set in the shell win', () => {
