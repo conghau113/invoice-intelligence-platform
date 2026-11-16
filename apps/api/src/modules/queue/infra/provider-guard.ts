@@ -125,8 +125,17 @@ export class ProviderGuard {
       await this.failed(signalOf(e), String(job.id));
       throw e;
     }
-    if (called) this.breaker.onSuccess();
-    else this.breaker.release();
+    if (!called) {
+      this.breaker.release();
+      return;
+    }
+    // Usually the probe; with concurrency 2 it can also be a job that started before the circuit
+    // opened and answered after, which closes it just the same.
+    const wasOpen = this.breaker.state !== 'closed';
+    this.breaker.onSuccess();
+    // The counterpart of "circuit open": without it the log never says when the queue moved again
+    // (failure drill T6.7).
+    if (wasOpen) this.logger.log('circuit closed: the AI service answered, the queue runs again');
   }
 
   /** Before a job: when the circuit is open the job goes back to the queue, untouched. */

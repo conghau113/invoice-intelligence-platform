@@ -30,6 +30,7 @@ describe('ProviderGuard', () => {
   beforeEach(() => {
     now = 0;
     jest.spyOn(logger, 'warn').mockImplementation(() => undefined);
+    jest.spyOn(logger, 'log').mockImplementation(() => undefined);
   });
   const guardOn = ({ queue, connection }: { queue: Queue; connection: Redis }) =>
     new ProviderGuard(queue, connection, logger, { threshold: 2, cooldownMs: 1_000 }, () => now);
@@ -89,6 +90,51 @@ describe('ProviderGuard', () => {
     await guard.run(job('c'), work, () => undefined); // the probe
     expect(ran).toBe(true);
     expect(guard.breakerState).toBe('closed');
+  });
+
+  it('logs once when a probe closes the circuit, not for ordinary successes', async () => {
+    const f = fakes();
+    const guard = guardOn(f);
+    const log = jest.spyOn(logger, 'log');
+    log.mockClear();
+    const ok = () => Promise.resolve(true);
+    await guard.run(job('before'), ok, () => undefined);
+    expect(log).not.toHaveBeenCalled();
+    await guard.failed({ providerDown: true }, 'a');
+    await guard.failed({ providerDown: true }, 'b');
+    now = 1_000;
+    await guard.run(job('probe'), ok, () => undefined);
+    await guard.run(job('after'), ok, () => undefined);
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledWith(expect.stringContaining('circuit closed'));
+  });
+
+  it('a job already running when the circuit opened closes it, and says so, when it succeeds', async () => {
+    const f = fakes();
+    const guard = guardOn(f);
+    const log = jest.spyOn(logger, 'log');
+    log.mockClear();
+    // Concurrency 2: job "slow" is admitted while the circuit is still closed...
+    let finish: (called: boolean) => void = () => undefined;
+    const slow = guard.run(
+      job('slow'),
+      () =>
+        new Promise<boolean>((resolve) => {
+          finish = resolve;
+        }),
+      () => undefined,
+    );
+    await Promise.resolve();
+    // ...the other slot's failures open it meanwhile...
+    await guard.failed({ providerDown: true }, 'a');
+    await guard.failed({ providerDown: true }, 'b');
+    expect(guard.breakerState).toBe('open');
+    // ...then the slow job gets its answer: the service is up after all.
+    finish(true);
+    await slow;
+    expect(guard.breakerState).toBe('closed');
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledWith(expect.stringContaining('circuit closed'));
   });
 
   it('a probe that did not ask the provider anything does not close the circuit', async () => {
