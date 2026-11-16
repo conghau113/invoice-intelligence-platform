@@ -11,6 +11,10 @@ import { InvalidDocumentTransitionError } from '../src/modules/documents/domain/
 import { DocumentNotFoundError } from '../src/modules/documents/domain/document-not-found.error';
 import { TenantDbService } from '../src/db/tenant-db.service';
 import * as schema from '../src/db/schema';
+import type {
+  RealtimeEvent,
+  RealtimePublisher,
+} from '../src/modules/realtime/application/realtime-publisher.port';
 import { tablesWithoutRls } from './support/rls';
 
 const ACME = '00000000-0000-4000-8000-0000000000a1';
@@ -301,5 +305,53 @@ describe('documents (Postgres, RLS, state machine)', () => {
       ),
     ).rejects.toThrow(/UPPER_SNAKE_CASE/);
     expect(await statusOf(DOC_A)).toEqual({ status: 'uploaded', version: 1 });
+  });
+
+  describe('realtime event (T6.4)', () => {
+    let sent: { tenantId: string; event: RealtimeEvent; committed: string | undefined }[];
+    let pushing: DocumentStateMachine;
+
+    beforeEach(() => {
+      sent = [];
+      const recorder: RealtimePublisher = {
+        // Reads the row with a separate connection while publishing: shows the change had committed.
+        toTenant: (tenantId, event) => {
+          sent.push({ tenantId, event, committed: undefined });
+          void statusOf(DOC_A).then((row) => {
+            const last = sent.at(-1);
+            if (last !== undefined) last.committed = row?.status;
+          });
+        },
+        toUser: () => undefined,
+      };
+      pushing = new DocumentStateMachine(tenantDb, NO_CACHE_INVALIDATION, recorder);
+    });
+
+    it('is published once, after COMMIT, to the tenant, with ids and the status only', async () => {
+      await tenantDb.run(ACME, () => pushing.transition(DOC_A, 'queued', { actorId: USER }));
+      await new Promise((r) => setTimeout(r, 100));
+
+      expect(sent).toEqual([
+        {
+          tenantId: ACME,
+          event: { name: 'document.updated', payload: { id: DOC_A, status: 'queued', version: 1 } },
+          committed: 'queued',
+        },
+      ]);
+    });
+
+    it('is not published when the transaction rolls back or the transition is refused', async () => {
+      await expect(
+        tenantDb.run(ACME, async () => {
+          await pushing.transition(DOC_A, 'queued', { actorId: USER });
+          throw new Error('boom');
+        }),
+      ).rejects.toThrow('boom');
+      await expect(
+        tenantDb.run(ACME, () => pushing.transition(DOC_A, 'approved', { actorId: USER })),
+      ).rejects.toThrow(InvalidDocumentTransitionError);
+
+      expect(sent).toEqual([]);
+    });
   });
 });

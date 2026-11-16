@@ -69,10 +69,17 @@
 | GET | `/admin/jobs?state=failed` | Failed jobs with reason |
 | POST | `/admin/jobs/:id/retry` | Retry a failed job |
 
-## Realtime (Socket.IO, namespace `/realtime`)
-- Handshake requires the access token; server joins rooms `tenant:<id>` and `user:<id>`.
-- Server events: `document.updated {id, status, progress?}`, `notification.created {id, type}`.
-- Clients treat events as hints and refetch via REST (events can be missed).
+## Realtime (Socket.IO, namespace `/realtime`, path `/realtime/socket.io`, T6.4)
+| Method | Path | Permission |
+|---|---|---|
+| POST | `/realtime/token` | `document:read` (rate limit class `read`) → `{token, expiresIn: 60}`; `404` when realtime is off (no `REALTIME_TOKEN_SECRET`); `403 DEMO_READ_ONLY` on the demo |
+
+- The web server (BFF) calls `POST /realtime/token` with the user's bearer token and `X-Tenant`, and gives the browser only that token (`POST /api/realtime/token` on the web: `{token, expiresIn, url}`). The Keycloak access token never reaches page JavaScript (ADR 0006).
+- The token is an HS256 JWT signed with `REALTIME_TOKEN_SECRET` (same value on every API instance): `iss=invoice-api`, `aud=realtime`, `sub` (user), `tid` (tenant id), 60 s. The REST guard refuses it and the gateway refuses a Keycloak token.
+- Handshake: WebSocket transport only (no sticky sessions behind several instances), `Origin` must be in `REALTIME_ALLOWED_ORIGINS`, `auth.token` must verify; else the connection is refused (`UNAUTHORIZED`, no reason given). The socket then joins `tenant:<tid>` and `tenant:<tid>:user:<uid>`, nothing else; the gateway has no client-to-server messages.
+- The server closes a socket after `REALTIME_MAX_CONNECTION_MS` (default 15 min, minus up to 10%); the client reconnects with a new token from the web, so a signed-out user loses the stream within that time.
+- Server events: `document.updated {id, status, version}` to the tenant room, after the status change has committed (`DocumentStateMachine`; from the API and the worker through `@socket.io/redis-emitter`, delivered by every instance's Redis adapter). Payloads pass a strict schema (`packages/contracts/src/realtime.ts`): ids and status only. `notification.created {id, type}` to the user room comes with T6.5.
+- Clients treat events as hints and refetch via REST (events can be missed): the web reads again after each reconnect and keeps a 30 s poll while a document is in flight; without a socket it polls every 5 s (list) / 2 s (detail) as before.
 
 ## Internal API: AI service (not public)
 | Method | Path | Body → Result |

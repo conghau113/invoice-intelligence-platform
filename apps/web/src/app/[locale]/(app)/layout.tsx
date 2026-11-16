@@ -5,6 +5,7 @@ import { connection } from 'next/server';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { getSession } from '@/auth/session';
 import { StatePanel } from '@/components/common/state-panel';
+import { RealtimeProvider } from '@/features/realtime/realtime-provider';
 import { AppShell } from '@/features/shell/app-shell';
 import { forbiddenHintKey } from '@/features/shell/forbidden';
 import { getMe } from '@/features/shell/me';
@@ -54,9 +55,17 @@ export default async function AppLayout({ children }: Readonly<{ children: React
       </AppShell>
     );
   }
+  const tenant = await currentTenant();
+  // Realtime progress (T6.4) for whoever may read documents; the API checks the same permission
+  // when it issues the socket token. Keyed by tenant: switching tenants opens a new socket.
+  const content = me.data.permissions.includes('document:read') ? (
+    <RealtimeProvider key={tenant ?? ''}>{children}</RealtimeProvider>
+  ) : (
+    children
+  );
   return (
-    <AppShell {...shellProps} access={me.data} tenant={await currentTenant()}>
-      {children}
+    <AppShell {...shellProps} access={me.data} tenant={tenant}>
+      {content}
     </AppShell>
   );
 }

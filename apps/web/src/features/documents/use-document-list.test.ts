@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { DocumentPage } from './list-client';
-import { POLL_MS, refetchIntervalFor } from './use-document-list';
+import { POLL_MS, refetchIntervalFor, SAFETY_POLL_MS } from './use-document-list';
 
 const page = (...statuses: DocumentPage['items'][number]['status'][]): DocumentPage => ({
   items: statuses.map((status, i) => ({
@@ -30,5 +30,11 @@ describe('refetchIntervalFor', () => {
 
   it('does not poll before the first answer', () => {
     expect(refetchIntervalFor(undefined)).toBe(false);
+  });
+
+  it('only polls slowly while realtime is connected, and not at all once settled', () => {
+    expect(refetchIntervalFor(page('processing'), true)).toBe(SAFETY_POLL_MS);
+    expect(SAFETY_POLL_MS).toBe(30_000);
+    expect(refetchIntervalFor(page('approved'), true)).toBe(false);
   });
 });

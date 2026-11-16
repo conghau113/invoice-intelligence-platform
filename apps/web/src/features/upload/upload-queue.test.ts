@@ -274,4 +274,57 @@ describe('UploadQueue', () => {
     q.add([file('b.pdf')]);
     expect(n).toBe(before);
   });
+
+  it('follows realtime status events for the uploaded document only (T6.4)', async () => {
+    const { transport, calls } = fakeTransport();
+    const q = new UploadQueue(transport);
+    q.add([file('a.xml'), file('b.xml')]);
+    calls[0]!.finish(ok());
+    calls[1]!.finish({ kind: 'ok', created: true, document: { id: 'doc-2', status: 'queued' } });
+    await tick();
+    let changes = 0;
+    q.subscribe(() => (changes += 1));
+
+    q.applyDocumentStatus('doc-1', 'processing', 1);
+    q.applyDocumentStatus('doc-1', 'needs_review', 1);
+    expect(state(q, 'a.xml').document).toEqual({ id: 'doc-1', status: 'needs_review' });
+    expect(state(q, 'b.xml').document).toEqual({ id: 'doc-2', status: 'queued' });
+
+    const before = q.getSnapshot();
+    q.applyDocumentStatus('doc-1', 'needs_review', 1); // unchanged
+    q.applyDocumentStatus('doc-1', 'teleported', 1); // not a status
+    q.applyDocumentStatus('doc-9', 'approved', 1); // not on this screen
+    expect(q.getSnapshot()).toBe(before);
+    expect(changes).toBe(2);
+  });
+
+  it('keeps events that arrive before the upload answers, and applies them when it does', async () => {
+    const { transport, calls } = fakeTransport();
+    const q = new UploadQueue(transport);
+    q.add([file('fast.xml')]);
+    // The worker was faster than the answer: queued, processing, needs_review are already here.
+    q.applyDocumentStatus('doc-1', 'queued', 1);
+    q.applyDocumentStatus('doc-1', 'processing', 1);
+    q.applyDocumentStatus('doc-1', 'needs_review', 1);
+
+    calls[0]!.finish(ok()); // the answer still says queued
+    await tick();
+
+    expect(state(q, 'fast.xml').document).toEqual({ id: 'doc-1', status: 'needs_review' });
+    expect(q.inFlightDocumentIds()).toEqual([]);
+  });
+
+  it('drops an event older than one already seen (lower version)', async () => {
+    const { transport, calls } = fakeTransport();
+    const q = new UploadQueue(transport);
+    q.add([file('r.xml')]);
+    calls[0]!.finish(ok());
+    await tick();
+    expect(q.inFlightDocumentIds()).toEqual(['doc-1']);
+
+    q.applyDocumentStatus('doc-1', 'needs_review', 2); // reopened: version 2
+    q.applyDocumentStatus('doc-1', 'approved', 1); // a late event of version 1
+
+    expect(state(q, 'r.xml').document?.status).toBe('needs_review');
+  });
 });

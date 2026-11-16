@@ -1,4 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Optional } from '@nestjs/common';
+import { DOCUMENT_UPDATED } from 'contracts';
 import { eq } from 'drizzle-orm';
 import { TenantDbService } from '../../../db/tenant-db.service';
 import { auditLogs, documents } from '../../../db/schema';
@@ -15,6 +16,11 @@ import {
   TENANT_CACHE_INVALIDATOR,
   type TenantCacheInvalidator,
 } from '../../cache/application/tenant-read-cache';
+import {
+  NO_REALTIME,
+  REALTIME_PUBLISHER,
+  type RealtimePublisher,
+} from '../../realtime/application/realtime-publisher.port';
 
 export interface TransitionContext {
   /** Keycloak sub of the user, or null when the system acts (worker). */
@@ -55,6 +61,9 @@ export class DocumentStateMachine {
   constructor(
     private readonly tenantDb: TenantDbService,
     @Inject(TENANT_CACHE_INVALIDATOR) private readonly cache: TenantCacheInvalidator,
+    @Optional()
+    @Inject(REALTIME_PUBLISHER)
+    private readonly realtime: RealtimePublisher = NO_REALTIME,
   ) {}
 
   async transition(
@@ -112,6 +121,14 @@ export class DocumentStateMachine {
     // Every list and dashboard number of the tenant may have changed. After COMMIT, never before:
     // a reader in between would cache the old rows again (ADR 0013, T6.3).
     this.tenantDb.afterCommit(() => this.cache.invalidate(row.tenantId));
+    // Pushed after the invalidation above, so a browser that reads on this event gets fresh rows.
+    // Ids and the status only (T6.4); the browser reads the rest through REST, with RLS.
+    this.tenantDb.afterCommit(() =>
+      this.realtime.toTenant(row.tenantId, {
+        name: DOCUMENT_UPDATED,
+        payload: { id: documentId, status: to, version },
+      }),
+    );
     return { from: row.status, to, version };
   }
 }

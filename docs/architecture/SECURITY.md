@@ -19,6 +19,7 @@
 - Keycloak realm `invoice`; one Organization per tenant (ADR 0005).
 - Web uses the BFF pattern (ADR 0006): Auth.js handles the Authorization Code + PKCE flow on the server; tokens live in an encrypted httpOnly, `Secure`, `SameSite=Lax` cookie; the browser never sees the access token. Logout calls Keycloak end-session.
 - API validates JWT signature via JWKS (cached, rotation-aware) and checks `iss`, `aud`, `exp`, `nbf`. No token → 401.
+- Realtime socket (T6.4, ADR 0006/0014, API.md "Realtime"): the browser gets a 60-second HS256 token from the web server, which asked the API for it with the user's access token (`POST /realtime/token`, `document:read`). The token carries only user and tenant ids, `aud=realtime`, and opens a socket in that tenant's rooms; it is useless against the REST API, and the gateway refuses Keycloak tokens. `REALTIME_TOKEN_SECRET` (≥ 32 characters, shared by the API instances, never by the worker or the web) is a secret like `AI_SERVICE_TOKEN`. WebSocket only, `Origin` allow-list, no client-to-server messages. Revocation is not immediate: an open socket lives until `REALTIME_MAX_CONNECTION_MS` (15 min), then the client must get a new token from a still-valid session. A stolen realtime token (XSS) reveals which documents of the tenant change status, for at most 60 s to open plus that lifetime; it reveals no document content.
 
 ## 3. Authorization
 - Roles: `tenant_admin`, `accountant`, `viewer`. Permissions are strings (`document:approve`) mapped from roles in one file; endpoints declare required permissions; deny by default.

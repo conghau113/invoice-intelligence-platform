@@ -7,6 +7,10 @@ import type { Pool } from 'pg';
 import { ProblemDetailsFilter } from '../../src/common/http/problem-details.filter';
 import * as schema from '../../src/db/schema';
 import { CACHE_ENABLED, CACHE_STORE } from '../../src/modules/cache/application/cache-store.port';
+import {
+  NO_REALTIME,
+  REALTIME_PUBLISHER,
+} from '../../src/modules/realtime/application/realtime-publisher.port';
 import { EXTRACTION_CACHE_OPTIONS } from '../../src/modules/cache/application/extraction-result-cache';
 import { MemoryCacheStore } from '../../src/modules/cache/testing/memory-cache-store';
 import { DB, TenantDbService } from '../../src/db/tenant-db.service';
@@ -101,7 +105,8 @@ export const UNLIMITED_PROVIDER = {
 /**
  * The caches of T6.3 switched off, for integration tests about something else: they write rows
  * straight into the database (as the owner), which no cache can know about, and they have no Redis.
- * Caching itself is tested with real Redis in cache.int-spec.
+ * Caching itself is tested with real Redis in cache.int-spec. Realtime publishing (T6.4) is off for
+ * the same reason (no Redis); it is tested in realtime.int-spec and documents.int-spec.
  */
 export const withoutCache = (builder: TestingModuleBuilder): TestingModuleBuilder =>
   builder
@@ -110,4 +115,6 @@ export const withoutCache = (builder: TestingModuleBuilder): TestingModuleBuilde
     .overrideProvider(CACHE_ENABLED)
     .useValue(false)
     .overrideProvider(EXTRACTION_CACHE_OPTIONS)
-    .useValue({ resultTtlMs: 1, lockTtlMs: 1, pollMs: 1 });
+    .useValue({ resultTtlMs: 1, lockTtlMs: 1, pollMs: 1 })
+    .overrideProvider(REALTIME_PUBLISHER)
+    .useValue(NO_REALTIME);

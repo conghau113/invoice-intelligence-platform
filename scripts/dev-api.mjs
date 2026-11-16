@@ -19,6 +19,11 @@ export const DEV_DEFAULTS = {
   // (variable AI_SERVICE_TOKEN, listed in the AI example env file).
   AI_SERVICE_URL: 'http://localhost:8000',
   AI_SERVICE_TOKEN: 'dev-only-ai-service-token',
+  // Signs the realtime handshake tokens (T6.4). Throw-away development value; only the API reads
+  // it (the worker publishes events without it). Unset = realtime off, and the web keeps polling.
+  REALTIME_TOKEN_SECRET: 'dev-only-realtime-token-secret-0123456789',
+  // The web of `pnpm --filter web dev`: the only origin allowed to open a socket.
+  REALTIME_ALLOWED_ORIGINS: 'http://localhost:3000',
 };
 
 /** Environment for the API: dev defaults under whatever the caller already set. */

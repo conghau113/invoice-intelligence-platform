@@ -1,4 +1,4 @@
-import type { DocumentStatus } from '@/components/common/status-badge';
+import { DOCUMENT_STATUSES, type DocumentStatus } from '@/components/common/status-badge';
 import type { HttpErrorCode } from 'contracts';
 import {
   detailCodeFor,
@@ -11,6 +11,8 @@ import { validateFile } from './validate';
 
 /** At most this many requests in flight: more only competes for the same bandwidth and the API's connection pool. */
 export const MAX_CONCURRENT_UPLOADS = 3;
+/** Realtime statuses remembered for documents not on screen yet (oldest dropped first). */
+const MAX_REMEMBERED_STATUSES = 500;
 
 export type UploadState = 'pending' | 'uploading' | 'done' | 'duplicate' | 'error' | 'cancelled';
 
@@ -74,6 +76,12 @@ export class UploadQueue {
   private readonly inFlight = new Map<string, { attempt: number; abort: () => void }>();
   private readonly listeners = new Set<() => void>();
   private attempts = 0;
+  /**
+   * Latest realtime status per document id (T6.4). The API announces `queued` before it answers
+   * the upload, and a fast worker may finish before the answer arrives too: those events are kept
+   * here and applied when the upload's answer names the document.
+   */
+  private readonly latest = new Map<string, { status: DocumentStatus; version: number }>();
 
   constructor(
     private readonly transport: UploadTransport,
@@ -139,6 +147,41 @@ export class UploadQueue {
     for (const i of [...byState('pending'), ...byState('uploading')]) this.cancel(i.id);
   }
 
+  /**
+   * A realtime event or a fresh read (T6.4): the uploaded document moved on (queued, processing,
+   * needs_review...). Rows holding that document change, and the status is remembered for a row
+   * whose upload has not answered yet. A lower version than one already seen is older news (events
+   * of a reopened document can arrive out of order) and is dropped; within one version the last
+   * to arrive wins. A status this version of the web does not know is ignored.
+   */
+  applyDocumentStatus(documentId: string, status: string, version: number): void {
+    if (!(DOCUMENT_STATUSES as readonly string[]).includes(status)) return;
+    const known = status as DocumentStatus;
+    const seen = this.latest.get(documentId);
+    if (seen !== undefined && version < seen.version) return;
+    this.latest.delete(documentId); // re-insert: the Map's order is then "least recently seen" first
+    this.latest.set(documentId, { status: known, version });
+    if (this.latest.size > MAX_REMEMBERED_STATUSES) {
+      const oldest = this.latest.keys().next().value;
+      if (oldest !== undefined) this.latest.delete(oldest);
+    }
+    if (!this.items.some((i) => i.document?.id === documentId && i.document.status !== known)) {
+      return; // unchanged: keep the snapshot stable for useSyncExternalStore
+    }
+    this.items = this.items.map((i) =>
+      i.document?.id === documentId ? { ...i, document: { ...i.document, status: known } } : i,
+    );
+    this.emit();
+  }
+
+  /** Ids of uploaded documents the worker may still change: what to read again after a reconnect. */
+  inFlightDocumentIds(): string[] {
+    const moving = new Set<DocumentStatus>(['uploaded', 'queued', 'processing']);
+    return this.items.flatMap((i) =>
+      i.document !== undefined && moving.has(i.document.status) ? [i.document.id] : [],
+    );
+  }
+
   /** Drops finished rows (done, duplicate, cancelled, rejected-before-sending) from the list. */
   clearSettled(): void {
     this.items = this.items.filter(
@@ -194,10 +237,13 @@ export class UploadQueue {
   private settle(id: string, result: TransportResult): void {
     this.inFlight.delete(id);
     if (result.kind === 'ok') {
+      // An event may already have told us more than the answer, which was written earlier.
+      const seen = this.latest.get(result.document.id);
       this.patch(id, {
         state: result.created ? 'done' : 'duplicate',
         progress: 100,
-        document: result.document,
+        document:
+          seen === undefined ? result.document : { ...result.document, status: seen.status },
       });
     } else if (result.kind === 'aborted') {
       this.patch(id, { state: 'cancelled', progress: 0 });
