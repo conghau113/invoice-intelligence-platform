@@ -167,7 +167,13 @@ test.describe('document list', () => {
     await expect(page).not.toHaveURL(/status=/);
   });
 
-  test('the list refreshes itself while a document is in flight', async ({ page }) => {
+  test('without a realtime socket, the list polls while a document is in flight', async ({
+    page,
+  }) => {
+    // The document below is invented by the mock, so no realtime event will ever come for it.
+    // With a socket the list only polls every 30 s (T6.4); this test is about the fallback, so the
+    // socket is refused as a proxy without WebSocket would. Realtime itself: realtime.spec.ts.
+    await page.routeWebSocket(/\/realtime\/socket\.io\//, (ws) => ws.close());
     await login(page, 'accountant');
     const id = randomUUID();
     let calls = 0;

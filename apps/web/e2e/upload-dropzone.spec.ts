@@ -39,9 +39,9 @@ test.describe('upload screen', () => {
 
     for (const f of good) {
       await expect(row(page, f.name)).toHaveAttribute('data-state', 'done');
-      await expect(
-        page.getByTestId(`upload-row-${f.name}`).locator('[data-status="queued"]'),
-      ).toBeVisible();
+      // The server's document status is shown. Which one depends on timing: the upload answers
+      // `queued`, and realtime events (T6.4) move the badge on as the worker handles the file.
+      await expect(page.getByTestId(`upload-row-${f.name}`).locator('[data-status]')).toBeVisible();
     }
     await expect(row(page, 'fake.xml')).toHaveAttribute('data-state', 'error');
     await expect(row(page, 'fake.xml')).toContainText('Loại file không được hỗ trợ');

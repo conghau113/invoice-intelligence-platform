@@ -225,6 +225,9 @@ test.describe('review screen', () => {
   }) => {
     const id = await openPdfReview(page);
     const tabB = await context.newPage();
+    // Tab B has no realtime socket (a stale tab): with one it would be told before it could click
+    // (realtime.spec.ts). This test is about the server's 409 and keeping what was typed.
+    await tabB.routeWebSocket(/\/realtime\/socket\.io\//, (ws) => ws.close());
     await tabB.goto(`/vi/documents/${id}`, { timeout: 30_000 });
     await expect(tabB.getByTestId('review-screen')).toBeVisible({ timeout: 30_000 });
     await tabB.getByTestId('field-seller.name').fill('Bản của tab B');
@@ -333,6 +336,9 @@ test.describe('review screen', () => {
     await expect(page.getByTestId('approved-now')).toBeVisible();
 
     const tabB = await context.newPage();
+    // A stale tab (no realtime socket): with one, tab B would follow the reopen by itself before it
+    // could click. This test is about the server's 409 and the page following the document.
+    await tabB.routeWebSocket(/\/realtime\/socket\.io\//, (ws) => ws.close());
     await tabB.goto(`/vi/documents/${id}`, { timeout: 30_000 });
     await expect(tabB.getByTestId('reopen')).toBeVisible({ timeout: 30_000 });
 

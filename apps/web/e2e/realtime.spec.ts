@@ -36,6 +36,36 @@ test.describe('realtime progress', () => {
     expect(reads).toEqual([]);
   });
 
+  test("another tab's approval reaches a form being edited at once; what was typed is kept", async ({
+    page,
+    context,
+  }) => {
+    await login(page, 'accountant');
+    await page.goto('/vi/upload');
+    await page.waitForLoadState('networkidle');
+    const { id } = await uploadFile(page, invoiceXml('e2e-realtime-two-tabs.xml'));
+    await page.goto('/vi/documents');
+    await expect(page.getByTestId(`document-row-${id}`)).toHaveAttribute(
+      'data-status',
+      'needs_review',
+      { timeout: 45_000 },
+    );
+    await page.goto(`/vi/documents/${id}`, { timeout: 30_000 });
+    await expect(page.getByTestId('review-screen')).toBeVisible({ timeout: 30_000 });
+
+    const tabB = await context.newPage();
+    await tabB.goto(`/vi/documents/${id}`, { timeout: 30_000 });
+    await expect(tabB.getByTestId('review-screen')).toBeVisible({ timeout: 30_000 });
+    await tabB.getByTestId('field-seller.name').fill('Bản của tab B');
+
+    await page.getByTestId('approve-form').click();
+    await expect(page.getByTestId('approved-now')).toBeVisible();
+
+    // A document waiting for review is not polled: only the event can tell tab B, before any click.
+    await expect(tabB.getByTestId('newer-extraction')).toBeVisible({ timeout: 10_000 });
+    await expect(tabB.getByTestId('field-seller.name')).toHaveValue('Bản của tab B');
+  });
+
   test('with the socket blocked, the list falls back to polling and still gets there', async ({
     page,
   }) => {
