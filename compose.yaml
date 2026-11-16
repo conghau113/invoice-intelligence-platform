@@ -30,6 +30,13 @@ services:
   redis:
     image: redis:8
     restart: unless-stopped
+    # AOF, fsync once a second: the queue's jobs live only here, and the default (RDB snapshots,
+    # at best every 60 s) lost every job added since the last one when Redis was killed
+    # (docs/reports/failure-drill-v1.md). Now a kill loses at most about one second of writes.
+    # A volume that already holds data from before this line: run `redis-cli CONFIG SET appendonly
+    # yes` and wait for `aof_rewrite_in_progress:0` BEFORE recreating the container. Started with
+    # AOF on and no AOF file yet, Redis starts empty and ignores dump.rdb.
+    command: ['redis-server', '--appendonly', 'yes', '--appendfsync', 'everysec']
     ports:
       - '127.0.0.1:${REDIS_PORT:-6380}:6379'
     volumes:
