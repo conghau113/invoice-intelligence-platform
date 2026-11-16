@@ -40,3 +40,6 @@ infra/prod/snapshot/
 
 # Personal mock-interview draft (2026-11-11): kept locally, not committed
 docs/interview/mock-interview-draft.md
+
+# k6 end-of-test summaries (T6.6)
+load/k6/results/
