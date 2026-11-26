@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
+import { activeTraceparent } from '../../../common/otel/trace-context';
 import { documents } from '../../../db/schema';
 import { TenantDbService } from '../../../db/tenant-db.service';
 import { DocumentStateMachine } from '../../documents/application/document-state-machine';
@@ -109,7 +110,15 @@ export class AdminJobsService {
     if (outcome === 'not_failed') throw new JobNotFailedError();
     // The job expired or was flushed: the document id is the job id, so adding it again is safe.
     if (outcome === 'not_found') {
-      await this.viaQueue(() => this.queue.enqueue({ documentId, tenantId }));
+      // The new job joins the admin's retry request in tracing (T7.1).
+      const traceparent = activeTraceparent();
+      await this.viaQueue(() =>
+        this.queue.enqueue({
+          documentId,
+          tenantId,
+          ...(traceparent === undefined ? {} : { traceparent }),
+        }),
+      );
     }
   }
 

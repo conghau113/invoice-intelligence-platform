@@ -7,6 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { UnrecoverableError, Worker, type Job } from 'bullmq';
 import type { Redis } from 'ioredis';
+import { runInConsumerSpan } from '../../../common/otel/trace-context';
 import type { Env } from '../../../config/env.schema';
 import { EXTRACTION_TOKENS_PER_JOB } from '../../extraction/resilience';
 import { ExtractionProcessor } from '../application/extraction.processor';
@@ -83,13 +84,45 @@ export class ExtractionWorker implements OnApplicationBootstrap, OnApplicationSh
     try {
       if ((await job.getState()) !== 'failed') return; // a retry is scheduled
       const code = /stalled/i.test(err.message) ? EXTRACTION_STALLED : EXTRACTION_RETRIES_EXHAUSTED;
-      await this.processor.settleFailure(job.data, code);
+      // BullMQ calls this listener outside the attempt's span: without its own span the final
+      // write would be a trace of its own, cut off from the upload (T7.1).
+      await this.traced(job, 'settle', () => this.processor.settleFailure(job.data, code));
     } catch {
       this.logger.warn(`could not reconcile job ${job.id ?? '?'}`);
     }
   }
 
-  private async handle(job: Job): Promise<void> {
+  /** One attempt of a job (T7.1): see `traced`. */
+  private handle(job: Job): Promise<void> {
+    return this.traced(job, 'process', () => this.process(job));
+  }
+
+  /**
+   * Runs `fn` in a CONSUMER span under the upload request that queued the job (the `traceparent` in
+   * the job data). Ids only as attributes: the job data holds no content.
+   */
+  private traced<T>(job: Job, operation: 'process' | 'settle', fn: () => Promise<T>): Promise<T> {
+    const data: unknown = job.data;
+    const traceparent =
+      typeof data === 'object' && data !== null && 'traceparent' in data
+        ? data.traceparent
+        : undefined;
+    return runInConsumerSpan(
+      `${EXTRACTION_QUEUE} ${operation}`,
+      traceparent,
+      {
+        'messaging.system': 'bullmq',
+        'messaging.operation.type': operation,
+        'messaging.destination.name': EXTRACTION_QUEUE,
+        'messaging.message.id': job.id ?? '',
+        'messaging.bullmq.attempt':
+          operation === 'process' ? job.attemptsMade + 1 : job.attemptsMade,
+      },
+      fn,
+    );
+  }
+
+  private async process(job: Job): Promise<void> {
     const guard = this.guard;
     if (guard === undefined) throw new Error(EXTRACTION_FAILED); // not bootstrapped
     try {

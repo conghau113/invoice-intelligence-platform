@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TracingModule } from '../../common/otel/tracing.module';
 import { ConfigModule } from '../../config/config.module';
 import { DbModule } from '../../db/db.module';
 import { DocumentStateModule } from '../documents/document-state.module';
@@ -14,7 +15,7 @@ import { ExtractionWorker } from './infra/extraction-worker';
 
 /** Root module of the worker process (src/worker.ts): database + queue consumers (extraction, RAG index), no HTTP. */
 @Module({
-  imports: [ConfigModule, DbModule, DocumentStateModule, ExtractionHandlerModule],
+  imports: [ConfigModule, DbModule, DocumentStateModule, ExtractionHandlerModule, TracingModule],
   providers: [
     { provide: EXTRACTION_HANDLER, useExisting: AiExtractionHandler },
     ExtractionProcessor,

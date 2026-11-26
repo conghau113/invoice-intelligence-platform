@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { activeTraceparent } from '../../../common/otel/trace-context';
 import { ConfigService } from '@nestjs/config';
 import type { Env } from '../../../config/env.schema';
 import {
@@ -71,7 +72,11 @@ export class HttpAiExtractor implements AiExtractor {
     form.set('sourceType', input.sourceType);
 
     const headers: Record<string, string> = { authorization: `Bearer ${this.token}` };
-    if (input.traceparent !== undefined) headers.traceparent = input.traceparent;
+    // With tracing on, the fetch instrumentation adds the worker span's `traceparent`; setting the
+    // job's too would send the header twice (T7.1). With tracing off, hand the job's on as before.
+    if (input.traceparent !== undefined && activeTraceparent() === undefined) {
+      headers.traceparent = input.traceparent;
+    }
 
     let res: Response;
     try {

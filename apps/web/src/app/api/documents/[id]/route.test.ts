@@ -35,7 +35,7 @@ const get = (id: string, headers: Record<string, string> = {}) =>
   });
 
 describe('GET /api/documents/[id]', () => {
-  it('calls the API with the bearer token, tenant and a valid traceparent, and returns the body', async () => {
+  it("calls the API with the bearer token and tenant, not the browser's traceparent, and returns the body", async () => {
     const res = await get(ID, { traceparent: TRACE });
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ id: ID });
@@ -44,13 +44,7 @@ describe('GET /api/documents/[id]', () => {
     expect(init.headers).toMatchObject({
       authorization: 'Bearer tok',
       'x-tenant': 'globex',
-      traceparent: TRACE,
     });
-  });
-
-  it('drops a malformed traceparent', async () => {
-    await get(ID, { traceparent: 'garbage' });
-    const init = fetchMock.mock.calls[0]?.[1] as { headers: Record<string, string> };
     expect(init.headers.traceparent).toBeUndefined();
   });
 

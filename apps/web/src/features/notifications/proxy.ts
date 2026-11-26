@@ -34,7 +34,7 @@ export async function forward(
   if (method === 'POST' && !isSameOrigin(req.headers.get('origin'), authEnv().NEXTAUTH_URL)) {
     return bffError('FORBIDDEN', 403);
   }
-  const headers = await upstreamHeaders(req.headers.get('traceparent'));
+  const headers = await upstreamHeaders();
   if (headers === null) return bffError('UNAUTHENTICATED', 401);
 
   let upstream: Response;

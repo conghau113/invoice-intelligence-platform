@@ -45,8 +45,7 @@ export async function POST(req: NextRequest) {
   if (forwardedFor !== null && process.env.TRUST_FORWARDED_FOR === 'true') {
     headers['x-forwarded-for'] = forwardedFor;
   }
-  const traceparent = req.headers.get('traceparent');
-  if (traceparent !== null) headers.traceparent = traceparent;
+  // No `traceparent`: the fetch instrumentation adds this route's own span (T7.1, see lib/api.ts).
 
   let upstream: Response;
   try {

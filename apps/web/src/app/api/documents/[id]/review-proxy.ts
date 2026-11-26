@@ -20,7 +20,7 @@ export function refuseEarly(req: NextRequest, id: string): NextResponse | null {
 
 /** The token, the version the person reviewed and the caller's address; null without a session. */
 export async function reviewHeaders(req: NextRequest): Promise<Record<string, string> | null> {
-  const headers = await upstreamHeaders(req.headers.get('traceparent'));
+  const headers = await upstreamHeaders();
   if (headers === null) return null;
   const ifMatch = req.headers.get('if-match');
   if (ifMatch !== null) headers['if-match'] = ifMatch;

@@ -14,6 +14,9 @@ import path from 'node:path';
 import { Pool } from 'pg';
 import request from 'supertest';
 import { Queue } from 'bullmq';
+import { SpanKind } from '@opentelemetry/api';
+import type { ReadableSpan, SpanExporter } from '@opentelemetry/sdk-trace';
+import { flushTracing, startTracing, stopTracing } from '../src/otel';
 import type { StartedTestContainer } from 'testcontainers';
 import type { Env } from '../src/config/env.schema';
 import { ProblemDetailsFilter } from '../src/common/http/problem-details.filter';
@@ -63,6 +66,21 @@ class ScriptedHandler implements ExtractionHandler {
     this.calls += 1;
     if (this.permanent) return Promise.reject(new PermanentExtractionError());
     if (this.calls <= this.failTimes) return Promise.reject(new Error('SECRET invoice content'));
+    return Promise.resolve();
+  }
+}
+
+const UPLOAD_TRACE_ID = '0af7651916cd43dd8448eb211c80319c';
+const UPLOAD_TRACEPARENT = `00-${UPLOAD_TRACE_ID}-b7ad6b7169203331-01`;
+
+/** Keeps every exported span in memory, like the OTLP exporter would send them. */
+class CollectingExporter implements SpanExporter {
+  readonly spans: ReadableSpan[] = [];
+  export(spans: ReadableSpan[], done: (r: { code: number }) => void): void {
+    this.spans.push(...spans);
+    done({ code: 0 });
+  }
+  shutdown(): Promise<void> {
     return Promise.resolve();
   }
 }
@@ -385,6 +403,32 @@ describe('extraction queue (HTTP -> Postgres -> Redis -> worker)', () => {
       .set('Authorization', 'Bearer tenant_admin@acme')
       .expect(200);
     expect(list.body.items[0]).toMatchObject({ attemptsMade: 1, reason: 'EXTRACTION_FAILED' });
+  });
+
+  it('T7.1: the final failure of a job is written inside the upload trace, not a trace of its own', async () => {
+    const exporter = new CollectingExporter();
+    expect(startTracing('invoice-worker', {}, exporter)).toBe(true);
+    try {
+      handler.permanent = true;
+      const res = await upload(live, 'traced', 'k1')
+        .set('traceparent', UPLOAD_TRACEPARENT)
+        .expect(201);
+      await waitForStatus(res.body.id, 'failed');
+      await sleep(300); // the 'failed' listener runs after the status change
+      await flushTracing();
+
+      const named = (name: string) => exporter.spans.find((s) => s.name === name);
+      const attempt = named('extraction process');
+      const settle = named('extraction settle');
+      expect(attempt?.spanContext().traceId).toBe(UPLOAD_TRACE_ID);
+      expect(settle?.kind).toBe(SpanKind.CONSUMER);
+      expect(settle?.spanContext().traceId).toBe(UPLOAD_TRACE_ID);
+      // Both hang under what queued the job, whether or not supertest's request got a span too.
+      expect(settle?.parentSpanContext?.spanId).toBe(attempt?.parentSpanContext?.spanId);
+      expect(settle?.attributes['messaging.operation.type']).toBe('settle');
+    } finally {
+      await stopTracing();
+    }
   });
 
   it('the same file twice (new key, replayed key) starts exactly one job', async () => {
