@@ -11,9 +11,10 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test/tsconfig.json",
     "test": "jest",
-    "test:int": "jest --config jest.int.config.js --runInBand",
+    "build:deps": "pnpm --filter contracts --filter telemetry build",
+    "test:int": "pnpm build:deps && jest --config jest.int.config.js --runInBand",
     "db:generate": "drizzle-kit generate",
-    "db:build": "pnpm --filter contracts build && tsc -p tsconfig.build.json --outDir dist-scripts --incremental false",
+    "db:build": "pnpm build:deps && tsc -p tsconfig.build.json --outDir dist-scripts --incremental false",
     "db:migrate": "pnpm db:build && node dist-scripts/db/migrate.js",
     "db:seed": "pnpm db:build && node dist-scripts/db/seed.js",
     "db:seed:documents": "pnpm db:build && node dist-scripts/db/seed-documents.js"
