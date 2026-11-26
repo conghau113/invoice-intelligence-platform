@@ -16,6 +16,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { Response } from 'express';
+import { activeTraceparent } from '../../../common/otel/trace-context';
 import { auditIp } from '../../../config/trusted-proxies';
 import { SkipTenantTransaction } from '../../../db/skip-tenant-transaction.decorator';
 import type { AuthenticatedRequest } from '../../auth/http/authenticated-request';
@@ -101,7 +102,9 @@ export class DocumentsController {
       ip: auditIp(req.ip),
       idempotencyKey,
       file,
-      traceparent: parseTraceparent(req.headers.traceparent),
+      // With tracing on, the job continues from this request's span (the worker becomes its
+      // child); with it off, a well-formed incoming header is passed on as before.
+      traceparent: activeTraceparent() ?? parseTraceparent(req.headers.traceparent),
     });
     res.status(result.statusCode);
     if (result.replayed) res.setHeader('Idempotent-Replayed', 'true');

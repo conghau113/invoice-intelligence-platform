@@ -60,21 +60,13 @@ describe('GET /api/documents', () => {
     expect(fetchMock.mock.calls[1]?.[0]).toBe('http://api.test/documents?limit=20');
   });
 
-  it('relays a well-formed traceparent and drops anything else', async () => {
+  it("does not relay the browser's traceparent (tracing adds the BFF span's own)", async () => {
     const tp = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
     await GET(
       new NextRequest('http://localhost:3000/api/documents', { headers: { traceparent: tp } }),
     );
-    await GET(
-      new NextRequest('http://localhost:3000/api/documents', {
-        headers: { traceparent: 'not-a-traceparent' },
-      }),
-    );
-    const sent = fetchMock.mock.calls.map(
-      (c) => (c[1] as { headers: Record<string, string> }).headers,
-    );
-    expect(sent[0]?.traceparent).toBe(tp);
-    expect(sent[1]?.traceparent).toBeUndefined();
+    const sent = fetchMock.mock.calls[0]?.[1] as { headers: Record<string, string> };
+    expect(sent.headers.traceparent).toBeUndefined();
   });
 
   it('answers 401 without calling the API when there is no token', async () => {

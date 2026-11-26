@@ -18,7 +18,7 @@ function readApiParams(search: URLSearchParams): URLSearchParams {
  * The response is not logged. A read, so no origin check: a cross-site page cannot read the answer.
  */
 export async function GET(req: NextRequest) {
-  const headers = await upstreamHeaders(req.headers.get('traceparent'));
+  const headers = await upstreamHeaders();
   if (headers === null) return bffError('UNAUTHENTICATED', 401);
 
   // `limit` is the API's name for what the URL calls `pageSize`; unknown parameters are gone.

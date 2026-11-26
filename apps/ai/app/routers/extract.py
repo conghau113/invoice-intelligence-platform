@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Form, Request, UploadFile
 from fastapi.responses import JSONResponse
 
 from app.error_codes import registered
+from app.otel import TracedLLMProvider
 from app.providers import build_provider
 from app.providers.base import LLMError, LLMProvider
 from app.security import require_service_token
@@ -26,11 +27,12 @@ def _error(status: int, code: str, message: str, retry_after_s: int | None = Non
 
 
 def get_llm_provider(request: Request) -> LLMProvider:
-    """Built on first use and kept: building needs a key the XML path does not."""
+    """Built on first use and kept: building needs a key the XML path does not. Every call through
+    it is one LLM span (T7.1); the wrapper lives here so the provider files stay untouched."""
     state = request.app.state
     if getattr(state, "llm_provider", None) is None:
         state.llm_provider = build_provider(state.settings)
-    return state.llm_provider
+    return TracedLLMProvider(state.llm_provider)
 
 
 @router.get("/extract/version")

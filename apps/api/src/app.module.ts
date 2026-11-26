@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { ProblemDetailsFilter } from './common/http/problem-details.filter';
+import { TracingModule } from './common/otel/tracing.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from './config/config.module';
 import { DbModule } from './db/db.module';
@@ -30,6 +31,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     QaModule,
     RealtimeModule,
     NotificationsModule,
+    TracingModule,
   ],
   // Registered here (not in main.ts) so tests that boot AppModule exercise the real wiring.
   providers: [{ provide: APP_FILTER, useClass: ProblemDetailsFilter }],

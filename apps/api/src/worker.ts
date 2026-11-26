@@ -1,3 +1,5 @@
+// First: tracing must patch http/pg before anything loads them (T7.1).
+import './otel-worker';
 import 'reflect-metadata';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';

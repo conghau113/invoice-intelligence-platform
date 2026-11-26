@@ -12,10 +12,12 @@ ENV NEXT_TELEMETRY_DISABLED=1 NEXT_OUTPUT_STANDALONE=1
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
 COPY apps/web/package.json apps/web/
 COPY packages/contracts/package.json packages/contracts/
+COPY packages/telemetry/package.json packages/telemetry/
 RUN pnpm install --frozen-lockfile --filter web...
 COPY packages/contracts packages/contracts
+COPY packages/telemetry packages/telemetry
 COPY apps/web apps/web
-RUN pnpm --filter contracts build && pnpm --filter web build
+RUN pnpm --filter contracts --filter telemetry build && pnpm --filter web build
 
 FROM node:24.21.0-bookworm-slim AS runtime
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 HOSTNAME=0.0.0.0 PORT=3000

@@ -4,6 +4,7 @@ from collections.abc import Awaitable, Callable
 from fastapi import FastAPI, Request, Response
 
 from app.config import get_settings
+from app.otel import setup_tracing
 from app.routers import extract, health, qa, rag
 from app.security import TRACEPARENT, ServiceAuthError, service_auth_error_handler
 
@@ -38,6 +39,8 @@ def create_app() -> FastAPI:
     app.include_router(extract.router)
     app.include_router(rag.router)
     app.include_router(qa.router)
+    # Last: the instrumentation wraps the app as built. A no-op without an OTLP endpoint (T7.1).
+    setup_tracing(app)
     return app
 
 

@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
   if (!Number.isSafeInteger(length) || length < 0) return bffError('BAD_REQUEST', 400);
   if (length > MAX_BODY_BYTES) return bffError('TOO_LARGE', 413);
 
-  const headers = await upstreamHeaders(req.headers.get('traceparent'));
+  const headers = await upstreamHeaders();
   if (headers === null) return bffError('UNAUTHENTICATED', 401);
   headers['content-type'] = 'application/json';
   headers.accept = 'text/event-stream';

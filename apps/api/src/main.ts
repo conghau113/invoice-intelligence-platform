@@ -1,3 +1,5 @@
+// First: tracing must patch http/express/pg before anything loads them (T7.1).
+import './otel-api';
 import 'reflect-metadata';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';

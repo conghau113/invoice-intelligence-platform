@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
   const { id } = await ctx.params;
   if (!isUuid(id)) return bffError('NOT_FOUND', 404);
 
-  const headers = await upstreamHeaders(req.headers.get('traceparent'));
+  const headers = await upstreamHeaders();
   if (headers === null) return bffError('UNAUTHENTICATED', 401);
 
   let upstream: Response;
