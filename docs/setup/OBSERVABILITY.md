@@ -12,6 +12,7 @@ Tracing **tắt** khi không có biến `OTEL_EXPORTER_OTLP_ENDPOINT`: test, CI 
 | NestJS API | `invoice-api` | `apps/api/src/otel.ts`, `apps/api/src/otel-api.ts` |
 | Worker BullMQ | `invoice-worker` | `apps/api/src/otel-worker.ts`, `apps/api/src/common/otel/trace-context.ts` |
 | FastAPI AI | `invoice-ai` | `apps/ai/app/otel.py` |
+| Dùng chung (Node) | | `packages/telemetry`: provider, propagator, lọc dữ liệu (`RedactingProcessor`) |
 
 ## Biến môi trường
 

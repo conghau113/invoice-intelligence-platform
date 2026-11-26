@@ -207,15 +207,6 @@ importers:
       '@opentelemetry/api':
         specifier: ^1.10.0
         version: 1.10.0
-      '@opentelemetry/context-async-hooks':
-        specifier: 3.1.1
-        version: 3.1.1(@opentelemetry/api@1.10.0)
-      '@opentelemetry/core':
-        specifier: 3.1.1
-        version: 3.1.1(@opentelemetry/api@1.10.0)
-      '@opentelemetry/exporter-trace-otlp-proto':
-        specifier: 0.301.2
-        version: 0.301.2(@opentelemetry/api@1.10.0)
       '@opentelemetry/instrumentation':
         specifier: 0.301.2
         version: 0.301.2(@opentelemetry/api@1.10.0)(supports-color@8.1.1)
@@ -231,15 +222,9 @@ importers:
       '@opentelemetry/instrumentation-undici':
         specifier: ^0.35.1
         version: 0.35.1(@opentelemetry/api@1.10.0)(supports-color@8.1.1)
-      '@opentelemetry/resources':
-        specifier: 3.1.1
-        version: 3.1.1(@opentelemetry/api@1.10.0)
       '@opentelemetry/sdk-trace':
         specifier: 3.1.1
         version: 3.1.1(@opentelemetry/api@1.10.0)
-      '@opentelemetry/semantic-conventions':
-        specifier: ^1.45.0
-        version: 1.45.0
       '@socket.io/redis-adapter':
         specifier: 8.3.0
         version: 8.3.0(socket.io-adapter@2.5.8(supports-color@8.1.1))(supports-color@8.1.1)
@@ -276,6 +261,9 @@ importers:
       socket.io:
         specifier: 4.8.3
         version: 4.8.3(supports-color@8.1.1)
+      telemetry:
+        specifier: workspace:*
+        version: link:../../packages/telemetry
       zod:
         specifier: ^4.6.7
         version: 4.6.7
@@ -343,30 +331,15 @@ importers:
       '@opentelemetry/api':
         specifier: ^1.10.0
         version: 1.10.0
-      '@opentelemetry/context-async-hooks':
-        specifier: 3.1.1
-        version: 3.1.1(@opentelemetry/api@1.10.0)
-      '@opentelemetry/core':
-        specifier: 3.1.1
-        version: 3.1.1(@opentelemetry/api@1.10.0)
-      '@opentelemetry/exporter-trace-otlp-proto':
-        specifier: 0.301.2
-        version: 0.301.2(@opentelemetry/api@1.10.0)
       '@opentelemetry/instrumentation':
         specifier: 0.301.2
         version: 0.301.2(@opentelemetry/api@1.10.0)(supports-color@8.1.1)
       '@opentelemetry/instrumentation-undici':
         specifier: ^0.35.1
         version: 0.35.1(@opentelemetry/api@1.10.0)(supports-color@8.1.1)
-      '@opentelemetry/resources':
-        specifier: 3.1.1
-        version: 3.1.1(@opentelemetry/api@1.10.0)
       '@opentelemetry/sdk-trace':
         specifier: 3.1.1
         version: 3.1.1(@opentelemetry/api@1.10.0)
-      '@opentelemetry/semantic-conventions':
-        specifier: ^1.45.0
-        version: 1.45.0
       '@tanstack/react-query':
         specifier: 5.104.5
         version: 5.104.5(@types/react@19.3.0)(react@19.3.0)
@@ -412,6 +385,9 @@ importers:
       socket.io-client:
         specifier: 4.8.4
         version: 4.8.4(supports-color@8.1.1)
+      telemetry:
+        specifier: workspace:*
+        version: link:../../packages/telemetry
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
@@ -458,6 +434,52 @@ importers:
       zod:
         specifier: ^4.6.7
         version: 4.6.7
+    devDependencies:
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
+      '@types/node':
+        specifier: ^26.6.5
+        version: 26.6.5
+      eslint:
+        specifier: ^10.12.0
+        version: 10.12.0(jiti@2.7.0)(supports-color@8.1.1)
+      jest:
+        specifier: ^30.5.2
+        version: 30.5.2(@types/node@26.6.5)(supports-color@8.1.1)
+      ts-jest:
+        specifier: ^29.4.14
+        version: 29.4.14(@babel/core@7.29.7(supports-color@8.1.1))(@jest/transform@30.5.2(supports-color@8.1.1))(@jest/types@30.5.1)(babel-jest@30.5.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(esbuild@0.28.2)(jest-util@30.5.1)(jest@30.5.2(@types/node@26.6.5)(supports-color@8.1.1))(typescript@5.9.3)
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.71.2
+        version: 8.71.2(eslint@10.12.0(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)
+
+  packages/telemetry:
+    dependencies:
+      '@opentelemetry/api':
+        specifier: ^1.10.0
+        version: 1.10.0
+      '@opentelemetry/context-async-hooks':
+        specifier: 3.1.1
+        version: 3.1.1(@opentelemetry/api@1.10.0)
+      '@opentelemetry/core':
+        specifier: 3.1.1
+        version: 3.1.1(@opentelemetry/api@1.10.0)
+      '@opentelemetry/exporter-trace-otlp-proto':
+        specifier: 0.301.2
+        version: 0.301.2(@opentelemetry/api@1.10.0)
+      '@opentelemetry/resources':
+        specifier: 3.1.1
+        version: 3.1.1(@opentelemetry/api@1.10.0)
+      '@opentelemetry/sdk-trace':
+        specifier: 3.1.1
+        version: 3.1.1(@opentelemetry/api@1.10.0)
+      '@opentelemetry/semantic-conventions':
+        specifier: ^1.45.0
+        version: 1.45.0
     devDependencies:
       '@types/jest':
         specifier: ^30.0.0
