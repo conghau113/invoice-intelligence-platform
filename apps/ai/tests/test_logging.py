@@ -110,7 +110,8 @@ def test_line_is_json_with_service_level_logger_and_redacted_message(
     assert line["logger"] == "ai.extract"
     assert line["msg"] == "llm output rejected for [NAME], MST [TAX_CODE]"
     assert "T" in line["time"]  # ISO 8601
-    assert "trace_id" not in line and "tenant_id" not in line
+    assert "trace_id" not in line
+    assert "tenant_id" not in line
 
 
 def test_line_inside_a_span_carries_its_trace_and_span_id(capture: Capture) -> None:

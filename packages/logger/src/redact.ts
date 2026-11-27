@@ -69,9 +69,9 @@ const TOKEN = String.raw`[\p{L}\p{N}&.'-]{1,40}`;
  * Words that start a company name ("Công ty TNHH ...", "Tập Đoàn ...") take the words after them,
  * up to the next punctuation; the English forms end the name ("Bridges Ltd", "Dennis and Sons").
  */
-const COMPANY_PREFIX = String.raw`(?:tổng công ty|công ty|cty|tập đoàn|doanh nghiệp|hợp tác xã)`;
+const COMPANY_PREFIX = `(?:tổng công ty|công ty|cty|tập đoàn|doanh nghiệp|hợp tác xã)`;
 const COMPANY_PREFIX_RE = new RegExp(
-  String.raw`(?<!${WORD})${COMPANY_PREFIX}(?!${WORD})(?: {1,3}${TOKEN}){0,8}`,
+  `(?<!${WORD})${COMPANY_PREFIX}(?!${WORD})(?: {1,3}${TOKEN}){0,8}`,
   'giu',
 );
 const CAP = String.raw`\p{Lu}[\p{L}'-]{0,30}`;
@@ -120,10 +120,7 @@ const SURNAMES = [
 ];
 const SURNAME_ALT = [...SURNAMES, ...SURNAMES.map((s) => s.toUpperCase())].join('|');
 /** A surname and up to four words after it; `personName` keeps only the capitalised ones. */
-const PERSON_RE = new RegExp(
-  String.raw`(?<!${WORD})(?:${SURNAME_ALT})(?!${WORD})((?: ${TOKEN}){1,4})`,
-  'gu',
-);
+const PERSON_RE = new RegExp(`(?<!${WORD})(?:${SURNAME_ALT})(?!${WORD})((?: ${TOKEN}){1,4})`, 'gu');
 
 // Not inside a longer number: no letter or digit right before, and no "1-" or "0." (a range, a
 // decimal). A dash after a word is fine ("MST-0101234567"). ASCII digits only, as in Python.

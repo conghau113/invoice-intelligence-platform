@@ -39,8 +39,9 @@ export class TenantDbService {
     @Optional() @Inject(DB_READ_ONLY) private readonly readOnly: boolean = false,
   ) {}
 
-  async run<T>(tenantId: string, fn: (tx: Tx) => Promise<T>): Promise<T> {
-    if (!isUuid(tenantId)) throw new Error('Invalid tenant id');
+  run<T>(tenantId: string, fn: (tx: Tx) => Promise<T>): Promise<T> {
+    // A rejected promise, as before when this method was async: callers may only `.catch` it.
+    if (!isUuid(tenantId)) return Promise.reject(new Error('Invalid tenant id'));
     // Every log line of the request or job from here on carries `tenant_id` (T7.2).
     return runWithLogContext({ tenantId }, () => this.runInTransaction(tenantId, fn));
   }

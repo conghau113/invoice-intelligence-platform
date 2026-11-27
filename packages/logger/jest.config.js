@@ -1,8 +1,8 @@
 /** @type {import('jest').Config} */
 module.exports = {
   rootDir: 'test',
-  testRegex: '.*\\.spec\\.ts$',
-  transform: { '^.+\\.ts$': ['ts-jest', { tsconfig: '<rootDir>/../tsconfig.json' }] },
+  testRegex: String.raw`.*\.spec\.ts$`,
+  transform: { [String.raw`^.+\.ts$`]: ['ts-jest', { tsconfig: '<rootDir>/../tsconfig.json' }] },
   testEnvironment: 'node',
   // Up to three suites run at once under turbo, so "all cores but one" per suite oversubscribes the
   // machine. The timeout is there to catch a hang: 5 s of wall clock also fails a slow machine, and

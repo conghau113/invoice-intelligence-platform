@@ -5,7 +5,7 @@ type Level = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
 /** A stack trace Nest passes as the second argument of `error` ("Error: ...\n    at ..."). */
 function isStack(value: unknown): value is string {
-  return typeof value === 'string' && /\n\s+at /.test(value);
+  return typeof value === 'string' && /\n[ \t]+at /.test(value);
 }
 
 /**
@@ -46,7 +46,7 @@ export class NestPinoLogger implements LoggerService {
   private write(level: Level, message: unknown, params: unknown[]): void {
     const rest = [...params];
     const fields: Record<string, unknown> = {};
-    if (rest.length > 0 && typeof rest[rest.length - 1] === 'string' && !isStack(rest.at(-1))) {
+    if (rest.length > 0 && typeof rest.at(-1) === 'string' && !isStack(rest.at(-1))) {
       fields.context = rest.pop();
     }
     const stack = rest.find(isStack);
