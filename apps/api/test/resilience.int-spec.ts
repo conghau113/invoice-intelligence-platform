@@ -101,6 +101,8 @@ describe('provider resilience (T6.2: pacing, 429, circuit breaker)', () => {
   let mode: Mode = 'ok';
   /** Arrival time of every call the stand-in AI service received. */
   let calls: number[] = [];
+  /** The X-Tenant-Id of every call (T7.2: the AI service logs it as tenant_id). */
+  let tenants: (string | undefined)[] = [];
 
   const env = (over: Record<string, unknown> = {}): Record<string, unknown> => ({
     REDIS_URL: redisUrl,
@@ -178,6 +180,8 @@ describe('provider resilience (T6.2: pacing, 429, circuit breaker)', () => {
       req.resume();
       req.on('end', () => {
         calls.push(Date.now());
+        const tenant = req.headers['x-tenant-id'];
+        tenants.push(typeof tenant === 'string' ? tenant : undefined);
         const json = (status: number, payload: unknown, headers: Record<string, string> = {}) =>
           res
             .writeHead(status, { 'content-type': 'application/json', ...headers })
@@ -219,6 +223,7 @@ describe('provider resilience (T6.2: pacing, 429, circuit breaker)', () => {
     await deleteDocumentsOf(owner, USER);
     await rm(path.join(root, 'tenant'), { recursive: true, force: true });
     calls = [];
+    tenants = [];
     mode = 'ok';
   });
 
@@ -279,6 +284,18 @@ describe('provider resilience (T6.2: pacing, 429, circuit breaker)', () => {
     // No document was failed by the breaker: waiting in the queue cost no attempt.
     expect(await statuses(ids)).toEqual(ids.map(() => 'needs_review'));
   }, 60_000);
+
+  it('every AI call of a job names the job tenant (X-Tenant-Id), retries included (T7.2)', async () => {
+    mode = 'down'; // a few failed attempts first: the retries must carry it too
+    const ids = [(await uploadPdf()).body.id as string, (await uploadPdf()).body.id as string];
+    worker = startWorker({ BREAKER_THRESHOLD: 100 });
+    const until = Date.now() + 10_000;
+    while (calls.length < 3 && Date.now() < until) await sleep(10);
+    mode = 'ok';
+    await waitAll(ids, 'needs_review', 20_000);
+    expect(tenants.length).toBeGreaterThanOrEqual(ids.length + 1);
+    expect(new Set(tenants)).toEqual(new Set([ACME]));
+  }, 40_000);
 
   it('a short hold never shortens a longer one already on the queue (two 429s at once)', async () => {
     const guard = new ProviderGuard(admin, adminConnection, new Logger('test'), {

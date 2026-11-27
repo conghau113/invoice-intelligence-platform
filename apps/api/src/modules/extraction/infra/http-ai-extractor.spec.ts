@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { readFileSync } from 'node:fs';
 import { createServer, type IncomingMessage, type Server } from 'node:http';
@@ -8,9 +9,11 @@ import {
   PermanentExtractionError,
   TransientExtractionError,
 } from '../../queue/domain/extraction-job';
+import { withJobLogContext } from '../../../common/logging/job-log-context';
 import { HttpAiExtractor } from './http-ai-extractor';
 
 const TOKEN = 'unit-test-token-0123456789';
+const TENANT = '00000000-0000-4000-8000-0000000000a1';
 const TRACE = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
 const INVOICE: unknown = JSON.parse(
   readFileSync(
@@ -105,6 +108,46 @@ describe('HttpAiExtractor (real HTTP against a local stub)', () => {
     expect(seen?.body).toContain('<xml>SAMPLE</xml>');
     expect(seen?.body).toContain('name="sourceType"');
     expect(seen?.body).toContain('filename="document"');
+  });
+
+  it('sends the tenant of the job as X-Tenant-Id, for the AI service logs (T7.2)', async () => {
+    reply = json(200, { invoice: INVOICE, warnings: [], usage: null });
+    await withJobLogContext({ tenantId: TENANT }, () => extractor().extract(input));
+    expect(seen?.headers['x-tenant-id']).toBe(TENANT);
+    await extractor().extract(input);
+    expect(seen?.headers['x-tenant-id']).toBeUndefined();
+  });
+
+  it('logs an unknown code that looks like a code, and nothing taken from another body (T7.2)', async () => {
+    const warn = jest.spyOn(Logger.prototype, 'warn').mockImplementation();
+    try {
+      reply = json(422, { code: 'SOMETHING_NEW' });
+      await extractor()
+        .extract(input)
+        .catch(() => undefined);
+      reply = json(503, { code: 'ALSO_NEW_BUT_TRANSIENT' });
+      await extractor()
+        .extract(input)
+        .catch(() => undefined);
+      reply = json(422, { code: 'Nguyễn Văn Jane SAMPLE' });
+      await extractor()
+        .extract(input)
+        .catch(() => undefined);
+      reply = json(422, { code: `X${'A'.repeat(64)}` });
+      await extractor()
+        .extract(input)
+        .catch(() => undefined);
+      reply = json(422, { code: 'XML_MALFORMED' });
+      await extractor()
+        .extract(input)
+        .catch(() => undefined);
+      expect(warn.mock.calls).toEqual([
+        ['AI service sent an unknown code (SOMETHING_NEW)'],
+        ['AI service sent an unknown code (ALSO_NEW_BUT_TRANSIENT)'],
+      ]);
+    } finally {
+      warn.mockRestore();
+    }
   });
 
   it('omits traceparent when the job has none', async () => {

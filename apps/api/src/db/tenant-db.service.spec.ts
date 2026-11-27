@@ -1,3 +1,4 @@
+import { currentLogContext } from 'logger';
 import { TenantDbService, type Db } from './tenant-db.service';
 
 const ACME = '00000000-0000-4000-8000-0000000000a1';
@@ -129,5 +130,17 @@ describe('TenantDbService', () => {
       ),
     );
     expect(seen).toEqual([true, true, true]);
+  });
+});
+
+describe('TenantDbService log context (T7.2)', () => {
+  it('gives the work inside run the tenant, and nothing after it', async () => {
+    const { db } = fakeDb();
+    const seen = await new TenantDbService(db).run(ACME, async () => {
+      await Promise.resolve();
+      return currentLogContext().tenantId;
+    });
+    expect(seen).toBe(ACME);
+    expect(currentLogContext().tenantId).toBeUndefined();
   });
 });

@@ -1,4 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { runWithLogContext } from 'logger';
 import {
   aggregateFilterProblems,
   todayInVietnam,
@@ -48,7 +49,16 @@ export class QaService {
     private readonly tenantDb: TenantDbService,
   ) {}
 
-  async ask(tenantId: string, question: string, signal?: AbortSignal): Promise<QaOutcome> {
+  ask(tenantId: string, question: string, signal?: AbortSignal): Promise<QaOutcome> {
+    // Outside a tenant transaction (the answer streams): log lines and AI calls get the tenant here.
+    return runWithLogContext({ tenantId }, () => this.answerQuestion(tenantId, question, signal));
+  }
+
+  private async answerQuestion(
+    tenantId: string,
+    question: string,
+    signal?: AbortSignal,
+  ): Promise<QaOutcome> {
     const outcome = await this.decide(tenantId, question, signal);
     this.log.log(
       outcome.kind === 'refusal'

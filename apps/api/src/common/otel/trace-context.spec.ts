@@ -7,6 +7,9 @@ import type { Env } from '../../config/env.schema';
 import { HttpAiExtractor } from '../../modules/extraction/infra/http-ai-extractor';
 import { ExtractionJobError } from '../../modules/queue/domain/extraction-job';
 import { flushTracing, startTracing, stopTracing } from '../../otel';
+import { captureLines } from '../logging/capture.testing';
+import { withJobLogContext } from '../logging/job-log-context';
+import { NestPinoLogger } from '../logging/nest-logger';
 import { activeTraceparent, runInConsumerSpan } from './trace-context';
 
 const TRACE_ID = '0af7651916cd43dd8448eb211c80319c';
@@ -115,6 +118,28 @@ describe('trace context (tracing on, real HTTP against a local stub)', () => {
     const call = exporter.spans.find((s) => s.kind === SpanKind.CLIENT);
     expect(call?.spanContext().spanId).toBe(parentId);
     expect(call?.parentSpanContext?.spanId).toBe(job?.spanContext().spanId);
+  });
+
+  it('a log line written in the job carries the trace, span and tenant of the job (T7.2)', async () => {
+    const out = captureLines();
+    const log = new NestPinoLogger({ service: 'invoice-worker', destination: out.stream });
+    const tenantId = '00000000-0000-4000-8000-0000000000a1';
+    await withJobLogContext({ tenantId }, () =>
+      runInConsumerSpan('extraction process', JOB_TRACEPARENT, {}, () => {
+        log.warn('job doc-1 failed (EXTRACTION_RETRY)', 'ExtractionWorker');
+        return Promise.resolve();
+      }),
+    );
+    await flushTracing();
+    const job = spanNamed('extraction process');
+    expect(out.lines()).toEqual([
+      expect.objectContaining({
+        service: 'invoice-worker',
+        trace_id: TRACE_ID,
+        span_id: job?.spanContext().spanId,
+        tenant_id: tenantId,
+      }),
+    ]);
   });
 
   it('starts a new trace when the job has no usable traceparent', async () => {

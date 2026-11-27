@@ -2,22 +2,24 @@ import {
   ArgumentsHost,
   BadRequestException,
   ForbiddenException,
+  HttpException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { API_ERROR_CODES } from 'contracts';
+import { currentLogContext } from 'logger';
 import { DocumentNotFoundError } from '../../modules/documents/domain/document-not-found.error';
 import { InvalidDocumentTransitionError } from '../../modules/documents/domain/document-status';
 import { JobNotFailedError } from '../../modules/queue/application/admin-jobs.service';
 import { ProblemDetailsFilter } from './problem-details.filter';
 
-function run(exception: unknown) {
+function run(exception: unknown, extra: Record<string, unknown> = {}) {
   const res = {
     status: jest.fn().mockReturnThis(),
     type: jest.fn().mockReturnThis(),
     json: jest.fn().mockReturnThis(),
   };
-  const req = { method: 'GET', path: '/x', originalUrl: '/x?q=Nguyen' };
+  const req = { method: 'GET', path: '/x', originalUrl: '/x?q=Nguyen', ...extra };
   const host = {
     switchToHttp: () => ({ getResponse: () => res, getRequest: () => req }),
   } as unknown as ArgumentsHost;
@@ -27,8 +29,10 @@ function run(exception: unknown) {
 
 describe('ProblemDetailsFilter', () => {
   let logError: jest.SpyInstance;
+  let logWarn: jest.SpyInstance;
   beforeEach(() => {
     logError = jest.spyOn(Logger.prototype, 'error').mockImplementation();
+    logWarn = jest.spyOn(Logger.prototype, 'warn').mockImplementation();
   });
   afterEach(() => jest.restoreAllMocks());
 
@@ -114,5 +118,52 @@ describe('ProblemDetailsFilter', () => {
     expect(body.detail).toBe('Internal server error');
     expect(JSON.stringify(body)).not.toContain('PII');
     expect(logError).toHaveBeenCalledWith('TypeError -> 500 on GET /x');
+  });
+
+  describe('log lines (T7.2)', () => {
+    const TENANT = '00000000-0000-4000-8000-0000000000a1';
+    const USER = '00000000-0000-4000-8000-0000000000b1';
+    const user = { tenantId: TENANT, userId: USER };
+
+    it('logs a refused request once: route template, code, ids; never the query', () => {
+      run(new ForbiddenException({ message: 'no', code: 'FORBIDDEN_PERMISSION' }), {
+        user,
+        route: { path: '/documents/:id/approve' },
+        method: 'POST',
+        originalUrl: '/documents/1/approve?note=Nguyen',
+      });
+      expect(logWarn).toHaveBeenCalledTimes(1);
+      expect(logWarn).toHaveBeenCalledWith({
+        msg: 'request refused',
+        status: 403,
+        method: 'POST',
+        route: '/documents/:id/approve',
+        code: 'FORBIDDEN_PERMISSION',
+        user_id: USER,
+      });
+      expect(JSON.stringify(logWarn.mock.calls)).not.toContain('Nguyen');
+    });
+
+    it.each([401, 429])('logs %i too, without a user when there is none', (status) => {
+      run(new HttpException('x', status));
+      expect(logWarn).toHaveBeenCalledWith(expect.objectContaining({ status, route: 'unmatched' }));
+      expect(logWarn.mock.calls[0]?.[0]).not.toHaveProperty('user_id');
+    });
+
+    it('does not log an ordinary 4xx', () => {
+      run(new NotFoundException('nope'));
+      run(new BadRequestException('bad'));
+      expect(logWarn).not.toHaveBeenCalled();
+      expect(logError).not.toHaveBeenCalled();
+    });
+
+    it('writes the error line inside the tenant of the authenticated user', () => {
+      let tenant: string | undefined;
+      logError.mockImplementation(() => {
+        tenant = currentLogContext().tenantId;
+      });
+      run(new TypeError('boom'), { user });
+      expect(tenant).toBe(TENANT);
+    });
   });
 });

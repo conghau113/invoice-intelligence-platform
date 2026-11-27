@@ -13,12 +13,14 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
 COPY apps/api/package.json apps/api/
 COPY packages/contracts/package.json packages/contracts/
 COPY packages/telemetry/package.json packages/telemetry/
+COPY packages/logger/package.json packages/logger/
 RUN pnpm install --frozen-lockfile --filter api...
 COPY packages/contracts packages/contracts
 COPY packages/telemetry packages/telemetry
+COPY packages/logger packages/logger
 COPY apps/api apps/api
-RUN pnpm --filter contracts --filter telemetry build && pnpm --filter api build
-# Production dependencies only, with the workspace packages (contracts, telemetry) copied in, not linked.
+RUN pnpm --filter contracts --filter telemetry --filter logger build && pnpm --filter api build
+# Production dependencies only, with the workspace packages (contracts, telemetry, logger) copied in, not linked.
 RUN pnpm --filter api deploy --prod /out
 
 FROM node:24.21.0-bookworm-slim AS runtime

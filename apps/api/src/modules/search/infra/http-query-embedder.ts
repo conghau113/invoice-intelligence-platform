@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { aiServiceHeaders } from '../../../common/http/ai-service-headers';
 import { ConfigService } from '@nestjs/config';
 import { z } from 'zod';
 import type { Env } from '../../../config/env.schema';
@@ -45,7 +46,7 @@ export class HttpQueryEmbedder implements QueryEmbedder {
       res = await fetch(this.endpoint, {
         method: 'POST',
         body: JSON.stringify({ texts: [question], task: 'query' }),
-        headers: { authorization: `Bearer ${this.token}`, 'content-type': 'application/json' },
+        headers: aiServiceHeaders(this.token, { 'content-type': 'application/json' }),
         signal: AbortSignal.timeout(this.timeoutMs),
       });
     } catch {

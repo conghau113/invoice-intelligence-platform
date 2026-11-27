@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { aiServiceHeaders } from '../../../common/http/ai-service-headers';
 import { ConfigService } from '@nestjs/config';
 import { QaAnswerSchema, QaRouteSchema, type QaAnswer, type QaRoute } from 'contracts';
 import { z } from 'zod';
@@ -71,7 +72,7 @@ export class HttpQaModel implements QaModel {
       res = await fetch(new URL(path, this.base), {
         method: 'POST',
         body: JSON.stringify(body),
-        headers: { authorization: `Bearer ${this.token}`, 'content-type': 'application/json' },
+        headers: aiServiceHeaders(this.token, { 'content-type': 'application/json' }),
         // The person closing the page stops the wait, so a dropped question frees its slot at once.
         signal: signal ? AbortSignal.any([timeout, signal]) : timeout,
       });

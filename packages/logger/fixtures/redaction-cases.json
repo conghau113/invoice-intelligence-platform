@@ -1,0 +1,191 @@
+{
+  "$comment": "T7.2: the same cases run in packages/logger (Jest) and apps/ai (pytest), so Node and Python redact alike. Synthetic data only: names end in SAMPLE, tax codes have a wrong check digit.",
+  "redact": [
+    {
+      "why": "email",
+      "input": "sent to nguyen.van.a+inv@example.com.vn today",
+      "expected": "sent to [EMAIL] today"
+    },
+    {
+      "why": "two emails",
+      "input": "a@b.co, ops@example.org",
+      "expected": "[EMAIL], [EMAIL]"
+    },
+    {
+      "why": "mobile, plain",
+      "input": "call 0912345678 now",
+      "expected": "call [TAX_CODE] now"
+    },
+    {
+      "why": "mobile, dotted",
+      "input": "call 0912.345.678",
+      "expected": "call [PHONE]"
+    },
+    {
+      "why": "mobile, spaced, +84",
+      "input": "tel +84 912 345 678.",
+      "expected": "tel [PHONE]."
+    },
+    {
+      "why": "landline, 11 digits",
+      "input": "phone 028 3823 4567",
+      "expected": "phone [PHONE]"
+    },
+    {
+      "why": "tax code",
+      "input": "MST: 6904000855",
+      "expected": "MST: [TAX_CODE]"
+    },
+    {
+      "why": "branch tax code",
+      "input": "seller 5193714551-891 rejected",
+      "expected": "seller [TAX_CODE] rejected"
+    },
+    {
+      "why": "Vietnamese person name",
+      "input": "buyer Nguyễn Văn Jane SAMPLE paid",
+      "expected": "buyer [NAME] paid"
+    },
+    {
+      "why": "person name in capitals",
+      "input": "NGƯỜI MUA: TRẦN THỊ MAI SAMPLE",
+      "expected": "NGƯỜI MUA: [NAME]"
+    },
+    {
+      "why": "person name without diacritics",
+      "input": "for Nguyen Huu John SAMPLE",
+      "expected": "for [NAME]"
+    },
+    {
+      "why": "company with a legal-form prefix",
+      "input": "seller Phạm Bùi Công ty TNHH SAMPLE (code X)",
+      "expected": "seller [NAME] [NAME] (code X)"
+    },
+    {
+      "why": "company prefix only",
+      "input": "Công ty SAMPLE Bán 0, MST 2181960011-224",
+      "expected": "[NAME], MST [TAX_CODE]"
+    },
+    {
+      "why": "group in capitals",
+      "input": "TẬP ĐOÀN ABC SAMPLE",
+      "expected": "[NAME]"
+    },
+    {
+      "why": "English company, Ltd",
+      "input": "from Bridges Ltd SAMPLE",
+      "expected": "from [NAME] SAMPLE"
+    },
+    {
+      "why": "English company, and Sons",
+      "input": "Dennis and Sons SAMPLE",
+      "expected": "[NAME] SAMPLE"
+    },
+    {
+      "why": "English company, list form",
+      "input": "Brooks, Tyler and Combs Group",
+      "expected": "[NAME]"
+    },
+    {
+      "why": "several kinds in one line",
+      "input": "Lê Quang Jane SAMPLE <jane@example.com> 0987654321",
+      "expected": "[NAME] <[EMAIL]> [TAX_CODE]"
+    },
+    {
+      "why": "branch tax code without the dash (13 digits)",
+      "input": "MST 6904000855001 x",
+      "expected": "MST [TAX_CODE] x"
+    },
+    {
+      "why": "tax code after a dash",
+      "input": "MST-6904000855",
+      "expected": "MST-[TAX_CODE]"
+    },
+    {
+      "why": "landline in brackets",
+      "input": "ĐT (028) 3823 4567",
+      "expected": "ĐT [PHONE]"
+    },
+    {
+      "why": "mobile with 84 and no plus",
+      "input": "tel 84912345678",
+      "expected": "tel [PHONE]"
+    },
+    {
+      "why": "email with a local part over 64 characters",
+      "input": "to aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@example.com ok",
+      "expected": "to [EMAIL] ok"
+    },
+    {
+      "why": "name in decomposed Unicode (NFD)",
+      "input": "buyer Nguyễn Văn Jane SAMPLE",
+      "expected": "buyer [NAME]"
+    }
+  ],
+  "keep": [
+    {
+      "why": "Nest start-up line",
+      "input": "Mapped {/documents/:id/approve, POST} route"
+    },
+    {
+      "why": "Nest module line",
+      "input": "RoutesResolver AppController {/health}:"
+    },
+    {
+      "why": "Nest started",
+      "input": "Nest application successfully started"
+    },
+    {
+      "why": "uuid",
+      "input": "job 0b9f4e2a-1234-4cde-8f00-123456789012 failed (EXTRACTION_FAILED)"
+    },
+    {
+      "why": "uuid with a 10-digit segment run",
+      "input": "doc 00000000-0000-4000-8000-000000000001"
+    },
+    {
+      "why": "trace id",
+      "input": "trace 4bf92f3577b34da6a3ce929d0e0e4736"
+    },
+    {
+      "why": "durations and counts",
+      "input": "llm call ok attempt=2 ms=10345 tokens=123456789"
+    },
+    {
+      "why": "decimal",
+      "input": "score 0.12345678 ratio 0.9123456789"
+    },
+    {
+      "why": "http line",
+      "input": "GET /documents?page=2 HTTP/1.1 200"
+    },
+    {
+      "why": "surname-like word alone",
+      "input": "Mai 3 jobs, Cao priority"
+    },
+    {
+      "why": "error code",
+      "input": "provider rate limit: holding the queue 60000 ms"
+    },
+    {
+      "why": "iso date",
+      "input": "at 2026-11-27T10:15:30.123Z"
+    },
+    {
+      "why": "11 and 12 digit runs",
+      "input": "ids 12345678901 and 123456789012"
+    },
+    {
+      "why": "14 digit run",
+      "input": "ref 12345678901234"
+    },
+    {
+      "why": "digits after a decimal dash",
+      "input": "range 1-0123456789"
+    },
+    {
+      "why": "Arabic-Indic digits are not ASCII digits",
+      "input": "n ٠١٢٣٤٥٦٧٨٩"
+    }
+  ]
+}

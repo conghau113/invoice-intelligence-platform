@@ -1,6 +1,7 @@
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { runWithLogContext } from 'logger';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { isUuid } from '../common/uuid';
 import type * as schema from './schema';
@@ -40,6 +41,11 @@ export class TenantDbService {
 
   async run<T>(tenantId: string, fn: (tx: Tx) => Promise<T>): Promise<T> {
     if (!isUuid(tenantId)) throw new Error('Invalid tenant id');
+    // Every log line of the request or job from here on carries `tenant_id` (T7.2).
+    return runWithLogContext({ tenantId }, () => this.runInTransaction(tenantId, fn));
+  }
+
+  private async runInTransaction<T>(tenantId: string, fn: (tx: Tx) => Promise<T>): Promise<T> {
     const afterCommit: AfterCommit[] = [];
     const result = await this.db.transaction(
       async (tx) => {

@@ -6,11 +6,15 @@ import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { applyJsonBodyLimit } from './common/http/json-body-limit';
+import { NestPinoLogger } from './common/logging/nest-logger';
 import type { Env } from './config/env.schema';
 import { useRealtimeAdapter } from './modules/realtime/infra/realtime-io.adapter';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  // Given here, not with useLogger later, so even a start-up error is a redacted JSON line (T7.2).
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: new NestPinoLogger({ service: 'invoice-api' }),
+  });
   app.disable('x-powered-by');
   applyJsonBodyLimit(app);
   // req.ip then follows X-Forwarded-For only from these peers (audit rows record the caller's address).
