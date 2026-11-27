@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { runWithLogContext } from 'logger';
 import { ConfigService } from '@nestjs/config';
 import { sql, type SQL } from 'drizzle-orm';
 import type { Env } from '../../../config/env.schema';
@@ -197,10 +198,19 @@ export class RetrievalService {
     this.candidates = config.get('RAG_CANDIDATES', { infer: true });
   }
 
-  async retrieve(
+  retrieve(
     tenantId: string,
     question: string,
     options: { topK?: number } = {},
+  ): Promise<RetrievalResult> {
+    // The query embedding is an AI call outside any tenant transaction: give it the tenant (T7.2).
+    return runWithLogContext({ tenantId }, () => this.retrieveFor(tenantId, question, options));
+  }
+
+  private async retrieveFor(
+    tenantId: string,
+    question: string,
+    options: { topK?: number },
   ): Promise<RetrievalResult> {
     // The debug route validates both; Q&A (T5.4) calls this directly, so the service bounds them too.
     const topK = Math.min(Math.max(Math.trunc(options.topK ?? this.defaultTopK), 1), MAX_TOP_K);

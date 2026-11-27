@@ -28,6 +28,7 @@
         "$TURBO_DEFAULT$",
         "!**/*.md",
         "$TURBO_ROOT$/packages/contracts/fixtures/**",
+        "$TURBO_ROOT$/packages/logger/fixtures/**",
         "$TURBO_ROOT$/tools/invoice-gen/**/*.py",
         "$TURBO_ROOT$/tools/invoice-gen/templates/**",
         "$TURBO_ROOT$/tools/invoice-gen/fonts/**",

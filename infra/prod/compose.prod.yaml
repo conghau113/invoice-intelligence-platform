@@ -11,6 +11,15 @@
 #            provider, whatever its config (ADR 0018: no LLM calls from the demo).
 name: invoice-demo
 
+# Log retention (T7.2): logs stay on the VM only, as Docker's json-file, rotated at 10 MB with 3
+# files kept per container (≤ 30 MB each). Without this json-file grows until the disk is full.
+# Long-term storage (shipping logs off the VM) is not done (T7.2 out of scope).
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
 x-api-env: &api-env
   NODE_ENV: production
   DEMO_READ_ONLY: 'true'
@@ -27,6 +36,7 @@ x-api-env: &api-env
 
 services:
   caddy:
+    logging: *logging
     image: caddy:2.10.2-alpine
     restart: unless-stopped
     ports:
@@ -51,6 +61,7 @@ services:
         condition: service_healthy
 
   web:
+    logging: *logging
     build:
       context: ../..
       dockerfile: apps/web/Dockerfile
@@ -87,6 +98,7 @@ services:
         condition: service_healthy
 
   api:
+    logging: *logging
     build:
       context: ../..
       dockerfile: apps/api/Dockerfile
@@ -119,6 +131,7 @@ services:
         condition: service_healthy
 
   worker:
+    logging: *logging
     image: invoice-demo/api:local
     pull_policy: never
     restart: unless-stopped
@@ -132,6 +145,7 @@ services:
         condition: service_healthy
 
   ai:
+    logging: *logging
     build:
       context: ../../apps/ai
     image: invoice-demo/ai:local
@@ -158,6 +172,7 @@ services:
   # One-shot: migrations as the table owner, then the demo tenants (Phát sinh T1.3: a step of its
   # own before the app starts). Exits 0; api and worker wait for it.
   migrate:
+    logging: *logging
     # Same image as api (built by the api service; never pulled from a registry).
     image: invoice-demo/api:local
     pull_policy: never
@@ -194,6 +209,7 @@ services:
         condition: service_completed_successfully
 
   postgres:
+    logging: *logging
     image: pgvector/pgvector:0.8.7-pg17
     restart: unless-stopped
     environment:
@@ -215,6 +231,7 @@ services:
 
   # Redis 8 is used under AGPLv3, unmodified, as a separate container (docs/LEGAL.md).
   redis:
+    logging: *logging
     image: redis:8.10.2
     restart: unless-stopped
     # AOF, fsync once a second, so a killed Redis keeps its queued jobs (T6.7,
@@ -233,6 +250,7 @@ services:
     networks: [backend]
 
   keycloak:
+    logging: *logging
     image: quay.io/keycloak/keycloak:26.4.7
     restart: unless-stopped
     # Production mode (not start-dev). The realm is imported on first start only (IGNORE_EXISTING).
@@ -282,6 +300,7 @@ services:
   # Keeps <subdomain>.duckdns.org pointing at this VM. Only on the server: enable with
   # COMPOSE_PROFILES=duckdns in the env file. The token stays in that file (ADR 0010).
   duckdns:
+    logging: *logging
     image: curlimages/curl:8.17.0
     restart: unless-stopped
     profiles: [duckdns]

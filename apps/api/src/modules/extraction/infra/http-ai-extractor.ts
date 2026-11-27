@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import type { DocumentFailureCode } from 'contracts';
+import { aiServiceHeaders } from '../../../common/http/ai-service-headers';
 import { activeTraceparent } from '../../../common/otel/trace-context';
 import { ConfigService } from '@nestjs/config';
 import type { Env } from '../../../config/env.schema';
@@ -51,8 +53,12 @@ const MISCONFIGURED: ReadonlySet<number> = new Set([401, 403, 404]);
  * Neither the token, the file, nor any response body ever reaches an error message or a log: the
  * only things taken from the answer are the status class and a validated failure code.
  */
+/** UPPER_SNAKE, at most 64 characters: what an error code looks like. */
+const CODE_SHAPE = /^[A-Z][A-Z0-9_]{0,63}$/;
+
 @Injectable()
 export class HttpAiExtractor implements AiExtractor {
+  private readonly logger = new Logger(HttpAiExtractor.name);
   private readonly endpoint: URL;
   private readonly versionEndpoint: URL;
   private readonly token: string;
@@ -71,7 +77,7 @@ export class HttpAiExtractor implements AiExtractor {
     form.set('file', new Blob([new Uint8Array(input.bytes)]), 'document');
     form.set('sourceType', input.sourceType);
 
-    const headers: Record<string, string> = { authorization: `Bearer ${this.token}` };
+    const headers = aiServiceHeaders(this.token);
     // With tracing on, the fetch instrumentation adds the worker span's `traceparent`; setting the
     // job's too would send the header twice (T7.1). With tracing off, hand the job's on as before.
     if (input.traceparent !== undefined && activeTraceparent() === undefined) {
@@ -102,7 +108,7 @@ export class HttpAiExtractor implements AiExtractor {
       const code = await readErrorCode(res);
       const rateLimited = code === RATE_LIMITED_CODE || res.status === 429;
       throw new TransientExtractionError(
-        isFailureCode(code) ? code : undefined,
+        this.knownCode(code) ?? undefined,
         retryAfterMs,
         rateLimited,
       );
@@ -113,7 +119,20 @@ export class HttpAiExtractor implements AiExtractor {
     }
     // Other 4xx: the service looked at the request and said no. Retrying would get the same answer.
     const code = await readErrorCode(res);
-    throw new PermanentExtractionError(isFailureCode(code) ? code : EXTRACTION_FAILED);
+    throw new PermanentExtractionError(this.knownCode(code) ?? EXTRACTION_FAILED);
+  }
+
+  /**
+   * The AI service's code if this API knows it. An unknown one (AI deployed with a code this
+   * version lacks) is replaced by the caller, so it is logged here, Phát sinh T3.9, but only when
+   * it has the shape of a code: the body may hold anything, never log it as such.
+   */
+  private knownCode(code: unknown): DocumentFailureCode | undefined {
+    if (isFailureCode(code)) return code;
+    if (typeof code === 'string' && CODE_SHAPE.test(code)) {
+      this.logger.warn(`AI service sent an unknown code (${code})`);
+    }
+    return undefined;
   }
 
   async version(): Promise<ExtractionVersion | null> {

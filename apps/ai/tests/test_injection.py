@@ -386,4 +386,7 @@ def test_log_level_setting_decides_whether_info_lines_are_written(level: str, sh
         check=True,
         timeout=60,
     )
-    assert ("probe-line" in done.stderr) is shown
+    # One JSON line per record on stdout, like the Node services (T7.2).
+    lines = [json.loads(line) for line in done.stdout.splitlines() if line.startswith("{")]
+    assert any(line.get("msg") == "probe-line" for line in lines) is shown
+    assert "probe-line" not in done.stderr

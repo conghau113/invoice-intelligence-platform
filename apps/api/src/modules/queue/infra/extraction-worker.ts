@@ -7,6 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { UnrecoverableError, Worker, type Job } from 'bullmq';
 import type { Redis } from 'ioredis';
+import { withJobLogContext } from '../../../common/logging/job-log-context';
 import { runInConsumerSpan } from '../../../common/otel/trace-context';
 import type { Env } from '../../../config/env.schema';
 import { EXTRACTION_TOKENS_PER_JOB } from '../../extraction/resilience';
@@ -68,10 +69,12 @@ export class ExtractionWorker implements OnApplicationBootstrap, OnApplicationSh
       settings: { backoffStrategy: (attemptsMade) => backoffMs(attemptsMade, baseMs) },
     });
     // Ids only: a job's data and error text never go to the log.
-    this.worker.on('failed', (job, err) => {
-      this.logger.warn(`job ${job?.id ?? '?'} failed (${err.name})`);
-      if (job) void this.reconcile(job, err);
-    });
+    this.worker.on('failed', (job, err) =>
+      withJobLogContext(job?.data, () => {
+        this.logger.warn(`job ${job?.id ?? '?'} failed (${err.name})`);
+        if (job) void this.reconcile(job, err);
+      }),
+    );
     this.worker.on('error', (err) => this.logger.error(`worker error (${err.name})`));
   }
 
@@ -107,18 +110,20 @@ export class ExtractionWorker implements OnApplicationBootstrap, OnApplicationSh
       typeof data === 'object' && data !== null && 'traceparent' in data
         ? data.traceparent
         : undefined;
-    return runInConsumerSpan(
-      `${EXTRACTION_QUEUE} ${operation}`,
-      traceparent,
-      {
-        'messaging.system': 'bullmq',
-        'messaging.operation.type': operation,
-        'messaging.destination.name': EXTRACTION_QUEUE,
-        'messaging.message.id': job.id ?? '',
-        'messaging.bullmq.attempt':
-          operation === 'process' ? job.attemptsMade + 1 : job.attemptsMade,
-      },
-      fn,
+    return withJobLogContext(data, () =>
+      runInConsumerSpan(
+        `${EXTRACTION_QUEUE} ${operation}`,
+        traceparent,
+        {
+          'messaging.system': 'bullmq',
+          'messaging.operation.type': operation,
+          'messaging.destination.name': EXTRACTION_QUEUE,
+          'messaging.message.id': job.id ?? '',
+          'messaging.bullmq.attempt':
+            operation === 'process' ? job.attemptsMade + 1 : job.attemptsMade,
+        },
+        fn,
+      ),
     );
   }
 

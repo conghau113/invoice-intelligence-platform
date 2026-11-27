@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { isApiErrorCode, type ApiErrorCode } from 'contracts';
 import type { Request, Response } from 'express';
+import { runWithLogContext } from 'logger';
 import { STATUS_CODES } from 'node:http';
 import {
   InvalidQueryError,
@@ -120,6 +121,13 @@ export interface ProblemDetails {
  * original message of unknown or 5xx errors may contain document content or PII. For the same
  * reason the logger records only the error class, status, method and path.
  */
+/** Refusals worth a log line: unauthenticated, forbidden, rate limited. */
+const DENIED = new Set<number>([
+  HttpStatus.UNAUTHORIZED,
+  HttpStatus.FORBIDDEN,
+  HttpStatus.TOO_MANY_REQUESTS,
+]);
+
 @Catch()
 export class ProblemDetailsFilter implements ExceptionFilter {
   private readonly logger = new Logger(ProblemDetailsFilter.name);
@@ -135,10 +143,8 @@ export class ProblemDetailsFilter implements ExceptionFilter {
       domain?.status ?? (isHttp ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR);
     const title = STATUS_CODES[status] ?? 'Error';
 
-    if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
-      const name = exception instanceof Error ? exception.constructor.name : typeof exception;
-      this.logger.error(`${name} -> ${status} on ${req.method} ${req.path}`);
-    }
+    const code = domain ? domain.code : this.codeOf(exception);
+    this.logOutcome(exception, status, code, req);
 
     const body: ProblemDetails = {
       type: 'about:blank',
@@ -147,10 +153,40 @@ export class ProblemDetailsFilter implements ExceptionFilter {
       detail: domain?.detail ?? this.detailOf(exception, status),
       instance: req.path,
     };
-    const code = domain ? domain.code : this.codeOf(exception);
     if (code !== undefined) body.code = code;
 
     res.status(status).type('application/problem+json').json(body);
+  }
+
+  /**
+   * 5xx: the error class, method and path. 401/403/429 (T7.2, Phát sinh T3.5): one warning per
+   * refused request, so repeated refusals show up in the log; route template, known code and ids
+   * only, never the body or query. The filter runs after the tenant transaction is gone, so the
+   * tenant is taken from the authenticated user.
+   */
+  private logOutcome(
+    exception: unknown,
+    status: number,
+    code: ApiErrorCode | undefined,
+    req: Request,
+  ): void {
+    const user = (req as { user?: { tenantId?: string; userId?: string } }).user;
+    runWithLogContext(user?.tenantId === undefined ? {} : { tenantId: user.tenantId }, () => {
+      if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
+        const name = exception instanceof Error ? exception.constructor.name : typeof exception;
+        this.logger.error(`${name} -> ${status} on ${req.method} ${req.path}`);
+      } else if (DENIED.has(status)) {
+        const route = (req.route as { path?: unknown } | undefined)?.path;
+        this.logger.warn({
+          msg: 'request refused',
+          status,
+          method: req.method,
+          route: typeof route === 'string' ? route : 'unmatched',
+          ...(code === undefined ? {} : { code }),
+          ...(user?.userId === undefined ? {} : { user_id: user.userId }),
+        });
+      }
+    });
   }
 
   /** Only codes from the list in `contracts` are echoed, never a value derived from the request. */

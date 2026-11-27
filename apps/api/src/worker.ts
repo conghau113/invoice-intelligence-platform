@@ -3,11 +3,15 @@ import './otel-worker';
 import 'reflect-metadata';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestPinoLogger } from './common/logging/nest-logger';
 import { WorkerModule } from './modules/queue/worker.module';
+
+const logger = new NestPinoLogger({ service: 'invoice-worker' });
 
 /** Entry of the queue consumer. A separate process from main.ts (ADR 0008): a slow job cannot stall HTTP. */
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.createApplicationContext(WorkerModule);
+  // Given here, not with useLogger later, so even a start-up error is a redacted JSON line (T7.2).
+  const app = await NestFactory.createApplicationContext(WorkerModule, { logger });
   // On SIGTERM the worker finishes its running jobs before the process exits.
   app.enableShutdownHooks();
 }

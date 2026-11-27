@@ -7,6 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { UnrecoverableError, Worker, type Job } from 'bullmq';
 import type { Redis } from 'ioredis';
+import { withJobLogContext } from '../../../common/logging/job-log-context';
 import type { Env } from '../../../config/env.schema';
 import { INDEX_TOKENS_PER_JOB } from '../../extraction/resilience';
 import { backoffMs } from '../../queue/domain/extraction-job';
@@ -53,12 +54,18 @@ export class IndexWorker implements OnApplicationBootstrap, OnApplicationShutdow
     });
     // Ids only: a job's data and error text never go to the log.
     this.worker.on('failed', (job, err) =>
-      this.logger.warn(`index job ${job?.id ?? '?'} failed (${err.message})`),
+      withJobLogContext(job?.data, () =>
+        this.logger.warn(`index job ${job?.id ?? '?'} failed (${err.message})`),
+      ),
     );
     this.worker.on('error', (err) => this.logger.error(`index worker error (${err.name})`));
   }
 
-  private async handle(job: Job): Promise<void> {
+  private handle(job: Job): Promise<void> {
+    return withJobLogContext(job.data, () => this.run(job));
+  }
+
+  private async run(job: Job): Promise<void> {
     const guard = this.guard;
     if (guard === undefined) throw new Error(INDEX_FAILED); // not bootstrapped
     try {

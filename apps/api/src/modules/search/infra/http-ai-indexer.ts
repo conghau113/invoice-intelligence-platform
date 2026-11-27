@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { aiServiceHeaders } from '../../../common/http/ai-service-headers';
 import { ConfigService } from '@nestjs/config';
 import type { Env } from '../../../config/env.schema';
 import type { AiIndexer, CurrentInvoiceRow } from '../application/ai-indexer.port';
@@ -39,7 +40,7 @@ export class HttpAiIndexer implements AiIndexer {
       res = await fetch(this.endpoint, {
         method: 'POST',
         body: JSON.stringify(row),
-        headers: { authorization: `Bearer ${this.token}`, 'content-type': 'application/json' },
+        headers: aiServiceHeaders(this.token, { 'content-type': 'application/json' }),
         signal: AbortSignal.timeout(this.timeoutMs),
       });
     } catch {
