@@ -23,6 +23,8 @@ async function main() {
 
   const express = require('express');
   const app = express();
+  // As the API does in main.ts: no `X-Powered-By` header disclosing the framework (Sonar S5689).
+  app.disable('x-powered-by');
   app.get('/things/:id', (req, res) => {
     if (req.params.id === 'missing') res.status(404).end();
     else res.json({ id: req.params.id });
@@ -33,7 +35,10 @@ async function main() {
   });
   const base = `http://127.0.0.1:${server.address().port}`;
 
-  for (const path of process.argv.slice(2)) await (await fetch(base + path)).arrayBuffer();
+  // Independent requests; each one is counted once whatever the order.
+  await Promise.all(
+    process.argv.slice(2).map(async (path) => (await fetch(base + path)).arrayBuffer()),
+  );
 
   await flushMetrics();
   const points = exporter
@@ -55,6 +60,6 @@ async function main() {
 }
 
 main().catch((e) => {
-  process.stderr.write(String(e && e.stack));
+  process.stderr.write(String(e?.stack));
   process.exitCode = 1;
 });
