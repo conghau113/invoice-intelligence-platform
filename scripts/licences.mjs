@@ -106,10 +106,19 @@ export function pythonExpression(raw) {
 export const pyName = (name) => name.toLowerCase().replaceAll(/[-_.]+/g, '-');
 
 // --- Inventory -------------------------------------------------------------------------------
+// Code-point order, the same on every machine (localeCompare follows the local ICU data, and the
+// generated notices must not change with the machine that wrote them).
+const byCodePoint = (a, b) => (a < b ? -1 : Number(a > b));
+
 // pnpm: { "<licence>": [{ name, versions, homepage }] } → flat rows.
 function npmRows(byLicence) {
   return Object.entries(byLicence).flatMap(([licence, pkgs]) =>
-    pkgs.map((p) => ({ name: p.name, versions: [...p.versions].sort(), licence, url: p.homepage })),
+    pkgs.map((p) => ({
+      name: p.name,
+      versions: [...p.versions].sort(byCodePoint),
+      licence,
+      url: p.homepage,
+    })),
   );
 }
 
@@ -141,16 +150,15 @@ export function normalize(inventory) {
 // An exception names one package (a trailing "*" covers platform builds such as
 // @img/sharp-libvips-linux-x64 / -linux-arm64) AND the exact licence string it was reviewed with:
 // if a new release changes its licence, the exception stops applying and the package is flagged.
+function sameName(pattern, row) {
+  if (pattern.endsWith('*')) return row.name.startsWith(pattern.slice(0, -1));
+  if (row.ecosystem === 'python') return pyName(pattern) === pyName(row.name);
+  return pattern === row.name;
+}
+
 function findException(row, exceptions) {
   return exceptions.find(
-    (e) =>
-      e.ecosystem === row.ecosystem &&
-      e.licence === row.licence &&
-      (e.name.endsWith('*')
-        ? row.name.startsWith(e.name.slice(0, -1))
-        : row.ecosystem === 'python'
-          ? pyName(e.name) === pyName(row.name)
-          : e.name === row.name),
+    (e) => e.ecosystem === row.ecosystem && e.licence === row.licence && sameName(e.name, row),
   );
 }
 
@@ -176,10 +184,14 @@ export function checkLicences(rows, policy) {
 }
 
 // --- Notices ----------------------------------------------------------------------------------
-const cell = (s) => (s ?? '').replaceAll('|', '\\|').replaceAll(/\s+/g, ' ').trim();
+const cell = (s) =>
+  (s ?? '')
+    .replaceAll('|', String.raw`\|`)
+    .replaceAll(/\s+/g, ' ')
+    .trim();
 
 function table(rows) {
-  const sorted = [...rows].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+  const sorted = [...rows].sort((a, b) => byCodePoint(a.name, b.name));
   return [
     '| Package | Version | Licence | Source |',
     '|---|---|---|---|',

@@ -15,8 +15,9 @@ const nextConfig: NextConfig = {
   // Same headers as Caddy sets on the demo (infra/prod/Caddyfile), so they hold wherever the web
   // runs (e2e, local). HSTS stays with Caddy: it only means something over https. The CSP is per
   // response (a nonce), so proxy.ts sets it (T7.4).
-  async headers() {
-    return [
+  // Next expects a promise here; nothing is awaited, so no async function (Sonar S7503).
+  headers() {
+    return Promise.resolve([
       {
         source: '/:path*',
         headers: [
@@ -26,7 +27,7 @@ const nextConfig: NextConfig = {
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         ],
       },
-    ];
+    ]);
   },
   // No `X-Powered-By: Next.js` (Caddy's `-Server` removes a different header).
   poweredByHeader: false,
