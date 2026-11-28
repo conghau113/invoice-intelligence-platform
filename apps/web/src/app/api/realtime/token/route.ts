@@ -1,7 +1,8 @@
 import type { NextRequest } from 'next/server';
 import { authEnv } from '@/auth/env';
 import { isSameOrigin } from '@/auth/logout';
-import { answerTokenRequest, realtimePublicUrl } from '@/features/realtime/token-proxy';
+import { realtimePublicUrl } from '@/features/realtime/public-url';
+import { answerTokenRequest } from '@/features/realtime/token-proxy';
 import { apiBaseUrl, upstreamHeaders } from '@/lib/api';
 import { bffError } from '@/lib/bff-error';
 

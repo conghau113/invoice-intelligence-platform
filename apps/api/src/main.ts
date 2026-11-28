@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
+import { applyCorsPolicy } from './common/http/cors-policy';
 import { applyJsonBodyLimit } from './common/http/json-body-limit';
 import { NestPinoLogger } from './common/logging/nest-logger';
 import type { Env } from './config/env.schema';
@@ -16,6 +17,7 @@ async function bootstrap(): Promise<void> {
     logger: new NestPinoLogger({ service: 'invoice-api' }),
   });
   app.disable('x-powered-by');
+  applyCorsPolicy(app);
   applyJsonBodyLimit(app);
   // req.ip then follows X-Forwarded-For only from these peers (audit rows record the caller's address).
   app.set('trust proxy', app.get(ConfigService<Env, true>).get('TRUSTED_PROXIES', { infer: true }));

@@ -43,3 +43,6 @@ docs/interview/mock-interview-draft.md
 
 # k6 end-of-test summaries (T6.6)
 load/k6/results/
+
+# pnpm --filter ai audit:py: the exported requirement list pip-audit reads (T7.4)
+apps/ai/.audit-requirements.txt

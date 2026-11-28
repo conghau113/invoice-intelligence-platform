@@ -6,6 +6,9 @@
     "dev": "uv run uvicorn app.main:app --reload --port 8000",
     "lint": "uv run ruff check . ../../tools/invoice-gen ../../eval && uv run ruff format --check . ../../tools/invoice-gen ../../eval",
     "typecheck": "echo 'no typecheck for apps/ai yet'",
-    "test": "uv run pytest"
+    "test": "uv run pytest",
+    "licences:json": "uv run --frozen --all-groups --with pip-licenses==5.5.5 pip-licenses --format=json --from=mixed --with-urls",
+    "deps:runtime": "uv export --frozen --no-dev --no-hashes --no-emit-project --no-header --no-annotate",
+    "audit:py": "uv export --frozen --all-groups --no-hashes --no-emit-project --no-header --no-annotate > .audit-requirements.txt && uvx pip-audit==2.10.0 --strict -r .audit-requirements.txt --disable-pip --no-deps --progress-spinner off"
   }
 }

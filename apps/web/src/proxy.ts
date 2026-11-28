@@ -12,6 +12,8 @@ import { decide, localePrefix } from '@/auth/guard';
 import { routing } from '@/i18n/routing';
 import { needsRefresh, refreshAccessToken } from '@/auth/refresh';
 import { bffError } from '@/lib/bff-error';
+import { contentSecurityPolicy, createNonce } from '@/lib/csp';
+import { realtimePublicUrl } from '@/features/realtime/public-url';
 
 // Same as next-auth's default session maxAge.
 const MAX_AGE = 30 * 24 * 60 * 60;
@@ -49,7 +51,7 @@ function next(req: NextRequest): NextResponse {
 
 // Next 16 "proxy" (ex-middleware). Server Components cannot set cookies, so the
 // refreshed (rotated) token must be written here, before the page renders.
-export default async function proxy(req: NextRequest) {
+async function route(req: NextRequest): Promise<NextResponse> {
   // Public paths (login, auth endpoints, health) must work even if auth env is broken.
   if (decide(req.nextUrl.pathname, false) === 'allow') return next(req);
 
@@ -88,6 +90,26 @@ export default async function proxy(req: NextRequest) {
       maxAge: MAX_AGE,
     });
   }
+  return res;
+}
+
+// Pages get a CSP with a nonce made for this response (T7.4). It is put on the request too: Next
+// reads the nonce from the request's CSP header while rendering and adds it to its scripts. A CSP
+// header sent by the client is overwritten. /api/* answers JSON or files with their own headers
+// (the file route sends `sandbox`), so it is left alone.
+export default async function proxy(req: NextRequest): Promise<NextResponse> {
+  if (isApi(req.nextUrl.pathname)) return route(req);
+  const csp = contentSecurityPolicy({
+    nonce: createNonce(),
+    dev: process.env.NODE_ENV === 'development',
+    realtimeUrl: realtimePublicUrl(),
+    issuerUrl: process.env.KEYCLOAK_ISSUER,
+    appUrl: process.env.NEXTAUTH_URL,
+  });
+  const headers = new Headers(req.headers);
+  headers.set('content-security-policy', csp);
+  const res = await route(new NextRequest(req, { headers }));
+  res.headers.set('Content-Security-Policy', csp);
   return res;
 }
 

@@ -23,8 +23,13 @@ allowBuilds:
 # depends on the fixed version. API runtime: multer GHSA-q7qp-rjg7-q26m (pinned by
 # @nestjs/platform-express), body-parser GHSA-27r3-jxmh-p828, qs (moderate, fixed in 6.16.1).
 # Web: fast-uri via @hookform/resolvers > ajv (GHSA-w74x-v6f9-j3xg and three related advisories).
+# Dev only (T7.4, `pnpm audit --audit-level high` in CI): the shadcn CLI pulls undici 7 (six
+# advisories, e.g. GHSA-xjj6-f33q-929c) and systeminformation (GHSA-3f7j-7jwc-fxfj) through
+# @shadcn/registry and @dotenvx/dotenvx.
 overrides:
   body-parser@2: ^2.4.0
   multer@2: ^2.5.0
   qs@6: ^6.16.2
   fast-uri@3: ^3.1.9
+  undici@7: ^7.30.1
+  systeminformation@5: ^5.33.16

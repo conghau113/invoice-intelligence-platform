@@ -1,0 +1,169 @@
+{
+  "$comment": "Read by scripts/licences.mjs (pnpm check:licences). docs/LEGAL.md §3 explains the policy. An exception covers one package (a trailing * covers its platform builds) with the exact licence string it was reviewed under; a new licence string flags it again.",
+  "allowed": [
+    "MIT",
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "MPL-2.0",
+    "PostgreSQL",
+    "Python-2.0"
+  ],
+  "exceptions": [
+    {
+      "ecosystem": "npm",
+      "name": "@img/sharp-libvips-*",
+      "licence": "LGPL-3.0-or-later",
+      "reason": "Prebuilt libvips binary pulled in by sharp, an optional dependency of next; unmodified and dynamically linked, replaceable by the user. The web app does not use next/image, so it is not loaded at run time. Licence text and source link are in THIRD_PARTY_NOTICES.md.",
+      "reviewed": "2026-11-28 (T7.4; deferred from T0.2)"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "caniuse-lite",
+      "licence": "CC-BY-4.0",
+      "reason": "Browser-support data used by browserslist at build time (dependency of next). A data licence: attribution only, given in THIRD_PARTY_NOTICES.md.",
+      "reviewed": "2026-11-28 (T7.4; deferred from T0.2)"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "tslib",
+      "licence": "0BSD",
+      "reason": "TypeScript runtime helpers. Zero-clause BSD: no conditions at all, more permissive than MIT.",
+      "reviewed": "2026-11-28 (T7.4; deferred from T0.2)"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "language-subtag-registry",
+      "licence": "CC0-1.0",
+      "reason": "IANA language tag data (dev, via eslint-plugin-jsx-a11y). Public-domain dedication.",
+      "reviewed": "2026-11-28 (T7.4; deferred from T0.2)"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "glob",
+      "licence": "BlueOak-1.0.0",
+      "reason": "Dev tooling only (jest, eslint, rimraf chains); never shipped. Blue Oak Model License 1.0.0 is a permissive licence (notice + patent grant).",
+      "reviewed": "2026-11-28 (T7.4; deferred from T0.2)"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "isexe",
+      "licence": "BlueOak-1.0.0",
+      "reason": "Dev tooling only; never shipped. Permissive (see glob).",
+      "reviewed": "2026-11-28 (T7.4; deferred from T0.2)"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "jackspeak",
+      "licence": "BlueOak-1.0.0",
+      "reason": "Dev tooling only; never shipped. Permissive (see glob).",
+      "reviewed": "2026-11-28 (T7.4)"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lru-cache",
+      "licence": "BlueOak-1.0.0",
+      "reason": "Dev tooling only (this major); never shipped. Permissive (see glob).",
+      "reviewed": "2026-11-28 (T7.4)"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "minimatch",
+      "licence": "BlueOak-1.0.0",
+      "reason": "Dev tooling only (these majors); never shipped. Permissive (see glob).",
+      "reviewed": "2026-11-28 (T7.4; deferred from T0.2)"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "minipass",
+      "licence": "BlueOak-1.0.0",
+      "reason": "Dev tooling only; never shipped. Permissive (see glob).",
+      "reviewed": "2026-11-28 (T7.4)"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "package-json-from-dist",
+      "licence": "BlueOak-1.0.0",
+      "reason": "Dev tooling only; never shipped. Permissive (see glob).",
+      "reviewed": "2026-11-28 (T7.4)"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "path-scurry",
+      "licence": "BlueOak-1.0.0",
+      "reason": "Dev tooling only; never shipped. Permissive (see glob).",
+      "reviewed": "2026-11-28 (T7.4)"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@isaacs/nonrecursive-glob-match",
+      "licence": "BlueOak-1.0.0",
+      "reason": "Dev tooling only; never shipped. Permissive (see glob).",
+      "reviewed": "2026-11-28 (T7.4)"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "tweetnacl",
+      "licence": "Unlicense",
+      "reason": "Dev only, via testcontainers > ssh2 (pnpm test:int). Public-domain dedication. Kept with Hậu's approval on 2026-10-19 (T1.8).",
+      "reviewed": "2026-10-19 (T1.8)"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "memfs",
+      "licence": "Unlicense",
+      "reason": "Dev only (test tooling); never shipped. Public-domain dedication.",
+      "reviewed": "2026-11-28 (T7.4; deferred from T1.8)"
+    },
+    {
+      "ecosystem": "npm",
+      "name": "fs-monkey",
+      "licence": "Unlicense",
+      "reason": "Dev only, via memfs; never shipped. Public-domain dedication.",
+      "reviewed": "2026-11-28 (T7.4; deferred from T1.8)"
+    },
+    {
+      "ecosystem": "python",
+      "name": "defusedxml",
+      "licence": "Python Software Foundation License",
+      "reason": "PSF-2.0, the family of the allowed Python-2.0. Parses untrusted invoice XML in apps/ai.",
+      "reviewed": "2026-10-26 (T2.8)"
+    },
+    {
+      "ecosystem": "python",
+      "name": "typing-extensions",
+      "licence": "PSF-2.0",
+      "reason": "PSF-2.0 (see defusedxml). Runtime dependency of pydantic and fastapi.",
+      "reviewed": "2026-11-28 (T7.4)"
+    },
+    {
+      "ecosystem": "python",
+      "name": "greenlet",
+      "licence": "MIT AND PSF-2.0",
+      "reason": "invoice-gen group only (Playwright for Python), never in the AI image. PSF-2.0 part reviewed with defusedxml.",
+      "reviewed": "2026-11-07 (T4.1)"
+    },
+    {
+      "ecosystem": "python",
+      "name": "httpx",
+      "licence": "BSD License",
+      "reason": "Metadata gives only the 'BSD License' classifier; the shipped LICENSE.md is BSD-3-Clause (checked 2026-11-28).",
+      "reviewed": "2026-11-28 (T7.4)"
+    },
+    {
+      "ecosystem": "python",
+      "name": "jinja2",
+      "licence": "BSD License",
+      "reason": "Metadata gives only the 'BSD License' classifier; the shipped LICENSE.txt is BSD-3-Clause (checked 2026-11-28). invoice-gen group only.",
+      "reviewed": "2026-11-28 (T7.4)"
+    },
+    {
+      "ecosystem": "python",
+      "name": "pypdfium2",
+      "licence": "BSD-3-Clause, Apache-2.0, dependency licenses",
+      "reason": "Apache-2.0 OR BSD-3-Clause; the wheel bundles the PDFium binary and the licences of its build dependencies (listed in THIRD_PARTY_NOTICES.md).",
+      "reviewed": "2026-11-02 (T3.1)"
+    }
+  ]
+}
