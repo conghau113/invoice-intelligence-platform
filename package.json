@@ -55,8 +55,8 @@
     "check:full": "pnpm check:fast && turbo run build && pnpm test:int && pnpm check && pnpm test:scripts && pnpm test:invoice-gen && pnpm check:licences && pnpm audit:deps && pnpm check:secrets"
   },
   "devDependencies": {
-    "prettier": "^3.9.10",
-    "turbo": "^2.11.7",
+    "prettier": "^3.10.1",
+    "turbo": "^2.11.13",
     "typescript": "~5.9.3"
   }
 }
