@@ -9,6 +9,10 @@ jest.mock('../../otel', () => ({
     order.push('tracing stopped');
     return Promise.resolve();
   },
+  stopMetrics: () => {
+    order.push('metrics stopped');
+    return Promise.resolve();
+  },
 }));
 
 /** Stands for ExtractionWorker: shutting down waits for the job it is running. */
@@ -30,7 +34,7 @@ class FeatureModule {}
 @Module({ imports: [FeatureModule, TracingModule] })
 class AppLikeRoot {}
 
-describe('TracingModule stops tracing only after the rest of the app has shut down', () => {
+describe('TracingModule stops tracing and metrics only after the rest of the app has shut down', () => {
   beforeEach(() => {
     order.length = 0;
   });
@@ -41,6 +45,6 @@ describe('TracingModule stops tracing only after the rest of the app has shut do
   ])('the slow shutdown is %s', async (_, root) => {
     const app = await NestFactory.createApplicationContext(root, { logger: false });
     await app.close();
-    expect(order).toEqual(['last job finished', 'tracing stopped']);
+    expect(order).toEqual(['last job finished', 'tracing stopped', 'metrics stopped']);
   });
 });

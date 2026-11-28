@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request, Response
 
 from app.config import get_settings
 from app.logging import TENANT_HEADER, configure_logging, tenant_from_header, tenant_id_var
-from app.otel import setup_tracing
+from app.otel import setup_metrics, setup_tracing
 from app.routers import extract, health, qa, rag
 from app.security import TRACEPARENT, ServiceAuthError, service_auth_error_handler
 
@@ -43,7 +43,9 @@ def create_app() -> FastAPI:
     app.include_router(extract.router)
     app.include_router(rag.router)
     app.include_router(qa.router)
-    # Last: the instrumentation wraps the app as built. A no-op without an OTLP endpoint (T7.1).
+    # Last: the instrumentation wraps the app as built. Both are no-ops without an OTLP endpoint
+    # (T7.1, T7.3).
+    setup_metrics()
     setup_tracing(app)
     return app
 

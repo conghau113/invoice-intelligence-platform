@@ -35,7 +35,7 @@ function errorType(e: unknown): string {
  * in the job data. Everything the job does (Postgres, the call to the AI service) then joins the
  * upload's trace. Without a valid traceparent the span starts a new trace.
  */
-export async function runInConsumerSpan<T>(
+export function runInConsumerSpan<T>(
   name: string,
   traceparent: unknown,
   attributes: Attributes,

@@ -28,11 +28,12 @@ def _error(status: int, code: str, message: str, retry_after_s: int | None = Non
 
 def get_llm_provider(request: Request) -> LLMProvider:
     """Built on first use and kept: building needs a key the XML path does not. Every call through
-    it is one LLM span (T7.1); the wrapper lives here so the provider files stay untouched."""
+    it is one LLM span (T7.1) and is counted under the route's operation (T7.3: `/extract`,
+    `/classify`, `/answer`); the wrapper lives here so the provider files stay untouched."""
     state = request.app.state
     if getattr(state, "llm_provider", None) is None:
         state.llm_provider = build_provider(state.settings)
-    return TracedLLMProvider(state.llm_provider)
+    return TracedLLMProvider(state.llm_provider, operation=request.url.path.rsplit("/", 1)[-1])
 
 
 @router.get("/extract/version")

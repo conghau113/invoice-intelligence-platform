@@ -2,7 +2,7 @@ import { context, propagation, trace, type Attributes } from '@opentelemetry/api
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { W3CTraceContextPropagator } from '@opentelemetry/core';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
-import { resourceFromAttributes } from '@opentelemetry/resources';
+import { resourceFromAttributes, type Resource } from '@opentelemetry/resources';
 import {
   BatchSpanProcessor,
   TracerProvider,
@@ -72,6 +72,14 @@ export class RedactingProcessor implements SpanProcessor {
   }
 }
 
+/** Who sends the telemetry: shared by the tracer and the meter provider of one process. */
+export function serviceResource(serviceName: string, environment: string): Resource {
+  return resourceFromAttributes({
+    [ATTR_SERVICE_NAME]: serviceName,
+    'deployment.environment.name': environment,
+  });
+}
+
 /**
  * Creates the process's tracer provider and makes it global, with the W3C propagator and an
  * async-hooks context (the active span follows `await`). `exporter` is for tests (in-memory);
@@ -83,10 +91,7 @@ export function registerTracerProvider(
   exporter?: SpanExporter,
 ): TracerProvider {
   const provider = new TracerProvider({
-    resource: resourceFromAttributes({
-      [ATTR_SERVICE_NAME]: serviceName,
-      'deployment.environment.name': environment,
-    }),
+    resource: serviceResource(serviceName, environment),
     // Order matters: user input is removed before the batch processor hands the span on.
     spanProcessors: [
       new RedactingProcessor(),
@@ -98,3 +103,5 @@ export function registerTracerProvider(
   trace.setGlobalTracerProvider(provider);
   return provider;
 }
+
+export * from './metrics';

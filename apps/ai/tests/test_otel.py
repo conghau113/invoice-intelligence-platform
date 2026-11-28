@@ -88,7 +88,8 @@ def test_extract_joins_the_workers_trace_with_an_llm_span(client, spans) -> None
 
     server = next(s for s in recorded if s.kind == SpanKind.SERVER)
     assert format(server.context.trace_id, "032x") == TRACE_ID
-    assert server.parent is not None and format(server.parent.span_id, "016x") == API_SPAN
+    assert server.parent is not None
+    assert format(server.parent.span_id, "016x") == API_SPAN
 
     llm = next(s for s in recorded if s.name.startswith("chat "))
     assert llm.kind == SpanKind.CLIENT
@@ -126,9 +127,9 @@ def test_llm_span_holds_no_prompt_and_no_answer(spans) -> None:
 
 
 def test_failed_llm_call_records_its_code_only(spans) -> None:
-    inner = FakeProvider([LLMUnavailable("LLM_RATE_LIMITED")])
+    traced = otel.TracedLLMProvider(FakeProvider([LLMUnavailable("LLM_RATE_LIMITED")]))
     with pytest.raises(LLMUnavailable):
-        otel.TracedLLMProvider(inner).generate(system="s", user_text="u", images=[], json_schema={})
+        traced.generate(system="s", user_text="u", images=[], json_schema={})
     (span,) = spans()
     assert span.status.status_code == StatusCode.ERROR
     assert (span.attributes or {})["error.type"] == "LLM_RATE_LIMITED"

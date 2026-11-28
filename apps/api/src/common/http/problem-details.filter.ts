@@ -121,12 +121,12 @@ export interface ProblemDetails {
  * original message of unknown or 5xx errors may contain document content or PII. For the same
  * reason the logger records only the error class, status, method and path.
  */
-/** Refusals worth a log line: unauthenticated, forbidden, rate limited. */
-const DENIED = new Set<number>([
-  HttpStatus.UNAUTHORIZED,
-  HttpStatus.FORBIDDEN,
-  HttpStatus.TOO_MANY_REQUESTS,
-]);
+/**
+ * Refusals worth a log line: unauthenticated, forbidden. A 429 is not logged (T7.3): one client
+ * over its limit writes one per request (44 in one CI e2e run), and the RED metric
+ * `http.server.request.duration` already counts it per route and status.
+ */
+const DENIED = new Set<number>([HttpStatus.UNAUTHORIZED, HttpStatus.FORBIDDEN]);
 
 @Catch()
 export class ProblemDetailsFilter implements ExceptionFilter {
@@ -159,7 +159,7 @@ export class ProblemDetailsFilter implements ExceptionFilter {
   }
 
   /**
-   * 5xx: the error class, method and path. 401/403/429 (T7.2, Phát sinh T3.5): one warning per
+   * 5xx: the error class, method and path. 401/403 (T7.2, Phát sinh T3.5): one warning per
    * refused request, so repeated refusals show up in the log; route template, known code and ids
    * only, never the body or query. The filter runs after the tenant transaction is gone, so the
    * tenant is taken from the authenticated user.
