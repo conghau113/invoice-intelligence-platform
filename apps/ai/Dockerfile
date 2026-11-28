@@ -6,7 +6,7 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project --no-build
 COPY app ./app
 
-FROM python:3.12-slim-bookworm AS runtime
+FROM python:3.15-slim-bookworm AS runtime
 ENV PATH="/app/.venv/bin:$PATH" PYTHONUNBUFFERED=1
 WORKDIR /app
 RUN useradd --system --uid 10001 appuser

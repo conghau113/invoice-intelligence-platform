@@ -5,7 +5,7 @@
 # Note: next/font/google downloads the font during the build, so the build needs internet
 # (Phát sinh T3.9/T4.1: switch to next/font/local in T7.4).
 
-FROM node:24.21.0-bookworm-slim AS build
+FROM node:26.13.1-bookworm-slim AS build
 RUN corepack enable
 WORKDIR /repo
 ENV NEXT_TELEMETRY_DISABLED=1 NEXT_OUTPUT_STANDALONE=1
@@ -19,7 +19,7 @@ COPY packages/telemetry packages/telemetry
 COPY apps/web apps/web
 RUN pnpm --filter contracts --filter telemetry build && pnpm --filter web build
 
-FROM node:24.21.0-bookworm-slim AS runtime
+FROM node:26.13.1-bookworm-slim AS runtime
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 HOSTNAME=0.0.0.0 PORT=3000
 WORKDIR /app
 # server.js plus only the node_modules Next traced. Static assets are not part of standalone.

@@ -4,7 +4,7 @@
 #   docker build -f apps/api/Dockerfile .
 # Built natively on the arm64 demo VM (T4.7); CI multi-arch builds come in T7.5.
 
-FROM node:24.21.0-bookworm-slim AS build
+FROM node:26.13.1-bookworm-slim AS build
 # pnpm from the version pinned in package.json (packageManager), no global install.
 RUN corepack enable
 WORKDIR /repo
@@ -23,7 +23,7 @@ RUN pnpm --filter contracts --filter telemetry --filter logger build && pnpm --f
 # Production dependencies only, with the workspace packages (contracts, telemetry, logger) copied in, not linked.
 RUN pnpm --filter api deploy --prod /out
 
-FROM node:24.21.0-bookworm-slim AS runtime
+FROM node:26.13.1-bookworm-slim AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
 COPY --from=build --chown=root:root /out/node_modules ./node_modules
