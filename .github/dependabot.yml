@@ -1,0 +1,60 @@
+# Dependency updates (T7.4, docs/architecture/SECURITY.md §8). Security updates for known
+# vulnerabilities come from the repository's Dependabot alerts at any time; these entries add one
+# weekly round of version updates, grouped so a round is a few PRs, not dozens. Every PR runs the
+# full CI (supply-chain included) and SonarCloud like any other; nothing merges by itself.
+version: 2
+updates:
+  # One pnpm workspace: the root lockfile covers apps/web, apps/api and packages/*.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      npm-minor-and-patch:
+        update-types: [minor, patch]
+    # Nest is pinned to 11 on purpose (Nest 12 is ESM only, T0.3): that major goes through a task.
+    ignore:
+      - dependency-name: '@nestjs/*'
+        update-types: [version-update:semver-major]
+
+  - package-ecosystem: uv
+    directory: /apps/ai
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      python-minor-and-patch:
+        update-types: [minor, patch]
+
+  # Actions are pinned by commit SHA with the version in a comment; Dependabot updates both.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: ['*']
+
+  # Base images of the three app images.
+  - package-ecosystem: docker
+    directories: [/apps/web, /apps/api, /apps/ai]
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      base-images:
+        patterns: ['*']
+
+  # Images run by compose: dev stack (Postgres, Redis, Keycloak) and the demo (Caddy and the same).
+  - package-ecosystem: docker-compose
+    directories: [/, /infra/prod]
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      compose-images:
+        patterns: ['*']

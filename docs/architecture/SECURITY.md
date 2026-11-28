@@ -75,12 +75,14 @@ An upload writes one row: `document.created`, or `document.upload_duplicate` whe
 - Redis caches (T6.3, ADR 0013) hold document data: list pages (ids, statuses, dates; 30 s), dashboard counts (60 s) and whole extraction results incl. party names and tax codes (7 days). Every key starts with `cache:{tenant_id}` and is built from ids, hashes and version tokens only, never from request text; a value read back is schema-validated before use. Nothing removes a tenant's entries early (offboarding, a deletion request): they leave by TTL only, to be handled with data deletion (M7/M8). Logs of the cache carry a code only. The public demo (`DEMO_READ_ONLY`) still writes these derived entries to Redis on reads, as the rate limiter does; Postgres stays read-only. Redis runs with its default `maxmemory-policy noeviction` (BullMQ requires it), so a tenant's generation counter is never evicted while its entries live.
 
 ## 8. Supply chain & platform
-- Lockfiles committed; Dependabot; `pnpm audit`/OSV and `pip-audit` in CI; gitleaks on every push.
-- Security headers + CSP (nonce-based for Next.js), strict CORS on the API, HTTPS only (Caddy).
+- Lockfiles committed; Dependabot (weekly grouped updates for npm, uv, GitHub Actions, Dockerfiles, compose images: `.github/dependabot.yml`); GitHub Actions pinned by commit SHA and the gitleaks image by digest; gitleaks on every push.
+- CI job `supply-chain`: `pnpm audit --audit-level high` and `pip-audit` over every group of `uv.lock` fail on High/Critical, dev tools included (Moderate is reported, not enforced); `pnpm check:licences` enforces `docs/LEGAL.md` §3 and keeps `THIRD_PARTY_NOTICES.md` in step with the lockfiles.
+- Web: a Content-Security-Policy with a fresh nonce per response on every page (`apps/web/src/lib/csp.ts`, set in `proxy.ts`): only scripts the server rendered for that response run (`'strict-dynamic'` for the chunks they load), no inline handlers, no `eval` in production, no plugins, no framing, form posts only to us and Keycloak. `style-src` keeps `'unsafe-inline'` for React `style=""` attributes. `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy` and `Permissions-Policy` are set by the web itself and by Caddy; HSTS by Caddy. `/api/*` responses keep their own headers (files: `sandbox`).
+- API: CORS allows no origin (`apps/api/src/common/http/cors-policy.ts`): only the web server calls it (BFF); the realtime socket has its own `Origin` allow-list. HTTPS only (Caddy).
 - Containers run as non-root; internal services not exposed publicly (only Caddy on 80/443).
 
 ## 9. Legal
 See `docs/LEGAL.md` (data protection, provider terms, licences of third-party components).
 
-## 10. Review checklist (filled in T7.4)
-A table of each control above with status `pass / fail / n.a.` and evidence link, stored in `docs/reports/security-review-v1.md`.
+## 10. Review checklist
+Each control above with status `pass / fail / n.a.` and its evidence: [`docs/reports/security-review-v1.md`](../reports/security-review-v1.md) (T7.4, 2026-11-28). Open items from it (daily quotas per tenant, socket limits, AI service docs endpoints) are tracked under "Phát sinh" in `docs/plan/TASKS.md`.

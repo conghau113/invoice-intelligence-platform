@@ -31,9 +31,12 @@
     "check:links": "node scripts/check-links.mjs",
     "check:eval-dataset": "node scripts/check-eval-dataset.mjs",
     "check:prod-realm": "node infra/prod/keycloak/build-realm.mjs --check",
+    "check:licences": "node scripts/licences.mjs check",
+    "gen:notices": "node scripts/licences.mjs write",
+    "audit:deps": "pnpm audit --audit-level high && pnpm --filter ai audit:py",
     "check": "pnpm check:schema && pnpm check:i18n && pnpm check:adr && pnpm check:links && pnpm check:eval-dataset && pnpm check:prod-realm",
     "test:scripts": "node --test \"scripts/*.test.mjs\"",
-    "check:secrets": "docker run --rm -v \"$PWD:/repo\" zricethezav/gitleaks:v8.30.0 git /repo --redact --no-banner --exit-code 1",
+    "check:secrets": "docker run --rm -v \"$PWD:/repo\" zricethezav/gitleaks:v8.30.0@sha256:691af3c7c5a48b16f187ce3446d5f194838f91238f27270ed36eef6359a574d9 git /repo --redact --no-banner --exit-code 1",
     "check:fast": "turbo run lint typecheck test",
     "gen:invoices": "uv run --frozen --project apps/ai --group invoice-gen python tools/invoice-gen/generate.py",
     "gen:invoices:freeze": "uv run --frozen --project apps/ai --group invoice-gen python tools/invoice-gen/freeze_dataset.py",
@@ -49,7 +52,7 @@
     "eval:rag:report": "cd apps/ai && PYTHONPATH=.:../../eval uv run --frozen python -m rag report",
     "gen:invoices:verify": "pnpm --filter contracts build && uv run --frozen --project apps/ai --group invoice-gen python tools/invoice-gen/verify.py && cd tools/invoice-gen/out && node ../check-rules.mjs",
     "test:invoice-gen": "pnpm --filter contracts build && uv run --frozen --project apps/ai --group invoice-gen pytest apps/ai/tests/test_invoice_gen_render.py -o addopts= -m browser --rootdir apps/ai -c apps/ai/pyproject.toml",
-    "check:full": "pnpm check:fast && turbo run build && pnpm test:int && pnpm check && pnpm test:scripts && pnpm test:invoice-gen && pnpm check:secrets"
+    "check:full": "pnpm check:fast && turbo run build && pnpm test:int && pnpm check && pnpm test:scripts && pnpm test:invoice-gen && pnpm check:licences && pnpm audit:deps && pnpm check:secrets"
   },
   "devDependencies": {
     "prettier": "^3.9.10",

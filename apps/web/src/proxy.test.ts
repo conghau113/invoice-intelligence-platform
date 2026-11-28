@@ -198,4 +198,61 @@ describe('proxy', () => {
       expect(res.headers.get('x-middleware-request-cookie')).toContain(`${NAME}=${set!.value}`);
     });
   });
+
+  describe('content security policy (T7.4)', () => {
+    const nonceOf = (csp: string | null) => /'nonce-([^']+)'/.exec(csp ?? '')?.[1];
+
+    it('gives every page response a CSP with its own nonce, and hands the same policy to the renderer', async () => {
+      const a = await proxy(await reqWith(now() + 3600));
+      const b = await proxy(await reqWith(now() + 3600));
+      const csp = a.headers.get('content-security-policy');
+      expect(nonceOf(csp)).toBeTruthy();
+      expect(nonceOf(b.headers.get('content-security-policy'))).not.toBe(nonceOf(csp));
+      // Next reads the nonce from this forwarded request header when it renders the page.
+      expect(a.headers.get('x-middleware-request-content-security-policy')).toBe(csp);
+    });
+
+    // The refresh path builds a second request from the first: the policy (and its nonce) must reach
+    // the renderer there too, or every page right after a token refresh would never hydrate.
+    it('hands the policy to the renderer on the refresh path as well', async () => {
+      refreshOk();
+      const res = await proxy(await reqWith(now() - 10));
+      expect(res.cookies.get(NAME)?.value).toBeTruthy(); // the refresh really happened
+      const csp = res.headers.get('content-security-policy');
+      expect(nonceOf(csp)).toBeTruthy();
+      expect(res.headers.get('x-middleware-request-content-security-policy')).toBe(csp);
+    });
+
+    it('covers the locale redirect of a public page (/login → /vi/login)', async () => {
+      const res = await proxy(new NextRequest('http://localhost:3000/login'));
+      expect(res.headers.get('location')).toMatch(/\/vi\/login$/);
+      expect(nonceOf(res.headers.get('content-security-policy'))).toBeTruthy();
+    });
+
+    it('also covers the redirect to the login page', async () => {
+      const res = await proxy(new NextRequest('http://localhost:3000/vi/dashboard'));
+      expect(res.status).toBe(307);
+      expect(res.headers.get('content-security-policy')).toContain("frame-ancestors 'none'");
+    });
+
+    it('overwrites a CSP header sent by the client instead of trusting it', async () => {
+      const forged = await reqWith(now() + 3600);
+      forged.headers.set('content-security-policy', "script-src 'nonce-chosen-by-attacker'");
+      const res = await proxy(forged);
+      expect(res.headers.get('x-middleware-request-content-security-policy')).not.toContain(
+        'chosen-by-attacker',
+      );
+      expect(nonceOf(res.headers.get('content-security-policy'))).not.toBe('chosen-by-attacker');
+    });
+
+    it('leaves /api/* alone: those routes set their own headers (the file route sends sandbox)', async () => {
+      const res = await proxy(new NextRequest('http://localhost:3000/api/health'));
+      expect(res.headers.get('content-security-policy')).toBeNull();
+    });
+
+    it('allows the Keycloak origin as a form target, so sign-out can redirect there', async () => {
+      const res = await proxy(await reqWith(now() + 3600));
+      expect(res.headers.get('content-security-policy')).toContain("form-action 'self' http://kc");
+    });
+  });
 });

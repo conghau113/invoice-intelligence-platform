@@ -1,0 +1,21 @@
+{
+  "npm": {
+    "all": {
+      "MIT": [{ "name": "left-pad", "versions": ["1.3.0"] }],
+      "GPL-3.0-only": [{ "name": "copyleft-pkg", "versions": ["1.0.0"] }],
+      "MIT AND GPL-2.0-only": [{ "name": "half-copyleft", "versions": ["1.0.0"] }],
+      "BlueOak-2.0.0": [{ "name": "dev-tool", "versions": ["4.0.0"] }],
+      "MIT OR": [{ "name": "broken-expression", "versions": ["1.0.0"] }]
+    },
+    "prod": {
+      "MIT": [{ "name": "left-pad", "versions": ["1.3.0"] }],
+      "GPL-3.0-only": [{ "name": "copyleft-pkg", "versions": ["1.0.0"] }]
+    }
+  },
+  "python": {
+    "all": [
+      { "Name": "httpx", "Version": "0.28.1", "License": "BSD License", "URL": "https://example.test/httpx" }
+    ],
+    "runtime": ["httpx"]
+  }
+}

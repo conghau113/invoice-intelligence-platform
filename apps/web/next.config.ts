@@ -12,6 +12,24 @@ const nextConfig: NextConfig = {
   ...(process.env.NEXT_OUTPUT_STANDALONE === '1'
     ? { output: 'standalone' as const, outputFileTracingRoot: path.join(__dirname, '../..') }
     : {}),
+  // Same headers as Caddy sets on the demo (infra/prod/Caddyfile), so they hold wherever the web
+  // runs (e2e, local). HSTS stays with Caddy: it only means something over https. The CSP is per
+  // response (a nonce), so proxy.ts sets it (T7.4).
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+        ],
+      },
+    ];
+  },
+  // No `X-Powered-By: Next.js` (Caddy's `-Server` removes a different header).
+  poweredByHeader: false,
   experimental: {
     // proxy.ts also runs on /api/*: Next buffers the request body for it (default 10MB) and
     // silently cuts what is over. A 10 MiB upload plus multipart framing must fit.

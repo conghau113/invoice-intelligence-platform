@@ -19,10 +19,10 @@ jobs:
   node:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       # Reads "packageManager" from package.json, same pnpm version as local dev.
       - run: corepack enable
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -43,7 +43,7 @@ jobs:
       run:
         working-directory: apps/ai
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           version: 0.13.0
@@ -61,9 +61,9 @@ jobs:
   schema-drift:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: corepack enable
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -81,9 +81,9 @@ jobs:
   repo-checks:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: corepack enable
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
       - name: i18n parity
@@ -100,20 +100,50 @@ jobs:
   secrets:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0 # scan the whole history, not just the tip
-      # Same command as "check:secrets" in package.json; bump the image tag in both places together.
-      - run: docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.30.0 git /repo --redact --no-banner --exit-code 1
+      # Same command as "check:secrets" in package.json; bump the tag and digest in both places together.
+      # The digest pins the exact image (a tag can be moved). Dependabot does not read a `docker run`
+      # line, so this pin is bumped by hand (TASKS.md, Phát sinh T7.4).
+      - run: docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.30.0@sha256:691af3c7c5a48b16f187ce3446d5f194838f91238f27270ed36eef6359a574d9 git /repo --redact --no-banner --exit-code 1
+
+  # Dependencies (T7.4, docs/reports/security-review-v1.md): known vulnerabilities rated High or
+  # Critical fail, in dev tools too; licences outside docs/legal/licence-policy.json fail; and
+  # THIRD_PARTY_NOTICES.md must match the lockfiles. Advisories are published without any change
+  # here, so this job can turn red on an unrelated PR: upgrade or override the package, or record an
+  # ignore with its reason in the security review. Moderate and Low are reported, not enforced.
+  supply-chain:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: corepack enable
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: 0.13.0
+          enable-cache: true
+          cache-dependency-glob: apps/ai/uv.lock
+      - run: pnpm install --frozen-lockfile
+      - name: npm advisories (High and above)
+        run: pnpm audit --audit-level high
+      # pip-audit (pinned, run by uvx) reads every group of uv.lock, dev and invoice-gen included.
+      - name: Python advisories
+        run: pnpm --filter ai audit:py
+      - name: Licences and THIRD_PARTY_NOTICES.md
+        run: pnpm check:licences
 
   # Row-level security against a real Postgres. Testcontainers starts it from the Docker already on
   # the runner, applies the real migrations and seed, then jest runs as the non-owner app role.
   integration:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: corepack enable
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -155,9 +185,9 @@ jobs:
       REALTIME_ALLOWED_ORIGINS: http://localhost:3000
       REALTIME_PUBLIC_URL: http://localhost:3001
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: corepack enable
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -228,7 +258,7 @@ jobs:
           pnpm test:e2e
         env:
           NODE_ENV: production # install is done; the API refuses to start without it
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: failure()
         with:
           name: playwright-report
