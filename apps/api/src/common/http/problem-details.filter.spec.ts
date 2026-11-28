@@ -144,10 +144,18 @@ describe('ProblemDetailsFilter', () => {
       expect(JSON.stringify(logWarn.mock.calls)).not.toContain('Nguyen');
     });
 
-    it.each([401, 429])('logs %i too, without a user when there is none', (status) => {
-      run(new HttpException('x', status));
-      expect(logWarn).toHaveBeenCalledWith(expect.objectContaining({ status, route: 'unmatched' }));
+    it('logs 401 too, without a user when there is none', () => {
+      run(new HttpException('x', 401));
+      expect(logWarn).toHaveBeenCalledWith(
+        expect.objectContaining({ status: 401, route: 'unmatched' }),
+      );
       expect(logWarn.mock.calls[0]?.[0]).not.toHaveProperty('user_id');
+    });
+
+    it('does not log a 429: the RED metric counts it per route (T7.3)', () => {
+      run(new HttpException('slow down', 429), { user });
+      expect(logWarn).not.toHaveBeenCalled();
+      expect(logError).not.toHaveBeenCalled();
     });
 
     it('does not log an ordinary 4xx', () => {

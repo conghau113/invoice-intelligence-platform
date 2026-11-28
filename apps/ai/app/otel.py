@@ -1,4 +1,4 @@
-"""OpenTelemetry tracing for the AI service (T7.1, ADR 0015).
+"""OpenTelemetry tracing and LLM metrics for the AI service (T7.1, T7.3, ADR 0015).
 
 Off unless OTEL_EXPORTER_OTLP_ENDPOINT is set: tests, CI and a plain dev server start no SDK, and
 the tracer calls below are then no-ops. The OTLP exporter reads the standard variables itself
@@ -8,16 +8,22 @@ service's own env file.
 Traced: incoming requests (continuing the `traceparent` the API worker sends), outgoing httpx calls
 (the provider's REST API) and one manual span per LLM call. Spans carry names, sizes and codes,
 never document content, prompts, answers or query strings.
+
+Metrics (T7.3), under the same condition: tokens, list-price cost and calls of every LLM call, by
+tenant, operation and model. Every call goes through `TracedLLMProvider`, so it is the one place
+they are counted, retries included.
 """
 
 import os
 from typing import Any
 
 from fastapi import FastAPI
-from opentelemetry import trace
+from opentelemetry import metrics, trace
 from opentelemetry.trace import Span, SpanKind, Status, StatusCode
 
+from app.logging import tenant_id_var
 from app.providers.base import ImagePart, LLMError, LLMProvider, LLMResult
+from app.providers.pricing import estimate_cost_usd
 
 SERVICE_NAME = "invoice-ai"
 _tracer = trace.get_tracer(SERVICE_NAME)
@@ -26,9 +32,28 @@ _tracer = trace.get_tracer(SERVICE_NAME)
 _URL_ATTRIBUTES = ("url.full", "http.url", "http.target")
 _QUERY_ATTRIBUTE = "url.query"
 _REDACTED = "REDACTED"
+_ERROR_TYPE = "error.type"
 
-# The SDK TracerProvider once started (Any: the SDK is imported lazily). A dict, not a `global`.
-_state: dict[str, Any] = {"provider": None}
+# The SDK providers once started (Any: the SDK is imported lazily). A dict, not a `global`.
+_state: dict[str, Any] = {"provider": None, "meter_provider": None}
+
+# Bound to the real provider by `setup_metrics`; until then (tests, CI, plain dev) they do nothing.
+_meter = metrics.get_meter(SERVICE_NAME)
+_llm_tokens = _meter.create_counter(
+    "llm.tokens", unit="{token}", description="Tokens of LLM calls (input and output)."
+)
+# No unit on purpose: an exporter would append it to the name. The name says what it is.
+_llm_cost = _meter.create_counter(
+    "llm.cost.list_price_usd",
+    description="LLM cost at list price (pricing.py), in USD. Not money paid: the free tier is $0.",
+)
+_llm_calls = _meter.create_counter("llm.calls", unit="{call}", description="LLM calls by outcome.")
+
+# Labels of every LLM metric. `operation` is one of these; anything else is `other`.
+OPERATIONS = frozenset({"extract", "classify", "answer"})
+NO_TENANT = "none"
+# One data point per series per minute, as on the Node side (Grafana Cloud Free).
+EXPORT_INTERVAL_MS = 60_000
 
 
 def without_query(url: str) -> str:
@@ -83,6 +108,36 @@ def setup_tracing(app: FastAPI, exporter: Any = None) -> bool:
     return True
 
 
+def setup_metrics(reader: Any = None) -> bool:
+    """Starts the metrics SDK once per process. `reader`: tests (an in-memory reader)."""
+    if reader is None and not os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT"):
+        return False
+    if _state["meter_provider"] is not None:
+        return True
+    from opentelemetry.sdk.metrics import MeterProvider
+    from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+    from opentelemetry.sdk.metrics.view import DropAggregation, View
+    from opentelemetry.sdk.resources import Resource
+
+    if reader is None:
+        from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter
+
+        reader = PeriodicExportingMetricReader(
+            OTLPMetricExporter(), export_interval_millis=EXPORT_INTERVAL_MS
+        )
+    # Flushes the last values at interpreter exit (shutdown_on_exit), like the tracer provider.
+    provider = MeterProvider(
+        metric_readers=[reader],
+        resource=Resource.create({"service.name": SERVICE_NAME}),
+        # The FastAPI and httpx instrumentations record HTTP histograms into the global provider.
+        # RED metrics are the API's (T7.3); here they would only spend the free series quota.
+        views=[View(instrument_name="http.*", aggregation=DropAggregation())],
+    )
+    metrics.set_meter_provider(provider)
+    _state["meter_provider"] = provider
+    return True
+
+
 _EXCEPTION_EVENT = "exception"
 
 
@@ -101,8 +156,8 @@ def redact(span: Any) -> Any:
         return span
     attributes = dict(span.attributes or {})
     kind = (exception.attributes or {}).get("exception.type") if exception else None
-    if "error.type" not in attributes and isinstance(kind, str):
-        attributes["error.type"] = kind
+    if _ERROR_TYPE not in attributes and isinstance(kind, str):
+        attributes[_ERROR_TYPE] = kind
     return ReadableSpan(
         name=span.name,
         context=span.context,
@@ -147,10 +202,16 @@ class TracedLLMProvider:
     Attributes: provider name, model, token counts and whether the answer was cut. No prompt, no
     answer, no image: the arguments and `LLMResult.text` are never read here. A failed call records
     the error code only (an `LLMError` code is registered in error_codes.py).
+
+    Each call is also counted (T7.3): tokens, list-price cost and the call, labelled with the
+    tenant from the API's X-Tenant-Id header (a uuid or `none`; the routes that call a model all
+    require the service token first), `operation` and the requested model. A failed call is counted
+    with no tokens: the provider bills what it answered, and a failure answers nothing we can read.
     """
 
-    def __init__(self, inner: LLMProvider) -> None:
+    def __init__(self, inner: LLMProvider, operation: str = "other") -> None:
         self._inner = inner
+        self.operation = operation if operation in OPERATIONS else "other"
         self.name = inner.name
         self.model = inner.model
         self.timeout_s = inner.timeout_s
@@ -176,20 +237,37 @@ class TracedLLMProvider:
             record_exception=False,
             set_status_on_exception=False,
         ) as span:
+            labels = {
+                "tenant_id": tenant_id_var.get() or NO_TENANT,
+                "operation": self.operation,
+                "model": self.model,
+            }
             try:
                 result = self._inner.generate(
                     system=system, user_text=user_text, images=images, json_schema=json_schema
                 )
             except LLMError as e:
                 span.set_status(Status(StatusCode.ERROR))
-                span.set_attribute("error.type", e.code)
+                span.set_attribute(_ERROR_TYPE, e.code)
+                _llm_calls.add(1, {**labels, "outcome": "error"})
                 raise
             except Exception as e:
                 span.set_status(Status(StatusCode.ERROR))
-                span.set_attribute("error.type", type(e).__name__)
+                span.set_attribute(_ERROR_TYPE, type(e).__name__)
+                _llm_calls.add(1, {**labels, "outcome": "error"})
                 raise
+            _record_usage(labels, result)
             span.set_attribute("gen_ai.response.model", result.model)
             span.set_attribute("gen_ai.usage.input_tokens", result.input_tokens)
             span.set_attribute("gen_ai.usage.output_tokens", result.output_tokens)
             span.set_attribute("llm.response.truncated", result.truncated)
             return result
+
+
+def _record_usage(labels: dict[str, str], result: LLMResult) -> None:
+    """Counts one answered call. Priced on the model that answered, as services/extract.py does."""
+    _llm_calls.add(1, {**labels, "outcome": "ok"})
+    _llm_tokens.add(result.input_tokens, {**labels, "token_type": "input"})
+    _llm_tokens.add(result.output_tokens, {**labels, "token_type": "output"})
+    cost = estimate_cost_usd(result.model, result.input_tokens, result.output_tokens)
+    _llm_cost.add(cost, labels)

@@ -1,0 +1,93 @@
+# Grafana-managed alert rules (T7.3), in Grafana's file-provisioning format (the format of
+# Alerting → Alert rules → Export). On Grafana Cloud they are created by hand from this file, see
+# ../README.md; a self-hosted Grafana (ADR 0015 "Revisit when") reads it from provisioning/alerting.
+#
+# `grafanacloud-prom` is the uid Grafana Cloud gives every stack's own Prometheus data source; on
+# another Grafana, replace it with that data source's uid.
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: invoice-api
+    folder: Invoice Intelligence
+    interval: 1m
+    rules:
+      - uid: invoice-api-error-rate
+        title: API error rate
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: grafanacloud-prom
+            model:
+              refId: A
+              instant: true
+              # Share of 5xx over 5 minutes, only when the API answered at least 20 requests in
+              # that window: one failed request out of three is not an incident.
+              expr: >-
+                (
+                  sum(rate(http_server_request_duration_seconds_count{job="invoice-api",http_response_status_code=~"5.."}[5m]))
+                  / sum(rate(http_server_request_duration_seconds_count{job="invoice-api"}[5m]))
+                )
+                and on()
+                (sum(increase(http_server_request_duration_seconds_count{job="invoice-api"}[5m])) >= 20)
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator: { type: gt, params: [0.05] }
+        # No traffic means no series: that is not an error.
+        noDataState: OK
+        execErrState: Error
+        for: 2m
+        labels:
+          severity: warning
+          service: invoice-api
+        annotations:
+          summary: More than 5% of API requests failed with a 5xx over 5 minutes
+          description: >-
+            Open the dashboard "Invoice Intelligence: overview", panel "Error rate", then the API's
+            5xx traces in Tempo ({ resource.service.name = "invoice-api" && status = error }).
+            The error class and path of each 5xx is also in the API log.
+        isPaused: false
+
+      - uid: invoice-queue-stuck
+        title: Queue stuck
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: grafanacloud-prom
+            model:
+              refId: A
+              instant: true
+              # One series per queue (extraction, rag-index): the alert names the queue. How long the
+              # same job has been next in line (QueueHeads in the API), not the job's own age: a
+              # failed job an admin retries keeps its creation time and would fire at once.
+              # Keeps growing while Redis cannot be read, so a dead Redis does not hide a stuck job.
+              expr: max by (queue) (queue_head_wait_age_seconds{job="invoice-api"})
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator: { type: gt, params: [300] }
+        noDataState: OK
+        execErrState: Error
+        for: 2m
+        labels:
+          severity: warning
+          service: invoice-worker
+        annotations:
+          summary: 'Queue {{ $labels.queue }} has not moved for more than 5 minutes'
+          description: >-
+            The same job has been next in line for 5 minutes. Either no worker is taking jobs
+            (stopped, crashed, stuck on one job), the provider guard is holding the worker after a
+            provider 429 (T6.2: jobs stay in waiting), an admin paused the queue, or Redis cannot be
+            read (dashboard "Queue numbers fresh" = stale). Check the worker's log and the dashboard
+            panels "Jobs by queue and state" and "Head of queue".
+        isPaused: false

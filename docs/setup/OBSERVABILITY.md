@@ -1,4 +1,4 @@
-# Tracing và log với Grafana Cloud (task T7.1, T7.2)
+# Tracing, log và metrics với Grafana Cloud (task T7.1, T7.2, T7.3)
 
 > Theo ADR 0015: OpenTelemetry trong cả 4 dịch vụ, xuất OTLP sang Grafana Cloud bản free. Không tự host Grafana.
 
@@ -101,7 +101,7 @@ Dán trace id đó vào Tempo, ra đúng lần upload: 4 dịch vụ, 68 span, r
 
 ### Log gì, không log gì
 
-Code chỉ ghi id, mã lỗi, kích thước, thời gian. Không ghi nội dung tài liệu, prompt, câu trả lời, body hay query string (đã có từ T3.6). Không có log truy cập của API: span HTTP đã có method, route, status và thời gian. Request bị từ chối (401/403/429) ghi một dòng `warn` gồm route mẫu, mã lỗi và `user_id`. Log truy cập của uvicorn (AI) vẫn còn, và cũng đi qua bộ che.
+Code chỉ ghi id, mã lỗi, kích thước, thời gian. Không ghi nội dung tài liệu, prompt, câu trả lời, body hay query string (đã có từ T3.6). Không có log truy cập của API: span HTTP đã có method, route, status và thời gian. Request bị từ chối vì 401/403 ghi một dòng `warn` gồm route mẫu, mã lỗi và `user_id`. Từ T7.3, 429 không ghi log nữa (một client vượt giới hạn sẽ sinh một dòng cho mỗi request) mà được đếm bằng metric RED theo route và status. Log truy cập của uvicorn (AI) vẫn còn, và cũng đi qua bộ che.
 
 Bộ che là **lớp thứ hai**, áp lên mọi chuỗi và mọi trường, kể cả log của thư viện:
 
@@ -115,3 +115,58 @@ Bộ che là **lớp thứ hai**, áp lên mọi chuỗi và mọi trường, k�
 | Tên người bắt đầu bằng họ Việt phổ biến (Nguyễn, Trần, Lê…, có dấu hoặc không, viết hoa) | họ + 1–4 từ viết hoa | `[NAME]` |
 
 Chuỗi được chuẩn hoá NFC trước khi che (tên gõ bằng dấu tổ hợp vẫn khớp). Trường truyền qua `logger.child({...})` (Node) cũng bị che. Giới hạn: tên người có họ hiếm, hoặc tên tiếng Anh nằm trong câu tự do ("Keith Anderson"), **không** bị che. Vì vậy quy tắc "không ghi nội dung" vẫn là lớp chính. Node và Python dùng chung bộ case `packages/logger/fixtures/redaction-cases.json`: thêm một mẫu ở bên này mà quên bên kia thì test bên kia đỏ.
+
+## Metrics (task T7.3)
+
+Metric được đẩy bằng OTLP như trace, cùng endpoint, mỗi 60 giây. Bật cùng điều kiện với tracing (có `OTEL_EXPORTER_OTLP_ENDPOINT`). Token phải có quyền `metrics:write`. Dashboard và cảnh báo nằm ở [`infra/grafana/`](../../infra/grafana/README.md).
+
+| Metric (tên OTel → tên trong Grafana) | Loại | Nhãn | Ai ghi, ở đâu |
+|---|---|---|---|
+| `http.server.request.duration` → `http_server_request_duration_seconds_*` | histogram, 9 bucket (có mốc 0,3 s của NFR-02) | `http_request_method`, `http_route` (route mẫu, ví dụ `/documents/:id`), `http_response_status_code` | API, instrumentation http của T7.1 (`packages/telemetry/src/metrics.ts` giữ đúng 3 nhãn này) |
+| `queue.jobs` → `queue_jobs` | gauge | `queue` (`extraction`, `rag-index`), `state` (`waiting`, `active`, `delayed`, `failed`) | API đọc Redis (`apps/api/src/modules/metrics/`) |
+| `queue.head_wait.age` → `queue_head_wait_age_seconds` | gauge | `queue` | như trên: cùng một job đã đứng đầu hàng bao lâu (API tự ghi nhớ, `QueueHeads`); 0 khi không có job chờ hoặc đầu hàng vừa đổi |
+| `queue.reachable` → `queue_reachable` | gauge | không | 1: lần đọc Redis vừa rồi thành công; 0: thất bại |
+| `cache.requests` → `cache_requests_total` | counter | `cache`, `outcome` | API đọc hash `cache:stats` (đếm chung của mọi process) |
+| `llm.tokens` → `llm_tokens_total` | counter | `tenant_id`, `operation` (`extract`, `classify`, `answer`), `model`, `token_type` | AI, `TracedLLMProvider` trong `apps/ai/app/otel.py` |
+| `llm.cost.list_price_usd` → `llm_cost_list_price_usd_total` | counter | `tenant_id`, `operation`, `model` | như trên, giá từ `apps/ai/app/providers/pricing.py` |
+| `llm.calls` → `llm_calls_total` | counter | `tenant_id`, `operation`, `model`, `outcome` (`ok`, `error`) | như trên, tính cả từng lần thử lại |
+
+Grafana Cloud đổi `service.name` thành nhãn `job` (`invoice-api`, `invoice-ai`), dấu chấm thành `_`, và thêm hậu tố theo đơn vị cùng `_total` cho counter ([OTLP format considerations](https://grafana.com/docs/grafana-cloud/send-data/otlp/otlp-format-considerations/)).
+
+Những điểm cần biết:
+
+- **Chi phí LLM là giá niêm yết, không phải tiền đã trả.** Dự án chạy trên free tier nên số tiền thật là $0. `fake-model` có giá bịa trong `pricing.py`, để lần chạy local bằng LLM fake vẫn hiện số trên dashboard.
+- **Hàng đợi được đo từ API, không từ worker.** Worker chết chính là lúc hàng đợi ứ đọng, nên process đo phải sống sót.
+- **Tuổi đầu hàng là thời gian hàng đợi không tiến, không phải tuổi của job.** BullMQ giữ thời điểm tạo job khi admin retry một job failed, nên tính theo tuổi job thì job failed một tuần trước được retry sẽ trông như đã kẹt một tuần. API ghi nhớ job nào đang đứng đầu, và tuổi chỉ tăng khi lần đọc sau vẫn thấy đúng job đó. Khi API khởi động lại, đồng hồ đếm lại từ 0, nên cảnh báo có thể bật muộn hơn tối đa một ngưỡng (5 phút).
+- **Khi Redis không đọc được:** `queue_reachable = 0`. Số job không được ghi, nên SDK (xuất dạng cumulative) lặp lại giá trị cuối. Riêng tuổi đầu hàng vẫn tiếp tục tăng, coi như đầu hàng chưa đổi, nên một job đang kẹt vẫn kích hoạt cảnh báo. Đã kiểm ở `apps/api/test/metrics.int-spec.ts`. Lần thu cuối khi process tắt không ghi gì cả, để không báo nhầm là Redis không đọc được.
+- **Worker và web không có metric riêng.** Probe `/health` không được đếm. Histogram HTTP của AI (FastAPI, httpx) và histogram HTTP client của API bị bỏ bằng View, vì RED là của API và mỗi histogram tốn hàng trăm series.
+- **Không bao giờ thành nhãn:** đường dẫn thô, query string, id tài liệu hay job, nội dung, câu hỏi. Mỗi nhãn chỉ nhận giá trị từ một tập cố định; riêng `tenant_id` là uuid đã kiểm (sai hoặc thiếu thì là `none`), và số tenant là hữu hạn. Mỗi metric tối đa 500 tổ hợp nhãn (`CARDINALITY_LIMIT`).
+- **429 không còn ghi log từng dòng** (từ T7.3); panel "Refused requests" đếm 429 theo route.
+- **Lần tăng đầu tiên của một series mới không được tính.** `increase()`/`rate()` lấy mẫu đầu tiên của counter làm mốc. Ví dụ 12 upload xảy ra trước lần export đầu tiên của series `201 /documents/upload` (mỗi 60 s) hiện ra là 0. Từ các lần sau thì đếm đúng, nên trên stack chạy lâu (VM demo) sai lệch này không đáng kể. Kiểm thật ngày 2026-11-28.
+- **Panel "per 5 min" có min interval 5 phút.** Metric về mỗi phút một lần, nên `increase` trên cửa sổ ngắn hơn 2 mẫu sẽ không trả gì ("No data").
+
+### Kiểm thật ngày 2026-11-28
+
+`LLM_PROVIDER=fake pnpm dev:stack` gửi metric lên Grafana Cloud. Đã chạy 12 upload PDF tổng hợp cho hai tenant, 6 câu hỏi và 40 lần đọc. Dashboard có số thật:
+
+- **API:** tỉ lệ 5xx 0%. p95 là 97,5 ms ở lần chạy đầu và 287 ms ở lần chụp ảnh (16:30 UTC, có upload). Đây là `pnpm dev:stack` có watcher, không phải số đo NFR-02: số đó đo trên bản build (T6.6, `docs/reports/load-test-v1.md`).
+- **LLM theo tenant** (giá niêm yết của `fake-model`, tiền thật là $0): acme khoảng $0,014, globex khoảng $0,007; token tách theo `extract`/`classify`/`answer`.
+- **Cache:** tỉ lệ hit của `documents-list` lên tới 95%.
+
+Tổng cộng 96 series, trong đó 50 là bucket của histogram HTTP.
+
+![RED của API: request theo route, tỉ lệ 5xx, p95/p50 (287/174 ms trên stack dev) so với vạch 300 ms của NFR-02, request bị từ chối (Grafana Cloud, 2026-11-28)](../assets/t7.3-dashboard-red.png)
+
+![Token và chi phí LLM theo tenant (giá niêm yết, không phải tiền đã trả), tỉ lệ hit cache](../assets/t7.3-dashboard-llm-cache.png)
+
+**Kích hoạt thử cảnh báo "Queue stuck".** Worker bị đóng băng bằng `kill -STOP <pid>` (giống một worker bị treo; phải dừng process `node .../dist/worker`, không phải `/bin/sh` bọc ngoài), rồi upload một file. Kết quả trên metric đầu hàng (`queue_head_wait_age_seconds`, sau code-reviewer):
+
+- Job đứng đầu hàng từ 16:04:08 UTC.
+- Rule chuyển sang **Firing** lúc 16:11:30 UTC với nhãn `queue=extraction` (đầu hàng đứng yên 576 s, `queue_reachable = 1`).
+- Sau `kill -CONT` lúc 16:15:13, job được xử lý ngay; đến 16:20:30 rule đã về **Normal** và tuổi đầu hàng về 0.
+
+Bản đo đầu tiên theo tuổi job (trước khi đổi) cũng bật cảnh báo lúc 15:16:30. Rule "API error rate" ở trạng thái `Normal (NoData)` vì không có 5xx.
+
+![Cảnh báo "Queue stuck" ở trạng thái Firing: đầu hàng đợi extraction đứng yên vượt vạch 300 s (2026-11-28)](../assets/t7.3-alert-queue-stuck.png)
+
+![Hàng đợi: đầu hàng đứng yên tới 10,7 phút khi worker bị đóng băng, về 0 khi chạy lại; "Queue numbers fresh" = fresh](../assets/t7.3-dashboard-api-queues.png)

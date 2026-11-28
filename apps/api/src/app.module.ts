@@ -10,6 +10,7 @@ import { ExtractionModule } from './modules/extraction/extraction.module';
 import { QueueAdminModule } from './modules/queue/queue-admin.module';
 import { HealthModule } from './modules/health/health.module';
 import { InsightsModule } from './modules/insights/insights.module';
+import { MetricsModule } from './modules/metrics/metrics.module';
 import { ReviewModule } from './modules/review/review.module';
 import { QaModule } from './modules/qa/qa.module';
 import { RetrievalModule } from './modules/search/retrieval.module';
@@ -31,6 +32,8 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     QaModule,
     RealtimeModule,
     NotificationsModule,
+    // Queue and cache gauges: API only, so a dead worker still shows as a growing queue (T7.3).
+    MetricsModule,
     TracingModule,
   ],
   // Registered here (not in main.ts) so tests that boot AppModule exercise the real wiring.

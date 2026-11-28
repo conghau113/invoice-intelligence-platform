@@ -1,11 +1,12 @@
-import { context, propagation, trace } from '@opentelemetry/api';
+import { context, metrics, propagation, trace } from '@opentelemetry/api';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { PgInstrumentation } from '@opentelemetry/instrumentation-pg';
 import { UndiciInstrumentation } from '@opentelemetry/instrumentation-undici';
+import type { MeterProvider, PushMetricExporter } from '@opentelemetry/sdk-metrics';
 import type { SpanExporter, TracerProvider } from '@opentelemetry/sdk-trace';
-import { registerTracerProvider } from 'telemetry';
+import { registerMeterProvider, registerTracerProvider, serviceResource } from 'telemetry';
 
 /**
  * OpenTelemetry tracing for the API and the worker (T7.1, ADR 0015). Off unless
@@ -18,12 +19,18 @@ import { registerTracerProvider } from 'telemetry';
  * worker polls Redis all the time, which would make a root span every few milliseconds. The
  * provider and what it removes from every span (query strings, error messages) live in the shared
  * `telemetry` package.
+ *
+ * Metrics (T7.3) start under the same condition, in the API process only: RED metrics from the
+ * http instrumentation, plus the queue and cache gauges of `QueueMetrics`. The worker has none: the
+ * queue is measured from the API so a dead worker still shows up as a growing queue.
  */
 
 /** Probes run every few seconds and say nothing about a request: no trace for them. */
 const UNTRACED_PATHS = /^\/health(\/|$)/;
 
 let provider: TracerProvider | undefined;
+/** Metrics (T7.3): the API only; started before tracing so the http instrumentation records into it. */
+let meterProvider: MeterProvider | undefined;
 /** Removes the instrumentations again (registerInstrumentations' return value). */
 let unregister: (() => void) | undefined;
 
@@ -44,6 +51,9 @@ export function startTracing(
 
   unregister = registerInstrumentations({
     tracerProvider: provider,
+    // RED metrics (`http.server.request.duration`) come from the same http instrumentation; probes
+    // ignored above are neither traced nor counted.
+    ...(meterProvider === undefined ? {} : { meterProvider }),
     instrumentations: [
       new HttpInstrumentation({
         ignoreIncomingRequestHook: (req) => UNTRACED_PATHS.test(req.url ?? ''),
@@ -57,6 +67,40 @@ export function startTracing(
     ],
   });
   return true;
+}
+
+/**
+ * Starts metrics for this process (T7.3), under the same condition as tracing. Call before
+ * `startTracing`. `exporter`/`intervalMs` are for tests (in-memory, short interval).
+ */
+export function startMetrics(
+  serviceName: string,
+  env: NodeJS.ProcessEnv = process.env,
+  exporter?: PushMetricExporter,
+  intervalMs?: number,
+): boolean {
+  if (meterProvider !== undefined) return true;
+  if (exporter === undefined && !env.OTEL_EXPORTER_OTLP_ENDPOINT) return false;
+  meterProvider = registerMeterProvider(
+    serviceResource(serviceName, env.NODE_ENV ?? 'development'),
+    exporter,
+    intervalMs,
+  );
+  return true;
+}
+
+/** Collects and exports every metric now (tests read the exporter right after). */
+export async function flushMetrics(): Promise<void> {
+  await meterProvider?.forceFlush();
+}
+
+/** Sends the last values, then takes metrics down. Called on shutdown; never throws. */
+export async function stopMetrics(): Promise<void> {
+  const current = meterProvider;
+  if (current === undefined) return;
+  meterProvider = undefined;
+  await current.shutdown().catch(() => undefined);
+  metrics.disable();
 }
 
 /** Exports the spans waiting in the batch now (tests read the exporter right after). */

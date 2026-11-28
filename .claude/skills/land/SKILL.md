@@ -1,13 +1,13 @@
 ---
-name: ship
-description: Land a finished task or change: branch, grouped commits, local gate, push, PR, watch CI and SonarCloud until green, then merge. Runs only when Hậu types /ship.
+name: land
+description: Land a finished task or change: branch, grouped commits, local gate, push, PR, watch CI and SonarCloud until green, then merge. Runs only when Hậu types /land. (Not named `ship`: Claude Code has a built-in /ship that takes precedence and rejects these arguments.)
 disable-model-invocation: true
 ---
 
 Land the work in the current working tree. Reply in Vietnamese. Arguments: `$ARGUMENTS`
 (optional: `--merge` = merge without asking once everything is green; `--draft` = open the PR as Draft and stop after step 4; any other words = a hint for the commit/PR title, e.g. a task ID).
 
-Typing `/ship` IS Hậu's request to commit and push in this message (CLAUDE.md: never commit or push otherwise). It is NOT permission to merge: merge only with `--merge` in the arguments or after Hậu says so after seeing green checks.
+Typing `/land` IS Hậu's request to commit and push in this message (CLAUDE.md: never commit or push otherwise). It is NOT permission to merge: merge only with `--merge` in the arguments or after Hậu says so after seeing green checks.
 
 ## 1. Look before touching anything
 
