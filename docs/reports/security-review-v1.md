@@ -151,6 +151,12 @@ base-uri 'none'; form-action 'self' <Keycloak origin>; frame-ancestors 'none'; u
   cookie), so no page changed mode; the build shows every route as dynamic except Next's built-in
   `/_not-found`, which is static and therefore has no nonce: if Next ever serves it, it shows its
   HTML but runs no script. T7.6 measures the pages under this policy.
+- **No eval in production, including the libraries.** Zod 4 probes `Function("")` the first time it
+  parses, to decide whether to compile schemas; the policy refuses it and the browser reports a
+  `script-src` violation on every page (Zod then falls back, so nothing broke, but the noise would
+  hide a real violation). `apps/web/src/instrumentation-client.ts` sets `jitless` before the app
+  runs, so the probe never happens. This only showed on production builds in CI: development allows
+  `'unsafe-eval'`, and the first local production check covered the public login page only.
 - **`style-src 'unsafe-inline'`** is required because React renders `style=""` attributes (progress
   bars, column widths). A nonce there would make browsers ignore `'unsafe-inline'`.
 

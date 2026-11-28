@@ -88,7 +88,9 @@ test.describe('content security policy', () => {
     const sockets: string[] = [];
     page.on('websocket', (ws) => sockets.push(ws.url()));
 
-    await login(page, 'accountant');
+    // admin, not accountant: the suite signs in as accountant almost everywhere, and every page
+    // here costs that user's per-minute read budget (rate limit), which the later specs then miss.
+    await login(page, 'admin');
     for (const path of ['/vi/dashboard', '/vi/documents', '/vi/insights', '/vi/ask']) {
       await page.goto(path);
       await page.waitForLoadState('networkidle');
