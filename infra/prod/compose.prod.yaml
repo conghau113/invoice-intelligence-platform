@@ -37,7 +37,7 @@ x-api-env: &api-env
 services:
   caddy:
     logging: *logging
-    image: caddy:2.10.2-alpine
+    image: caddy:2.11.9-alpine
     restart: unless-stopped
     ports:
       - '80:80'
@@ -251,7 +251,7 @@ services:
 
   keycloak:
     logging: *logging
-    image: quay.io/keycloak/keycloak:26.4.7
+    image: quay.io/keycloak/keycloak:26.8.2-3
     restart: unless-stopped
     # Production mode (not start-dev). The realm is imported on first start only (IGNORE_EXISTING).
     command: ['start', '--import-realm']
@@ -301,7 +301,7 @@ services:
   # COMPOSE_PROFILES=duckdns in the env file. The token stays in that file (ADR 0010).
   duckdns:
     logging: *logging
-    image: curlimages/curl:8.17.0
+    image: curlimages/curl:8.23.0
     restart: unless-stopped
     profiles: [duckdns]
     environment:
